@@ -17,6 +17,9 @@ include("colorspaces.jl")
 include("splittable.jl")
 export color_at, colors_at, palette_at, GAY_SEED
 
+# Include custom REPL
+include("repl.jl")
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
@@ -112,9 +115,17 @@ export show_colors, show_palette
 function __init__()
     # Initialize global splittable RNG
     gay_seed!(GAY_SEED)
-    @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
-    @info "Deterministic: gay_seed!(42); show_palette([next_color() for _ in 1:6])"
-    @info "Random access: color_at(1), color_at(42), palette_at(1, 6)"
+    
+    # Auto-initialize REPL if running interactively
+    if isdefined(Base, :active_repl) && Base.active_repl !== nothing
+        @async begin
+            sleep(0.1)  # Let REPL finish loading
+            init_gay_repl()
+        end
+    else
+        @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
+        @info "In REPL: init_gay_repl() to start Gay mode (press ` to enter)"
+    end
 end
 
 end # module Gay
