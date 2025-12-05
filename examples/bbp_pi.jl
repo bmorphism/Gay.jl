@@ -15,6 +15,58 @@
 
 using Gay
 using Colors
+using SplittableRandoms: SplittableRandom, split
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Continuation Points - Reserved Branches for Future Exploration
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+Reserved continuation branches. Each gets an independent deterministic stream
+from the master seed. Future explorations fork from their reserved point.
+
+    :bbp_pi          # Current: π digit colors (this file)
+    :galperin        # Future: billiard collision colors  
+    :triangle_magic  # Future: (r,θ) parameter space colors
+    :polylog         # Future: Li_n polylogarithm values
+    :narya_proofs    # Future: proof-derived colors
+    :quantum         # Future: quantum Galperin extension
+"""
+const CONTINUATION_BRANCHES = [
+    :bbp_pi,
+    :galperin,
+    :triangle_magic,
+    :polylog,
+    :narya_proofs,
+    :quantum,
+]
+
+"""
+    continuation_point(seed::Integer, branch::Symbol) -> SplittableRandom
+
+Get a deterministic RNG stream for a named continuation branch.
+Each branch is independent - work on one doesn't affect others.
+"""
+function continuation_point(seed::Integer, branch::Symbol)
+    root = SplittableRandom(UInt64(seed))
+    branch_hash = hash(branch) % UInt64
+    
+    current = root
+    for _ in 1:(branch_hash % 1000 + 1)
+        current = split(current)
+    end
+    
+    return current
+end
+
+"""
+    branch_seed(master_seed::Integer, branch::Symbol) -> UInt64
+
+Get a deterministic seed for a continuation branch.
+Use this to initialize gay_seed! for branch-specific work.
+"""
+branch_seed(master_seed::Integer, branch::Symbol) = 
+    UInt64(hash(branch) ⊻ master_seed)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # BBP Formula Implementation
