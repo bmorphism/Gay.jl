@@ -8,9 +8,14 @@ export sx, desx, codegen, @lisp_str, assign_reader_dispatch, include_lisp
 using Colors
 using ColorTypes
 using Random
+using SplittableRandoms
 
 # Include wide-gamut color space support
 include("colorspaces.jl")
+
+# Include splittable RNG for deterministic color generation
+include("splittable.jl")
+export color_at, colors_at, palette_at, GAY_SEED
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
@@ -105,9 +110,11 @@ export show_colors, show_palette
 # ═══════════════════════════════════════════════════════════════════════════
 
 function __init__()
-    # Register Lisp reader macros for color operations
-    @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + Lisp syntax"
-    @info "Try: random_color(Rec2020()), rainbow(), show_colors(transgender())"
+    # Initialize global splittable RNG
+    gay_seed!(GAY_SEED)
+    @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
+    @info "Deterministic: gay_seed!(42); show_palette([next_color() for _ in 1:6])"
+    @info "Random access: color_at(1), color_at(42), palette_at(1, 6)"
 end
 
 end # module Gay
