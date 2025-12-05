@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master
     tags: ['*']
   pull_request:
 
@@ -39,7 +40,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
