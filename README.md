@@ -52,6 +52,78 @@ pride_flag(:progress)    # Progress Pride flag
 rainbow(Rec2020())       # Wide-gamut rainbow
 ```
 
+## Comrade.jl-Style Sky Models
+
+Colored S-expressions for VLBI sky model composition, inspired by [Comrade.jl](https://github.com/ptiede/Comrade.jl):
+
+```julia
+using Gay
+
+# Primitives get deterministic colors from SplittableRandoms
+gay_seed!(2017)
+ring = comrade_ring(1.0, 0.3)      # → (ring 1.0 0.3)  ← colored parens!
+gauss = comrade_gaussian(0.5)      # → (gaussian 0.5 0.5)
+model = sky_add(ring, gauss)       # → (ring) + (gaussian)
+
+# Display as colored S-expression + ASCII render
+comrade_show(model)
+```
+
+**Output:**
+```
+Colored S-Expression (parentheses colored by component):
+(ring 1.0 0.3) + (gaussian 0.5 0.5)
+
+Intensity Map:
+        ████████████        
+      ████████████████      
+    ██████    ████    ██████    
+   █████        ██        █████   
+  ████          ██          ████  
+  ████          ██          ████  
+   █████        ██        █████   
+    ██████    ████    ██████    
+      ████████████████      
+        ████████████        
+```
+
+### Model Types
+
+| Style | S-Expression | Description |
+|-------|--------------|-------------|
+| M87*  | `(ring r w) + (gaussian σ)` | Ring + central gaussian |
+| Sgr A* | `(crescent r_out r_in shift) + (disk r)` | Asymmetric crescent |
+| Rings | `(ring) + (ring) + (ring) + (ring)` | Multi-ring structure |
+| Custom | Mix of primitives | User-defined |
+
+## Gallery: 1069 Models
+
+Generated **1069 sky models in parallel** using SplittableRandoms fork-safe streams:
+
+```bash
+julia --threads=auto scripts/generate_gallery.jl
+```
+
+- **Master seed:** 42069 (fully reproducible)
+- **Threads:** 16 parallel workers
+- **Time:** 1.17 seconds
+- **Each model:** Independent forked RNG stream
+
+### Top 5 by Aesthetic Score
+
+```
+#1 [rings] seed=51749 (4 rings)
+   (ring 0.63 0.23) + (ring 0.91 0.18) + (ring 1.22 0.11) + (ring 1.52 0.29)
+
+#2 [rings] seed=73597 (4 rings)  
+   (ring 0.73 0.23) + (ring 0.99 0.14) + (ring 1.25 0.23) + (ring 1.56 0.12)
+
+#3 [rings] seed=57547 (4 rings)
+   (ring 0.76 0.25) + (ring 1.08 0.18) + (ring 1.38 0.13) + (ring 1.61 0.21)
+```
+
+Full gallery: [`gallery/index.md`](gallery/index.md) | All models: [`gallery/catalog.jsonl`](gallery/catalog.jsonl)
+
 ## Black Hole Imaging Demo
 
 Inspired by [Comrade.jl](https://github.com/ptiede/Comrade.jl) (Event Horizon Telescope VLBI imaging):
@@ -63,9 +135,9 @@ eht_rings(seed=2017)
 ```
 
 Generates deterministic false-color visualizations of black hole accretion disks with:
-- Photon ring structure
-- Relativistic Doppler boosting
-- Temperature-dependent plasma colors
+- Photon ring structure (EHT n=1,2,3... orbits)
+- Relativistic Doppler boosting (bright approaching side)
+- Temperature-dependent plasma colors (hot inner → cool outer)
 
 ## How It Works
 
