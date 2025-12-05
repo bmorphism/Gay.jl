@@ -144,6 +144,58 @@ end
 export show_colors, show_palette
 
 # ═══════════════════════════════════════════════════════════════════════════
+# Main entry point (SpaceInvaders.jl style)
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    main(; seed=42, n=6)
+
+Launch a color palette demo, SpaceInvaders.jl style.
+Displays a rainbow palette with the given seed.
+"""
+function main(; seed::Int=42, n::Int=6)
+    gay_seed!(seed)
+    
+    println()
+    println(rainbow_text("  ╔════════════════════════════════════════════════════════════════╗"))
+    println(rainbow_text("  ║              Gay.jl - Wide Gamut Color Palettes                ║"))
+    println(rainbow_text("  ╚════════════════════════════════════════════════════════════════╝"))
+    println()
+    
+    # Show pride flags
+    println("  Pride Flags:")
+    print("    Rainbow:    "); show_colors(rainbow(); width=4)
+    print("    Trans:      "); show_colors(transgender(); width=4)
+    print("    Bi:         "); show_colors(bisexual(); width=4)
+    print("    Nonbinary:  "); show_colors(nonbinary(); width=4)
+    println()
+    
+    # Show deterministic palettes
+    println("  Deterministic Palettes (seed=$seed):")
+    for cs in [SRGB(), DisplayP3(), Rec2020()]
+        gay_seed!(seed)
+        colors = next_palette(n, cs)
+        print("    $(rpad(typeof(cs), 12)): ")
+        show_colors(colors; width=4)
+    end
+    println()
+    
+    # Show indexed access
+    println("  Random Access (same seed = same colors):")
+    print("    color_at(1,2,3,4,5,6; seed=$seed): ")
+    colors = [color_at(i; seed=seed) for i in 1:6]
+    show_colors(colors; width=4)
+    println()
+    
+    println(rainbow_text("  Press SPC in REPL to enter Gay mode! 🏳️‍🌈"))
+    println()
+    
+    return nothing
+end
+
+export main
+
+# ═══════════════════════════════════════════════════════════════════════════
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -159,7 +211,7 @@ function __init__()
         end
     else
         @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
-        @info "In REPL: init_gay_repl() to start Gay mode (press ` to enter)"
+        @info "In REPL: init_gay_repl() to start Gay mode (press SPC to enter)"
     end
 end
 

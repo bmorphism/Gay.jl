@@ -1,9 +1,13 @@
 using Test
 using Gay
+using Aqua
 using Colors: RGB
 using SplittableRandoms: SplittableRandom
 
 @testset "Gay.jl" begin
+    @testset "Aqua.jl" begin
+        Aqua.test_all(Gay; deps_compat=(check_extras=false,))
+    end
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace
         @test DisplayP3() isa ColorSpace

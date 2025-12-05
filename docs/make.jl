@@ -15,7 +15,8 @@ literate_files = [
     "wide_gamut_colors.jl", 
     "comrade_sky_models.jl",
     "pride_palettes.jl",
-    "parallel_spi.jl"
+    "parallel_spi.jl",
+    "gay_invaders.jl"
 ]
 
 for file in literate_files
@@ -57,7 +58,8 @@ makedocs(
             "Wide-Gamut Colors" => "examples/wide_gamut_colors.md",
             "Comrade Sky Models" => "examples/comrade_sky_models.md",
             "Pride Palettes" => "examples/pride_palettes.md",
-            "Parallel SPI" => "examples/parallel_spi.md"
+            "Parallel SPI" => "examples/parallel_spi.md",
+            "Gay Invaders" => "examples/gay_invaders.md"
         ],
         "API Reference" => "api.md"
     ],

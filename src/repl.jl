@@ -287,12 +287,13 @@ COMMANDS["rng"] = state_command
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    init_gay_repl(; start_key="🏳️‍🌈", sticky=true)
+    init_gay_repl(; start_key=' ', sticky=true)
 
 Initialize the Gay REPL mode. 
-Press the start_key (default: type 'gay' then backspace) to enter.
+Press SPC (space bar) to enter Gay mode (SpaceInvaders.jl style).
+Press backspace to return to Julia mode.
 """
-function init_gay_repl(; start_key::String = "`", sticky::Bool = true)
+function init_gay_repl(; start_key::Char = ' ', sticky::Bool = true)
     # Dynamic rainbow prompt based on invocation
     function gay_prompt()
         inv = prompt_invocation()
@@ -313,7 +314,7 @@ function init_gay_repl(; start_key::String = "`", sticky::Bool = true)
     println(rainbow_text("  ╔═══════════════════════════════════════╗"))
     println(rainbow_text("  ║     Gay.jl REPL Initialized 🏳️‍🌈      ║"))
     println(rainbow_text("  ╚═══════════════════════════════════════╝"))
-    println("  Press $(start_key) to enter Gay mode. Type !help for commands.")
+    println("  Press SPC (space bar) to enter Gay mode. Type !help for commands.")
     println()
 end
 

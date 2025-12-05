@@ -7,8 +7,8 @@
 using Colors: RGB
 
 export SkyPrimitive, Ring, MRing, Gaussian, Disk, Crescent
-export SkyModel, sky_add, sky_stretch, sky_rotate, sky_shift, sky_smooth
-export sky_eval, sky_show, sky_render
+export SkyModel, sky_add, sky_stretch, sky_rotate, sky_shift
+export sky_show, sky_render
 export comrade_ring, comrade_gaussian, comrade_model
 
 # ═══════════════════════════════════════════════════════════════════════════
