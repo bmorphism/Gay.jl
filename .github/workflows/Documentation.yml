@@ -3,8 +3,8 @@ name: Documentation
 on:
   push:
     branches:
-      - main
-      - master
+      - gay
+      - slave
     tags: ['*']
   pull_request:
 
@@ -40,7 +40,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/gay'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

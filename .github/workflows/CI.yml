@@ -3,8 +3,8 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - master
+      - gay
+      - slave
     tags: ['*']
   pull_request:
   workflow_dispatch:
