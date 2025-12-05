@@ -292,4 +292,4 @@ function init_gay_repl(; start_key::String = "`", sticky::Bool = true)
     println()
 end
 
-export init_gay_repl, current_colorspace
+export init_gay_repl, current_colorspace, show_color_inline, rainbow_text

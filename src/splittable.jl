@@ -3,7 +3,7 @@
 
 using SplittableRandoms: SplittableRandom, split
 
-export GayRNG, gay_seed!, gay_split, next_color, next_colors, next_palette
+export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_palette
 
 """
     GayRNG
