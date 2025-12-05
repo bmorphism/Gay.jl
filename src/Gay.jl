@@ -20,6 +20,10 @@ export color_at, colors_at, palette_at, GAY_SEED
 # Include custom REPL
 include("repl.jl")
 
+# Include Comrade.jl-style sky model DSL
+include("comrade.jl")
+export comrade_show, comrade_mring, comrade_disk, comrade_crescent
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
