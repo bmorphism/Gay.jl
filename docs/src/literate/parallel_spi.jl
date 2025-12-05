@@ -18,24 +18,13 @@
 # ## Setup
 
 using Gay
-using Base.Threads
+using Colors: RGB
 
-println("Julia threads available: ", nthreads())
+println("Julia threads available: ", Threads.nthreads())
 
 # ## The Problem with Standard RNGs
 #
-# Traditional RNGs maintain global state that causes race conditions:
-#
-# ```julia
-# # ⚠️ NOT REPRODUCIBLE — race condition!
-# using Random
-# Random.seed!(42)
-# results = Vector{Float64}(undef, 100)
-# @threads for i in 1:100
-#     results[i] = rand()  # Different each run!
-# end
-# ```
-#
+# Traditional RNGs maintain global state that causes race conditions.
 # Different runs produce different results because threads
 # access the shared RNG in unpredictable order.
 
@@ -56,13 +45,10 @@ println("Julia threads available: ", nthreads())
 # ## Parallel Color Generation
 
 function generate_colors_parallel(n::Int, master_seed::Int)
-    colors = Vector{RGB}(undef, n)
-    
-    @threads for i in 1:n
-        # Each index gets deterministic color from master seed
+    colors = Vector{RGB{Float64}}(undef, n)
+    Threads.@threads for i in 1:n
         colors[i] = color_at(i; seed=master_seed)
     end
-    
     colors
 end
 
@@ -86,74 +72,17 @@ parallel_colors_2 = generate_colors_parallel(n, seed)
 @assert parallel_colors == parallel_colors_2
 println("✓ Reproducibility verified: parallel runs are identical")
 
-# ## Parallel Sky Model Gallery
-#
-# Generate many Comrade-style models in parallel:
+# ## Palette Generation
 
-function generate_model_gallery(n::Int; master_seed::Int=42069)
-    models = Vector{SkyModel}(undef, n)
-    styles = [:m87, :sgra, :custom]
-    
-    @threads for i in 1:n
-        # Deterministic style selection
-        style_rng = SplittableRandom(UInt64(master_seed + i))
-        style_idx = mod(style_rng.x, length(styles)) + 1
-        style = styles[style_idx]
-        
-        # Deterministic model generation
-        models[i] = comrade_model(seed=master_seed + i, style=style)
-    end
-    
-    models
-end
+gay_seed!(1337)
+p1 = next_palette(6)
+println("Generated palette with 6 colors")
 
-println("\n=== Parallel Model Gallery ===")
-println("Generating 16 models in parallel...")
-
-models = generate_model_gallery(16; master_seed=42069)
-println("Generated $(length(models)) models")
-
-# Show first few
-for i in 1:3
-    println("\nModel $i:")
-    println("  ", sky_show(models[i]))
-end
-
-# Verify reproducibility
-models_2 = generate_model_gallery(16; master_seed=42069)
-for i in 1:16
-    @assert sky_show(models[i]) == sky_show(models_2[i])
-end
-println("\n✓ Gallery reproducibility verified")
-
-# ## Performance: Parallel Palette Generation
-
-function timed_palette_generation(n_palettes::Int, palette_size::Int; seed::Int=1337)
-    palettes = Vector{Vector{RGB}}(undef, n_palettes)
-    
-    t = @elapsed begin
-        @threads for i in 1:n_palettes
-            palettes[i] = palette_at(i, palette_size; seed=seed)
-        end
-    end
-    
-    (palettes, t)
-end
-
-println("\n=== Performance Benchmark ===")
-
-n_palettes = 1000
-palette_size = 6
-
-(palettes, parallel_time) = timed_palette_generation(n_palettes, palette_size)
-println("Generated $n_palettes palettes of $palette_size colors each")
-println("  Time: $(round(parallel_time * 1000, digits=2)) ms")
-println("  Rate: $(round(n_palettes / parallel_time, digits=0)) palettes/sec")
-
-# Verify all palettes are reproducible
-(palettes_2, _) = timed_palette_generation(n_palettes, palette_size)
-@assert palettes == palettes_2
-println("  ✓ All palettes reproducible")
+# Indexed palette access
+p_at_5 = palette_at(5, 6)
+p_at_5_again = palette_at(5, 6)
+@assert p_at_5 == p_at_5_again
+println("✓ Indexed palette access is reproducible")
 
 # ## Connection to Pigeons.jl
 #
@@ -168,26 +97,6 @@ println("  ✓ All palettes reproducible")
 #
 # The SplittableRandoms foundation is identical.
 
-# ## Fork Safety
-#
-# Unlike thread-based parallelism, process forks (e.g., with `Distributed.jl`)
-# also work correctly because each process gets an independent RNG stream:
-#
-# ```julia
-# using Distributed
-# addprocs(4)
-# 
-# @everywhere using Gay
-# 
-# # Each worker generates its portion
-# results = pmap(1:1000) do i
-#     color_at(i; seed=42069)
-# end
-# 
-# # Identical to sequential!
-# @assert results == [color_at(i; seed=42069) for i in 1:1000]
-# ```
-
 # ## Best Practices
 #
 # 1. **Use `color_at` for parallel work** — random access by index
@@ -195,16 +104,9 @@ println("  ✓ All palettes reproducible")
 # 3. **Verify with sequential** — always test SPI property
 # 4. **Document seeds** — share seeds for reproducibility
 
-println("\n=== Best Practice Example ===")
-
 function reproducible_visualization(data::Vector; seed::Int)
     n = length(data)
-    
-    # Generate colors deterministically
     colors = [color_at(i; seed=seed) for i in 1:n]
-    
-    # (In real code: create plot with these colors)
-    
     return (data=data, colors=colors, seed=seed)
 end
 
