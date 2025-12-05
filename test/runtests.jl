@@ -1,6 +1,7 @@
 using Test
 using Gay
 using Colors: RGB
+using SplittableRandoms: SplittableRandom
 
 @testset "Gay.jl" begin
     @testset "Color Spaces" begin
@@ -30,6 +31,61 @@ using Colors: RGB
         @test length(palette) == 3
     end
     
+    @testset "Splittable Determinism" begin
+        # Same seed produces same colors
+        gay_seed!(42)
+        c1 = next_color()
+        c2 = next_color()
+        
+        gay_seed!(42)
+        @test next_color() == c1
+        @test next_color() == c2
+        
+        # Random access by index
+        c_at_10 = color_at(10)
+        c_at_10_again = color_at(10)
+        @test c_at_10 == c_at_10_again
+        
+        # Different seeds produce different colors
+        gay_seed!(42)
+        a = next_color()
+        gay_seed!(1337)
+        b = next_color()
+        @test a != b
+    end
+    
+    @testset "Strong Parallelism Invariance (SPI)" begin
+        seed = 42069
+        n = 100
+        
+        # Sequential generation
+        sequential = [color_at(i; seed=seed) for i in 1:n]
+        
+        # Parallel generation (simulated)
+        parallel = Vector{RGB}(undef, n)
+        Threads.@threads for i in 1:n
+            parallel[i] = color_at(i; seed=seed)
+        end
+        
+        # Must be identical
+        @test sequential == parallel
+        
+        # Reproducibility across runs
+        sequential2 = [color_at(i; seed=seed) for i in 1:n]
+        @test sequential == sequential2
+    end
+    
+    @testset "Palette Generation" begin
+        gay_seed!(1337)
+        p1 = next_palette(6)
+        @test length(p1) == 6
+        
+        # Indexed palette access
+        p_at_5 = palette_at(5, 6)
+        p_at_5_again = palette_at(5, 6)
+        @test p_at_5 == p_at_5_again
+    end
+    
     @testset "Pride Flags" begin
         r = rainbow()
         @test length(r) == 6
@@ -56,6 +112,28 @@ using Colors: RGB
         @test in_gamut(clamped, SRGB())
     end
     
+    @testset "Comrade Sky Models" begin
+        gay_seed!(2017)
+        
+        ring = comrade_ring(1.0, 0.3)
+        @test ring isa Ring
+        @test ring.radius == 1.0
+        @test ring.width == 0.3
+        
+        gauss = comrade_gaussian(0.5)
+        @test gauss isa Gaussian
+        
+        model = sky_add(ring, gauss)
+        @test model isa SkyModel
+        @test length(model.components) == 2
+        
+        # Reproducible models
+        gay_seed!(42)
+        m1 = comrade_model(seed=42, style=:m87)
+        m2 = comrade_model(seed=42, style=:m87)
+        @test sky_show(m1) == sky_show(m2)
+    end
+    
     @testset "Lisp Interface" begin
         c = gay_random_color()
         @test c isa RGB
@@ -65,5 +143,12 @@ using Colors: RGB
         
         pride = gay_pride(:rainbow)
         @test length(pride) == 6
+        
+        # Deterministic via Lisp API
+        gay_seed(42)
+        l1 = gay_next()
+        gay_seed(42)
+        l2 = gay_next()
+        @test l1 == l2
     end
 end

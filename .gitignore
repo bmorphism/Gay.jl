@@ -1,0 +1,26 @@
+# Julia
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+Manifest.toml
+
+# Documentation
+docs/build/
+docs/site/
+docs/Manifest.toml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+*.lcov
+lcov.info
+coverage/
