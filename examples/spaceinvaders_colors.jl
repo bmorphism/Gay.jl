@@ -23,8 +23,25 @@ module GayInvaders
 using Gay
 using Gay: rainbow_text, show_color_inline, RAINBOW_COLORS
 using Colors: RGB
+using OhMyThreads: tmap
 
 export main
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Strong Parallelism Invariance (SPI)
+# ═══════════════════════════════════════════════════════════════════════════
+# 
+# Gay.jl uses SplittableRandoms to ensure color_at(i; seed=s) returns the
+# SAME color regardless of:
+#   - Which thread calls it
+#   - What order threads execute  
+#   - Whether you run sequentially or in parallel
+#
+# This means we can safely parallelize color generation with OhMyThreads
+# and get identical, reproducible results every time.
+#
+# See: docs/src/literate/parallel_color_determinism.jl for full explanation
+# ═══════════════════════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANSI Color Helpers
@@ -192,8 +209,9 @@ end
 function GameColors(; seed::Int=42, num_rows::Int=10)
     gay_seed!(seed)
     
-    # Enemy colors - deterministic per row
-    enemy_rows = [rgb_fg(color_at(i; seed=seed)) for i in 1:num_rows]
+    # Enemy colors - deterministic per row, parallelized with OhMyThreads
+    # Thanks to SPI, this produces identical results to sequential execution!
+    enemy_rows = tmap(i -> rgb_fg(color_at(i; seed=seed)), 1:num_rows)
     
     # Ship = trans pride light blue
     trans = transgender()
@@ -202,11 +220,12 @@ function GameColors(; seed::Int=42, num_rows::Int=10)
     # Bullet = trans pride pink  
     bullet = rgb_fg(trans[1])
     
-    # Explosions = rainbow
-    explosion = [rgb_fg(c) for c in rainbow()]
+    # Explosions = rainbow (parallel generation)
+    rainbow_colors = rainbow()
+    explosion = tmap(i -> rgb_fg(rainbow_colors[i]), 1:length(rainbow_colors))
     
     # Border = rainbow
-    border = [rgb_fg(RAINBOW_COLORS[i]) for i in 1:6]
+    border = tmap(i -> rgb_fg(RAINBOW_COLORS[i]), 1:6)
     
     GameColors(enemy_rows, ship, bullet, explosion, border, seed)
 end

@@ -16,7 +16,8 @@ literate_files = [
     "comrade_sky_models.jl",
     "pride_palettes.jl",
     "parallel_spi.jl",
-    "gay_invaders.jl"
+    "gay_invaders.jl",
+    "parallel_color_determinism.jl"
 ]
 
 for file in literate_files
@@ -59,7 +60,8 @@ makedocs(
             "Comrade Sky Models" => "examples/comrade_sky_models.md",
             "Pride Palettes" => "examples/pride_palettes.md",
             "Parallel SPI" => "examples/parallel_spi.md",
-            "Gay Invaders" => "examples/gay_invaders.md"
+            "Gay Invaders" => "examples/gay_invaders.md",
+            "Parallel Color Determinism" => "examples/parallel_color_determinism.md"
         ],
         "API Reference" => "api.md"
     ],

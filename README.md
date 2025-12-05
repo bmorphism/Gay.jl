@@ -4,6 +4,7 @@ Wide-gamut color sampling with **splittable determinism** — reproducible color
 
 [![CI](https://github.com/bmorphism/Gay.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/bmorphism/Gay.jl/actions/workflows/CI.yml)
 [![Documentation](https://github.com/bmorphism/Gay.jl/actions/workflows/Documentation.yml/badge.svg)](https://bmorphism.github.io/Gay.jl/)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 ```
        🌌 Nice Black Hole (gay_seed!(69)) 🌌
@@ -256,12 +257,59 @@ The **Strong Parallelism Invariance** property ensures identical results regardl
 - `show_colors(colors)` — ANSI terminal display
 - `show_palette(colors)` — with hex codes
 
+## GayInvaders: Terminal Game Demo
+
+Full interactive Space Invaders with deterministic color palettes, inspired by [Lilith Hafner's JuliaCon talk](https://www.youtube.com/watch?v=PgqrHm-wL1w):
+
+```julia
+using Gay
+include(joinpath(pkgdir(Gay), "examples", "spaceinvaders_colors.jl"))
+GayInvaders.main(seed=42)  # Same seed = same colors!
+```
+
+**Features:**
+- 🙯 Enemy rows colored by `color_at(row; seed=seed)`
+- 🙭 Ship in trans pride light blue
+- 🢙 Bullets in trans pride pink
+- ✦ Rainbow explosion effects
+- Parallel color generation via [OhMyThreads.jl](https://github.com/JuliaFolds2/OhMyThreads.jl)
+
+**Controls:** Arrow keys/WASD to move, Space to fire, Q to quit.
+
+## Parallel Color Determinism
+
+Gay.jl provides **Strong Parallelism Invariance** — colors are identical whether generated sequentially or in parallel:
+
+```julia
+using Gay, OhMyThreads
+
+seed = 42
+sequential = [color_at(i; seed=seed) for i in 1:100]
+parallel = tmap(i -> color_at(i; seed=seed), 1:100)
+
+sequential == parallel  # true — always!
+```
+
+This is critical for:
+- Reproducible game visuals across different hardware
+- Parallel rendering without color drift
+- Shareable "color seeds" between users
+
 ## Dependencies
 
 - [Colors.jl](https://github.com/JuliaGraphics/Colors.jl)
 - [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl)
-- [Pigeons.jl](https://github.com/Julia-Tempering/Pigeons.jl)
+- [OhMyThreads.jl](https://github.com/JuliaFolds2/OhMyThreads.jl)
 - [LispSyntax.jl](https://github.com/swadey/LispSyntax.jl)
+
+## Code Quality
+
+Tested with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl) for:
+- ✅ No method ambiguities
+- ✅ No unbound type parameters
+- ✅ No undefined exports
+- ✅ No stale dependencies
+- ✅ Proper compat bounds
 
 ## License
 

@@ -24,6 +24,9 @@ include("repl.jl")
 include("comrade.jl")
 export comrade_show, comrade_mring, comrade_disk, comrade_crescent
 
+# Include parallel color generation (OhMyThreads + Pigeons SPI)
+include("parallel.jl")
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
