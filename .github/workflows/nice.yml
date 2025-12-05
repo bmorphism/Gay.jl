@@ -6,6 +6,9 @@ on:
       - gay
       - slave
 
+permissions:
+  contents: write
+
 jobs:
   check-nice:
     runs-on: ubuntu-latest
@@ -13,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Check for 69 in commit hash
         id: nice-check
