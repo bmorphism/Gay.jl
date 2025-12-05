@@ -25,16 +25,18 @@ include("repl.jl")
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Lisp-accessible random color generation.
+Lisp-accessible DETERMINISTIC color generation.
 
-Usage from Lisp REPL:
-  (random-color)              ; Random sRGB color
-  (random-color :p3)          ; Random Display P3 color  
-  (random-color :rec2020)     ; Random Rec.2020 color
-  (random-colors 5)           ; 5 random sRGB colors
-  (random-palette 8)          ; 8 visually distinct colors
-  (pride :rainbow)            ; Rainbow flag colors
-  (pride :trans :p3)          ; Trans flag in P3 gamut
+Usage from Gay REPL (Lisp syntax with parentheses):
+  (gay-next)                  ; Next deterministic color  
+  (gay-next 5)                ; Next 5 colors
+  (gay-at 42)                 ; Color at index 42
+  (gay-at 1 2 3)              ; Colors at indices 1,2,3
+  (gay-palette 6)             ; 6 visually distinct colors
+  (gay-seed 1337)             ; Set RNG seed
+  (pride :rainbow)            ; Rainbow flag
+  (pride :trans :rec2020)     ; Trans flag in Rec.2020
+  (gay-blackhole 42)          ; Render black hole with seed
 """
 
 # Symbol to ColorSpace mapping for Lisp interface
@@ -50,20 +52,49 @@ function sym_to_colorspace(s::Symbol)
     end
 end
 
-# Lisp-friendly wrappers
+# ═══════════════════════════════════════════════════════════════════════════
+# Lisp-friendly deterministic color functions (kebab-case → snake_case)
+# These are the primary API for reproducible colors from S-expressions
+# ═══════════════════════════════════════════════════════════════════════════
+
+# (gay-next) or (gay-next n) - deterministic next color(s)
+gay_next() = next_color(current_colorspace())
+gay_next(n::Int) = [next_color(current_colorspace()) for _ in 1:n]
+gay_next(cs::Symbol) = next_color(sym_to_colorspace(cs))
+gay_next(n::Int, cs::Symbol) = [next_color(sym_to_colorspace(cs)) for _ in 1:n]
+
+# (gay-at index) or (gay-at i1 i2 i3...) - random access by index
+gay_at(idx::Int) = color_at(idx, current_colorspace())
+gay_at(idx::Int, cs::Symbol) = color_at(idx, sym_to_colorspace(cs))
+gay_at(indices::Int...) = [color_at(i, current_colorspace()) for i in indices]
+
+# (gay-palette n) - n visually distinct colors
+gay_palette(n::Int) = next_palette(n, current_colorspace())
+gay_palette(n::Int, cs::Symbol) = next_palette(n, sym_to_colorspace(cs))
+
+# (gay-seed n) - set RNG seed for reproducibility
+gay_seed(n::Int) = gay_seed!(n)
+
+# (gay-space :rec2020) - set color space
+gay_space(cs::Symbol) = (CURRENT_COLORSPACE[] = sym_to_colorspace(cs); current_colorspace())
+
+# (gay-rng-state) - show current RNG state
+gay_rng_state() = (r = gay_rng(); (seed=r.seed, invocation=r.invocation))
+
+# (pride :flag) or (pride :flag :colorspace)
+gay_pride(flag::Symbol) = pride_flag(flag, current_colorspace())
+gay_pride(flag::Symbol, cs::Symbol) = pride_flag(flag, sym_to_colorspace(cs))
+
+# Legacy random (non-deterministic) wrappers
 gay_random_color() = random_color(SRGB())
 gay_random_color(cs::Symbol) = random_color(sym_to_colorspace(cs))
-
 gay_random_colors(n::Int) = random_colors(n, SRGB())
 gay_random_colors(n::Int, cs::Symbol) = random_colors(n, sym_to_colorspace(cs))
-
 gay_random_palette(n::Int) = random_palette(n, SRGB())
 gay_random_palette(n::Int, cs::Symbol) = random_palette(n, sym_to_colorspace(cs))
 
-gay_pride(flag::Symbol) = pride_flag(flag, SRGB())
-gay_pride(flag::Symbol, cs::Symbol) = pride_flag(flag, sym_to_colorspace(cs))
-
-# Export Lisp-friendly names
+# Export all Lisp-friendly names (kebab-case maps to these)
+export gay_next, gay_at, gay_palette, gay_seed, gay_space, gay_rng_state
 export gay_random_color, gay_random_colors, gay_random_palette, gay_pride
 
 # ═══════════════════════════════════════════════════════════════════════════

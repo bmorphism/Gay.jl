@@ -130,24 +130,38 @@ end
 
 function help_command(args...)
     println("""
-  ╔═══════════════════════════════════════════════════════════╗
-  ║  Gay.jl REPL Commands                                     ║
-  ╠═══════════════════════════════════════════════════════════╣
-  ║  !help              Show this help                        ║
-  ║  !seed <n>          Set RNG seed                          ║
-  ║  !next [n]          Generate next color(s)                ║
-  ║  !at <index>        Get color at index                    ║
-  ║  !palette <n>       Generate n-color palette              ║
-  ║  !rainbow           Show rainbow flag                     ║
-  ║  !pride <flag>      Show pride flag colors                ║
-  ║  !blackhole [seed]  Render black hole                     ║
-  ║  !space <name>      Set color space (srgb/p3/rec2020)     ║
-  ╚═══════════════════════════════════════════════════════════╝
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║  Gay.jl REPL - Reproducible Colors via SplittableRandoms         ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  COMMANDS (! prefix)                                              ║
+  ║    !seed <n>        Set RNG seed for reproducibility              ║
+  ║    !next [n]        Generate next deterministic color(s)          ║
+  ║    !at <i> [j k...] Get color(s) at specific index/indices        ║
+  ║    !palette <n>     Generate n visually distinct colors           ║
+  ║    !pride <flag>    Show pride flag (rainbow/trans/bi/nb/pan)     ║
+  ║    !space <name>    Set color space (srgb/p3/rec2020)             ║
+  ║    !blackhole [s]   Render black hole (optional seed)             ║
+  ║    !state           Show RNG state (seed, invocation)             ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  LISP S-EXPRESSIONS (parentheses)                                 ║
+  ║    (gay-seed 42)           Set seed                               ║
+  ║    (gay-next)              Next deterministic color               ║
+  ║    (gay-next 5)            Next 5 colors                          ║
+  ║    (gay-at 1 10 100)       Colors at indices                      ║
+  ║    (gay-palette 6)         6 distinct colors                      ║
+  ║    (gay-space :rec2020)    Set Rec.2020 gamut                     ║
+  ║    (gay-pride :trans)      Trans flag colors                      ║
+  ║    (gay-rng-state)         Show (seed, invocation)                ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  JULIA EXPRESSIONS                                                ║
+  ║    gay_seed!(42)           Same as (gay-seed 42)                  ║
+  ║    next_color()            Next color (uses current space)        ║
+  ║    color_at(42)            Color at index 42                      ║
+  ║    rainbow(Rec2020())      Rainbow in Rec.2020                    ║
+  ╚═══════════════════════════════════════════════════════════════════╝
   
-  Or use Julia/Lisp syntax directly:
-    next_color()
-    (next-color)
-    rainbow(Rec2020())
+  Reproducibility: Same seed → same colors, always.
+  Fork-safe: Each color = independent RNG split (Pigeons.jl SPI pattern)
 """)
     return nothing
 end
@@ -256,6 +270,17 @@ function space_command(args...)
 end
 COMMANDS["space"] = space_command
 COMMANDS["cs"] = space_command
+
+function state_command(args...)
+    r = gay_rng()
+    println("  RNG State:")
+    println("    seed:       $(r.seed)")
+    println("    invocation: $(r.invocation)")
+    println("    colorspace: $(typeof(current_colorspace()))")
+    return (seed=r.seed, invocation=r.invocation)
+end
+COMMANDS["state"] = state_command
+COMMANDS["rng"] = state_command
 
 # ═══════════════════════════════════════════════════════════════════════════
 # REPL initialization
