@@ -1,0 +1,69 @@
+name: Nice
+
+on:
+  push:
+    branches:
+      - gay
+      - slave
+
+jobs:
+  check-nice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Check for 69 in commit hash
+        id: nice-check
+        run: |
+          HASH="${{ github.sha }}"
+          echo "Commit hash: $HASH"
+          if [[ "$HASH" == *"69"* ]]; then
+            echo "🎉 NICE! Found 69 in commit hash!"
+            echo "nice=true" >> $GITHUB_OUTPUT
+          else
+            echo "No 69 found (yet)"
+            echo "nice=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - uses: julia-actions/setup-julia@v2
+        if: steps.nice-check.outputs.nice == 'true'
+        with:
+          version: '1.10'
+          
+      - name: Update README with celebration
+        if: steps.nice-check.outputs.nice == 'true'
+        run: |
+          julia --project=. -e '
+            using Pkg
+            Pkg.instantiate()
+            using Gay
+            
+            # Generate celebratory model
+            gay_seed!(69)
+            model = sky_add(
+              comrade_ring(0.69, 0.169),
+              comrade_gaussian(0.420),
+              comrade_ring(1.069, 0.269)
+            )
+            
+            # Append to README
+            open("README.md", "a") do io
+              println(io, "\n---\n")
+              println(io, "## 🎉 Nice Commit: ${{ github.sha }}\n")
+              println(io, "This commit hash contains **69**! Celebratory black hole:\n")
+              println(io, "```")
+              println(io, sky_show(model))
+              println(io, "```")
+            end
+          '
+          
+      - name: Commit README update
+        if: steps.nice-check.outputs.nice == 'true'
+        run: |
+          git config user.name "Nice Bot"
+          git config user.email "nice@gay.jl"
+          git add README.md
+          git commit -m "🎉 Nice! Commit ${{ github.sha }} contains 69" || echo "No changes"
+          git push
