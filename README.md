@@ -160,6 +160,33 @@ julia --threads=auto scripts/generate_gallery.jl
 
 Full gallery: [`gallery/index.md`](gallery/index.md) | All models: [`gallery/catalog.jsonl`](gallery/catalog.jsonl)
 
+## BBP π Digit Extraction
+
+Random access to π digits → deterministic colors. The [Bailey-Borwein-Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula) extracts the n-th hexadecimal digit of π WITHOUT computing digits 0..n-1 — the same random access property as `color_at(n)`:
+
+```julia
+include("examples/bbp_pi.jl")
+
+# Extract hex digit at position 1000 (no iteration!)
+pi_hex_digit(1000)  # → 0x6
+
+# Color derived from π digit position
+pi_color_at(1000; colorspace=Rec2020())
+
+# Palette from consecutive positions (parallelizable)
+pi_palette(0, 16)  # First 16 π-derived colors
+
+# Visualization
+render_pi_spiral(seed=314159, colorspace=Rec2020())
+```
+
+**Shared properties with Gay.jl:**
+```
+✓ Same seed always produces same colors
+✓ Parallel execution is reproducible  
+✓ Random access by index is efficient
+```
+
 ## Black Hole Imaging Demo
 
 Inspired by [Comrade.jl](https://github.com/ptiede/Comrade.jl) (Event Horizon Telescope VLBI imaging):
