@@ -1,0 +1,464 @@
+#!/usr/bin/env julia
+#=
+gay-spins: NeurIPS 2025 papers as Ising spins with Gay.jl coloring
+
+Each paper gets a single integer spin σ ∈ {-1, +1} (spin down/up).
+Spin assignment is deterministic from paper ID via FNV-1a hash.
+Colors follow Gay.jl interleaving - spin up/down get different color streams.
+
+DuckDB schema:
+  papers(id TEXT, title TEXT, spin INTEGER, color TEXT, area TEXT)
+
+Usage:
+  gay-spins init              # Create DuckDB + load papers
+  gay-spins query [sql]       # Run SQL query
+  gay-spins magnetization     # Compute <M> = Σσ/N per area
+  gay-spins correlations      # Nearest-neighbor spin correlations
+  gay-spins flip <id>         # Flip a spin (Metropolis move)
+  gay-spins sweep             # One Metropolis sweep
+  gay-spins show [area]       # Display spins with colors
+=#
+
+using JSON3
+using Colors
+
+# ═══════════════════════════════════════════════════════════════════════════
+# FNV-1a Hash (same as Gay.jl CLI)
+# ═══════════════════════════════════════════════════════════════════════════
+
+const FNV_OFFSET = 0xcbf29ce484222325
+const FNV_PRIME = 0x100000001b3
+
+function fnv1a(s::AbstractString)::UInt64
+    h = FNV_OFFSET
+    for c in codeunits(s)
+        h ⊻= c
+        h *= FNV_PRIME
+    end
+    return h
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Spin assignment: σ = (-1)^(hash mod 2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+function paper_spin(id::String)::Int
+    h = fnv1a(id)
+    return (h % 2 == 0) ? 1 : -1
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Color from hash (deterministic Gay.jl style)
+# ═══════════════════════════════════════════════════════════════════════════
+
+const GOLDEN_ANGLE = 137.508
+
+function hash_to_color(h::UInt64, spin::Int)
+    # Spin modulates the color stream (like GayInterleaver sublattices)
+    stream_offset = spin > 0 ? 0x0 : 0x9e3779b97f4a7c15
+    h2 = h ⊻ stream_offset
+    
+    hue = mod(((h2 % 1000) / 1000.0) * 360.0 + GOLDEN_ANGLE, 360.0)
+    sat = 0.6 + 0.3 * ((h2 >> 10) % 1000) / 1000.0
+    lum = 0.4 + 0.25 * ((h2 >> 20) % 1000) / 1000.0
+    
+    return HSL(hue, sat, lum)
+end
+
+function color_hex(c)
+    rgb = convert(RGB, c)
+    r = round(Int, clamp(rgb.r, 0, 1) * 255)
+    g = round(Int, clamp(rgb.g, 0, 1) * 255)
+    b = round(Int, clamp(rgb.b, 0, 1) * 255)
+    return uppercase(string("#", string(r, base=16, pad=2), 
+                            string(g, base=16, pad=2), 
+                            string(b, base=16, pad=2)))
+end
+
+function ansi_fg(c)
+    rgb = convert(RGB, c)
+    r = round(Int, clamp(rgb.r, 0, 1) * 255)
+    g = round(Int, clamp(rgb.g, 0, 1) * 255)
+    b = round(Int, clamp(rgb.b, 0, 1) * 255)
+    return "\e[38;2;$(r);$(g);$(b)m"
+end
+
+const R = "\e[0m"
+const B = "\e[1m"
+const D = "\e[2m"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DuckDB operations
+# ═══════════════════════════════════════════════════════════════════════════
+
+const DB_PATH = joinpath(homedir(), ".gay_spins.duckdb")
+const CATALOG_PATH = "/Users/bob/Downloads/neurips_2025_catalog.json"
+
+function init_db()
+    using DuckDB
+    
+    println("$(B)Initializing Gay.jl Ising Spin Database$(R)")
+    println()
+    
+    # Remove existing
+    isfile(DB_PATH) && rm(DB_PATH)
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    # Create schema
+    DuckDB.execute(con, """
+        CREATE TABLE papers (
+            id TEXT PRIMARY KEY,
+            title TEXT,
+            spin INTEGER,           -- σ ∈ {-1, +1}
+            color TEXT,             -- Hex color from Gay.jl
+            area TEXT,
+            keywords TEXT[],
+            hash UBIGINT            -- FNV-1a hash for reproducibility
+        )
+    """)
+    
+    DuckDB.execute(con, """
+        CREATE TABLE spin_history (
+            step INTEGER,
+            paper_id TEXT,
+            old_spin INTEGER,
+            new_spin INTEGER,
+            delta_E DOUBLE,
+            accepted BOOLEAN
+        )
+    """)
+    
+    # Load papers
+    papers = JSON3.read(read(CATALOG_PATH, String))
+    
+    spin_up = 0
+    spin_down = 0
+    
+    for p in papers
+        id = string(p.id)
+        title = replace(string(p.title), "'" => "''")
+        area = string(get(p, :primary_area, "unknown"))
+        keywords = get(p, :keywords, String[])
+        
+        h = fnv1a(id)
+        spin = paper_spin(id)
+        c = hash_to_color(h, spin)
+        hex = color_hex(c)
+        
+        spin > 0 ? (spin_up += 1) : (spin_down += 1)
+        
+        kw_array = "ARRAY[" * join(["'" * replace(string(k), "'" => "''") * "'" for k in keywords], ",") * "]"
+        
+        DuckDB.execute(con, """
+            INSERT INTO papers VALUES (
+                '$(id)', '$(title)', $(spin), '$(hex)', '$(area)', 
+                $(kw_array), $(h)
+            )
+        """)
+    end
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+    
+    println("  Loaded $(length(papers)) papers")
+    println("  Spin ↑: $(spin_up)  Spin ↓: $(spin_down)")
+    println("  Magnetization M = $(round((spin_up - spin_down) / length(papers), digits=4))")
+    println()
+    println("  Database: $(DB_PATH)")
+end
+
+function query_db(sql::String)
+    using DuckDB
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    result = DuckDB.execute(con, sql)
+    df = DuckDB.toDataFrame(result)
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+    
+    return df
+end
+
+function show_magnetization()
+    using DuckDB
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    println()
+    println("$(B)╔════════════════════════════════════════════════════════════╗$(R)")
+    println("$(B)║$(R)     NeurIPS 2025 Ising Model Magnetization ⟨M⟩           $(B)║$(R)")
+    println("$(B)╚════════════════════════════════════════════════════════════╝$(R)")
+    println()
+    
+    # Overall magnetization
+    result = DuckDB.execute(con, """
+        SELECT 
+            COUNT(*) as n,
+            SUM(spin) as total_spin,
+            ROUND(AVG(spin), 4) as magnetization,
+            SUM(CASE WHEN spin = 1 THEN 1 ELSE 0 END) as spin_up,
+            SUM(CASE WHEN spin = -1 THEN 1 ELSE 0 END) as spin_down
+        FROM papers
+    """)
+    df = DuckDB.toDataFrame(result)
+    
+    n = df[1, :n]
+    m = df[1, :magnetization]
+    up = df[1, :spin_up]
+    down = df[1, :spin_down]
+    
+    println("  $(B)Overall:$(R) N=$(n)  ↑=$(up)  ↓=$(down)  ⟨M⟩=$(m)")
+    println()
+    
+    # Per-area magnetization
+    result = DuckDB.execute(con, """
+        SELECT 
+            area,
+            COUNT(*) as n,
+            ROUND(AVG(spin), 4) as magnetization,
+            SUM(CASE WHEN spin = 1 THEN 1 ELSE 0 END) as spin_up,
+            SUM(CASE WHEN spin = -1 THEN 1 ELSE 0 END) as spin_down
+        FROM papers
+        GROUP BY area
+        ORDER BY n DESC
+    """)
+    df = DuckDB.toDataFrame(result)
+    
+    println("  $(B)By Area:$(R)")
+    println()
+    
+    for row in eachrow(df)
+        area = rpad(row.area, 45)
+        n = lpad(string(row.n), 5)
+        m = row.magnetization
+        up = row.spin_up
+        down = row.spin_down
+        
+        # Visual bar
+        bar_len = 20
+        up_len = round(Int, (up / (up + down)) * bar_len)
+        down_len = bar_len - up_len
+        bar = "\e[32m" * "▓"^up_len * "\e[31m" * "░"^down_len * R
+        
+        println("  $(area) $(n) $(bar) M=$(lpad(string(m), 7))")
+    end
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+end
+
+function show_spins(area::String="")
+    using DuckDB
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    where_clause = isempty(area) ? "" : "WHERE area = '$(area)'"
+    
+    result = DuckDB.execute(con, """
+        SELECT id, title, spin, color, area
+        FROM papers
+        $(where_clause)
+        ORDER BY area, id
+        LIMIT 50
+    """)
+    df = DuckDB.toDataFrame(result)
+    
+    println()
+    println("$(B)╔════════════════════════════════════════════════════════════╗$(R)")
+    println("$(B)║$(R)     NeurIPS 2025 Spin Lattice (Gay.jl colored)           $(B)║$(R)")
+    println("$(B)╚════════════════════════════════════════════════════════════╝$(R)")
+    println()
+    
+    current_area = ""
+    for row in eachrow(df)
+        if row.area != current_area
+            println()
+            println("  $(B)$(row.area)$(R)")
+            current_area = row.area
+        end
+        
+        # Parse color
+        hex = row.color
+        r = parse(Int, hex[2:3], base=16)
+        g = parse(Int, hex[4:5], base=16)
+        b = parse(Int, hex[6:7], base=16)
+        fg = "\e[38;2;$(r);$(g);$(b)m"
+        
+        spin_char = row.spin > 0 ? "↑" : "↓"
+        spin_color = row.spin > 0 ? "\e[32m" : "\e[31m"
+        
+        title = length(row.title) > 50 ? row.title[1:47] * "..." : row.title
+        
+        println("    $(fg)●$(R) $(spin_color)$(spin_char)$(R) $(row.id) │ $(title)")
+    end
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+end
+
+function flip_spin(paper_id::String)
+    using DuckDB
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    # Get current spin
+    result = DuckDB.execute(con, "SELECT spin, hash FROM papers WHERE id = '$(paper_id)'")
+    df = DuckDB.toDataFrame(result)
+    
+    if size(df, 1) == 0
+        println("Paper not found: $(paper_id)")
+        return
+    end
+    
+    old_spin = df[1, :spin]
+    h = df[1, :hash]
+    new_spin = -old_spin
+    
+    # New color for flipped spin
+    c = hash_to_color(UInt64(h), new_spin)
+    new_hex = color_hex(c)
+    
+    DuckDB.execute(con, """
+        UPDATE papers SET spin = $(new_spin), color = '$(new_hex)'
+        WHERE id = '$(paper_id)'
+    """)
+    
+    spin_char_old = old_spin > 0 ? "↑" : "↓"
+    spin_char_new = new_spin > 0 ? "↑" : "↓"
+    
+    println("Flipped $(paper_id): $(spin_char_old) → $(spin_char_new)")
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+end
+
+function metropolis_sweep(beta::Float64=1.0)
+    using DuckDB
+    using Random
+    
+    db = DuckDB.open(DB_PATH)
+    con = DuckDB.connect(db)
+    
+    # Get all papers
+    result = DuckDB.execute(con, "SELECT id, spin, hash, area FROM papers ORDER BY RANDOM()")
+    df = DuckDB.toDataFrame(result)
+    
+    accepted = 0
+    rejected = 0
+    
+    # Simple Ising: E = -J Σ σ_i σ_j for neighbors
+    # Neighbors defined by same area
+    area_spins = Dict{String, Vector{Int}}()
+    for row in eachrow(df)
+        a = row.area
+        if !haskey(area_spins, a)
+            area_spins[a] = Int[]
+        end
+        push!(area_spins[a], row.spin)
+    end
+    
+    for row in eachrow(df)
+        # Local field from same-area neighbors
+        neighbors = area_spins[row.area]
+        h_local = sum(neighbors) - row.spin  # exclude self
+        
+        # Energy change for flip
+        delta_E = 2.0 * row.spin * h_local
+        
+        # Metropolis acceptance
+        if delta_E <= 0 || rand() < exp(-beta * delta_E)
+            new_spin = -row.spin
+            c = hash_to_color(UInt64(row.hash), new_spin)
+            new_hex = color_hex(c)
+            
+            DuckDB.execute(con, """
+                UPDATE papers SET spin = $(new_spin), color = '$(new_hex)'
+                WHERE id = '$(row.id)'
+            """)
+            
+            # Update local cache
+            idx = findfirst(==(row.spin), area_spins[row.area])
+            area_spins[row.area][idx] = new_spin
+            
+            accepted += 1
+        else
+            rejected += 1
+        end
+    end
+    
+    # Compute new magnetization
+    result = DuckDB.execute(con, "SELECT ROUND(AVG(spin), 4) as m FROM papers")
+    m = DuckDB.toDataFrame(result)[1, :m]
+    
+    println("Sweep complete: $(accepted) accepted, $(rejected) rejected, ⟨M⟩=$(m)")
+    
+    DuckDB.close(con)
+    DuckDB.close(db)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+function main()
+    if length(ARGS) == 0
+        println("""
+$(B)gay-spins$(R) - NeurIPS 2025 as Ising Spin System
+
+$(B)Usage:$(R)
+  gay-spins init                  Initialize DuckDB with papers
+  gay-spins magnetization         Show magnetization ⟨M⟩ by area  
+  gay-spins show [area]           Display spins with Gay.jl colors
+  gay-spins flip <paper_id>       Flip a single spin
+  gay-spins sweep [beta]          Metropolis sweep at inverse temp β
+  gay-spins query "<sql>"         Run custom SQL
+
+$(B)Schema:$(R)
+  papers(id, title, spin, color, area, keywords, hash)
+  
+  spin ∈ {-1, +1}  (determined by FNV-1a hash of paper ID)
+  color = Gay.jl deterministic color (spin ↑/↓ get different streams)
+
+$(B)Examples:$(R)
+  gay-spins init
+  gay-spins magnetization
+  gay-spins show deep_learning
+  gay-spins sweep 2.0
+  gay-spins query "SELECT area, AVG(spin) FROM papers GROUP BY area"
+""")
+        return
+    end
+    
+    cmd = ARGS[1]
+    
+    if cmd == "init"
+        init_db()
+    elseif cmd == "magnetization"
+        show_magnetization()
+    elseif cmd == "show"
+        area = length(ARGS) > 1 ? ARGS[2] : ""
+        show_spins(area)
+    elseif cmd == "flip"
+        length(ARGS) < 2 && error("Usage: gay-spins flip <paper_id>")
+        flip_spin(ARGS[2])
+    elseif cmd == "sweep"
+        beta = length(ARGS) > 1 ? parse(Float64, ARGS[2]) : 1.0
+        metropolis_sweep(beta)
+    elseif cmd == "query"
+        length(ARGS) < 2 && error("Usage: gay-spins query \"<sql>\"")
+        df = query_db(ARGS[2])
+        println(df)
+    else
+        println("Unknown command: $(cmd)")
+    end
+end
+
+main()

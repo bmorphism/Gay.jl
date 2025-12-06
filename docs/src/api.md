@@ -161,6 +161,116 @@ struct SkyModel
 end
 ```
 
+## Derangeable Permutations
+
+Derangements are permutations with no fixed points (σ(i) ≠ i for all i).
+
+### Core Types
+
+```@docs
+Derangeable
+GayDerangementStream
+```
+
+### Generation
+
+```@docs
+derange
+derange_at
+derange_indices
+derange_colors
+next_derangement
+nth_derangement
+```
+
+### Analysis
+
+```@docs
+derange_cycle
+cycle_colors
+derangement_sign
+gay_parity_derangement
+```
+
+## Abductive Inference
+
+Abduction: reasoning from effect to cause. Given a color, find what seed/index produced it.
+
+### Core Types
+
+```@docs
+GayAbducer
+Abducible
+```
+
+### GayAbducer Workflow
+
+```@docs
+register_observation!
+infer_seed
+infer_structure
+```
+
+### Direct Abduction
+
+```@docs
+abduce
+abduce_index
+abduce_seed
+```
+
+### Inverse Operations
+
+```@docs
+abduce_inverse
+abduce_derangement
+abduce_cycle
+abduce_parity
+```
+
+### Color Utilities
+
+```@docs
+color_distance
+color_fingerprint
+find_nearest_color
+```
+
+## Binary Analysis
+
+Enhanced binary analysis with tree-sitter AST parsing and diaphora-style hashing.
+
+### Core Types
+
+```@docs
+GayBinary
+FunctionSignature
+ASTHash
+```
+
+### AST Parsing & Hashing
+
+```@docs
+parse_pseudocode
+hash_ast_primes
+fnv1a_hash
+```
+
+### Function Matching
+
+```@docs
+function_signature
+abduce_function_match
+abduce_binary_seed
+```
+
+### Visualization
+
+```@docs
+render_call_graph
+render_cfg_graph
+```
+
 ## Constants
 
 ```julia

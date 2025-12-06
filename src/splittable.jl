@@ -4,6 +4,7 @@
 using SplittableRandoms: SplittableRandom, split
 
 export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_palette
+export gay_interleave, gay_interleave_streams, GayInterleaver
 
 """
     GayRNG
@@ -175,4 +176,373 @@ function palette_at(index::Integer, n::Int, cs::ColorSpace=SRGB();
         current = split(current)
     end
     return random_palette(n, cs; min_distance=min_distance, rng=current)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Interleaved streams for checkerboard/XOR lattice decomposition
+# Used in SSE QMC, parallel tempering, phased array steering
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    GayInterleaver
+
+Interleaved SPI streams for checkerboard lattice decomposition.
+Each sublattice gets an independent deterministic color stream.
+
+Used for:
+- SSE QMC: even/odd site updates with XOR parity
+- Parallel tempering: alternating replica swaps  
+- Phased arrays: interleaved antenna element phases
+- Nearest-neighbor exchange: J_ij coupling colored by i⊕j parity
+
+# Example: Heisenberg model checkerboard update
+```julia
+using LispSyntax
+interleaver = GayInterleaver(seed, 2)  # 2 sublattices
+
+@lisp begin
+  (for-each-sweep (sweep 1 n-sweeps)
+    ;; Update even sites (parity 0) - all can run in parallel
+    (let ((parity (mod sweep 2)))
+      (for-each-site (site (sublattice interleaver parity))
+        (metropolis-update site (color-for interleaver parity site)))))
+end
+```
+"""
+mutable struct GayInterleaver
+    seed::UInt64
+    n_streams::Int
+    streams::Vector{GayRNG}
+    current_phase::Int
+    step::UInt64
+end
+
+"""
+    GayInterleaver(seed::Integer, n::Int=2)
+
+Create n interleaved SPI streams. Default n=2 for checkerboard (even/odd).
+Each stream is independent and deterministic from the seed.
+"""
+function GayInterleaver(seed::Integer, n::Int=2)
+    root = SplittableRandom(UInt64(seed))
+    streams = Vector{GayRNG}(undef, n)
+    current = root
+    for i in 1:n
+        current = split(current)
+        stream_seed = UInt64(seed) ⊻ UInt64(i * 0x9e3779b97f4a7c15)
+        streams[i] = GayRNG(stream_seed)
+    end
+    GayInterleaver(UInt64(seed), n, streams, 1, UInt64(0))
+end
+
+"""
+    gay_interleave(il::GayInterleaver)
+
+Get next color from current stream, then advance to next stream.
+Returns (color, stream_index, step).
+"""
+function gay_interleave(il::GayInterleaver)
+    stream = il.streams[il.current_phase]
+    color = next_color(SRGB(); gr=stream)
+    idx = il.current_phase
+    
+    # Advance phase (round-robin through streams)
+    il.current_phase = mod1(il.current_phase + 1, il.n_streams)
+    if il.current_phase == 1
+        il.step += 1
+    end
+    
+    return (color, idx, il.step)
+end
+
+"""
+    gay_interleave(il::GayInterleaver, n::Int)
+
+Get n interleaved colors, cycling through all streams.
+"""
+function gay_interleave(il::GayInterleaver, n::Int)
+    return [gay_interleave(il) for _ in 1:n]
+end
+
+"""
+    gay_sublattice(il::GayInterleaver, parity::Int)
+
+Get next color for a specific sublattice (0-indexed parity).
+For checkerboard: parity = (i + j) % 2 or i ⊻ j & 1
+"""
+function gay_sublattice(il::GayInterleaver, parity::Int)
+    stream_idx = mod1(parity + 1, il.n_streams)
+    stream = il.streams[stream_idx]
+    return next_color(SRGB(); gr=stream)
+end
+
+"""
+    gay_xor_color(il::GayInterleaver, i::Int, j::Int)
+
+Get deterministic color for bond (i,j) based on XOR parity.
+Used for nearest-neighbor exchange coupling J_ij coloring.
+
+The color depends on (i ⊻ j) & 1, giving checkerboard pattern.
+"""
+function gay_xor_color(il::GayInterleaver, i::Int, j::Int)
+    parity = (i ⊻ j) & 1
+    return gay_sublattice(il, parity)
+end
+
+"""
+    gay_exchange_colors(il::GayInterleaver, lattice_size::Int)
+
+Generate colors for all nearest-neighbor bonds on a 1D lattice.
+Returns vector of (bond_color, i, j, parity) tuples.
+"""
+function gay_exchange_colors(il::GayInterleaver, lattice_size::Int)
+    bonds = Tuple{Any, Int, Int, Int}[]
+    for i in 1:lattice_size
+        j = mod1(i + 1, lattice_size)  # periodic BC
+        parity = (i ⊻ j) & 1
+        color = gay_xor_color(il, i, j)
+        push!(bonds, (color, i, j, parity))
+    end
+    return bonds
+end
+
+"""
+    gay_interleave_streams(seed::Integer, n::Int=2)
+
+Convenience constructor for GayInterleaver.
+"""
+gay_interleave_streams(seed::Integer, n::Int=2) = GayInterleaver(seed, n)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 2D lattice support for SSE QMC
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    gay_checkerboard_2d(il::GayInterleaver, Lx::Int, Ly::Int)
+
+Generate checkerboard coloring for 2D lattice.
+Returns matrix where color[i,j] = sublattice color based on (i+j) mod 2.
+"""
+function gay_checkerboard_2d(il::GayInterleaver, Lx::Int, Ly::Int)
+    colors = Matrix{Any}(undef, Lx, Ly)
+    for i in 1:Lx, j in 1:Ly
+        parity = (i + j) % 2
+        colors[i, j] = gay_sublattice(il, parity)
+    end
+    return colors
+end
+
+"""
+    gay_heisenberg_bonds(il::GayInterleaver, Lx::Int, Ly::Int)
+
+Color all nearest-neighbor bonds for 2D Heisenberg model.
+Each bond J_ij * (S_i · S_j) gets deterministic color.
+Returns Dict mapping (i,j) => (jx,jy) => color for all bonds.
+"""
+function gay_heisenberg_bonds(il::GayInterleaver, Lx::Int, Ly::Int)
+    bonds = Dict{Tuple{Int,Int}, Dict{Tuple{Int,Int}, Any}}()
+    
+    for i in 1:Lx, j in 1:Ly
+        bonds[(i,j)] = Dict{Tuple{Int,Int}, Any}()
+        
+        # Right neighbor (periodic)
+        jx, jy = mod1(i+1, Lx), j
+        parity = ((i + j) ⊻ (jx + jy)) & 1
+        bonds[(i,j)][(jx,jy)] = gay_sublattice(il, parity)
+        
+        # Up neighbor (periodic)  
+        jx, jy = i, mod1(j+1, Ly)
+        parity = ((i + j) ⊻ (jx + jy)) & 1
+        bonds[(i,j)][(jx,jy)] = gay_sublattice(il, parity)
+    end
+    
+    return bonds
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# S-Expression Parenthesis Coloring (Rainbow Parens with SPI)
+# ═══════════════════════════════════════════════════════════════════════════
+
+export gay_sexpr_colors, gay_paren_color, GaySexpr, gay_render_sexpr
+export gay_depth_color, gay_magnetized_sexpr
+
+"""
+    GaySexpr
+
+A magnetized S-expression: each parenthesis pair has a deterministic color
+and an Ising spin σ ∈ {-1, +1} based on its depth and position.
+
+From SICP 4A: "Enzymes attach to expressions, change them, then go away.
+The key-in-lock phenomenon." Each colored paren is a potential binding site.
+
+# Semantics
+- Depth d → color stream d mod n_streams (like checkerboard sublattices)
+- Position p → deterministic color within stream
+- Spin σ = (-1)^(d ⊻ p) for magnetization
+
+# Example
+```julia
+using LispSyntax
+sexpr = lisp"(defn fib [n] (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))"
+colored = gay_magnetized_sexpr(sexpr, seed=42)
+gay_render_sexpr(colored)  # Prints with ANSI colors
+```
+"""
+struct GaySexpr
+    content::Any
+    depth::Int
+    position::Int
+    color::Any      # RGB color
+    spin::Int       # -1 or +1
+    children::Vector{GaySexpr}
+end
+
+"""
+    gay_depth_color(il::GayInterleaver, depth::Int, position::Int)
+
+Get color for a parenthesis at given depth and position.
+Depth determines which interleaved stream to use.
+Position advances within that stream deterministically.
+"""
+function gay_depth_color(il::GayInterleaver, depth::Int, position::Int)
+    # Depth selects sublattice (like checkerboard)
+    stream_idx = mod1(depth + 1, il.n_streams)
+    stream = il.streams[stream_idx]
+    
+    # Position advances the stream (skip to position)
+    # Use color_at for O(1) access
+    return color_at(position, SRGB(); seed=stream.seed)
+end
+
+"""
+    gay_paren_color(seed::Integer, depth::Int, position::Int; n_depths::Int=8)
+
+Get deterministic color for parenthesis at (depth, position).
+Uses n_depths interleaved streams for depth cycling.
+"""
+function gay_paren_color(seed::Integer, depth::Int, position::Int; n_depths::Int=8)
+    il = GayInterleaver(seed, n_depths)
+    return gay_depth_color(il, depth, position)
+end
+
+"""
+    gay_magnetized_sexpr(expr, seed::Integer=0xDEADBEEF; depth::Int=0, pos_counter::Ref{Int}=Ref(0))
+
+Convert an S-expression to a magnetized GaySexpr tree.
+Each node gets a deterministic color and spin.
+"""
+function gay_magnetized_sexpr(expr, seed::Integer=0xDEADBEEF; 
+                               depth::Int=0, 
+                               pos_counter::Ref{Int}=Ref(0),
+                               n_depths::Int=8)
+    pos = pos_counter[]
+    pos_counter[] += 1
+    
+    # Get color for this depth/position
+    color = gay_paren_color(seed, depth, pos; n_depths=n_depths)
+    
+    # Spin from XOR of depth and position (Ising-like)
+    spin = ((depth ⊻ pos) & 1 == 0) ? 1 : -1
+    
+    if expr isa Vector || expr isa Tuple
+        # Recurse into children
+        children = [gay_magnetized_sexpr(child, seed; 
+                                         depth=depth+1, 
+                                         pos_counter=pos_counter,
+                                         n_depths=n_depths) 
+                    for child in expr]
+        return GaySexpr(nothing, depth, pos, color, spin, children)
+    else
+        # Leaf node
+        return GaySexpr(expr, depth, pos, color, spin, GaySexpr[])
+    end
+end
+
+"""
+    gay_render_sexpr(gs::GaySexpr; indent::Int=0)
+
+Render a GaySexpr with ANSI colors to terminal.
+"""
+function gay_render_sexpr(gs::GaySexpr; indent::Int=0)
+    R = "\e[0m"
+    
+    rgb = convert(RGB, gs.color)
+    r = round(Int, clamp(rgb.r, 0, 1) * 255)
+    g = round(Int, clamp(rgb.g, 0, 1) * 255)
+    b = round(Int, clamp(rgb.b, 0, 1) * 255)
+    fg = "\e[38;2;$(r);$(g);$(b)m"
+    
+    spin_char = gs.spin > 0 ? "⁺" : "⁻"
+    
+    if isempty(gs.children)
+        # Leaf
+        return "$(fg)$(gs.content)$(R)"
+    else
+        # Compound
+        inner = join([gay_render_sexpr(c; indent=indent+1) for c in gs.children], " ")
+        return "$(fg)($(spin_char)$(R)$(inner)$(fg))$(R)"
+    end
+end
+
+"""
+    gay_sexpr_colors(expr, seed::Integer=0xDEADBEEF)
+
+Color an S-expression and print with rainbow parentheses.
+Each depth level gets a different color from an interleaved stream.
+"""
+function gay_sexpr_colors(expr, seed::Integer=0xDEADBEEF)
+    gs = gay_magnetized_sexpr(expr, seed)
+    return gay_render_sexpr(gs)
+end
+
+"""
+    gay_sexpr_magnetization(gs::GaySexpr)
+
+Compute magnetization ⟨M⟩ = Σσ/N for an S-expression tree.
+"""
+function gay_sexpr_magnetization(gs::GaySexpr)
+    total_spin = 0
+    count = 0
+    
+    function walk(node::GaySexpr)
+        total_spin += node.spin
+        count += 1
+        for child in node.children
+            walk(child)
+        end
+    end
+    
+    walk(gs)
+    return total_spin / count
+end
+
+"""
+    gay_sexpr_depth_spins(gs::GaySexpr)
+
+Get spin statistics by depth level.
+Returns Dict(depth => (up_count, down_count, magnetization))
+"""
+function gay_sexpr_depth_spins(gs::GaySexpr)
+    depth_stats = Dict{Int, Tuple{Int, Int}}()
+    
+    function walk(node::GaySexpr)
+        d = node.depth
+        if !haskey(depth_stats, d)
+            depth_stats[d] = (0, 0)
+        end
+        up, down = depth_stats[d]
+        if node.spin > 0
+            depth_stats[d] = (up + 1, down)
+        else
+            depth_stats[d] = (up, down + 1)
+        end
+        for child in node.children
+            walk(child)
+        end
+    end
+    
+    walk(gs)
+    
+    return Dict(d => (up, down, (up - down) / (up + down)) 
+                for (d, (up, down)) in depth_stats)
 end
