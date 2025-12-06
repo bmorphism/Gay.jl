@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@verify_spi expr seed [n_trials]` macro for SPI verification
 - `Colorable` trait and `colorize(x, seed)` generic function
 - `HasColorSeed` trait for objects carrying their own seed
-- `ColorExperience{T}` wrapper for colored iteration over collections
+- `ColorView{T}` wrapper for colored indexed views of collections
 - `@colorable T` macro to auto-implement colorize for custom types
 - `ColoredView{T,N}` for N-dimensional array coloring
 - `color_fingerprint(colors)` for XOR fingerprinting

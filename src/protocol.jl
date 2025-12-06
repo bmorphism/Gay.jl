@@ -1,10 +1,10 @@
-# Universal Color Experience Protocol
+# Universal Color View Protocol
 # Trait-based interface for any system to integrate Gay.jl deterministic colors
 
 using Colors: RGB, HSL
 
 export Colorable, colorize, HasColorSeed, color_seed
-export ColorExperience, @colorable
+export ColorView, @colorable
 export SPIColorable, spi_color, @verify_spi
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -94,58 +94,58 @@ Get the color seed associated with an object.
 function color_seed end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ColorExperience Wrapper
+# ColorView Wrapper
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    ColorExperience{T}
+    ColorView{T}
 
-Wrapper that provides a "colored view" of any collection.
+Wrapper that provides a colored indexed view of any collection.
 Each element gets a deterministic color based on its index.
 
 # Example
 ```julia
 items = ["apple", "banana", "cherry"]
-for (item, color, idx) in ColorExperience(items, GAY_SEED)
+for (item, color, idx) in ColorView(items, GAY_SEED)
     println("\$item is colored \$(color)")
 end
 
 # Random access with color
-ce = ColorExperience(items, GAY_SEED)
-item, color = ce[2]  # ("banana", RGB{Float32}(...))
+cv = ColorView(items, GAY_SEED)
+item, color = cv[2]  # ("banana", RGB{Float32}(...))
 ```
 """
-struct ColorExperience{T}
+struct ColorView{T}
     data::T
     seed::UInt64
 end
 
-ColorExperience(data) = ColorExperience(data, GAY_SEED)
+ColorView(data) = ColorView(data, GAY_SEED)
 
-Base.length(ce::ColorExperience) = length(ce.data)
+Base.length(cv::ColorView) = length(cv.data)
 
-function Base.getindex(ce::ColorExperience, i::Integer)
-    item = ce.data[i]
-    color = hash_color_rgb(UInt64(i), ce.seed)
+function Base.getindex(cv::ColorView, i::Integer)
+    item = cv.data[i]
+    color = hash_color_rgb(UInt64(i), cv.seed)
     (item=item, color=color)
 end
 
-function Base.iterate(ce::ColorExperience, state=1)
-    if state > length(ce.data)
+function Base.iterate(cv::ColorView, state=1)
+    if state > length(cv.data)
         return nothing
     end
-    item = ce.data[state]
-    color = hash_color_rgb(UInt64(state), ce.seed)
+    item = cv.data[state]
+    color = hash_color_rgb(UInt64(state), cv.seed)
     ((item=item, color=color, index=state), state + 1)
 end
 
-function Base.collect(ce::ColorExperience)
-    [(item=ce.data[i], color=hash_color_rgb(UInt64(i), ce.seed), index=i) 
-     for i in 1:length(ce.data)]
+function Base.collect(cv::ColorView)
+    [(item=cv.data[i], color=hash_color_rgb(UInt64(i), cv.seed), index=i)
+     for i in 1:length(cv.data)]
 end
 
-function Base.show(io::IO, ce::ColorExperience{T}) where T
-    print(io, "ColorExperience{$T}($(length(ce)) items, seed=0x$(string(ce.seed, base=16)))")
+function Base.show(io::IO, cv::ColorView{T}) where T
+    print(io, "ColorView{$T}($(length(cv)) items, seed=0x$(string(cv.seed, base=16)))")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
