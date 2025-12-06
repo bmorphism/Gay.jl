@@ -15,7 +15,7 @@ ReplMaker = "b873ce64-0db9-51f5-a568-4457d8e49576"
 SplittableRandoms = "8efc31e9-3fb0-4277-b18c-5a3d5d07abad"
 
 [compat]
-ColorTypes = "0.11"
+ColorTypes = "0.11, 0.12"
 Colors = "0.12"
 LispSyntax = "0.2"
 OhMyThreads = "0.7"
