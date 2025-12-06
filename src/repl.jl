@@ -142,6 +142,17 @@ function help_command(args...)
   ║    !space <name>    Set color space (srgb/p3/rec2020)             ║
   ║    !blackhole [s]   Render black hole (optional seed)             ║
   ║    !state           Show RNG state (seed, invocation)             ║
+  ║    !bench           Run Chairmarks microbenchmarks                ║
+  ║    !metal           Show Metal GPU info and benchmark             ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  WORLD TELEPORTATION (Abductive Testing)                          ║
+  ║    !teleport <id>   Teleport to invader's world                   ║
+  ║    !world           Show current world state                      ║
+  ║    !back            Return to previous world                      ║
+  ║    !abduce r g b    Infer invader from RGB (0-1 floats)           ║
+  ║    !jump <n>        Jump to nth hypothesis from !abduce           ║
+  ║    !neighbors [r]   Explore nearby invaders (radius r)            ║
+  ║    !test [n]        Run n abductive roundtrip tests               ║
   ╠═══════════════════════════════════════════════════════════════════╣
   ║  LISP S-EXPRESSIONS (parentheses)                                 ║
   ║    (gay-seed 42)           Set seed                               ║
@@ -281,6 +292,186 @@ function state_command(args...)
 end
 COMMANDS["state"] = state_command
 COMMANDS["rng"] = state_command
+
+function bench_command(args...)
+    println("  Running Chairmarks benchmarks...")
+    println()
+    results = gay_benchmark(verbose=true)
+    return results
+end
+COMMANDS["bench"] = bench_command
+COMMANDS["benchmark"] = bench_command
+
+function metal_command(args...)
+    if !metal_available()
+        println("  Metal is not available on this system")
+        return nothing
+    end
+    
+    info = metal_info()
+    println("  Metal GPU Information:")
+    println("    Device:      $(info.name)")
+    println("    Max threads: $(info.max_threads)")
+    println("    Low power:   $(info.is_low_power)")
+    println()
+    
+    if !isempty(args) && args[1] == "bench"
+        println("  Running Metal benchmark...")
+        return metal_benchmark()
+    end
+    
+    return info
+end
+COMMANDS["metal"] = metal_command
+COMMANDS["gpu"] = metal_command
+
+# ═══════════════════════════════════════════════════════════════════════════
+# World Teleportation Commands (Abductive Testing)
+# ═══════════════════════════════════════════════════════════════════════════
+
+function teleport_command(args...)
+    isempty(args) && (println("  Usage: !teleport <id>"); return nothing)
+    id = parse(Int, args[1])
+    world = teleport!(id)
+    println("  ⚡ Teleported to world #$(id)")
+    show_world_state(world)
+    return world
+end
+COMMANDS["teleport"] = teleport_command
+COMMANDS["tp"] = teleport_command
+
+function world_command(args...)
+    world = current_world()
+    show_world_state(world)
+    return world
+end
+COMMANDS["world"] = world_command
+COMMANDS["w"] = world_command
+
+function back_command(args...)
+    try
+        world = back!()
+        println("  ↩ Returned to world #$(world.id)")
+        show_world_state(world)
+        return world
+    catch e
+        println("  No history to go back to!")
+        return nothing
+    end
+end
+COMMANDS["back"] = back_command
+COMMANDS["b"] = back_command
+
+function abduce_command(args...)
+    if length(args) < 3
+        println("  Usage: !abduce <r> <g> <b> (floats 0-1)")
+        return nothing
+    end
+    r, g, b = parse.(Float64, args[1:3])
+    observed = RGB(r, g, b)
+    
+    println("  🔍 Abducing invader from color...")
+    print("  Target: ")
+    show_color_inline(observed)
+    println()
+    
+    hypotheses = abduce!(observed; search_range=1:50000, top_k=5)
+    
+    println("  ─────────────────────────────────────────")
+    println("  Top hypotheses (use !jump <n> to explore):")
+    for (i, h) in enumerate(hypotheses)
+        print("  [$i] ID=$(h.id) conf=$(round(h.confidence, digits=3)) ")
+        show_color_inline(h.predicted_world)
+        println()
+    end
+    return hypotheses
+end
+COMMANDS["abduce"] = abduce_command
+COMMANDS["ab"] = abduce_command
+
+function jump_command(args...)
+    isempty(args) && (println("  Usage: !jump <hypothesis_index>"); return nothing)
+    idx = parse(Int, args[1])
+    world = jump_hypothesis!(idx)
+    println("  🚀 Jumped to hypothesis #$(idx)")
+    show_world_state(world)
+    return world
+end
+COMMANDS["jump"] = jump_command
+COMMANDS["j"] = jump_command
+
+function neighbors_command(args...)
+    radius = isempty(args) ? 5 : parse(Int, args[1])
+    neighbors = explore_neighbors(; radius=radius)
+    
+    println("  Neighboring worlds (radius=$radius):")
+    for sim in neighbors
+        prefix = sim.id == get_navigator().current_id ? "→ " : "  "
+        print("  $(prefix)[$(sim.id)] ")
+        show_color_inline(sim.source)
+        print(" → ")
+        show_color_inline(sim.world)
+        spin_char = sim.spin > 0 ? "↑" : "↓"
+        println(" $spin_char")
+    end
+    return neighbors
+end
+COMMANDS["neighbors"] = neighbors_command
+COMMANDS["nb"] = neighbors_command
+
+function test_command(args...)
+    n = isempty(args) ? 20 : parse(Int, args[1])
+    println("  Running $n abductive roundtrip tests...")
+    
+    passed = 0
+    failed = 0
+    nav = get_navigator()
+    
+    for i in 1:n
+        id = rand(1:100000)
+        if abductive_roundtrip_test(id, nav.seed)
+            passed += 1
+            print("  ✓")
+        else
+            failed += 1
+            print("  ✗")
+        end
+        i % 20 == 0 && println()
+    end
+    println()
+    
+    println("  ─────────────────────────────────────────")
+    println("  Results: $(passed)/$(n) passed ($(round(100*passed/n, digits=1))%)")
+    
+    if failed > 0
+        println("  ⚠ $(failed) tests failed!")
+    else
+        println("  ✓ All tests passed!")
+    end
+    
+    return (passed=passed, failed=failed, total=n)
+end
+COMMANDS["test"] = test_command
+
+function show_world_state(world)
+    println("  ─────────────────────────────────────────")
+    println("  Invader #$(world.id)")
+    print("    Source:   ")
+    show_color_inline(world.source)
+    println(" (SPI hash)")
+    
+    print("    Deranged: ")
+    show_color_inline(world.deranged)
+    println(" (perm=$(world.derangement))")
+    
+    print("    World:    ")
+    show_color_inline(world.world)
+    println(" (t=$(round(world.tropical_t, digits=2)))")
+    
+    spin_char = world.spin > 0 ? "↑" : "↓"
+    println("    Spin:     $(spin_char) ($(world.spin))")
+    println("  ─────────────────────────────────────────")
+end
 
 # ═══════════════════════════════════════════════════════════════════════════
 # REPL initialization

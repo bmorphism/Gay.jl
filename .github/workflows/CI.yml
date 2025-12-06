@@ -5,6 +5,7 @@ on:
     branches:
       - gay
       - slave
+      - master
     tags: ['*']
   pull_request:
   workflow_dispatch:
@@ -14,15 +15,114 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
-  test:
-    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }}
+  # ═══════════════════════════════════════════════════════════════════════════
+  # SLAVE: Sequential testing - one job at a time, verify SPI step by step
+  # ═══════════════════════════════════════════════════════════════════════════
+  test-slave:
+    name: Slave (Sequential) - Julia ${{ matrix.version }}
+    if: github.ref == 'refs/heads/slave'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: write
+      contents: read
+    strategy:
+      fail-fast: true
+      max-parallel: 1  # Sequential execution
+      matrix:
+        version:
+          - '1.10'
+          - '1.11'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      
+      - name: Run SPI tests with various seeds (sequential)
+        run: |
+          julia --project=. -e '
+            using Pkg
+            Pkg.instantiate()
+            
+            using Gay
+            using Gay: ka_colors, xor_fingerprint, hash_color
+            using KernelAbstractions: CPU
+            
+            println("═" ^ 60)
+            println("SLAVE MODE: Sequential SPI Verification")
+            println("═" ^ 60)
+            
+            test_seeds = [
+                (0, "zero"),
+                (1, "minimal"),
+                (42, "classic"),
+                (1337, "leetspeak"),
+                (42069, "gallery"),
+                (0x6761795f636f6c6f, "GAY_SEED"),
+                (0x78656e6f66656d21, "XF_SEED"),
+            ]
+            
+            n = 10000
+            all_pass = true
+            
+            for (seed, name) in test_seeds
+                print("  Testing seed=$name ($seed)... ")
+                
+                # Sequential reference
+                ref = zeros(Float32, n, 3)
+                for i in 1:n
+                    r, g, b = hash_color(UInt64(seed), UInt64(i))
+                    ref[i, 1] = r
+                    ref[i, 2] = g
+                    ref[i, 3] = b
+                end
+                ref_fp = xor_fingerprint(ref)
+                
+                # KernelAbstractions
+                ka = ka_colors(n, seed)
+                ka_fp = xor_fingerprint(ka)
+                
+                if ref_fp == ka_fp
+                    println("✓ PASS (0x$(string(ref_fp, base=16, pad=8)))")
+                else
+                    println("✗ FAIL (ref=0x$(string(ref_fp, base=16, pad=8)), ka=0x$(string(ka_fp, base=16, pad=8)))")
+                    global all_pass = false
+                end
+            end
+            
+            println()
+            if all_pass
+                println("ALL SEEDS VERIFIED ✓")
+            else
+                error("SPI verification failed!")
+            end
+          '
+      
+      - uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-processcoverage@v1
+      - uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MASTER: Maximally parallel testing - all jobs at once
+  # ═══════════════════════════════════════════════════════════════════════════
+  test-master:
+    name: Master (Parallel) - Julia ${{ matrix.version }} - ${{ matrix.os }}
+    if: github.ref == 'refs/heads/master'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     permissions:
       actions: write
       contents: read
     strategy:
-      fail-fast: false
+      fail-fast: false  # Run all even if some fail
+      max-parallel: 10  # Maximum parallelism
       matrix:
         version:
           - '1.10'
@@ -47,6 +147,54 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
+      
+      - name: Run parallel SPI verification
+        run: |
+          julia --project=. --threads=auto -e '
+            using Pkg
+            Pkg.instantiate()
+            
+            using Gay
+            using Gay: ka_colors, xor_fingerprint
+            
+            println("═" ^ 60)
+            println("MASTER MODE: Parallel SPI Verification")
+            println("Threads: $(Threads.nthreads())")
+            println("═" ^ 60)
+            
+            # Generate fingerprints in parallel across seeds
+            seeds = [0, 1, 42, 1337, 42069, 0x6761795f636f6c6f, 0x78656e6f66656d21]
+            n = 100000
+            
+            fingerprints = Vector{UInt32}(undef, length(seeds))
+            
+            Threads.@threads for i in eachindex(seeds)
+                colors = ka_colors(n, seeds[i])
+                fingerprints[i] = xor_fingerprint(colors)
+            end
+            
+            # Verify reproducibility
+            fingerprints2 = Vector{UInt32}(undef, length(seeds))
+            Threads.@threads for i in eachindex(seeds)
+                colors = ka_colors(n, seeds[i])
+                fingerprints2[i] = xor_fingerprint(colors)
+            end
+            
+            all_match = fingerprints == fingerprints2
+            
+            for i in eachindex(seeds)
+                status = fingerprints[i] == fingerprints2[i] ? "✓" : "✗"
+                println("  seed=$(seeds[i]): 0x$(string(fingerprints[i], base=16, pad=8)) $status")
+            end
+            
+            println()
+            if all_match
+                println("PARALLEL SPI VERIFIED ✓")
+            else
+                error("Parallel SPI verification failed!")
+            end
+          '
+      
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
       - uses: codecov/codecov-action@v4
@@ -55,9 +203,80 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GAY: Observer mode - no tests, just watch and report
+  # ═══════════════════════════════════════════════════════════════════════════
+  observe-gay:
+    name: Gay (Observer) 🏳️‍🌈
+    if: github.ref == 'refs/heads/gay'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Observe without testing
+        run: |
+          echo "═══════════════════════════════════════════════════════════════"
+          echo "  GAY MODE: Observer 🏳️‍🌈"
+          echo "  No tests run - observing only"
+          echo "═══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo ""
+          echo "Files changed:"
+          git diff --name-only HEAD~1 || echo "(first commit)"
+          echo ""
+          echo "Gay.jl observes. Gay.jl remembers. 🌈"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # PR / Tags: Standard testing
+  # ═══════════════════════════════════════════════════════════════════════════
+  test-pr:
+    name: PR/Tag - Julia ${{ matrix.version }} - ${{ matrix.os }}
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    permissions:
+      actions: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.10'
+          - '1.11'
+        os:
+          - ubuntu-latest
+          - macOS-latest
+        include:
+          - os: ubuntu-latest
+            arch: x64
+          - os: macOS-latest
+            arch: aarch64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-processcoverage@v1
+      - uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Documentation (runs on all branches)
+  # ═══════════════════════════════════════════════════════════════════════════
   docs:
     name: Documentation
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/gay'  # Skip docs on gay branch
     permissions:
       actions: write
       contents: write

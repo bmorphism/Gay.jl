@@ -1,0 +1,361 @@
+#!/usr/bin/env julia
+# gay-seesaw - Shallow Find: oscillating self-avoiding walk guided by color
+#
+# DeepSeek → deep seek (depth-first, diving deep)
+# ShallowFind → shallow find (breadth-first, oscillating seesaw)
+#
+# The seesaw oscillates between primary_areas, never revisiting papers.
+# Color guides the walk: similar colors attract, complementary colors repel.
+#
+# Based on Barabási's SAW research:
+# - SAW on scale-free networks: ⟨L⟩ ~ N^α
+# - Multicyclic networks → power law path distribution
+# - Self-avoiding = never revisit = each paper colored once
+
+using Pkg
+Pkg.activate(dirname(dirname(@__FILE__)); io=devnull)
+
+using Gay
+using Colors
+using JSON
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Helpers
+# ═══════════════════════════════════════════════════════════════════════════
+
+function fnv1a(text::String)::UInt64
+    h = UInt64(14695981039346656037)
+    for c in text
+        h = (h ⊻ UInt64(c)) * UInt64(1099511628211)
+    end
+    h
+end
+
+ansi_bg(c::RGB) = "\e[48;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+ansi_fg(c::RGB) = "\e[38;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+const R = "\e[0m"
+const B = "\e[1m"
+const D = "\e[2m"
+
+hex(c::RGB) = uppercase("#$(lpad(string(round(Int, red(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, green(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, blue(c)*255), base=16), 2, '0'))")
+
+luminance(c::RGB) = 0.299 * red(c) + 0.587 * green(c) + 0.114 * blue(c)
+
+# Color distance in RGB space
+color_distance(c1::RGB, c2::RGB) = sqrt((red(c1)-red(c2))^2 + (green(c1)-green(c2))^2 + (blue(c1)-blue(c2))^2)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Data
+# ═══════════════════════════════════════════════════════════════════════════
+
+const CATALOG_PATH = expanduser("~/Downloads/neurips_2025_catalog.json")
+
+function load_catalog()
+    JSON.parsefile(CATALOG_PATH)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Self-Avoiding Random Walk with Color Guidance
+# ═══════════════════════════════════════════════════════════════════════════
+
+struct Paper
+    id::String
+    title::String
+    area::String
+    color::RGB
+    seed::UInt64
+end
+
+function paper_from_dict(p::Dict)
+    id = p["id"]
+    seed = fnv1a(id)
+    Paper(
+        id,
+        p["title"],
+        get(p, "primary_area", "other"),
+        color_at(1; seed=seed),
+        seed
+    )
+end
+
+# Seesaw: oscillate between areas, guided by color similarity/complementarity
+function seesaw_walk(papers::Vector{Paper}, start_id::String, steps::Int; mode::Symbol=:attract)
+    visited = Set{String}()
+    path = Paper[]
+    
+    # Find start paper
+    current = nothing
+    for p in papers
+        if p.id == start_id
+            current = p
+            break
+        end
+    end
+    
+    if current === nothing
+        println("Start paper not found: $start_id")
+        return path
+    end
+    
+    push!(path, current)
+    push!(visited, current.id)
+    
+    # Group papers by area for seesaw oscillation
+    by_area = Dict{String, Vector{Paper}}()
+    for p in papers
+        if !haskey(by_area, p.area)
+            by_area[p.area] = Paper[]
+        end
+        push!(by_area[p.area], p)
+    end
+    
+    areas = collect(keys(by_area))
+    area_idx = findfirst(==(current.area), areas)
+    direction = 1  # Seesaw direction: +1 or -1
+    
+    for step in 1:steps
+        # Seesaw: alternate between areas
+        area_idx = mod1(area_idx + direction, length(areas))
+        direction *= -1  # Flip direction each step (seesaw!)
+        
+        target_area = areas[area_idx]
+        candidates = filter(p -> !(p.id in visited), by_area[target_area])
+        
+        if isempty(candidates)
+            # Try other areas
+            for a in areas
+                candidates = filter(p -> !(p.id in visited), by_area[a])
+                !isempty(candidates) && break
+            end
+        end
+        
+        isempty(candidates) && break  # SAW trapped
+        
+        # Color-guided selection
+        if mode == :attract
+            # Find most similar color (shallow find - stay in color neighborhood)
+            _, idx = findmin(p -> color_distance(current.color, p.color), candidates)
+            current = candidates[idx]
+        elseif mode == :repel
+            # Find most different color (explore widely)
+            _, idx = findmax(p -> color_distance(current.color, p.color), candidates)
+            current = candidates[idx]
+        else
+            # Random (classic SAW)
+            current = candidates[rand(1:length(candidates))]
+        end
+        
+        push!(path, current)
+        push!(visited, current.id)
+    end
+    
+    path
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Display
+# ═══════════════════════════════════════════════════════════════════════════
+
+function display_path(path::Vector{Paper})
+    println()
+    println("$(B)🎢 Seesaw Path$(R) ($(length(path)) papers, self-avoiding)")
+    println()
+    
+    # Show color gradient
+    print("  ")
+    for p in path
+        print("$(ansi_bg(p.color))  $(R)")
+    end
+    println()
+    println()
+    
+    prev_area = ""
+    for (i, p) in enumerate(path)
+        # Show area changes
+        if p.area != prev_area
+            ac = color_at(1; seed=fnv1a(p.area))
+            println("  $(ansi_bg(ac))  $(R) $(D)$(p.area)$(R)")
+            prev_area = p.area
+        end
+        
+        title = p.title[1:min(55, length(p.title))] * (length(p.title) > 55 ? "..." : "")
+        println("    $(ansi_fg(p.color))●$(R) $(i). $(p.id) │ $(title)")
+    end
+end
+
+function display_fund(path::Vector{Paper})
+    # The "fund" = the irreducible basis of this walk
+    # Combine all seeds to create the walk's signature
+    combined_seed = UInt64(0)
+    for p in path
+        combined_seed = xor(combined_seed, p.seed)
+    end
+    
+    fund_color = color_at(1; seed=combined_seed)
+    
+    println()
+    println("$(B)💎 The Fund$(R) (co-fund of $(length(path)) papers)")
+    println()
+    println("  $(ansi_bg(fund_color))                                        $(R)")
+    println("  $(ansi_bg(fund_color))    ShallowFind Irreducible Basis       $(R)")
+    println("  $(ansi_bg(fund_color))                                        $(R)")
+    println()
+    println("  seed = 0x$(string(combined_seed, base=16))")
+    println("  color = $(hex(fund_color))")
+    println()
+    
+    # Show constituent colors
+    print("  constituents: ")
+    for p in path[1:min(20, length(path))]
+        print("$(ansi_bg(p.color)) $(R)")
+    end
+    length(path) > 20 && print(" ...")
+    println()
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Commands
+# ═══════════════════════════════════════════════════════════════════════════
+
+function cmd_help()
+    println("$(B)🎢 gay-seesaw$(R) - ShallowFind: oscillating self-avoiding walk")
+    println()
+    println("$(B)Usage:$(R)")
+    println("  gay-seesaw walk [start_id] [steps]  Walk from paper (default: expander seed)")
+    println("  gay-seesaw attract [steps]          Color-attract mode (similar colors)")
+    println("  gay-seesaw repel [steps]            Color-repel mode (complementary)")
+    println("  gay-seesaw random [steps]           Classic random SAW")
+    println("  gay-seesaw fund [steps]             Show the co-fund of walk")
+    println("  gay-seesaw trio [steps]             3 expander seeds walk together")
+    println()
+    println("$(B)Theory:$(R) Barabási SAW on scale-free networks")
+    println("  • Self-avoiding: never revisit papers")
+    println("  • Seesaw: oscillate between primary_areas")
+    println("  • Color-guided: similar/complementary colors guide path")
+    println("  • ShallowFind vs DeepSeek: breadth-first oscillation")
+    println()
+end
+
+function cmd_walk(start_id::String, steps::Int; mode::Symbol=:attract)
+    catalog = load_catalog()
+    papers = [paper_from_dict(p) for p in catalog]
+    
+    # Default to first expander seed
+    if isempty(start_id)
+        start_id = "T1V8BJO0iG"  # RL expander seed
+    end
+    
+    println("$(B)ShallowFind$(R) vs DeepSeek")
+    println("$(D)Mode: $(mode) | Start: $(start_id) | Steps: $(steps)$(R)")
+    
+    path = seesaw_walk(papers, start_id, steps; mode=mode)
+    display_path(path)
+    display_fund(path)
+end
+
+function cmd_trio(steps::Int)
+    catalog = load_catalog()
+    papers = [paper_from_dict(p) for p in catalog]
+    
+    # The 3 expander seeds that cover 97.84% of NeurIPS
+    seeds = [
+        ("T1V8BJO0iG", "reinforcement_learning"),
+        ("idnW3BiZcV", "deep_learning"),
+        ("kYisDXzTk7", "theory")
+    ]
+    
+    println("$(B)🎢 Trio Walk$(R) - 3 Expander Seeds")
+    println("$(D)Each seed walks $(steps) steps, self-avoiding$(R)")
+    println()
+    
+    all_funds = UInt64[]
+    
+    for (seed_id, area) in seeds
+        path = seesaw_walk(papers, seed_id, steps; mode=:attract)
+        
+        # Compute fund
+        fund_seed = UInt64(0)
+        for p in path
+            fund_seed = xor(fund_seed, p.seed)
+        end
+        push!(all_funds, fund_seed)
+        
+        fund_color = color_at(1; seed=fund_seed)
+        area_color = color_at(1; seed=fnv1a(area))
+        
+        # Compact display
+        print("$(ansi_bg(area_color))  $(R) $(B)$(seed_id)$(R) ")
+        for p in path[1:min(steps+1, length(path))]
+            print("$(ansi_bg(p.color)) $(R)")
+        end
+        print(" → $(ansi_bg(fund_color))  $(R) Fund")
+        println()
+    end
+    
+    # Meta-fund: XOR of all 3 funds
+    meta_fund = reduce(xor, all_funds)
+    meta_color = color_at(1; seed=meta_fund)
+    
+    println()
+    println("$(B)💎 Meta-Fund$(R) (co-fund of 3 expander walks)")
+    println()
+    println("  $(ansi_bg(meta_color))                                        $(R)")
+    println("  $(ansi_bg(meta_color))    The ShallowFind Trifecta            $(R)")
+    println("  $(ansi_bg(meta_color))                                        $(R)")
+    println()
+    println("  seed = 0x$(string(meta_fund, base=16))")
+    println("  color = $(hex(meta_color))")
+    println()
+    
+    # Show the 3 constituent fund colors
+    print("  constituents: ")
+    for f in all_funds
+        c = color_at(1; seed=f)
+        print("$(ansi_bg(c))    $(R) ")
+    end
+    println()
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+function main()
+    args = ARGS
+    
+    if isempty(args)
+        cmd_help()
+        return
+    end
+    
+    cmd = lowercase(args[1])
+    
+    if cmd == "walk"
+        start_id = length(args) >= 2 ? args[2] : ""
+        steps = length(args) >= 3 ? parse(Int, args[3]) : 20
+        cmd_walk(start_id, steps; mode=:attract)
+    elseif cmd == "attract"
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_walk("", steps; mode=:attract)
+    elseif cmd == "repel"
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_walk("", steps; mode=:repel)
+    elseif cmd == "random"
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_walk("", steps; mode=:random)
+    elseif cmd == "fund"
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_walk("", steps; mode=:attract)
+    elseif cmd == "trio"
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 15
+        cmd_trio(steps)
+    elseif cmd == "help" || cmd == "-h" || cmd == "--help"
+        cmd_help()
+    else
+        # Treat as start_id
+        steps = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_walk(args[1], steps; mode=:attract)
+    end
+end
+
+main()

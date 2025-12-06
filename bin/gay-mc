@@ -1,0 +1,214 @@
+#!/usr/bin/env julia
+# gay-mc - Colored Monte Carlo demo with SPI
+#
+# Shows deterministic parallel coloring of MC sweeps/measures
+
+using Pkg
+Pkg.activate(dirname(dirname(@__FILE__)); io=devnull)
+
+using Gay
+using Colors
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ANSI helpers
+# ═══════════════════════════════════════════════════════════════════════════
+
+ansi_bg(c::RGB) = "\e[48;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+ansi_fg(c::RGB) = "\e[38;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+const R = "\e[0m"
+const B = "\e[1m"
+const D = "\e[2m"
+
+hex(c) = uppercase("#$(lpad(string(round(Int, red(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, green(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, blue(c)*255), base=16), 2, '0'))")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Demo: Ising-like colored sweeps
+# ═══════════════════════════════════════════════════════════════════════════
+
+function demo_sweeps(seed::Int, n_sweeps::Int)
+    ctx = GayMCContext(seed)
+    
+    println("$(B)🎲 GayMC Sweeps$(R) (seed=$seed)")
+    println()
+    
+    print("  Sweeps: ")
+    for i in 1:n_sweeps
+        rng, color = gay_sweep!(ctx)
+        print("$(ansi_bg(color))  $(R)")
+    end
+    println()
+    
+    # Show state color
+    state = color_state(ctx)
+    println()
+    println("  $(ansi_bg(state))  $(R) State color (avg of last 10)")
+    println("  $(D)sweep_count = $(ctx.sweep_count)$(R)")
+end
+
+function demo_measures(seed::Int)
+    ctx = GayMCContext(seed)
+    
+    # Do some sweeps first
+    for _ in 1:10
+        gay_sweep!(ctx)
+    end
+    
+    println()
+    println("$(B)📊 GayMC Measurements$(R)")
+    println()
+    
+    observables = ["energy", "magnetization", "susceptibility", "correlation", "entropy"]
+    
+    for obs in observables
+        rng, color = gay_measure!(ctx, obs)
+        println("  $(ansi_bg(color))  $(R) $(obs)")
+    end
+end
+
+function demo_parallel(seed::Int, n_workers::Int, sweeps_per_worker::Int)
+    println()
+    println("$(B)⚡ Parallel Workers$(R) (SPI determinism)")
+    println()
+    
+    workers = gay_workers(seed, n_workers)
+    
+    for (i, ctx) in enumerate(workers)
+        print("  Worker $i: ")
+        for _ in 1:sweeps_per_worker
+            rng, color = gay_sweep!(ctx)
+            print("$(ansi_bg(color)) $(R)")
+        end
+        state = color_state(ctx)
+        println(" → $(ansi_bg(state))  $(R)")
+    end
+    
+    println()
+    println("  $(D)Each worker has independent deterministic stream$(R)")
+end
+
+function demo_tempering(seed::Int)
+    println()
+    println("$(B)🌡️ Parallel Tempering$(R)")
+    println()
+    
+    temps = [1.0, 2.0, 3.0, 4.0, 5.0]
+    replicas = gay_tempering(seed, temps)
+    
+    for (i, r) in enumerate(replicas)
+        # Do some sweeps
+        for _ in 1:15
+            gay_sweep!(r.ctx)
+        end
+        
+        state = color_state(r.ctx)
+        print("  T=$(r.T) β=$(round(r.β, digits=2)): ")
+        for c in r.ctx.color_history[end-9:end]
+            print("$(ansi_bg(c)) $(R)")
+        end
+        println(" $(ansi_bg(state))  $(R)")
+    end
+end
+
+function demo_sampling(seed::Int)
+    println()
+    println("$(B)📈 Non-Gaussian Sampling$(R)")
+    println()
+    
+    ctx = GayMCContext(seed)
+    
+    # Gaussian samples
+    print("  Gaussian:    ")
+    for _ in 1:12
+        val, color = gay_gaussian!(ctx)
+        print("$(ansi_bg(color)) $(R)")
+    end
+    println()
+    
+    # Reset for Cauchy
+    ctx = GayMCContext(seed + 1)
+    print("  Cauchy:      ")
+    for _ in 1:12
+        val, color = gay_cauchy!(ctx)
+        print("$(ansi_bg(color)) $(R)")
+    end
+    println()
+    
+    # Exponential
+    ctx = GayMCContext(seed + 2)
+    print("  Exponential: ")
+    for _ in 1:12
+        val, color = gay_exponential!(ctx)
+        print("$(ansi_bg(color)) $(R)")
+    end
+    println()
+    
+    # Metropolis
+    ctx = GayMCContext(seed + 3)
+    print("  Metropolis:  ")
+    for _ in 1:12
+        ΔE = randn() * 2  # Random energy difference
+        accepted, color = gay_metropolis!(ctx, ΔE, 1.0)
+        if accepted
+            print("$(ansi_bg(color))✓$(R)")
+        else
+            print("$(ansi_bg(color))✗$(R)")
+        end
+    end
+    println()
+end
+
+function demo_checkpoint(seed::Int)
+    println()
+    println("$(B)💾 HDF5 Checkpoint$(R)")
+    println()
+    
+    ctx = GayMCContext(seed)
+    
+    # Do some sweeps
+    for _ in 1:20
+        gay_sweep!(ctx)
+    end
+    
+    # Create checkpoint
+    cp = gay_checkpoint(ctx)
+    
+    println("  Checkpoint data:")
+    println("    seed = $(cp["seed"])")
+    println("    sweep_count = $(cp["sweep_count"])")
+    println("    checkpoint_count = $(cp["checkpoint_count"])")
+    
+    cp_color = RGB{Float64}(cp["checkpoint_color"]...)
+    println("    checkpoint_color = $(ansi_bg(cp_color))  $(R) $(hex(cp_color))")
+    
+    # Show color history
+    print("    color_history: ")
+    for i in 1:min(15, length(ctx.color_history))
+        c = ctx.color_history[i]
+        print("$(ansi_bg(c)) $(R)")
+    end
+    println(" ...")
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+function main()
+    seed = length(ARGS) >= 1 ? parse(Int, ARGS[1]) : 42
+    
+    println()
+    println("$(B)🏳️‍🌈 GayMC$(R) - Colored Monte Carlo with SPI")
+    println("$(D)Strong Parallelism Invariance for deterministic parallel MC$(R)")
+    println()
+    
+    demo_sweeps(seed, 30)
+    demo_measures(seed)
+    demo_parallel(seed, 4, 15)
+    demo_tempering(seed)
+    demo_sampling(seed)
+    demo_checkpoint(seed)
+    
+    println()
+end
+
+main()

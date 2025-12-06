@@ -54,6 +54,7 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Getting Started" => "getting_started.md",
+        "Abductive Testing" => "abductive_testing.md",
         "Examples" => [
             "Splittable Determinism" => "examples/splittable_determinism.md",
             "Wide-Gamut Colors" => "examples/wide_gamut_colors.md",

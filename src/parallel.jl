@@ -1,13 +1,19 @@
-# Parallel color generation using Pigeons.jl and OhMyThreads.jl
+# Parallel color generation using KernelAbstractions.jl, Pigeons.jl and OhMyThreads.jl
 #
 # This module provides parallelized color operations with Strong Parallelism
 # Invariance (SPI) - the same results regardless of thread count or execution order.
+#
+# Three parallelization strategies:
+# 1. KernelAbstractions.jl - SPMD kernels (fastest, portable to GPU)
+# 2. OhMyThreads.jl - Task-based parallelism (flexible, good for complex ops)
+# 3. Pigeons.jl - SplittableRandom for MCMC-style sampling
 
 using OhMyThreads: tmap, tforeach
 using Pigeons: SplittableRandom as PigeonsSR
 using Random: shuffle
 
 export parallel_palette, parallel_colors_at, spi_demo
+export fast_parallel_colors, fast_parallel_palette
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Parallel Color Generation with OhMyThreads
@@ -114,4 +120,55 @@ function spi_demo(; seed::Int=42, n::Int=100)
     println("═══════════════════════════════════════════════════════════════")
     
     return sequential == parallel == reversed == sorted_random
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Fast Parallel API (uses KernelAbstractions when available)
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    fast_parallel_colors(n::Int; seed::Int=42)
+
+Generate n colors using the fastest available parallel backend.
+Uses KernelAbstractions SPMD kernels for maximum throughput.
+
+Returns n×3 Float32 matrix of RGB values.
+
+# Example
+```julia
+# Generate 1 million colors
+colors = fast_parallel_colors(1_000_000; seed=42)
+
+# Convert to RGB if needed
+rgb_colors = [RGB(colors[i,1], colors[i,2], colors[i,3]) for i in 1:size(colors,1)]
+```
+"""
+function fast_parallel_colors(n::Int; seed::Int=42)
+    ka_colors(n, seed)
+end
+
+"""
+    fast_parallel_palette(n::Int; seed::Int=42)
+
+Generate n palette colors using KernelAbstractions.
+Alias for ka_colors with ergonomic interface.
+"""
+function fast_parallel_palette(n::Int; seed::Int=42)
+    ka_colors(n, seed)
+end
+
+"""
+    fast_color_sums(n::Int; seed::Int=42, chunk_size::Int=100_000)
+
+Compute RGB sums over n colors without storing them.
+Useful for billion-scale operations.
+
+# Example
+```julia
+# Sum 1 billion colors in ~0.2 seconds
+sums = fast_color_sums(1_000_000_000; seed=42)
+```
+"""
+function fast_color_sums(n::Int; seed::Int=42, chunk_size::Int=100_000)
+    ka_color_sums(n, seed; chunk_size=chunk_size)
 end

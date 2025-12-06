@@ -1,0 +1,253 @@
+#!/usr/bin/env julia
+# gay - Command line interface for Gay.jl color generation
+#
+# Usage:
+#   gay                     # Show help
+#   gay next [n]            # Next n colors (default 6)
+#   gay at <index>          # Color at index
+#   gay palette <n>         # n distinct colors
+#   gay seed <text>         # Create irreducible from text
+#   gay diff <text>         # Differentiate from text seed
+#   gay pride <flag>        # Pride flag colors
+#   gay threads             # Color amp threads
+
+using Pkg
+Pkg.activate(dirname(dirname(@__FILE__)); io=devnull)
+
+using Gay
+using Colors
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Helpers
+# ═══════════════════════════════════════════════════════════════════════════
+
+function fnv1a(text::String)::UInt64
+    h = UInt64(14695981039346656037)
+    for c in text
+        h = (h ⊻ UInt64(c)) * UInt64(1099511628211)
+    end
+    h
+end
+
+ansi_bg(c::RGB) = "\e[48;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+ansi_fg(c::RGB) = "\e[38;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+const R = "\e[0m"
+const B = "\e[1m"
+const D = "\e[2m"
+
+hex(c::RGB) = uppercase("#$(lpad(string(round(Int, red(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, green(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, blue(c)*255), base=16), 2, '0'))")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Commands
+# ═══════════════════════════════════════════════════════════════════════════
+
+function cmd_help()
+    println("$(B)🏳️‍🌈 gay$(R) - Splittable deterministic colors")
+    println()
+    println("$(B)Usage:$(R)")
+    println("  gay next [n]           Next n colors (default 6)")
+    println("  gay at <index>         Color at specific index")
+    println("  gay palette <n>        n visually distinct colors")
+    println("  gay seed <text>        Create irreducible from text")
+    println("  gay diff <text> [d]    Differentiate from text, depth d")
+    println("  gay pride <flag>       Pride flag (rainbow, trans, bi, nb, pan, ace)")
+    println("  gay threads            Color amp threads")
+    println("  gay stream <text> [n]  Stream n colors from text seed")
+    println()
+    println("$(B)Examples:$(R)")
+    println("  gay next 12")
+    println("  gay at 42069")
+    println("  gay seed \"Hello World\"")
+    println("  gay diff \"splittable reafference\" 3")
+    println("  gay pride rainbow")
+    println()
+end
+
+function cmd_next(n::Int=6)
+    gay_seed!(Gay.GAY_SEED)
+    for i in 1:n
+        c = next_color()
+        println("$(ansi_bg(c))  $(R) $(hex(c))")
+    end
+end
+
+function cmd_at(index::Int)
+    c = color_at(index)
+    println("$(ansi_bg(c))  $(R) color_at($index) = $(hex(c))")
+end
+
+function cmd_palette(n::Int)
+    gay_seed!(Gay.GAY_SEED)
+    colors = next_palette(n)
+    for (i, c) in enumerate(colors)
+        println("$(ansi_bg(c))  $(R) [$i] $(hex(c))")
+    end
+end
+
+function cmd_seed(text::String)
+    seed = fnv1a(text)
+    println("$(B)Irreducible:$(R) \"$text\"")
+    println("$(D)seed = 0x$(string(seed, base=16))$(R)")
+    println()
+    
+    for i in 1:8
+        c = color_at(i; seed=seed)
+        println("$(ansi_bg(c))  $(R) [$i] $(hex(c))")
+    end
+end
+
+function cmd_diff(text::String, depth::Int=2)
+    seed = fnv1a(text)
+    println("$(B)∂ Differentiate:$(R) \"$text\"")
+    println("$(D)seed = 0x$(string(seed, base=16))$(R)")
+    println()
+    
+    function diff(s::UInt64, d::Int, prefix::String="")
+        c = color_at(1; seed=s)
+        println("$(prefix)$(ansi_bg(c))  $(R) 0x$(string(s, base=16))")
+        
+        if d > 0
+            # Generate children
+            h = s
+            for i in 1:2
+                h = xor(h, h >> 30) * 0xbf58476d1ce4e5b9
+                h = xor(h, h >> 27) * 0x94d049bb133111eb
+                h = xor(h, h >> 31)
+                
+                p = i == 2 ? "  └── " : "  ├── "
+                diff(h, d - 1, prefix * (i == 2 ? "      " : "  │   "))
+            end
+        end
+    end
+    
+    diff(seed, depth, "")
+end
+
+function cmd_pride(flag::String)
+    sym = Symbol(lowercase(flag))
+    colors = pride_flag(sym)
+    
+    println("$(B)Pride:$(R) :$sym")
+    print("  ")
+    for c in colors
+        print("$(ansi_bg(c))  $(R)")
+    end
+    println()
+    println()
+    
+    for (i, c) in enumerate(colors)
+        println("  $(ansi_bg(c))  $(R) $(hex(c))")
+    end
+end
+
+function cmd_stream(text::String, n::Int=12)
+    seed = fnv1a(text)
+    println("$(B)Stream:$(R) \"$text\"")
+    println("$(D)seed = 0x$(string(seed, base=16))$(R)")
+    println()
+    
+    print("  ")
+    for i in 1:n
+        c = color_at(i; seed=seed)
+        print("$(ansi_bg(c))  $(R)")
+    end
+    println()
+end
+
+function cmd_threads()
+    # Fetch threads from amp
+    output = try
+        read(`/Users/bob/.local/bin/amp threads`, String)
+    catch
+        println("Error: Could not run 'amp threads'")
+        return
+    end
+    
+    lines = split(output, '\n')
+    
+    println("$(B)🏳️‍🌈 Colored Amp Threads$(R)")
+    println()
+    
+    for line in lines[2:end]
+        isempty(strip(line)) && continue
+        
+        # Extract thread ID
+        m = match(r"(T-[a-f0-9-]+)", line)
+        if m !== nothing
+            tid = m.captures[1]
+            seed = fnv1a(tid)
+            c = color_at(1; seed=seed)
+            
+            # Get title (first part before multiple spaces)
+            parts = split(line, r"\s{2,}")
+            title = length(parts) > 0 ? strip(parts[1]) : line
+            
+            println("$(ansi_bg(c))  $(R) $(ansi_fg(c))$(title)$(R)")
+        end
+    end
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+function main()
+    args = ARGS
+    
+    if isempty(args)
+        cmd_help()
+        return
+    end
+    
+    cmd = lowercase(args[1])
+    
+    if cmd == "next"
+        n = length(args) >= 2 ? parse(Int, args[2]) : 6
+        cmd_next(n)
+    elseif cmd == "at"
+        if length(args) < 2
+            println("Usage: gay at <index>")
+            return
+        end
+        index = parse(Int, args[2])
+        cmd_at(index)
+    elseif cmd == "palette"
+        n = length(args) >= 2 ? parse(Int, args[2]) : 6
+        cmd_palette(n)
+    elseif cmd == "seed"
+        if length(args) < 2
+            println("Usage: gay seed <text>")
+            return
+        end
+        text = join(args[2:end], " ")
+        cmd_seed(text)
+    elseif cmd == "diff"
+        if length(args) < 2
+            println("Usage: gay diff <text> [depth]")
+            return
+        end
+        text = args[2]
+        depth = length(args) >= 3 ? parse(Int, args[3]) : 2
+        cmd_diff(text, depth)
+    elseif cmd == "pride"
+        flag = length(args) >= 2 ? args[2] : "rainbow"
+        cmd_pride(flag)
+    elseif cmd == "stream"
+        if length(args) < 2
+            println("Usage: gay stream <text> [n]")
+            return
+        end
+        text = args[2]
+        n = length(args) >= 3 ? parse(Int, args[3]) : 12
+        cmd_stream(text, n)
+    elseif cmd == "threads"
+        cmd_threads()
+    elseif cmd == "help" || cmd == "-h" || cmd == "--help"
+        cmd_help()
+    else
+        println("Unknown command: $cmd")
+        println("Run 'gay help' for usage")
+    end
+end
+
+main()

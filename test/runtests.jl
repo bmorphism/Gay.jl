@@ -4,6 +4,9 @@ using Aqua
 using Colors: RGB
 using SplittableRandoms: SplittableRandom
 
+# Include abductive tests
+include("abductive_tests.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         Aqua.test_all(Gay; deps_compat=(check_extras=false,))
@@ -179,5 +182,127 @@ using SplittableRandoms: SplittableRandom
         @test colors[1] == color_at(1; seed=42)
         @test colors[2] == color_at(5; seed=42)
         @test colors[3] == color_at(10; seed=42)
+    end
+    
+    @testset "KernelAbstractions SPMD Colors" begin
+        using Gay: ka_colors, ka_colors!, xor_fingerprint, hash_color
+        
+        # Basic generation
+        colors = ka_colors(1000, 42)
+        @test size(colors) == (1000, 3)
+        @test eltype(colors) == Float32
+        @test all(0.0f0 .<= colors .<= 1.0f0)
+        
+        # In-place generation
+        buf = zeros(Float32, 500, 3)
+        ka_colors!(buf, 1337)
+        @test all(0.0f0 .<= buf .<= 1.0f0)
+        
+        # hash_color produces Float32
+        r, g, b = hash_color(UInt64(42), UInt64(1))
+        @test r isa Float32
+        @test g isa Float32
+        @test b isa Float32
+    end
+    
+    @testset "XOR Fingerprint SPI Verification" begin
+        using Gay: ka_colors, xor_fingerprint
+        
+        # Same seed = same fingerprint (SPI core guarantee)
+        fp1 = xor_fingerprint(ka_colors(10000, 42))
+        fp2 = xor_fingerprint(ka_colors(10000, 42))
+        @test fp1 == fp2
+        
+        # Different seeds = different fingerprints
+        fp3 = xor_fingerprint(ka_colors(10000, 1337))
+        @test fp1 != fp3
+        
+        # Fingerprint is deterministic across multiple runs
+        for _ in 1:5
+            @test xor_fingerprint(ka_colors(10000, 42)) == fp1
+        end
+    end
+    
+    @testset "SPI Multi-Seed Verification" begin
+        using Gay: ka_colors, ka_colors!, xor_fingerprint, hash_color
+        using KernelAbstractions: CPU
+        
+        # Test various seeds for SPI correctness
+        test_seeds = [
+            0,                          # Edge case: zero
+            1,                          # Minimal
+            42,                         # Classic
+            1337,                       # Leetspeak
+            42069,                      # Gay.jl gallery seed
+            0x6761795f636f6c6f,         # GAY_SEED ("gay_colo")
+            0x78656e6f66656d21,         # XF_SEED ("xenofem!")
+            typemax(Int64),             # Maximum Int64
+            rand(UInt64),               # Random seed
+        ]
+        
+        n = 1000  # Colors per test
+        
+        for seed in test_seeds
+            @testset "seed=$seed" begin
+                # Generate reference via sequential loop
+                ref_colors = zeros(Float32, n, 3)
+                for i in 1:n
+                    r, g, b = hash_color(UInt64(seed), UInt64(i))
+                    ref_colors[i, 1] = r
+                    ref_colors[i, 2] = g
+                    ref_colors[i, 3] = b
+                end
+                ref_fp = xor_fingerprint(ref_colors)
+                
+                # Generate via KernelAbstractions
+                ka_result = ka_colors(n, seed)
+                ka_fp = xor_fingerprint(ka_result)
+                
+                # SPI: fingerprints must match
+                @test ref_fp == ka_fp
+                
+                # Colors must be identical
+                @test ref_colors ≈ ka_result
+                
+                # Reproducibility: generate again
+                ka_result2 = ka_colors(n, seed)
+                @test xor_fingerprint(ka_result2) == ka_fp
+            end
+        end
+    end
+    
+    @testset "SPI Workgroup Independence" begin
+        using Gay: ka_colors!, xor_fingerprint
+        using KernelAbstractions: CPU
+        
+        seed = 42069
+        n = 10000
+        
+        # Reference fingerprint
+        ref = zeros(Float32, n, 3)
+        ka_colors!(ref, seed; backend=CPU(), workgroup=256)
+        ref_fp = xor_fingerprint(ref)
+        
+        # Different workgroup sizes must produce identical results
+        for ws in [1, 16, 32, 64, 128, 256, 512, 1024]
+            colors = zeros(Float32, n, 3)
+            ka_colors!(colors, seed; backend=CPU(), workgroup=ws)
+            @test xor_fingerprint(colors) == ref_fp
+        end
+    end
+    
+    @testset "Backend Switching" begin
+        using Gay: set_backend!, get_backend
+        using KernelAbstractions: CPU
+        
+        # Default is CPU
+        original = get_backend()
+        
+        # Can set to CPU explicitly
+        set_backend!(CPU())
+        @test get_backend() isa CPU
+        
+        # Restore original
+        set_backend!(original)
     end
 end

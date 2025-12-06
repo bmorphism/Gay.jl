@@ -24,8 +24,30 @@ include("repl.jl")
 include("comrade.jl")
 export comrade_show, comrade_mring, comrade_disk, comrade_crescent
 
-# Include parallel color generation (OhMyThreads + Pigeons SPI)
+# Include KernelAbstractions SPMD kernels for portable parallel execution
+include("kernels.jl")
+
+# Include parallel color generation (OhMyThreads + Pigeons SPI + KA)
 include("parallel.jl")
+
+# Include GayMC - Colored Monte Carlo with SPI
+include("gaymc.jl")
+export GayMCContext, gay_sweep!, gay_measure!, gay_checkpoint, gay_restore!
+export color_sweep, color_measure, color_state
+export gay_exponential!, gay_cauchy!, gay_gaussian!, gay_metropolis!
+export gay_workers, gay_tempering
+
+# Include Abductive Testing for World Teleportation
+include("abductive.jl")
+
+# Include Chairmarks benchmarking
+include("bench.jl")
+
+# Include Metal GPU backend
+include("metal.jl")
+
+# Include JSON3 serialization
+include("serialization.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations

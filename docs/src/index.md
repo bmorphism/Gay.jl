@@ -59,6 +59,22 @@ model = sky_add(
 comrade_show(model)
 ```
 
+### 🔬 Abductive Testing
+Reason backwards from observed colors to infer their sources:
+
+```julia
+using Gay: abduce_invader, simulate_teleportation
+
+# Simulate an invader's world color
+sim = simulate_teleportation(42, Gay.GAY_SEED)
+
+# Abduce: given a color, find which invader produced it
+hypotheses = abduce_invader(sim.world; top_k=5)
+# hypotheses[1].id == 42 (the correct invader!)
+```
+
+See [Abductive Testing](abductive_testing.md) for REPL commands and full API.
+
 ## Installation
 
 ```julia

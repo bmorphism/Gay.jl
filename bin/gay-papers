@@ -1,0 +1,298 @@
+#!/usr/bin/env julia
+# gay-papers - Color NeurIPS papers by primary_area using Gay.jl
+#
+# Usage:
+#   gay-papers catalog [area]     # Show catalog papers (optionally filter by area)
+#   gay-papers seeds              # Show 3 expander seed papers
+#   gay-papers isolated           # Show 114 isolated papers
+#   gay-papers areas              # Show all areas with their colors
+
+using Pkg
+Pkg.activate(dirname(dirname(@__FILE__)); io=devnull)
+
+using Gay
+using Colors
+using JSON
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Helpers
+# ═══════════════════════════════════════════════════════════════════════════
+
+function fnv1a(text::String)::UInt64
+    h = UInt64(14695981039346656037)
+    for c in text
+        h = (h ⊻ UInt64(c)) * UInt64(1099511628211)
+    end
+    h
+end
+
+ansi_bg(c::RGB) = "\e[48;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+ansi_fg(c::RGB) = "\e[38;2;$(round(Int, red(c)*255));$(round(Int, green(c)*255));$(round(Int, blue(c)*255))m"
+const R = "\e[0m"
+const B = "\e[1m"
+const D = "\e[2m"
+
+hex(c::RGB) = uppercase("#$(lpad(string(round(Int, red(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, green(c)*255), base=16), 2, '0'))$(lpad(string(round(Int, blue(c)*255), base=16), 2, '0'))")
+
+# Luminance for contrast
+luminance(c::RGB) = 0.299 * red(c) + 0.587 * green(c) + 0.114 * blue(c)
+text_color(c::RGB) = luminance(c) > 0.5 ? "\e[38;2;0;0;0m" : "\e[38;2;255;255;255m"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Data
+# ═══════════════════════════════════════════════════════════════════════════
+
+const CATALOG_PATH = expanduser("~/Downloads/neurips_2025_catalog.json")
+const SEEDS_PATH = expanduser("~/Downloads/neurips_2025_expander_seeds.json")
+const ISOLATED_PATH = expanduser("~/Downloads/114ers_full.json")
+
+function load_catalog()
+    JSON.parsefile(CATALOG_PATH)
+end
+
+function load_seeds()
+    data = JSON.parsefile(SEEDS_PATH)
+    data["seed_papers"]
+end
+
+function load_isolated()
+    JSON.parsefile(ISOLATED_PATH)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Commands
+# ═══════════════════════════════════════════════════════════════════════════
+
+function cmd_help()
+    println("$(B)🏳️‍🌈 gay-papers$(R) - Color NeurIPS 2025 papers")
+    println()
+    println("$(B)Usage:$(R)")
+    println("  gay-papers catalog [area] [n]  Show catalog papers (filter by area, limit n)")
+    println("  gay-papers seeds               Show 3 expander seed papers")
+    println("  gay-papers isolated [n]        Show isolated papers (limit n)")
+    println("  gay-papers areas               Show all areas with their colors")
+    println("  gay-papers paper <id>          Show single paper by openreview_id")
+    println()
+    println("$(B)Areas:$(R)")
+    for area in ["reinforcement_learning", "deep_learning", "theory", "applications", 
+                 "optimization", "probabilistic_methods", "general_machine_learning",
+                 "machine_learning_for_sciences", "neuroscience_and_cognitive_science",
+                 "evaluation", "infrastructure", "social_and_economic_aspects_of_machine_learning", "other"]
+        c = color_at(1; seed=fnv1a(area))
+        println("  $(ansi_bg(c))  $(R) $(area)")
+    end
+    println()
+end
+
+function cmd_areas()
+    println("$(B)NeurIPS 2025 Primary Areas$(R)")
+    println()
+    
+    areas = ["reinforcement_learning", "deep_learning", "theory", "applications", 
+             "optimization", "probabilistic_methods", "general_machine_learning",
+             "machine_learning_for_sciences", "neuroscience_and_cognitive_science",
+             "evaluation", "infrastructure", "social_and_economic_aspects_of_machine_learning", "other"]
+    
+    catalog = load_catalog()
+    area_counts = Dict{String,Int}()
+    for p in catalog
+        area = get(p, "primary_area", "other")
+        area_counts[area] = get(area_counts, area, 0) + 1
+    end
+    
+    for area in sort(areas, by=a -> -get(area_counts, a, 0))
+        c = color_at(1; seed=fnv1a(area))
+        count = get(area_counts, area, 0)
+        println("$(ansi_bg(c))  $(R) $(rpad(area, 50)) $(count) papers")
+    end
+end
+
+function cmd_seeds()
+    println("$(B)🌱 3 Expander Seeds$(R) (cover 97.84% of NeurIPS 2025)")
+    println()
+    
+    seeds = load_seeds()
+    for (i, paper) in enumerate(seeds)
+        id = paper["id"]
+        title = paper["title"]
+        area = get(paper, "primary_area", "unknown")
+        
+        # Color by openreview_id
+        c = color_at(1; seed=fnv1a(id))
+        # Area color
+        ac = color_at(1; seed=fnv1a(area))
+        
+        println("$(B)Seed $i:$(R) $(ansi_fg(c))●$(R) $(id)")
+        println("  $(text_color(c))$(ansi_bg(c)) $(title) $(R)")
+        println("  $(ansi_bg(ac))  $(R) $(area)")
+        println()
+    end
+end
+
+function cmd_isolated(limit::Int=20)
+    println("$(B)🏝️ 114 Isolated Papers$(R)")
+    println()
+    
+    papers = load_isolated()
+    
+    # Group by primary_area
+    by_area = Dict{String,Vector{Any}}()
+    for p in papers
+        area = get(p, "primary_area", "other")
+        if !haskey(by_area, area)
+            by_area[area] = []
+        end
+        push!(by_area[area], p)
+    end
+    
+    count = 0
+    for (area, ps) in sort(collect(by_area), by=x -> -length(x[2]))
+        ac = color_at(1; seed=fnv1a(area))
+        println("$(ansi_bg(ac))  $(R) $(B)$(area)$(R) ($(length(ps)) papers)")
+        
+        for p in ps
+            count >= limit && break
+            id = get(p, "openreview_id", get(p, "id", "?"))
+            title = p["title"]
+            c = color_at(1; seed=fnv1a(id))
+            iso_type = get(p, "isolation_type", "unknown")
+            
+            println("    $(ansi_fg(c))●$(R) $(id) │ $(title[1:min(60, length(title))])$(length(title) > 60 ? "..." : "") $(D)[$(iso_type)]$(R)")
+            count += 1
+        end
+        count >= limit && break
+        println()
+    end
+    
+    count < length(papers) && println("$(D)... and $(length(papers) - count) more$(R)")
+end
+
+function cmd_catalog(area_filter::String="", limit::Int=30)
+    catalog = load_catalog()
+    
+    # Filter by area if specified
+    if !isempty(area_filter)
+        catalog = filter(p -> lowercase(get(p, "primary_area", "")) == lowercase(area_filter), catalog)
+        println("$(B)NeurIPS 2025:$(R) $(length(catalog)) papers in $(area_filter)")
+    else
+        println("$(B)NeurIPS 2025:$(R) $(length(catalog)) papers")
+    end
+    println()
+    
+    # Group by primary_area
+    by_area = Dict{String,Vector{Any}}()
+    for p in catalog
+        area = get(p, "primary_area", "other")
+        if !haskey(by_area, area)
+            by_area[area] = []
+        end
+        push!(by_area[area], p)
+    end
+    
+    count = 0
+    for (area, ps) in sort(collect(by_area), by=x -> -length(x[2]))
+        count >= limit && break
+        
+        ac = color_at(1; seed=fnv1a(area))
+        println("$(ansi_bg(ac))  $(R) $(B)$(area)$(R) ($(length(ps)) papers)")
+        
+        # Show first few from this area
+        shown = 0
+        for p in ps
+            count >= limit && break
+            shown >= 5 && break
+            
+            id = p["id"]
+            title = p["title"]
+            c = color_at(1; seed=fnv1a(id))
+            
+            display_title = title[1:min(65, length(title))] * (length(title) > 65 ? "..." : "")
+            println("    $(ansi_fg(c))●$(R) $(id) │ $(display_title)")
+            count += 1
+            shown += 1
+        end
+        length(ps) > 5 && println("    $(D)... +$(length(ps) - 5) more$(R)")
+        println()
+    end
+end
+
+function cmd_paper(id::String)
+    catalog = load_catalog()
+    
+    paper = nothing
+    for p in catalog
+        if p["id"] == id
+            paper = p
+            break
+        end
+    end
+    
+    if paper === nothing
+        println("Paper not found: $id")
+        return
+    end
+    
+    c = color_at(1; seed=fnv1a(id))
+    area = get(paper, "primary_area", "unknown")
+    ac = color_at(1; seed=fnv1a(area))
+    
+    println("$(ansi_bg(c))                                                                          $(R)")
+    println("$(ansi_bg(c))$(text_color(c)) $(paper["title"]) $(R)")
+    println("$(ansi_bg(c))                                                                          $(R)")
+    println()
+    println("$(B)ID:$(R) $(id)")
+    println("$(B)Area:$(R) $(ansi_bg(ac))  $(R) $(area)")
+    println("$(B)Authors:$(R) $(join(paper["authors"], ", "))")
+    println("$(B)Keywords:$(R) $(join(get(paper, "keywords", []), ", "))")
+    println()
+    
+    # Show color stream for this paper
+    println("$(B)Color stream:$(R)")
+    print("  ")
+    for i in 1:16
+        ci = color_at(i; seed=fnv1a(id))
+        print("$(ansi_bg(ci))  $(R)")
+    end
+    println()
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+function main()
+    args = ARGS
+    
+    if isempty(args)
+        cmd_help()
+        return
+    end
+    
+    cmd = lowercase(args[1])
+    
+    if cmd == "catalog"
+        area = length(args) >= 2 ? args[2] : ""
+        limit = length(args) >= 3 ? parse(Int, args[3]) : 30
+        cmd_catalog(area, limit)
+    elseif cmd == "seeds"
+        cmd_seeds()
+    elseif cmd == "isolated"
+        limit = length(args) >= 2 ? parse(Int, args[2]) : 20
+        cmd_isolated(limit)
+    elseif cmd == "areas"
+        cmd_areas()
+    elseif cmd == "paper"
+        if length(args) < 2
+            println("Usage: gay-papers paper <openreview_id>")
+            return
+        end
+        cmd_paper(args[2])
+    elseif cmd == "help" || cmd == "-h" || cmd == "--help"
+        cmd_help()
+    else
+        println("Unknown command: $cmd")
+        println("Run 'gay-papers help' for usage")
+    end
+end
+
+main()
