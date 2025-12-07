@@ -13,7 +13,7 @@ using Dates
 
 const N_MODELS = 1069
 const GALLERY_DIR = joinpath(@__DIR__, "..", "gallery")
-const MASTER_SEED = 42069  # Reproducible across runs
+const MASTER_SEED = 1069  # Reproducible: balanced ternary [+1, -1, -1, +1, +1, +1, +1]
 
 println("═"^70)
 println(rainbow_text("  Gay.jl Parallel Gallery Generator"))
