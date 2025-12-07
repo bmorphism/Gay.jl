@@ -10,6 +10,12 @@ include("abductive_tests.jl")
 # Include QUIC path probe tests
 include("quic_tests.jl")
 
+# Include fuzz tests (meta-testing the verification system)
+include("fuzz_tests.jl")
+
+# Include Jepsen-style meta-fuzzing (fuzz the fuzzers)
+include("jepsen_fuzz.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         Aqua.test_all(Gay; deps_compat=(check_extras=false,))

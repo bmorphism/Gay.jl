@@ -52,6 +52,9 @@ include("serialization.jl")
 # Include QUIC path probe coloring
 include("quic.jl")
 
+# Include deterministic test tracking
+include("tracking.jl")
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
@@ -89,39 +92,89 @@ end
 # These are the primary API for reproducible colors from S-expressions
 # ═══════════════════════════════════════════════════════════════════════════
 
-# (gay-next) or (gay-next n) - deterministic next color(s)
+"""
+    gay_next()
+    gay_next(n::Int)
+    gay_next(cs::Symbol)
+
+Generate the next deterministic color(s) from the global stream.
+Equivalent to `next_color()`.
+"""
 gay_next() = next_color(current_colorspace())
 gay_next(n::Int) = [next_color(current_colorspace()) for _ in 1:n]
 gay_next(cs::Symbol) = next_color(sym_to_colorspace(cs))
 gay_next(n::Int, cs::Symbol) = [next_color(sym_to_colorspace(cs)) for _ in 1:n]
 
-# (gay-at index) or (gay-at i1 i2 i3...) - random access by index
+"""
+    gay_at(index)
+    gay_at(indices...)
+
+Get color(s) at specific invocation index/indices.
+Equivalent to `color_at(index)`.
+"""
 gay_at(idx::Int) = color_at(idx, current_colorspace())
 gay_at(idx::Int, cs::Symbol) = color_at(idx, sym_to_colorspace(cs))
 gay_at(indices::Int...) = [color_at(i, current_colorspace()) for i in indices]
 
-# (gay-palette n) - n visually distinct colors
+"""
+    gay_palette(n)
+
+Generate n visually distinct deterministic colors.
+"""
 gay_palette(n::Int) = next_palette(n, current_colorspace())
 gay_palette(n::Int, cs::Symbol) = next_palette(n, sym_to_colorspace(cs))
 
-# (gay-seed n) - set RNG seed for reproducibility
+"""
+    gay_seed(n)
+
+Set the global RNG seed for reproducibility.
+"""
 gay_seed(n::Int) = gay_seed!(n)
 
-# (gay-space :rec2020) - set color space
+"""
+    gay_space(cs::Symbol)
+
+Set the current color space (:srgb, :p3, :rec2020).
+"""
 gay_space(cs::Symbol) = (CURRENT_COLORSPACE[] = sym_to_colorspace(cs); current_colorspace())
 
-# (gay-rng-state) - show current RNG state
+"""
+    gay_rng_state()
+
+Show the current RNG state (seed and invocation count).
+"""
 gay_rng_state() = (r = gay_rng(); (seed=r.seed, invocation=r.invocation))
 
-# (pride :flag) or (pride :flag :colorspace)
+"""
+    gay_pride(flag::Symbol)
+
+Get colors for a pride flag (:rainbow, :trans, :bi, :nb, :pan).
+"""
 gay_pride(flag::Symbol) = pride_flag(flag, current_colorspace())
 gay_pride(flag::Symbol, cs::Symbol) = pride_flag(flag, sym_to_colorspace(cs))
 
 # Legacy random (non-deterministic) wrappers
+"""
+    gay_random_color()
+
+Generate a non-deterministic random color.
+"""
 gay_random_color() = random_color(SRGB())
 gay_random_color(cs::Symbol) = random_color(sym_to_colorspace(cs))
+
+"""
+    gay_random_colors(n)
+
+Generate n non-deterministic random colors.
+"""
 gay_random_colors(n::Int) = random_colors(n, SRGB())
 gay_random_colors(n::Int, cs::Symbol) = random_colors(n, sym_to_colorspace(cs))
+
+"""
+    gay_random_palette(n)
+
+Generate n visually distinct non-deterministic random colors.
+"""
 gay_random_palette(n::Int) = random_palette(n, SRGB())
 gay_random_palette(n::Int, cs::Symbol) = random_palette(n, sym_to_colorspace(cs))
 

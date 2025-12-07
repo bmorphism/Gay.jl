@@ -254,6 +254,11 @@ COMMANDS["bh"] = blackhole_command
 # Current color space state
 const CURRENT_COLORSPACE = Ref{ColorSpace}(SRGB())
 
+"""
+    current_colorspace()
+
+Get the currently active color space (SRGB, DisplayP3, or Rec2020).
+"""
 current_colorspace() = CURRENT_COLORSPACE[]
 
 function space_command(args...)

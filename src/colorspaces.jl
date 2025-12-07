@@ -25,7 +25,11 @@ struct Primaries
     wx::Float64; wy::Float64  # White point (D65 default)
 end
 
-# ITU-R BT.2020 (Rec. 2020) - Ultra HD / 4K / 8K
+"""
+    Rec2020
+
+ITU-R BT.2020 (Rec. 2020) color space - Ultra HD / 4K / 8K.
+"""
 struct Rec2020 <: ColorSpace end
 const REC2020_PRIMARIES = Primaries(
     0.708, 0.292,   # Red
@@ -34,7 +38,11 @@ const REC2020_PRIMARIES = Primaries(
     0.3127, 0.3290  # D65
 )
 
-# Display P3 (Apple/DCI-P3 with D65)
+"""
+    DisplayP3
+
+Display P3 (Apple/DCI-P3 with D65) color space.
+"""
 struct DisplayP3 <: ColorSpace end
 const P3_PRIMARIES = Primaries(
     0.680, 0.320,   # Red
@@ -43,7 +51,11 @@ const P3_PRIMARIES = Primaries(
     0.3127, 0.3290  # D65
 )
 
-# sRGB / Rec.709
+"""
+    SRGB
+
+sRGB / Rec.709 color space.
+"""
 struct SRGB <: ColorSpace end
 const SRGB_PRIMARIES = Primaries(
     0.640, 0.330,   # Red
@@ -305,9 +317,45 @@ function _pride_colors(name::Symbol)
 end
 
 # Convenience functions for common flags
+
+"""
+    rainbow(cs::ColorSpace=SRGB())
+
+Get the Gilbert Baker rainbow flag colors.
+"""
 rainbow(cs::ColorSpace=SRGB()) = pride_flag(:rainbow, cs)
+
+"""
+    bisexual(cs::ColorSpace=SRGB())
+
+Get the bisexual pride flag colors.
+"""
 bisexual(cs::ColorSpace=SRGB()) = pride_flag(:bisexual, cs)
+
+"""
+    transgender(cs::ColorSpace=SRGB())
+
+Get the transgender pride flag colors.
+"""
 transgender(cs::ColorSpace=SRGB()) = pride_flag(:transgender, cs)
+
+"""
+    nonbinary(cs::ColorSpace=SRGB())
+
+Get the nonbinary pride flag colors.
+"""
 nonbinary(cs::ColorSpace=SRGB()) = pride_flag(:nonbinary, cs)
+
+"""
+    pansexual(cs::ColorSpace=SRGB())
+
+Get the pansexual pride flag colors.
+"""
 pansexual(cs::ColorSpace=SRGB()) = pride_flag(:pansexual, cs)
+
+"""
+    asexual(cs::ColorSpace=SRGB())
+
+Get the asexual pride flag colors.
+"""
 asexual(cs::ColorSpace=SRGB()) = pride_flag(:asexual, cs)
