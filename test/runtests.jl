@@ -7,6 +7,9 @@ using SplittableRandoms: SplittableRandom
 # Include abductive tests
 include("abductive_tests.jl")
 
+# Include QUIC path probe tests
+include("quic_tests.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         Aqua.test_all(Gay; deps_compat=(check_extras=false,))

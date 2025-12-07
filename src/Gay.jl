@@ -49,6 +49,9 @@ include("metal.jl")
 # Include JSON3 serialization
 include("serialization.jl")
 
+# Include QUIC path probe coloring
+include("quic.jl")
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════

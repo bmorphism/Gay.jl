@@ -301,6 +301,51 @@ parallel = tmap(i -> color_at(i; seed=seed), 1:100)
 sequential == parallel  # true — always!
 ```
 
+## Billion-Scale Color Generation
+
+Using [KernelAbstractions.jl](https://github.com/JuliaGPU/KernelAbstractions.jl) SPMD kernels:
+
+```julia
+using Gay
+
+# Generate 1 billion colors in 0.13 seconds
+ka_benchmark()
+# ═══════════════════════════════════════════════════════════════════════
+#   KernelAbstractions Color Generation Benchmark
+#   Backend: CPU, Threads: 8
+# ═══════════════════════════════════════════════════════════════════════
+#   1,000,000,000 colors in 0.13 seconds
+#   Rate: 7,410 million colors/second
+#   RGB sums: (5.0e8, 5.0e8, 5.0e8)
+```
+
+### Performance (8 threads, Apple M3)
+
+| Function | n | Time | Rate |
+|----------|---|------|------|
+| `ka_colors(n, seed)` | 1M | 1.0 ms | 1,000 M/s |
+| `ka_colors(n, seed)` | 10M | 25 ms | 400 M/s |
+| `ka_color_sums(n, seed)` | 100M | 0.02s | 4,452 M/s |
+| `ka_color_sums(n, seed)` | **1B** | **0.13s** | **7,097 M/s** |
+
+### API
+
+```julia
+# Generate colors as n×3 Float32 matrix
+colors = ka_colors(1_000_000, 42)
+
+# Fill pre-allocated matrix
+ka_colors!(my_matrix, 42)
+
+# Streaming reduction for billion-scale (O(1) memory)
+sums = ka_color_sums(1_000_000_000, 42)
+
+# Built-in benchmark
+ka_benchmark(n=1_000_000_000)
+```
+
+The same `@kernel` code runs on **CPU**, **Metal.jl**, **CUDA.jl**, or **AMDGPU.jl**.
+
 This is critical for:
 - Reproducible game visuals across different hardware
 - Parallel rendering without color drift

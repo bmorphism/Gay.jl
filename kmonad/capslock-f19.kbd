@@ -1,0 +1,96 @@
+;; KMonad configuration: Remap CapsLock to F19
+;;
+;; F19 is a "hyper" key - rarely used by any application,
+;; making it perfect for custom shortcuts (Karabiner, Hammerspoon, etc.)
+;;
+;; Installation:
+;;   macOS:   brew install kmonad
+;;   Linux:   https://github.com/kmonad/kmonad#installation
+;;
+;; Usage:
+;;   kmonad capslock-f19.kbd
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; Configuration block
+;; ═══════════════════════════════════════════════════════════════════════════
+
+(defcfg
+  ;; macOS configuration
+  input  (iokit-name)
+  output (kext)
+  
+  ;; Linux configuration (uncomment and adjust for your keyboard)
+  ;; input  (device-file "/dev/input/by-id/YOUR-KEYBOARD-HERE")
+  ;; output (uinput-sink "KMonad F19")
+  
+  ;; Windows configuration (uncomment for Windows)
+  ;; input  (low-level-hook)
+  ;; output (send-event-sink)
+  
+  ;; Allow unmapped keys to pass through
+  fallthrough true
+  
+  ;; Don't allow shell commands (security)
+  allow-cmd false
+)
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; Source layout - defines your physical keyboard
+;; Only need to define the keys we want to remap
+;; ═══════════════════════════════════════════════════════════════════════════
+
+(defsrc
+  caps
+)
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; Layer: CapsLock → F19
+;; ═══════════════════════════════════════════════════════════════════════════
+
+(deflayer f19-layer
+  f19
+)
+
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; ALTERNATIVE: CapsLock as Hyper (Ctrl+Shift+Alt+Cmd) when held, Escape when tapped
+;; Uncomment below and comment out the simple f19-layer above
+;; ═══════════════════════════════════════════════════════════════════════════
+
+;; (defalias
+;;   ;; Tap = Escape, Hold = Hyper (all modifiers)
+;;   hyper (tap-hold-next-release 200 esc (around lctl (around lsft (around lalt lmet))))
+;;   
+;;   ;; Or just F19 on tap, Hyper on hold
+;;   f19h  (tap-hold-next-release 200 f19 (around lctl (around lsft (around lalt lmet))))
+;; )
+;; 
+;; (deflayer hyper-layer
+;;   @hyper
+;; )
+
+
+;; ═══════════════════════════════════════════════════════════════════════════
+;; ALTERNATIVE: Full keyboard with CapsLock → F19
+;; For more complex setups, define your full keyboard layout
+;; ═══════════════════════════════════════════════════════════════════════════
+
+;; Example for Apple Magic Keyboard / MacBook keyboard:
+;;
+;; (defsrc
+;;   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+;;   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+;;   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+;;   caps a    s    d    f    g    h    j    k    l    ;    '    ret
+;;   lsft z    x    c    v    b    n    m    ,    .    /    rsft
+;;   fn   lctl lalt lmet           spc            rmet ralt
+;; )
+;; 
+;; (deflayer default
+;;   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+;;   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+;;   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+;;   f19  a    s    d    f    g    h    j    k    l    ;    '    ret
+;;   lsft z    x    c    v    b    n    m    ,    .    /    rsft
+;;   fn   lctl lalt lmet           spc            rmet ralt
+;; )
