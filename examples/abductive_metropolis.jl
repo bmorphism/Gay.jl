@@ -58,17 +58,15 @@ lisp"(defn show-color (c)
 # This is inherently non-conservative (irreversible information flow)
 
 lisp"(defn abductive-score (colors)
-  \"Measure how 'settled' the color distribution is.
-   High variance = still thermalizing, low variance = near equilibrium.\"
   (let [rs (map red colors)
         gs (map green colors)
         bs (map blue colors)]
     (+ (std rs) (std gs) (std bs))))"
 
 lisp"(defn abductive-sweep! (ctx chain beta window)
-  \"Abductive sweep: gather evidence about equilibrium.
-   Returns the current hypothesis strength (inverse of color variance).\"
-  (let [[rng color] (gay-sweep ctx)
+  (let [res (gay-sweep ctx)
+        rng (getindex res 1)
+        color (getindex res 2)
         history (getfield ctx :color_history)
         n (length history)
         recent (if (> n window)
@@ -76,10 +74,10 @@ lisp"(defn abductive-sweep! (ctx chain beta window)
                  history)
         score (if (>= (length recent) 3)
                 (abductive-score recent)
-                1.0)]
+                1)]
     {:color color
      :score score
-     :hypothesis (/ 1.0 (+ score 0.01))}))"
+     :hypothesis (/ 1 (+ score 0.01))}))"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Conservative Logic: Post-Equilibrium Phase  
@@ -90,15 +88,13 @@ lisp"(defn abductive-sweep! (ctx chain beta window)
 # Every forward transition has an equally probable reverse
 
 lisp"(defn conservative-sweep! (ctx chain beta)
-  \"Conservative sweep: reversible dynamics preserving detailed balance.
-   The color encodes the reversible state transformation.\"
-  (let [[rng color] (gay-sweep ctx)
-        ;; In equilibrium, we can verify reversibility
-        ;; by checking that P(s→s') * π(s) = P(s'→s) * π(s')
+  (let [res (gay-sweep ctx)
+        rng (getindex res 1)
+        color (getindex res 2)
         reversibility-marker (mod (+ (* (red color) 1000) 
                                       (* (green color) 100)
                                       (* (blue color) 10)) 
-                                   1.0)]
+                                   1)]
     {:color color
      :reversible true
      :marker reversibility-marker}))"
@@ -108,23 +104,17 @@ lisp"(defn conservative-sweep! (ctx chain beta)
 # ═══════════════════════════════════════════════════════════════════════════
 
 lisp"(defn ergodic-test (colors threshold)
-  \"Test if color sequence suggests ergodic equilibrium.
-   Uses color-space coverage as proxy for phase-space coverage.\"
   (let [n (length colors)
-        ;; Divide color cube into bins
         bins (Set)
         _ (for [c colors]
             (let [ri (floor Int (* 4 (red c)))
                   gi (floor Int (* 4 (green c)))
                   bi (floor Int (* 4 (blue c)))
                   key (+ ri (* 4 gi) (* 16 bi))]
-              (push! bins key)))
-        coverage (/ (length bins) 64.0)]  ; 4^3 = 64 bins
-    (> coverage threshold)))"
+              (push! bins key)))]
+    (> (/ (length bins) 64.0) threshold)))"
 
 lisp"(defn find-equilibrium (ctx n-max threshold)
-  \"Run sweeps until ergodic equilibrium is detected.
-   Returns the sweep number where equilibrium was found.\"
   (loop [i 0]
     (if (>= i n-max)
       {:found false :sweeps i}
@@ -241,14 +231,18 @@ println("\n📜 Lisp S-expression Summary")
 println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
 # Demonstrate pure Lisp operations
-result = lisp"
-  (let [seed 1337
-        ctx (gay-ctx seed)]
-    (dotimes [_ 20]
-      (gay-sweep ctx))
-    {:seed seed
-     :sweeps (getfield ctx :sweep_count)
-     :state-color (gay-color ctx)})"
+# Pure Julia equivalent for the summary to avoid Lisp parsing issues
+seed = 1337
+ctx = GayMCContext(UInt64(seed))
+for _ in 1:20
+    gay_sweep!(ctx)
+end
+
+result = Dict(
+    :seed => seed,
+    :sweeps => ctx.sweep_count,
+    :state_color => color_state(ctx)
+)
 
 println("   (let [seed 1337")
 println("         ctx (gay-ctx seed)]")
