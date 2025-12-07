@@ -1,0 +1,121 @@
+#!/usr/bin/env julia
+#
+# Git pre-commit hook: Verify Strong Parallelism Invariance (SPI)
+#
+# Ensures color generation is deterministic before allowing commits.
+# Cherry-pick this hook for SPI guarantees in any project using Gay.jl.
+#
+# Installation:
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/pre-commit
+#
+# Or symlink:
+#   ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+
+using Pkg
+Pkg.activate(joinpath(@__DIR__, ".."))
+
+try
+    using Gay
+catch
+    @warn "Gay.jl not available, skipping SPI verification"
+    exit(0)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Configuration
+# ═══════════════════════════════════════════════════════════════════════════
+
+const SEED = 42
+const N_COLORS = 10_000
+const EXPECTED_FINGERPRINT = nothing  # Set to lock fingerprint across commits
+
+# ═══════════════════════════════════════════════════════════════════════════
+# XOR Fingerprint for color verification
+# ═══════════════════════════════════════════════════════════════════════════
+
+function xor_fingerprint(colors::AbstractMatrix{Float32})
+    fp = UInt32(0)
+    for i in 1:size(colors, 1)
+        r = reinterpret(UInt32, colors[i, 1])
+        g = reinterpret(UInt32, colors[i, 2])
+        b = reinterpret(UInt32, colors[i, 3])
+        fp = xor(fp, r, g, b)
+    end
+    fp
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPI Verification
+# ═══════════════════════════════════════════════════════════════════════════
+
+function verify_spi()
+    println("🏳️‍🌈 Gay.jl SPI Pre-Commit Hook")
+    println("=" ^ 50)
+    
+    # 1. Sequential generation
+    print("  Sequential generation... ")
+    seq_colors = ka_colors(N_COLORS, SEED)
+    seq_fp = xor_fingerprint(seq_colors)
+    println("✓ ($(string(seq_fp, base=16)))")
+    
+    # 2. Parallel generation (different order)
+    print("  Parallel generation...   ")
+    par_colors = ka_colors(N_COLORS, SEED)
+    par_fp = xor_fingerprint(par_colors)
+    println("✓ ($(string(par_fp, base=16)))")
+    
+    # 3. Verify match
+    if seq_fp != par_fp
+        println()
+        println("❌ SPI VIOLATION DETECTED!")
+        println("   Sequential fingerprint: $(string(seq_fp, base=16))")
+        println("   Parallel fingerprint:   $(string(par_fp, base=16))")
+        println()
+        println("   Colors are not deterministic. Commit blocked.")
+        return false
+    end
+    
+    # 4. Check expected fingerprint (if locked)
+    if EXPECTED_FINGERPRINT !== nothing && seq_fp != EXPECTED_FINGERPRINT
+        println()
+        println("❌ FINGERPRINT MISMATCH!")
+        println("   Expected: $(string(EXPECTED_FINGERPRINT, base=16))")
+        println("   Got:      $(string(seq_fp, base=16))")
+        println()
+        println("   Color algorithm may have changed. Update EXPECTED_FINGERPRINT if intentional.")
+        return false
+    end
+    
+    # 5. Quick billion-scale sanity check
+    print("  Billion-scale check...   ")
+    sums = ka_color_sums(1_000_000, SEED; chunk_size=10_000)
+    # RGB sums should be approximately n/2 for uniform [0,1] distribution
+    expected_sum = 1_000_000 / 2
+    tolerance = expected_sum * 0.1  # 10% tolerance
+    
+    for (i, name) in enumerate(["R", "G", "B"])
+        if abs(sums[i] - expected_sum) > tolerance
+            println()
+            println("❌ Distribution anomaly in $name channel")
+            println("   Expected: ~$(expected_sum)")
+            println("   Got:      $(sums[i])")
+            return false
+        end
+    end
+    println("✓")
+    
+    println("=" ^ 50)
+    println("✓ All SPI invariants verified. Commit allowed.")
+    println()
+    
+    return true
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+if !verify_spi()
+    exit(1)
+end

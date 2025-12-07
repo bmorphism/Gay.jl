@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Git commit-msg hook: Embed color fingerprint in commit message
+#
+# Appends an SPI fingerprint to commit messages for traceability.
+# Cherry-pick for reproducibility guarantees.
+#
+# Installation:
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/commit-msg
+
+COMMIT_MSG_FILE=$1
+
+# Check if Gay.jl is available
+if ! julia --project=. -e 'using Gay' 2>/dev/null; then
+    exit 0
+fi
+
+# Generate fingerprint
+FINGERPRINT=$(julia --project=. -q -e '
+using Gay
+colors = ka_colors(1000, 42)
+fp = UInt32(0)
+for i in 1:size(colors, 1)
+    r = reinterpret(UInt32, colors[i, 1])
+    g = reinterpret(UInt32, colors[i, 2])
+    b = reinterpret(UInt32, colors[i, 3])
+    fp = xor(fp, r, g, b)
+end
+print(string(fp, base=16))
+' 2>/dev/null)
+
+if [ -n "$FINGERPRINT" ]; then
+    # Only add if not already present
+    if ! grep -q "Gay-SPI-Fingerprint:" "$COMMIT_MSG_FILE"; then
+        echo "" >> "$COMMIT_MSG_FILE"
+        echo "Gay-SPI-Fingerprint: 0x$FINGERPRINT" >> "$COMMIT_MSG_FILE"
+    fi
+fi

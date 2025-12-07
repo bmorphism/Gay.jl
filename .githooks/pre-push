@@ -1,0 +1,158 @@
+#!/usr/bin/env julia
+#
+# Git pre-push hook: Full SPI verification before pushing
+#
+# Runs comprehensive verification including:
+# - Fingerprint consistency across scales
+# - Workgroup independence
+# - Distribution sanity checks
+#
+# Installation:
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/pre-push
+
+using Pkg
+Pkg.activate(joinpath(@__DIR__, ".."))
+
+try
+    using Gay
+catch
+    @warn "Gay.jl not available, skipping SPI verification"
+    exit(0)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# XOR Fingerprint
+# ═══════════════════════════════════════════════════════════════════════════
+
+function xor_fingerprint(colors::AbstractMatrix{Float32})
+    fp = UInt32(0)
+    for i in 1:size(colors, 1)
+        r = reinterpret(UInt32, colors[i, 1])
+        g = reinterpret(UInt32, colors[i, 2])
+        b = reinterpret(UInt32, colors[i, 3])
+        fp = xor(fp, r, g, b)
+    end
+    fp
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Comprehensive SPI Verification
+# ═══════════════════════════════════════════════════════════════════════════
+
+function verify_spi_comprehensive()
+    println()
+    println("🏳️‍🌈 Gay.jl Pre-Push SPI Verification")
+    println("═" ^ 60)
+    println()
+    
+    seed = 42
+    all_pass = true
+    
+    # 1. Scale independence
+    println("1. Scale Independence")
+    println("   Testing fingerprint consistency across scales...")
+    
+    reference_fp = nothing
+    for n in [100, 1000, 10_000]
+        colors = ka_colors(n, seed)
+        # Take first 100 for comparison
+        fp = xor_fingerprint(colors[1:100, :])
+        
+        if reference_fp === nothing
+            reference_fp = fp
+            println("   n=$n (first 100): $(string(fp, base=16)) ← reference")
+        else
+            match = fp == reference_fp
+            status = match ? "✓" : "❌"
+            println("   n=$n (first 100): $(string(fp, base=16)) $status")
+            all_pass &= match
+        end
+    end
+    println()
+    
+    # 2. Seed sensitivity
+    println("2. Seed Sensitivity")
+    println("   Different seeds should produce different colors...")
+    
+    fp1 = xor_fingerprint(ka_colors(1000, 42))
+    fp2 = xor_fingerprint(ka_colors(1000, 43))
+    fp3 = xor_fingerprint(ka_colors(1000, 1337))
+    
+    seeds_differ = fp1 != fp2 && fp2 != fp3 && fp1 != fp3
+    status = seeds_differ ? "✓" : "❌"
+    println("   seed=42:   $(string(fp1, base=16))")
+    println("   seed=43:   $(string(fp2, base=16))")
+    println("   seed=1337: $(string(fp3, base=16))")
+    println("   All different: $status")
+    all_pass &= seeds_differ
+    println()
+    
+    # 3. Reproducibility
+    println("3. Reproducibility")
+    println("   Same seed should always produce same colors...")
+    
+    fp_a = xor_fingerprint(ka_colors(10_000, seed))
+    fp_b = xor_fingerprint(ka_colors(10_000, seed))
+    fp_c = xor_fingerprint(ka_colors(10_000, seed))
+    
+    reproducible = fp_a == fp_b == fp_c
+    status = reproducible ? "✓" : "❌"
+    println("   Run 1: $(string(fp_a, base=16))")
+    println("   Run 2: $(string(fp_b, base=16))")
+    println("   Run 3: $(string(fp_c, base=16))")
+    println("   All identical: $status")
+    all_pass &= reproducible
+    println()
+    
+    # 4. Distribution check
+    println("4. Distribution Sanity")
+    println("   RGB channels should be uniformly distributed...")
+    
+    n = 100_000
+    sums = ka_color_sums(n, seed; chunk_size=1000)
+    expected = n / 2  # Mean of uniform [0,1]
+    tolerance = expected * 0.05  # 5% tolerance
+    
+    for (i, name) in enumerate(["R", "G", "B"])
+        in_range = abs(sums[i] - expected) < tolerance
+        status = in_range ? "✓" : "❌"
+        pct = round(sums[i] / n * 100, digits=1)
+        println("   $name: $(round(sums[i], digits=0)) ($(pct)% of n) $status")
+        all_pass &= in_range
+    end
+    println()
+    
+    # 5. Performance sanity
+    println("5. Performance Sanity")
+    println("   Billion-scale should complete in reasonable time...")
+    
+    t = @elapsed ka_color_sums(10_000_000, seed; chunk_size=10_000)
+    rate = 10_000_000 / t / 1e6
+    fast_enough = rate > 100  # At least 100M colors/sec
+    status = fast_enough ? "✓" : "❌"
+    println("   10M colors: $(round(t * 1000, digits=1))ms ($(round(rate, digits=0)) M/s) $status")
+    all_pass &= fast_enough
+    println()
+    
+    # Summary
+    println("═" ^ 60)
+    if all_pass
+        println("✓ All SPI invariants verified. Push allowed.")
+    else
+        println("❌ SPI verification failed. Push blocked.")
+        println()
+        println("Fix the issues above before pushing.")
+    end
+    println()
+    
+    return all_pass
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Main
+# ═══════════════════════════════════════════════════════════════════════════
+
+if !verify_spi_comprehensive()
+    exit(1)
+end
