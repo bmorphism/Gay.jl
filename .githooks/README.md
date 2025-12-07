@@ -24,8 +24,18 @@ ln -sf ../../.githooks/pre-push .git/hooks/pre-push
 ### `pre-commit`
 Runs before each commit. Verifies:
 - ✓ Sequential and parallel generation produce identical colors
+- ✓ **69 interaction-by-interaction checks** (default)
 - ✓ Fingerprint matches expected value (if locked)
 - ✓ Distribution is sane (RGB channels uniform)
+
+### `verify-1069`
+Extended verification for releases (1069 seconds = ~18 minutes):
+```bash
+./.githooks/verify-1069
+```
+- ✓ Continuous color matching for 1069 seconds
+- ✓ Reports every 69 seconds
+- ✓ Millions of colors verified interaction-by-interaction
 
 ### `commit-msg`
 Runs after commit message is written. Appends:

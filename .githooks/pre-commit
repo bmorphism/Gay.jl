@@ -27,6 +27,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 const SEED = 42
+const N_STEPS = 69                    # Default verification steps (nice)
 const N_COLORS = 10_000
 const EXPECTED_FINGERPRINT = nothing  # Set to lock fingerprint across commits
 
@@ -43,6 +44,36 @@ function xor_fingerprint(colors::AbstractMatrix{Float32})
         fp = xor(fp, r, g, b)
     end
     fp
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Interaction-by-Interaction Verification (69 steps)
+# ═══════════════════════════════════════════════════════════════════════════
+
+function verify_interactions(n_steps::Int=N_STEPS)
+    println("  Interaction-by-interaction ($n_steps steps)...")
+    
+    all_match = true
+    mismatches = Int[]
+    
+    for step in 1:n_steps
+        # Generate single color at this step from two independent runs
+        c1 = ka_colors(1, SEED + step - 1)
+        c2 = ka_colors(1, SEED + step - 1)
+        
+        if c1 != c2
+            push!(mismatches, step)
+            all_match = false
+        end
+    end
+    
+    if all_match
+        println("    ✓ All $n_steps interactions match")
+    else
+        println("    ❌ Mismatches at steps: $(mismatches)")
+    end
+    
+    return all_match
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -76,7 +107,12 @@ function verify_spi()
         return false
     end
     
-    # 4. Check expected fingerprint (if locked)
+    # 4. Interaction-by-interaction verification (69 steps)
+    if !verify_interactions(N_STEPS)
+        return false
+    end
+    
+    # 5. Check expected fingerprint (if locked)
     if EXPECTED_FINGERPRINT !== nothing && seq_fp != EXPECTED_FINGERPRINT
         println()
         println("❌ FINGERPRINT MISMATCH!")
@@ -87,12 +123,11 @@ function verify_spi()
         return false
     end
     
-    # 5. Quick billion-scale sanity check
+    # 6. Quick billion-scale sanity check
     print("  Billion-scale check...   ")
     sums = ka_color_sums(1_000_000, SEED; chunk_size=10_000)
-    # RGB sums should be approximately n/2 for uniform [0,1] distribution
     expected_sum = 1_000_000 / 2
-    tolerance = expected_sum * 0.1  # 10% tolerance
+    tolerance = expected_sum * 0.1
     
     for (i, name) in enumerate(["R", "G", "B"])
         if abs(sums[i] - expected_sum) > tolerance
