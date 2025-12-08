@@ -43,8 +43,10 @@ include("abductive.jl")
 # Include Chairmarks benchmarking
 include("bench.jl")
 
-# Include Metal GPU backend
-include("metal.jl")
+# Metal GPU backend is now in ext/GayMetalExt.jl (loaded when Metal.jl is available)
+# Check if Metal is available (macOS Apple Silicon only)
+const HAS_METAL = Sys.isapple() && Sys.ARCH == :aarch64 && Base.find_package("Metal") !== nothing
+export HAS_METAL
 
 # Include JSON3 serialization
 include("serialization.jl")
@@ -54,6 +56,9 @@ include("quic.jl")
 
 # Include deterministic test tracking
 include("tracking.jl")
+
+# Include xy-pic LaTeX diagram generation
+include("xypic.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
