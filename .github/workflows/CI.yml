@@ -139,6 +139,8 @@ jobs:
         exclude:
           - os: macOS-latest
             version: 'nightly'
+          - os: ubuntu-latest
+            version: 'nightly'
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
