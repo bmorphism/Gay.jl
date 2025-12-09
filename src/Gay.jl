@@ -101,6 +101,11 @@ include("tracking.jl")
 # Include xy-pic LaTeX diagram generation
 include("xypic.jl")
 
+# Include SDF-style Propagator system with chromatic identity
+include("propagator.jl")
+include("propagator_lisp.jl")
+export Propagator, PropagatorLisp
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
