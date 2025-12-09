@@ -75,6 +75,49 @@ hypotheses = abduce_invader(sim.world; top_k=5)
 
 See [Abductive Testing](abductive_testing.md) for REPL commands and full API.
 
+### 🌐 Distributed Verification
+Verify tensor-parallel inference across multiple devices:
+
+```julia
+using Gay: verify_allgather, verify_pipeline_handoff, ExoCluster
+
+# Exo cluster: two MacBooks running OLMo
+cluster = ExoCluster([
+    ("MacBook Pro", 18.0, "192.168.1.10"),
+    ("MacBook Air", 8.0, "192.168.1.11"),
+], "olmo-7b")
+
+# Pre-compute expected fingerprints
+expected = expected_fingerprint(seed, n_tokens, hidden_dim)
+
+# Verify without gathering: fp(A ∪ B) = fp(A) ⊕ fp(B)
+@assert verify_exo_inference(cluster, "Hello")
+```
+
+See [Distributed SPI](distributed_spi.md) and [Fault Tolerance](fault_tolerance.md).
+
+### 🔀 Propagator Networks
+Constraint propagation with chromatic debugging:
+
+```julia
+using Gay.PropagatorLisp: @prop_str, cell_value
+
+prop"""
+(define-cell x)
+(define-cell y) 
+(define-cell sum)
+
+(constraint-add x y sum)
+
+(tell x 5)
+(tell sum 12)
+"""
+
+@assert cell_value(:y) == 7  # Inferred!
+```
+
+See [Propagators](propagators.md) for bidirectional constraints and Lisp DSL.
+
 ## Installation
 
 ```julia

@@ -54,6 +54,15 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Getting Started" => "getting_started.md",
+        "Theory" => [
+            "SPI & Color Theory" => "theory.md",
+            "Galois Connections" => "galois_connections.md",
+        ],
+        "Distributed Verification" => [
+            "Distributed SPI" => "distributed_spi.md",
+            "Fault Tolerance" => "fault_tolerance.md",
+        ],
+        "Propagators" => "propagators.md",
         "Abductive Testing" => "abductive_testing.md",
         "Examples" => [
             "Splittable Determinism" => "examples/splittable_determinism.md",
@@ -62,7 +71,6 @@ makedocs(
             "Pride Palettes" => "examples/pride_palettes.md",
             "Parallel SPI" => "examples/parallel_spi.md",
             "Gay Invaders" => "examples/gay_invaders.md",
-            "Parallel Color Determinism" => "examples/parallel_color_determinism.md"
         ],
         "API Reference" => "api.md"
     ],
