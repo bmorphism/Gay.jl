@@ -5,6 +5,7 @@ using SplittableRandoms: SplittableRandom, split
 
 export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_palette
 export gay_interleave, gay_interleave_streams, GayInterleaver
+export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
 
 """
     GayRNG
@@ -365,6 +366,7 @@ end
 
 export gay_sexpr_colors, gay_paren_color, GaySexpr, gay_render_sexpr
 export gay_depth_color, gay_magnetized_sexpr
+export gay_sexpr_magnetization, gay_sexpr_depth_spins
 
 """
     GaySexpr
