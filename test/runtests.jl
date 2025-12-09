@@ -16,6 +16,9 @@ include("fuzz_tests.jl")
 # Include Jepsen-style meta-fuzzing (fuzz the fuzzers)
 include("jepsen_fuzz.jl")
 
+# Include SDF-style propagator tests
+include("propagator_test.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         Aqua.test_all(Gay; deps_compat=(check_extras=false,))
