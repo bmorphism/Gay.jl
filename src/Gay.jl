@@ -37,6 +37,47 @@ export color_sweep, color_measure, color_state
 export gay_exponential!, gay_cauchy!, gay_gaussian!, gay_metropolis!
 export gay_workers, gay_tempering
 
+# Include Lifetimes - Bounded/Unbounded computation traces
+include("lifetimes.jl")
+using .Lifetimes
+export BoundedComputation, UnboundedComputation
+export bounded_iter!, bounded_finalize!, bounded_color, bounded_fingerprint
+export unbounded_iter!, unbounded_color, unbounded_fingerprint
+export extend, project, @bounded, @unbounded
+
+# Include KernelLifetimes - SPI colors for KernelAbstractions @index
+include("kernel_lifetimes.jl")
+using .KernelLifetimes
+export KernelColorContext, kernel_color!, kernel_finalize!
+export eventual_color, eventual_fingerprint, verify_kernel_spi
+export index_color, iter_index_color, cartesian_color
+
+# Include TensorParallel - SPI verification for distributed inference
+include("tensor_parallel.jl")
+using .TensorParallel
+export TensorPartition, ShardedTensor, DistributedContext
+export color_hidden_states!, color_logits!, color_embeddings!
+export verify_allgather, verify_allreduce, verify_pipeline_handoff
+export ExoPartition, create_exo_partitions, verify_exo_ring
+export verify_distributed_inference
+
+# Include ExoMLX - Exo + MLX cluster verification
+include("exo_mlx.jl")
+using .ExoMLX
+export ExoCluster, ExoDevice, ExoVerifier
+export discover_exo_cluster, verify_exo_inference
+export inject_spi_colors, extract_fingerprint
+export quick_verify_two_macs, model_config
+
+# Include FaultTolerant - Jepsen-style fault injection and testing
+include("fault_tolerant.jl")
+using .FaultTolerant
+export SimulatedCluster, DeviceState, FaultInjector
+export inject!, heal!, heal_all!, run_inference!
+export BidirectionalTracker, track_forward!, track_backward!, verify_consistency!
+export GaloisConnection, alpha, gamma, verify_closure, verify_all_closures
+export demo_fault_tolerant
+
 # Include Abductive Testing for World Teleportation
 include("abductive.jl")
 

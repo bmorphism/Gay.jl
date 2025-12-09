@@ -1,0 +1,23 @@
+\documentclass{standalone}
+\usepackage[all,2cell]{xy}
+\usepackage{xcolor}
+\UseTwocells
+
+\begin{document}
+% Color definitions
+\definecolor{gay1}{rgb}{0.577,0.567,0.572}
+\definecolor{gay2}{rgb}{0.566,0.598,0.52}
+\definecolor{gay3}{rgb}{0.905,0.437,0.0}
+\definecolor{gay4}{rgb}{0.729,0.268,1.0}
+\definecolor{gay5}{rgb}{0.504,0.505,0.537}
+\definecolor{gay6}{rgb}{0.0,0.833,1.0}
+\definecolor{gay7}{rgb}{0.348,0.127,0.858}
+\definecolor{gay8}{rgb}{0.427,0.125,0.058}
+
+% State diagram: SplitMix64 color chain
+% Seed: 0x6761795f636f6c6f
+\xymatrix{
+  *+[F-,]{\textcolor{gay1}{C_{1}\\scriptstyle L=60.2}} \ar[r]^{s} & *+[F-,]{\textcolor{gay2}{C_{2}\\scriptstyle L=61.9}} \ar[r]^{s} & *+[F-,]{\textcolor{gay3}{C_{3}\\scriptstyle L=60.3}} \ar[r]^{s} & *+[F-,]{\textcolor{gay4}{C_{4}\\scriptstyle L=53.9}} \ar[d]^{s} \
+  *+[F-,]{\textcolor{gay5}{C_{5}\\scriptstyle L=54.1}} \ar[r]^{s} & *+[F-,]{\textcolor{gay6}{C_{6}\\scriptstyle L=78.8}} \ar[r]^{s} & *+[F-,]{\textcolor{gay7}{C_{7}\\scriptstyle L=34.5}} \ar[r]^{s} & *+[F-,]{\textcolor{gay8}{C_{8}\\scriptstyle L=24.7}} \
+}
+\end{document}
