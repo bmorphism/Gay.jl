@@ -391,8 +391,7 @@ function verify_exo_ring(activations::Matrix{Float32},
     actual_fp = xor_fingerprint(activations)
     
     if actual_fp != expected_fp
-        @error "Exo ring verification FAILED" device=partition.device_name 
-               layers=partition.layer_range actual_fp expected_fp
+        @error "Exo ring verification FAILED" device=partition.device_name layers=partition.layer_range actual_fp expected_fp
         return false
     end
     
