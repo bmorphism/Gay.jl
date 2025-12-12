@@ -106,6 +106,18 @@ include("propagator.jl")
 include("propagator_lisp.jl")
 export Propagator, PropagatorLisp
 
+# Include Enzyme.jl integration for autodiff on colored S-expressions
+include("enzyme.jl")
+
+# Include Learnable Okhsl - the general class of all general classes
+include("okhsl_learnable.jl")
+using .OkhslLearnable
+export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
+export OkhslParameters, SeedProjection, EquivalenceClassObjective
+export forward_color, learn_colorspace!, compute_loss
+export EnzymeColorState, enzyme_color_gradient
+export demo_learnable_okhsl
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════

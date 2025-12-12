@@ -1,4 +1,4 @@
-# We-ness (wenis.jl) - Geometric Neurophenomenology of Joint Action
+# We-ness (we-ness.jl) - Geometric Neurophenomenology of Joint Action
 #
 # Based on Nicolás Hinrichs' "Geometric Neurophenomenology" (BAMΞ 2025)
 # Maps interbrain network dynamics to colors via discrete Ricci curvature
