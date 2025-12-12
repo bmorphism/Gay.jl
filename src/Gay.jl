@@ -30,6 +30,15 @@ include("kernels.jl")
 # Include parallel color generation (OhMyThreads + Pigeons SPI + KA)
 include("parallel.jl")
 
+# Include maximally parallel seed search (Fugue-inspired minimal syncpoints)
+include("parallel_seed_search.jl")
+export find_seeds_parallel, TARGET_COLORS, SearchResult, demo_parallel_search
+
+# Include maximally parallel genetic search
+include("genetic_search.jl")
+export GeneticSearchConfig, GeneticSearchResult
+export genetic_search_parallel, island_evolution, demo_genetic_search
+
 # Include GayMC - Colored Monte Carlo with SPI
 include("gaymc.jl")
 export GayMCContext, gay_sweep!, gay_measure!, gay_checkpoint, gay_restore!
@@ -78,16 +87,99 @@ export BidirectionalTracker, track_forward!, track_backward!, verify_consistency
 export GaloisConnection, alpha, gamma, verify_closure, verify_all_closures
 export demo_fault_tolerant
 
+# Include Chaos Vibing - Maximal fault injection into parallel causal chains
+include("chaos_vibing.jl")
+export ChaosConfig, ChaosResult, ChaosVibe
+export inject_chaos!, run_chaos_campaign, chaos_vibe!
+export CausalChain, break_chain!, verify_chain, chain_fingerprint
+export demo_chaos_vibing
+
+# Include Push-Pull Sequence Verification
+include("push_pull_sequence.jl")
+using .PushPullSequence
+export SequenceColorStream, push_token!, pull_verify!
+export StreamingVerifier, push_chunk!, verify_chunk!
+export demo_push_pull_sequence
+
 # Include Abductive Testing for World Teleportation
 include("abductive.jl")
 
 # Include Chairmarks benchmarking
 include("bench.jl")
 
+# Include SPI Regression Benchmarks
+include("bench_spi_regression.jl")
+using .SPIRegressionBench
+export run_spi_regression_tests, calibrate_baselines
+
+# Include Concept Tensor (69³ parallel interaction space)
+include("concept_tensor.jl")
+using .ConceptTensor
+export ConceptLattice, step_parallel!, verify_monoid_laws
+export interpolate_subtext!, extrapolate_superstructure!, interact!
+export lattice_magnetization, lattice_fingerprint, propagate_all!
+export demo_concept_tensor, demo_exponential, demo_higher_structure
+export ConceptMorphism, identity_morphism, compose, eval_morphism
+export concept_to_morphism, verify_exponential_laws, morphism_fingerprint
+export step_as_morphism, iterate_morphism, fixed_points, orbit
+export trace_morphism, verify_trace_laws, self_application
+
+# Include Regression Tests That Don't Suck
+include("regression.jl")
+using .SPIRegression
+export run_regression_suite, verify_splitmix64_reference
+export verify_galois_closure, verify_parallel_order_independence
+export verify_concept_tensor_invariants, @test_spi
+
 # Metal GPU backend is now in ext/GayMetalExt.jl (loaded when Metal.jl is available)
 # Check if Metal is available (macOS Apple Silicon only)
 const HAS_METAL = Sys.isapple() && Sys.ARCH == :aarch64 && Base.find_package("Metal") !== nothing
 export HAS_METAL
+
+# Include Proof of Color Parallelism (PoCP) - Making Chia Gay
+include("proof_of_color.jl")
+using .ProofOfColor
+export ColorPlot, ColorVDF, ProofOfColorParallelism
+export create_plot, verify_plot, plot_fingerprint
+export create_vdf, verify_vdf, vdf_output
+export create_pocp, verify_pocp, demo_pocp
+export Seed  # Universal seed wrapper
+
+# Include Ergodic Bridge (Wall Clock ↔ Color Bandwidth ↔ Compositionality)
+include("ergodic_bridge.jl")
+using .ErgodicBridge
+export WallClockBridge, ColorBandwidth, ErgodicMeasure, CompositionObstruction
+export create_bridge, verify_bridge, measure_bandwidth, measure_ergodicity
+export detect_obstructions, horizon_analysis, demo_ergodic_bridge
+
+# Include Spectral Bridge (dgleich GenericArpack ↔ Gay.jl ↔ PyT TDL)
+include("spectral_bridge.jl")
+export SpectralColorBridge, ArpackSeed, HodgeLaplacian
+export color_eigenvector, verify_spectral_spi, eigencolor_fingerprint
+export simplicial_hodge, chromatic_spectral_clustering
+export demo_spectral_bridge
+
+# Include Gay Hyperdoctrine (Categorical Logic with Chromatic Predicates)
+include("hyperdoctrine.jl")
+export ChromaticType, ChromaticPredicate, GayHyperdoctrine
+export substitution, existential, universal, verify_beck_chevalley
+export heyting_and, heyting_or, heyting_implies, heyting_not
+export predicate_color, predicate_fingerprint
+export demo_hyperdoctrine
+
+# Include Color-Logic Pullback Squares (Proper Beck-Chevalley from Hatchery)
+include("color_logic_pullback.jl")
+export ColorLogicSystem, LogicPullbackSquare, ColoredTheory
+export fibered_product, pullback_color, beck_chevalley_proper
+export theory_level, metatheory_level, logic_system_color
+export LogicSystem, TheoryLevel
+export INTUITIONISTIC, PARACONSISTENT, LINEAR, MODAL_S4, HOTT, CLASSICAL, METATHEORY
+export OBJECT_LEVEL, META_LEVEL, HIGHER_META
+export ChromaticPredicate_v2
+export demo_color_logic_pullback
+
+# Include Tropical Semirings with verification
+include("tropical_semirings.jl")
 
 # Include JSON3 serialization
 include("serialization.jl")
@@ -98,6 +190,25 @@ include("quic.jl")
 # Include deterministic test tracking
 include("tracking.jl")
 
+# Include Whale-Human Translation Bridge
+include("whale_bridge.jl")
+
+# Include Real Whale Data (EC-1 Clan from Sharma et al. 2024)
+include("whale_data.jl")
+
+# Include Whale Demo
+include("whale_demo.jl")
+
+# Include Whale World (Parallel SPI Demonstration through tripartite synergy)
+# NOTE: Must come before spc_repl.jl which uses WhaleWorld types
+include("whale_world.jl")
+
+# Include Whale Curriculum (Omniglot-style hierarchical refinement)
+include("whale_curriculum.jl")
+
+# Include SPC REPL (Symbolic · Possible · Compositional)
+include("spc_repl.jl")
+
 # Include xy-pic LaTeX diagram generation
 include("xypic.jl")
 
@@ -106,17 +217,102 @@ include("propagator.jl")
 include("propagator_lisp.jl")
 export Propagator, PropagatorLisp
 
-# Include Enzyme.jl integration for autodiff on colored S-expressions
-include("enzyme.jl")
+# Include Traced Monoidal Category Structure (after Propagator)
+include("traced_tensor.jl")
+using .TracedTensor
+export TracedMorphism, tensor_product, monoidal_unit, categorical_trace
+export feedback_loop, TensorNetwork, add_node!, add_edge!, run_network!
+export verify_traced_laws, demo_traced_tensor, network_fingerprint
 
-# Include Learnable Okhsl - the general class of all general classes
-include("okhsl_learnable.jl")
-using .OkhslLearnable
-export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
-export OkhslParameters, SeedProjection, EquivalenceClassObjective
-export forward_color, learn_colorspace!, compute_loss
-export EnzymeColorState, enzyme_color_gradient
-export demo_learnable_okhsl
+# Include Thread Findings (Two Monad Structure)
+include("thread_findings.jl")
+using .ThreadFindings
+export Finding, FindingsSet, ThreadContext, VerificationMonad
+export bind_finding, return_finding, run_verification
+export count_threads, fingerprint_threads, lazy_place!
+export demo_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
+export run_all_verifications
+
+# Include Verification Report
+include("verification_report.jl")
+using .VerificationReport
+export generate_report, FullReport, ReportSection
+export verify_coherence, attestation_fingerprint
+export export_report_markdown, demo_report
+
+# Include Amp Thread Connection
+include("amp_threads.jl")
+using .AmpThreads
+export AmpThread, thread_seed, thread_color, thread_fingerprint
+export ThreadGenealogy, add_thread!, genealogy_fingerprint
+export verify_thread_chain, demo_amp_threads
+
+# Include Cognitive Superposition (DisCoCat-style categorical semantics)
+include("cognitive_superposition.jl")
+using .CognitiveSuperposition
+export CognitiveState, CognitiveMorphism, CognitiveCategory
+export superpose, collapse, entails, induces, abduces
+export BraidedSuperposition, HypergraphSuperposition
+export cognitive_tensor, cognitive_trace, cognitive_spider
+export verify_cognitive_laws, demo_cognitive_superposition
+
+# Include SPI CLI
+include("spi_cli.jl")
+using .SPICLI
+export spi_main, spi_verify
+
+# Include Tuning Parameters
+include("tuning.jl")
+using .Tuning
+export SPIConfig, default_config, with_config, preset, tune!, current_config, set_config!
+
+# Include Kripke Semantics & Possible Worlds (Layers 6-8)
+include("kripke_worlds.jl")
+using .KripkeWorlds
+export KripkeFrame, World, accessible, truth_at, necessity, possibility
+export ModalProposition, box, diamond, verify_modal_laws
+export SheafSemantics, local_truth, global_sections, stalk_at
+export world_kripke, run_kripke_tests
+
+# Include Random Topos (Layers 9-11: Simpson's Three Toposes)
+include("random_topos.jl")
+using .RandomTopos
+export SampleSpace, RandomElement, RandomVariable, ProbabilitySheaf
+export GrowingRandomTopos, grow_random_topos!, world_random_topos
+
+# Include Strategic Differentiation (Semantic Blastoderm → Tower mapping)
+include("strategic_differentiation.jl")
+using .StrategicDifferentiation
+export StrategicChoice, DifferentiationBasin, SemanticFate
+export tower_basin, world_strategic_differentiation
+export differentiate!, fate_fingerprint, basin_color, TOWER_BASINS, fate_at_layer
+
+# Include Compositional World Bridge (Topos Institute research program)
+include("compositional_world.jl")
+using .CompositionalWorld
+export SystemProperty, DynamicalDoctrine, CompositionalBridge
+export property_layer, doctrine_fingerprint, world_compositional_world
+export SYSTEM_PROPERTIES, compose_systems, behavioral_intersection
+
+# Include Unified Tower (all 12 layers)
+include("tower.jl")
+using .Tower
+export TowerState, world_tower, tower_fingerprint, run_tower_tests
+export LAYER_INFO, layer_name, layer_category
+
+# Include SplitMix64-CFT Verification (first principles SPI proof)
+include("splitmix_cft_verify.jl")
+using .SplitMixCFTVerify
+export run_verification_suite
+
+# Include Multiverse Geometric Morphisms (Hamkins + Dave White)
+include("multiverse_geometric.jl")
+using .MultiverseGeometric
+export Verse, MultiverseFrame, GeometricMorphism
+export create_verse, partition, pushdown!, pullup!, resolve!
+export verse_fingerprint, verse_color, verify_multiverse_laws
+export HolographicColorGame, game_state, make_move!, check_win
+export world_multiverse, demo_holographic_game
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
@@ -169,30 +365,71 @@ gay_next(cs::Symbol) = next_color(sym_to_colorspace(cs))
 gay_next(n::Int, cs::Symbol) = [next_color(sym_to_colorspace(cs)) for _ in 1:n]
 
 """
-    gay_at(index)
-    gay_at(indices...)
+    gay_at(index; seed=nothing)
+    gay_at(indices...; seed=nothing)
 
 Get color(s) at specific invocation index/indices.
-Equivalent to `color_at(index)`.
+Uses global seed from `gay_seed!()` unless `seed=` is provided.
+
+# Universal seed support
+```julia
+gay_at(42)                    # Use global seed
+gay_at(42; seed=123)          # Integer seed
+gay_at(42; seed="experiment") # String seed
+gay_at(42; seed=:test)        # Symbol seed
+gay_at(42; seed=[1,2,3])      # Array seed
+```
 """
-gay_at(idx::Int) = color_at(idx, current_colorspace())
-gay_at(idx::Int, cs::Symbol) = color_at(idx, sym_to_colorspace(cs))
-gay_at(indices::Int...) = [color_at(i, current_colorspace()) for i in indices]
+function gay_at(idx::Integer; seed=nothing)
+    s = seed === nothing ? gay_rng().seed : _to_seed(seed)
+    color_at(idx, current_colorspace(); seed=s)
+end
+function gay_at(idx::Integer, cs::Symbol; seed=nothing)
+    s = seed === nothing ? gay_rng().seed : _to_seed(seed)
+    color_at(idx, sym_to_colorspace(cs); seed=s)
+end
+
+# Helper: convert anything to seed
+_to_seed(x::Integer) = UInt64(x)
+_to_seed(x::UInt64) = x
+function _to_seed(x)
+    # FNV-1a hash for strings, symbols, arrays, etc.
+    h = UInt64(0xcbf29ce484222325)
+    for byte in reinterpret(UInt8, [hash(x)])
+        h ⊻= byte
+        h *= 0x100000001b3
+    end
+    # SplitMix64 finalization
+    h = (h ⊻ (h >> 30)) * 0xbf58476d1ce4e5b9
+    h = (h ⊻ (h >> 27)) * 0x94d049bb133111eb
+    h ⊻ (h >> 31)
+end
 
 """
-    gay_palette(n)
+    gay_palette(n; seed=nothing)
 
 Generate n visually distinct deterministic colors.
 """
-gay_palette(n::Int) = next_palette(n, current_colorspace())
-gay_palette(n::Int, cs::Symbol) = next_palette(n, sym_to_colorspace(cs))
+function gay_palette(n::Int; seed=nothing)
+    s = seed === nothing ? gay_rng().seed : _to_seed(seed)
+    [color_at(i, current_colorspace(); seed=s) for i in 1:n]
+end
+function gay_palette(n::Int, cs::Symbol; seed=nothing)
+    s = seed === nothing ? gay_rng().seed : _to_seed(seed)
+    [color_at(i, sym_to_colorspace(cs); seed=s) for i in 1:n]
+end
 
 """
-    gay_seed(n)
+    gay_seed(x)
 
-Set the global RNG seed for reproducibility.
+Set the global RNG seed. Accepts any type:
+- Integer: `gay_seed(42)`
+- String: `gay_seed("my experiment")`
+- Symbol: `gay_seed(:test_run)`
+- Array: `gay_seed([1, 2, 3])`
 """
-gay_seed(n::Int) = gay_seed!(n)
+gay_seed(n::Integer) = gay_seed!(n)
+gay_seed(x) = gay_seed!(_to_seed(x))
 
 """
     gay_space(cs::Symbol)
@@ -351,11 +588,12 @@ function __init__()
     if isdefined(Base, :active_repl) && Base.active_repl !== nothing
         @async begin
             sleep(0.1)  # Let REPL finish loading
-            init_gay_repl()
+            # Initialize SPC REPL (press SPACE to enter)
+            init_spc_repl()
         end
     else
         @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
-        @info "In REPL: init_gay_repl() to start Gay mode (press SPC to enter)"
+        @info "In REPL: init_spc_repl() for SPC mode (press SPACE to enter)"
     end
 end
 
