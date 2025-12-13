@@ -33,7 +33,7 @@ GayEnzymeExt = "Enzyme"
 GayMetalExt = "Metal"
 
 [compat]
-AMDGPU = "1"
+AMDGPU = "1, 2"
 CUDA = "5"
 Chairmarks = "1"
 ColorTypes = "0.11"
