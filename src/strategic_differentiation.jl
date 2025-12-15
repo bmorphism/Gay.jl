@@ -1,0 +1,3 @@
+module StrategicDifferentiation
+# Stub
+end

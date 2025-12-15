@@ -1,0 +1,3 @@
+module Tuning
+# Stub
+end

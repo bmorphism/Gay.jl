@@ -1,0 +1,3 @@
+module SPIRegressionBench
+# Stub
+end

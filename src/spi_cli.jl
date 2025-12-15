@@ -1,0 +1,3 @@
+module SPICLI
+# Stub
+end

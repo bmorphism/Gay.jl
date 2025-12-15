@@ -1,0 +1,3 @@
+module ProofOfColor
+# Stub
+end

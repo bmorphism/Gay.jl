@@ -1,0 +1,3 @@
+module VerificationReport
+# Stub
+end

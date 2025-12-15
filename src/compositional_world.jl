@@ -1,0 +1,3 @@
+module CompositionalWorld
+# Stub
+end

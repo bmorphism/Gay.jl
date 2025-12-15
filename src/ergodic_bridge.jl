@@ -1,0 +1,3 @@
+module ErgodicBridge
+# Stub
+end
