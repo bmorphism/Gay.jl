@@ -1,7 +1,7 @@
 # split3.jl  
 module Split3
 
-export @split3_read, @split3_write, SplitContext
+export @split3_read, @split3_write, SplitContext, split3, execute_split3
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
