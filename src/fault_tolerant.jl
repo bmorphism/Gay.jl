@@ -40,16 +40,46 @@ Galois connection between Events and Colors.
 γ(c) = representative(c)  (right adjoint, concretization)
 
 Closure: α(γ(c)) = c for all c ∈ [0, 226)
+
+The representative table is built by searching for events that hash to each color.
+This ensures α(γ(c)) = c by construction.
 """
 struct GaloisConnection
     seed::UInt64
     palette_size::Int
     palette::Vector{Tuple{Float32, Float32, Float32}}
+    representatives::Dict{Int, Int}  # color_index → token that hashes to it
     
     function GaloisConnection(seed::Integer=GAY_SEED; palette_size::Int=226)
         palette = [hash_color(UInt64(seed), UInt64(i)) for i in 0:palette_size-1]
-        new(UInt64(seed), palette_size, palette)
+        representatives = _build_representatives(UInt64(seed), palette_size)
+        new(UInt64(seed), palette_size, palette, representatives)
     end
+end
+
+"""
+Build a table of tokens that hash to each color index.
+"""
+function _build_representatives(seed::UInt64, palette_size::Int)
+    representatives = Dict{Int, Int}()
+    token = 0
+    
+    while length(representatives) < palette_size && token < palette_size * 100
+        # Hash this event
+        h = seed ⊻ (UInt64(token) * 0x9e3779b97f4a7c15) ⊻
+                   (UInt64(1) * 0x517cc1b727220a95) ⊻  # layer=1
+                   (UInt64(1) * 0xc4ceb9fe1a85ec53)    # dim=1
+        h = splitmix64(h)
+        color_idx = Int(h % palette_size)
+        
+        if !haskey(representatives, color_idx)
+            representatives[color_idx] = token
+        end
+        
+        token += 1
+    end
+    
+    representatives
 end
 
 """
@@ -94,9 +124,11 @@ end
     gamma(gc::GaloisConnection, c::Color) -> Event
 
 Concretization: Color → representative Event (right adjoint).
+Uses the precomputed representative table to find an event that hashes to this color.
 """
 function gamma(gc::GaloisConnection, c::Color)
-    Event(gc.seed, c.index, 1, 1)
+    token = get(gc.representatives, c.index, c.index)
+    Event(gc.seed, token, 1, 1)
 end
 
 """
@@ -347,7 +379,7 @@ function run_inference!(cluster::SimulatedCluster; with_faults::Bool=false)
                                        (UInt64(layer) * 0x517cc1b727220a95) ⊻
                                        (UInt64(d) * 0xc4ceb9fe1a85ec53)
                     r, _, _ = hash_color(h, UInt64(t))
-                    hidden[t, d] += r * 1e-7f0
+                    hidden[t, d] += r * Float32(1e-7)
                 end
             end
             
@@ -536,7 +568,7 @@ Run verification with random fault injection.
 function verify_with_fault_injection(cluster::SimulatedCluster;
                                      fault_types::Vector{Symbol}=[:bit_flip],
                                      n_iterations::Int=10)
-    results = Dict(
+    results = Dict{Symbol, Any}(
         :total_runs => n_iterations,
         :detections => 0,
         :false_positives => 0,

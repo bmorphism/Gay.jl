@@ -54,17 +54,55 @@ export set_backend!
 # Fast deterministic hash-based color generation
 # ═══════════════════════════════════════════════════════════════════════════
 
-"""
-    splitmix64(x::UInt64) -> UInt64
+# Use GOLDEN, MIX1, MIX2, splitmix64 from splittable.jl (included before kernels.jl)
 
-Fast high-quality hash function (SplitMix64 finalizer).
-Used for deterministic color generation in kernels.
 """
-@inline function splitmix64(x::UInt64)
-    x = xor(x, x >> 30) * 0xbf58476d1ce4e5b9
-    x = xor(x, x >> 27) * 0x94d049bb133111eb
-    xor(x, x >> 31)
+    splitmix64_mix(z::UInt64) -> UInt64
+
+Pure SplitMix64 mixing function (the finalizer part only).
+This is used for one-shot hashing where you combine seed and index.
+"""
+@inline function splitmix64_mix(z::UInt64)
+    z = ((z ⊻ (z >> 30)) * MIX1) % UInt64
+    z = ((z ⊻ (z >> 27)) * MIX2) % UInt64
+    (z ⊻ (z >> 31)) % UInt64
 end
+
+# splitmix64 is imported from splittable.jl
+
+"""
+    SplitMix64RNG
+
+Stateful SplitMix64 RNG matching Go/Python/Rust implementations.
+
+Key insight: state is incremented by GOLDEN, but the output is
+a mixing of the NEW state. The output is NOT used as the next state.
+
+# Example
+```julia
+rng = SplitMix64RNG(GAY_SEED)
+h0 = next!(rng)  # 0xf061ebbc2ca74d78
+h1 = next!(rng)  # 0x34dc5aa0b7117465
+```
+"""
+mutable struct SplitMix64RNG
+    state::UInt64
+end
+
+SplitMix64RNG(seed::Integer) = SplitMix64RNG(UInt64(seed))
+
+"""
+    next!(rng::SplitMix64RNG) -> UInt64
+
+Generate next random value, advancing internal state.
+State += GOLDEN, then mixes state (not the previous output).
+"""
+@inline function next!(rng::SplitMix64RNG)
+    rng.state = (rng.state + GOLDEN) % UInt64
+    splitmix64_mix(rng.state)
+end
+
+export SplitMix64RNG, next!, splitmix64_mix
 
 """
     hash_color(seed::UInt64, index::UInt64) -> (Float32, Float32, Float32)

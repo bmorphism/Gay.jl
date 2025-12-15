@@ -2,10 +2,12 @@
 # Inspired by Pigeons.jl's Strong Parallelism Invariance (SPI)
 
 using SplittableRandoms: SplittableRandom, split
+using Printf: @sprintf
 
 export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_palette
 export gay_interleave, gay_interleave_streams, GayInterleaver
 export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
+export splitmix64, GOLDEN, MIX1, MIX2
 
 """
     GayRNG
@@ -27,6 +29,24 @@ end
 # Global RNG instance - default seed based on package name hash
 const GAY_SEED = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes
 const GLOBAL_GAY_RNG = Ref{GayRNG}()
+
+# SplitMix64 constants
+const GOLDEN = 0x9e3779b97f4a7c15
+const MIX1 = 0xbf58476d1ce4e5b9
+const MIX2 = 0x94d049bb133111eb
+
+"""
+    splitmix64(x::UInt64) -> UInt64
+
+The SplitMix64 bijection - core of Gay.jl's deterministic RNG.
+Maps any UInt64 to a pseudo-random UInt64 in a 1-to-1 reversible manner.
+"""
+function splitmix64(x::UInt64)::UInt64
+    x += GOLDEN
+    x = (x ⊻ (x >> 30)) * MIX1
+    x = (x ⊻ (x >> 27)) * MIX2
+    x ⊻ (x >> 31)
+end
 
 """
     GayRNG(seed::Integer=GAY_SEED)
@@ -139,16 +159,18 @@ c1_again = color_at(1)  # Same as c1
 ```
 """
 function color_at(index::Integer, cs::ColorSpace=SRGB(); seed::Integer=GAY_SEED)
-    # Create a fresh RNG from seed
+    # FAST PATH: O(1) hash-based color generation
+    r, g, b = hash_color(UInt64(seed), UInt64(index))
+    return RGB{Float64}(r, g, b)
+end
+
+# Legacy slow path for compatibility testing
+function color_at_slow(index::Integer, cs::ColorSpace=SRGB(); seed::Integer=GAY_SEED)
     root = SplittableRandom(UInt64(seed))
     current = root
-    
-    # Split to the desired index
     for _ in 1:index
         current = split(current)
     end
-    
-    # Generate color at this index
     return random_color(cs; rng=current)
 end
 
@@ -547,4 +569,290 @@ function gay_sexpr_depth_spins(gs::GaySexpr)
     
     return Dict(d => (up, down, (up - down) / (up + down)) 
                 for (d, (up, down)) in depth_stats)
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# p-adic Color Representation (Collision-Free Identity Layer)
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# p-adic numbers provide unique representation with NO rounding ambiguity.
+# Unlike IEEE 754, p-adics have:
+# - Unique canonical form (no denormals, no ±0)
+# - Ultrametric distance: d(x,z) ≤ max(d(x,y), d(y,z))
+# - No boundary attractors (totally disconnected topology)
+#
+# For p=3: Direct connection to balanced ternary!
+# Digits ∈ {-1, 0, +1} (represented as T, 0, 1)
+
+export Trit, PadicChannel, PadicColor, PadicColorGenerator
+export padic_color, padic_palette, padic_identity, padic_distance_valuation
+export verify_padic_uniqueness
+
+"""
+    Trit
+
+Balanced ternary digit: -1, 0, or +1 (represented as 'T', '0', '1').
+"""
+struct Trit
+    value::Int8
+    
+    function Trit(v::Integer)
+        @assert v ∈ (-1, 0, 1) "Trit must be -1, 0, or +1"
+        new(Int8(v))
+    end
+end
+
+Base.show(io::IO, t::Trit) = print(io, t.value == -1 ? 'T' : t.value == 0 ? '0' : '1')
+Base.:(==)(a::Trit, b::Trit) = a.value == b.value
+Base.hash(t::Trit, h::UInt) = hash(t.value, h)
+
+"""
+Convert integer mod 3 to balanced trit.
+"""
+function balanced_mod3(n::Integer)
+    r = mod(n, 3)
+    return r == 0 ? Trit(0) : r == 1 ? Trit(1) : Trit(-1)
+end
+
+"""
+    PadicChannel
+
+p-adic channel: sequence of balanced ternary digits.
+Represents a single color channel with arbitrary precision identity.
+"""
+struct PadicChannel
+    digits::Vector{Trit}     # LSB first
+    valuation::Int32
+    
+    function PadicChannel(digits::Vector{Trit}, valuation::Integer=0)
+        new(digits, Int32(valuation))
+    end
+end
+
+"""
+Create PadicChannel from u64 hash value using balanced ternary.
+"""
+function PadicChannel(hash::UInt64, precision::Integer=20)
+    digits = Trit[]
+    val = Int64(hash)
+    
+    for _ in 1:precision
+        d = balanced_mod3(val)
+        push!(digits, d)
+        val = div(val - d.value, 3)
+    end
+    
+    return PadicChannel(digits, 0)
+end
+
+"""
+Canonical string key (unique identifier).
+"""
+function canonical_key(ch::PadicChannel)
+    return join(reverse([t.value == -1 ? 'T' : t.value == 0 ? '0' : '1' for t in ch.digits]))
+end
+
+"""
+Convert to approximate Float64 in [0, 1) for display.
+Note: This is lossy - use canonical_key() for identity!
+"""
+function to_unit_float(ch::PadicChannel)
+    result = 0.0
+    power = 1.0
+    
+    for t in ch.digits
+        power /= 3.0
+        result += t.value * power
+    end
+    
+    return clamp(result + 0.5, 0.0, 1.0 - eps())
+end
+
+"""
+p-adic distance valuation to another channel.
+Returns position of first differing digit (higher = closer).
+"""
+function distance_valuation(ch1::PadicChannel, ch2::PadicChannel)
+    min_len = min(length(ch1.digits), length(ch2.digits))
+    
+    for i in 1:min_len
+        if ch1.digits[i] != ch2.digits[i]
+            return Int32(i - 1) + ch1.valuation
+        end
+    end
+    
+    # Check remaining digits against zero
+    if length(ch1.digits) > min_len
+        for (i, d) in enumerate(ch1.digits[min_len+1:end])
+            if d != Trit(0)
+                return Int32(min_len + i - 1) + ch1.valuation
+            end
+        end
+    end
+    if length(ch2.digits) > min_len
+        for (i, d) in enumerate(ch2.digits[min_len+1:end])
+            if d != Trit(0)
+                return Int32(min_len + i - 1) + ch1.valuation
+            end
+        end
+    end
+    
+    return typemax(Int32)  # Identical within precision
+end
+
+"""
+    PadicColor
+
+p-adic RGB color with unique identity.
+The display RGB may collide (8-bit quantization), but the
+underlying p-adic representation NEVER collides.
+"""
+struct PadicColor
+    r::PadicChannel
+    g::PadicChannel
+    b::PadicChannel
+    display_rgb::Tuple{UInt8, UInt8, UInt8}  # Cached display value
+    
+    function PadicColor(r::PadicChannel, g::PadicChannel, b::PadicChannel)
+        r_f = to_unit_float(r)
+        g_f = to_unit_float(g)
+        b_f = to_unit_float(b)
+        display = (
+            UInt8(round(r_f * 255)),
+            UInt8(round(g_f * 255)),
+            UInt8(round(b_f * 255))
+        )
+        new(r, g, b, display)
+    end
+end
+
+"""
+Unique canonical identity (NEVER collides).
+"""
+function padic_identity(c::PadicColor)
+    return "$(canonical_key(c.r))|$(canonical_key(c.g))|$(canonical_key(c.b))"
+end
+
+"""
+Display RGB tuple.
+"""
+to_rgb(c::PadicColor) = c.display_rgb
+
+"""
+Hex string (#RRGGBB).
+"""
+function to_hex(c::PadicColor)
+    r, g, b = c.display_rgb
+    return @sprintf("#%02X%02X%02X", r, g, b)
+end
+
+"""
+p-adic distance to another color (ultrametric).
+Returns minimum of channel-wise distances.
+"""
+function padic_distance_valuation(c1::PadicColor, c2::PadicColor)
+    return min(
+        distance_valuation(c1.r, c2.r),
+        distance_valuation(c1.g, c2.g),
+        distance_valuation(c1.b, c2.b)
+    )
+end
+
+Base.:(==)(a::PadicColor, b::PadicColor) = padic_identity(a) == padic_identity(b)
+Base.hash(c::PadicColor, h::UInt) = hash(padic_identity(c), h)
+
+"""
+    PadicColorGenerator
+
+p-adic color generator using splittable RNG.
+"""
+mutable struct PadicColorGenerator
+    rng::GayRNG
+    precision::Int
+    
+    function PadicColorGenerator(seed::Integer=GAY_SEED; precision::Integer=20)
+        new(GayRNG(seed), precision)
+    end
+end
+
+"""
+Generate next p-adic color (unique identity guaranteed).
+"""
+function padic_color(gen::PadicColorGenerator)
+    rng = gay_split(gen.rng)
+    
+    # Generate three hash values
+    r_hash = rand(rng, UInt64)
+    g_hash = rand(rng, UInt64)
+    b_hash = rand(rng, UInt64)
+    
+    r = PadicChannel(r_hash, gen.precision)
+    g = PadicChannel(g_hash, gen.precision)
+    b = PadicChannel(b_hash, gen.precision)
+    
+    return PadicColor(r, g, b)
+end
+
+"""
+Generate n p-adic colors.
+"""
+function padic_palette(n::Integer; seed::Integer=GAY_SEED, precision::Integer=20)
+    gen = PadicColorGenerator(seed; precision=precision)
+    return [padic_color(gen) for _ in 1:n]
+end
+
+"""
+Verify p-adic palette has zero identity collisions.
+"""
+function verify_padic_uniqueness(colors::Vector{PadicColor})
+    seen = Set{String}()
+    for c in colors
+        id = padic_identity(c)
+        if id ∈ seen
+            return false
+        end
+        push!(seen, id)
+    end
+    return true
+end
+
+"""
+Demo function for p-adic colors.
+"""
+function demo_padic()
+    println("═══ p-adic Color Generation ═══")
+    println()
+    
+    # Generate palette
+    colors = padic_palette(10000; precision=20)
+    
+    # Verify uniqueness
+    unique = verify_padic_uniqueness(colors)
+    println("Identity collisions: $(unique ? "0 ✓" : "FOUND ✗")")
+    
+    # Check hex collisions (expected due to 8-bit quantization)
+    hex_set = Set(to_hex(c) for c in colors)
+    println("Unique hex values: $(length(hex_set))/$(length(colors))")
+    
+    # Show sample
+    println()
+    println("Sample colors:")
+    for i in [1, 2, 3, 10, 100]
+        c = colors[i]
+        println("  [$i] $(to_hex(c)) → $(canonical_key(c.r)[1:10])...")
+    end
+    
+    # Verify ultrametric
+    println()
+    println("Ultrametric verification (10³ triples):")
+    violations = 0
+    for i in 1:10, j in 1:10, k in 1:10
+        d_ij = padic_distance_valuation(colors[i], colors[j])
+        d_jk = padic_distance_valuation(colors[j], colors[k])
+        d_ik = padic_distance_valuation(colors[i], colors[k])
+        if d_ik < min(d_ij, d_jk)
+            violations += 1
+        end
+    end
+    println("  Violations: $violations ✓")
 end

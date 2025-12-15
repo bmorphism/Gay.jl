@@ -16,6 +16,10 @@ include("colorspaces.jl")
 # Include splittable RNG for deterministic color generation
 include("splittable.jl")
 export color_at, colors_at, palette_at, GAY_SEED
+export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_palette
+export gay_interleave, gay_interleave_streams, GayInterleaver
+export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
+export splitmix64, GOLDEN, MIX1, MIX2
 
 # Include custom REPL
 include("repl.jl")
@@ -187,6 +191,22 @@ include("serialization.jl")
 # Include QUIC path probe coloring
 include("quic.jl")
 
+# Include QUIC interleaved streams
+include("quic_interleave.jl")
+export QUICInterleaver, InterleavedStream, InterleaverHopState
+export interleave!, next_stream_color!, combined_fingerprint
+export verify_interleave_spi, hop_state, from_hop_state
+export xor_color, visualize_interleave, demo_quic_interleave
+
+# Include Triadic Subagents (Synthetic 3-Agent Parallelism via GF(3))
+include("triadic_subagents.jl")
+using .TriadicSubagents
+export Polarity, MINUS, ERGODIC, PLUS
+export TriadicAgent, TriadicSubagents
+export sample_agent!, parallel_sample!, combined_fingerprint
+export verify_triadic_spi, phase_to_polarity, polarity_twist
+export demo_triadic_subagents
+
 # Include deterministic test tracking
 include("tracking.jl")
 
@@ -313,6 +333,14 @@ export create_verse, partition, pushdown!, pullup!, resolve!
 export verse_fingerprint, verse_color, verify_multiverse_laws
 export HolographicColorGame, game_state, make_move!, check_win
 export world_multiverse, demo_holographic_game
+
+# Include Marsaglia-Bumpus Tests (Statistical + Compositional SPI verification)
+include("marsaglia_bumpus_tests.jl")
+using .MarsagliaBumpusTests
+export run_marsaglia_suite, run_bumpus_suite, full_spi_audit
+export birthday_spacing_test, runs_test, permutation_test, spectral_test
+export adhesion_width_test, sheaf_gluing_test, tree_decomposition_test
+export genesis_handoff_test, split_correlation_test, run_genesis_suite
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
