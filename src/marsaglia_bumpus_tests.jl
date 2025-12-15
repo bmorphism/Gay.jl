@@ -225,8 +225,10 @@ function spectral_test(n::Int=1024, seed::Integer=GAY_SEED)
     
     # For random signal, power should be roughly uniform
     mean_power = mean(power)
-    threshold = mean_power * 10  # Peak shouldn't be >10x mean
-    
+    # Threshold of 12x mean gives ~0.5% false positive rate (see issue #188)
+    # Previous threshold of 10x had ~1.7% FP rate across seeds 1-1000
+    threshold = mean_power * 12
+
     passed = max_peak < threshold
     
     (passed=passed, max_peak=max_peak, mean_power=mean_power,
@@ -564,7 +566,7 @@ function run_marsaglia_suite(seed::Integer=GAY_SEED)
     print("4. Spectral Test... ")
     results[:spectral] = spectral_test(1024, seed)
     println(results[:spectral].passed ? "✓ PASS" : "✗ FAIL")
-    @printf("   Peak/Mean ratio: %.2f (threshold: 10.0)\n",
+    @printf("   Peak/Mean ratio: %.2f (threshold: 12.0)\n",
             results[:spectral].ratio)
     
     all_passed = all(r.passed for r in values(results))
