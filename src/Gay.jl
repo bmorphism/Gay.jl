@@ -342,6 +342,18 @@ export birthday_spacing_test, runs_test, permutation_test, spectral_test
 export adhesion_width_test, sheaf_gluing_test, tree_decomposition_test
 export genesis_handoff_test, split_correlation_test, run_genesis_suite
 
+# Include Sheaf-ACSet Integration (StructuredDecompositions.jl bridge)
+# Bridges Bumpus's decide_sheaf_tree_shape with chromatic identity
+include("sheaf_acset_integration.jl")
+using .SheafACSetIntegration
+export ColorMorphism, ChromaticBag, ChromaticAdhesion, ChromaticDecomposition
+export neighbors, local_neighborhood
+export chromatic_adhesion_filter, decide_chromatic_sheaf
+export ThreadAncestryNode, ThreadAncestryForest, to_chromatic_decomposition
+export RewritingGadget, apply_gadget
+export TritValue, TernaryAddress, AdhesionFilterOp, ADHESION_FILTER_OPS
+export ternary_execution_trace, seed_1069_signature
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
 # ═══════════════════════════════════════════════════════════════════════════
