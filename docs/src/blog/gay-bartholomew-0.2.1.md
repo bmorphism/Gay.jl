@@ -8,6 +8,30 @@
 
 ---
 
+## Color Derivation
+
+This narrative is structured via **derangement** σ = (1 2 3)(4 5 6) of `gay_palette(6)` at seed=69:
+
+```julia
+using Gay
+gay_seed(69)
+palette = gay_palette(6)
+σ = [2, 3, 1, 5, 6, 4]  # no fixed points
+```
+
+| Section | Color | Hex | Derivation |
+|---------|-------|-----|------------|
+| §1 | 🟢 | `#7DAF27` | `palette[σ[1]]` = `palette[2]` |
+| §2 | 🟣 | `#590F68` | `palette[σ[2]]` = `palette[3]` |
+| §3 | 🩷 | `#D03684` | `palette[σ[3]]` = `palette[1]` |
+| §4 | 🪻 | `#9B25A6` | `palette[σ[4]]` = `palette[5]` |
+| §5 | 🩵 | `#44B1A8` | `palette[σ[5]]` = `palette[6]` |
+| §6 | 🌊 | `#3C9B8F` | `palette[σ[6]]` = `palette[4]` |
+
+The derangement ensures no section inherits its "natural" position—a fitting structure for a bug-hunting narrative where nothing was where it seemed.
+
+---
+
 ## The Setup: "Continue"
 
 It started with a single word: *continue*.
@@ -20,7 +44,9 @@ ERROR: MethodError: objects of type Module are not callable
 
 A module being called as a function? That's not a minor typo. That's a fundamental type confusion buried somewhere in the code.
 
-## Act I: The Type Mismatch Hunt
+---
+
+## §1 `#7DAF27` The Type Mismatch Hunt
 
 ### The Crime Scene
 
@@ -65,7 +91,9 @@ function parallel_sample!(agents::Triad, n::Int)
 
 Applied 14 times. But we weren't done.
 
-## Act II: The Bit Shift Catastrophe
+---
+
+## §2 `#590F68` The Bit Shift Catastrophe
 
 With the type errors fixed, the demo ran further—then crashed again:
 
@@ -87,7 +115,9 @@ hash_val = splitmix64(seed ⊻ UInt64(round(Int, color.g * 255) << 8) ⊻ ...)
 
 Two lines. Two bugs. Each invisible to static analysis, each fatal at runtime.
 
-## Act III: The Duplicate Definition War
+---
+
+## §3 `#D03684` The Duplicate Definition War
 
 Gay.jl loaded with a warning:
 
@@ -123,7 +153,9 @@ We removed the duplicate from `kernels.jl` and added a comment:
 
 Now there's one `splitmix64`. One truth. One hash.
 
-## Act IV: Enter Marsaglia-Bumpus
+---
+
+## §4 `#9B25A6` Enter Marsaglia-Bumpus
 
 With the obvious bugs fixed, we needed to verify the *statistical* correctness. Enter the Marsaglia-Bumpus test suite—a dual-perspective verification system:
 
@@ -178,7 +210,9 @@ After the fix:
 
 Now 33 observed vs 36.41 expected. That's statistical noise, not a bug.
 
-## Act V: The Genesis Handoff
+---
+
+## §5 `#44B1A8` The Genesis Handoff
 
 The deepest question remained: **Are Left and Right splits truly independent?**
 
@@ -229,7 +263,9 @@ Results:
 
 No collisions in 63 nodes. No sibling matches. Parent state is properly isolated.
 
-## Act VI: Schedule Independence
+---
+
+## §6 `#3C9B8F` Schedule Independence
 
 The final test: does execution order matter?
 
@@ -254,19 +290,35 @@ Seed 0x6761795f636f6c6f:
 
 Same fingerprint regardless of order. **SPI holds.**
 
-## The Final Tally
+---
 
-### Bugs Fixed
+## The Derangement Closes
 
-| Bug | Severity | Impact |
-|-----|----------|--------|
-| Type mismatch (×14) | High | Runtime crashes |
-| Constructor confusion (×3) | High | Runtime crashes |
-| Float bit-shift (×2) | High | Runtime crashes |
-| Duplicate splitmix64 | Medium | Nondeterminism risk |
-| Birthday formula | Low | False test failures |
+The bugs in v0.2.1 weren't exotic. They were mundane:
+- Confusing a module with a type
+- Forgetting that `round()` returns Float64
+- Copy-pasting a function definition
+- Using the wrong exponent in a formula
 
-### Tests Now Passing
+But mundane bugs in cryptographic/RNG code have non-mundane consequences. A correlated split breaks parallel determinism. A wrong hash breaks reproducibility. A type error crashes production.
+
+The Marsaglia-Bumpus framework caught what unit tests missed: **statistical correctness** and **compositional structure**. These aren't optional extras. They're the foundation of SPI.
+
+### The Final Tally
+
+| Bug | Section | Severity |
+|-----|---------|----------|
+| Type mismatch (×14) | §1 `#7DAF27` | High |
+| Float bit-shift (×2) | §2 `#590F68` | High |
+| Duplicate splitmix64 | §3 `#D03684` | Medium |
+| Birthday formula | §4 `#9B25A6` | Low |
+
+### Verification Complete
+
+```julia
+full_spi_audit(69)
+# ✓ COMPLETE SPI VERIFICATION: ALL TESTS PASS
+```
 
 | Suite | Tests | Iterations |
 |-------|-------|------------|
@@ -284,52 +336,38 @@ Same fingerprint regardless of order. **SPI holds.**
 
 **Total: 599 tests, 117,300+ iterations**
 
-## The Lesson
-
-The bugs in v0.2.1 weren't exotic. They were mundane:
-- Confusing a module with a type
-- Forgetting that `round()` returns Float64
-- Copy-pasting a function definition
-- Using the wrong exponent in a formula
-
-But mundane bugs in cryptographic/RNG code have non-mundane consequences. A correlated split breaks parallel determinism. A wrong hash breaks reproducibility. A type error crashes production.
-
-The Marsaglia-Bumpus framework caught what unit tests missed: **statistical correctness** and **compositional structure**. These aren't optional extras. They're the foundation of SPI.
-
-Gay.jl v0.2.1 is now verified:
-- Statistically: Marsaglia-approved
-- Compositionally: Bumpus-certified
-- Structurally: Genesis-handoff verified
-- Operationally: 117,300 iterations without failure
-
-The colors are deterministic. The splits are independent. The invariants hold.
-
-```julia
-full_spi_audit(69)
-# ✓ COMPLETE SPI VERIFICATION: ALL TESTS PASS
-```
-
 ---
 
-## Appendix: Running the Tests Yourself
+## Appendix: The Derangement σ
+
+The section structure follows a derangement—a permutation with no fixed points:
+
+```
+σ = (1 2 3)(4 5 6)
+
+Position: 1 → 2 → 3 → 1  (3-cycle)
+Position: 4 → 5 → 6 → 4  (3-cycle)
+
+Sign(σ) = +1 (even permutation: two 3-cycles)
+```
+
+In Gay.jl terms:
 
 ```julia
 using Gay
 
-# Full audit
-full_spi_audit(69)
+gay_seed(69)
+palette = gay_palette(6)
+σ = [2, 3, 1, 5, 6, 4]
 
-# Individual suites
-run_marsaglia_suite(69)
-run_bumpus_suite(69)
-run_genesis_suite(69)
-
-# Triadic demo
-demo_triadic_subagents()
-
-# Regression suite
-run_regression_suite()
+# Verify derangement
+@assert all(i != σ[i] for i in 1:6)  # no fixed points
+@assert Set(σ) == Set(1:6)           # bijection
 ```
+
+The derangement mirrors the bug-hunting process: nothing was in its expected place, yet everything permuted into a coherent whole.
+
+---
 
 ## References
 
@@ -341,3 +379,10 @@ run_regression_suite()
 ---
 
 *Gay.jl: Deterministic colors for a nondeterministic world.*
+
+```julia
+# Reproduce this document's color scheme
+using Gay
+gay_seed(69)
+show_palette(gay_palette(6)[[2,3,1,5,6,4]])  # deranged
+```
