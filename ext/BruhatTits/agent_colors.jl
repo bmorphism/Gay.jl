@@ -2,8 +2,6 @@
 module AgentColors
 using Random
 
-export ColoredAgent, spawn_agents, agent_read!, agent_write!, fingerprint, GAY_SEED
-
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
 sm64(z) = let z = z + 0x9E3779B97F4A7C15

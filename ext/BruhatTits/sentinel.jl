@@ -1,6 +1,6 @@
 module Sentinel
 
-export ColorViolation, validate_agent, run_sentinels, SentinelState
+export ColorViolation, validate_agent, run_sentinels
 
 struct ColorViolation
     agent_id::Int
