@@ -1,0 +1,3 @@
+module AmpThreads
+# Stub
+end

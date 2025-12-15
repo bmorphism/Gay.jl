@@ -1,0 +1,3 @@
+module Tower
+# Stub
+end

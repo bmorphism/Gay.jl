@@ -1,0 +1,3 @@
+module ThreadFindings
+# Stub
+end

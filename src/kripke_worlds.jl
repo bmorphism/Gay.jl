@@ -1,0 +1,3 @@
+module KripkeWorlds
+# Stub
+end
