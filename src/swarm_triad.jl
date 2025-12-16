@@ -1,6 +1,8 @@
 # Swarm Triad - Distributed triadic coordination for Gay mining
 # Generated to fix missing include
 
+module SwarmTriad
+
 export demo_swarm_triad, SwarmTriadState, coordinate_swarm
 
 const GAY_SEED_SWARM = UInt64(0x6761795f636f6c6f)
@@ -77,3 +79,5 @@ function demo_swarm_triad()
     
     final_fp
 end
+
+end # module SwarmTriad

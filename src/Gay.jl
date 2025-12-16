@@ -258,6 +258,13 @@ include("xypic.jl")
 
 # Include SDF-style Propagator system with chromatic identity
 include("propagator.jl")
+
+# Include Quantum Hamlet: BE CNOT BE in the Quantum Wallet
+include("quantum_hamlet.jl")
+using .QuantumHamlet
+export QuantumWallet, ApeState, sheafify!, measure_wallet!
+export zx_color_conservation_experiment, generate_hamlet_ascii
+export ApeACSet, BlogpostMorphism, run_billion_times, demo_quantum_hamlet
 include("propagator_lisp.jl")
 export Propagator, PropagatorLisp
 
@@ -387,17 +394,6 @@ export map_to_gamut, is_in_gamut, gamut_distance
 export learn_gamut_map!, gamut_loss, chroma_preservation_loss
 export GayChain, chain_to_gamut, verify_chain_in_gamut, process_gay_chain
 export enzyme_gamut_gradient, enzyme_learn_gamut!  # Stubs, overridden by GayEnzymeExt
-
-# Include Gay Hyperdoctrines - chromatic categorical logic
-include("hyperdoctrine.jl")
-using .Hyperdoctrine
-export GayContext, GayType, GayTerm, GayPredicate, GaySubstitution
-export GayHyperdoctrine, predicate_lattice, substitution_functor
-export existential, universal, beck_chevalley_check
-export ChromaticPredicate, predicate_color, predicate_fingerprint
-export conjunction, disjunction, implication, negation, ∧, ∨, →, ¬
-export truth, falsity, entails, ∃, ∀
-export demonstrate_hyperdoctrine
 
 # Include GayMC Graph Algorithms - chromatic graph algorithms with SPI
 include("gaymc_graph.jl")
@@ -863,6 +859,18 @@ export ParaConsapevolezzaAblativa, integrate_ablative!, awareness_source
 export CPTColor, time_reverse_color
 export LATIN, ITALIAN, ENGLISH, RUSSIAN
 export demo_ablative_consapevolezza
+
+# Include Gay E Integration (core constants and utilities for chromatic propagator)
+include("gay_e_integration.jl")
+using .GayEIntegration
+export GAY_E_SEED, GAY_IGOR_SEED, EULER_BITS, mix64, gay_seed, gay_color
+export conserved_combine, DialectColors, lisp_dialect, julia_dialect
+export ansi_color, ansi_bg, ANSI_RESET, OperatorClass
+
+# TODO: The following stashed modules need completion before integration:
+# - chromatic_propagator.jl (needs Propagator module fixes)
+# - containerization_gay.jl (needs RootfsBuilder implementation)
+# - games.jl (needs Games module exports)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Lisp bindings for color operations
