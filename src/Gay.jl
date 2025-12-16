@@ -1902,6 +1902,7 @@ export verify_pentagon, verify_hexagon, verify_triangle
 export verify_coherence, probe_coherence, world_categorical_foundations
 export detect_coherence_obstruction, inject_coherence_violation
 export CoherenceObstruction, probe_obstruction, world_coherence_detection
+export verify_crdt_cohomology, probe_crdt_consistency, world_crdt_cohomology
 
 # Include Seed Sonification - HSL/Polarity/XOR → Audio (Issue #190)
 include("seed_sonification.jl")
