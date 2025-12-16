@@ -262,13 +262,191 @@ function Enzyme.EnzymeRules.forward(
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
+# GamutLearnable Enzyme Support
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    enzyme_gamut_loss(params_vec::Vector{Float64}, colors_lab::Matrix{Float64},
+                      target_gamut::Symbol) -> Float64
+
+Enzyme-compatible loss function for gamut mapping.
+params_vec contains flattened GamutParameters.
+colors_lab is Nx3 matrix of Lab colors.
+"""
+function enzyme_gamut_loss(params_vec::Vector{Float64}, colors_lab::Matrix{Float64},
+                          target_gamut::Symbol)
+    # Unpack parameters
+    chroma_compress = params_vec[1]
+    chroma_L_a = params_vec[2]
+    chroma_L_b = params_vec[3]
+    chroma_L_c = params_vec[4]
+    chroma_H_cos1 = params_vec[5]
+    chroma_H_sin1 = params_vec[6]
+    chroma_H_cos2 = params_vec[7]
+    chroma_H_sin2 = params_vec[8]
+    lightness_boost = params_vec[9]
+
+    n_colors = size(colors_lab, 1)
+    total_loss = 0.0
+
+    # Base chroma limits for target gamut
+    base_chroma = if target_gamut == :srgb
+        130.0
+    elseif target_gamut == :p3
+        150.0
+    else  # :rec2020
+        180.0
+    end
+
+    for i in 1:n_colors
+        L = colors_lab[i, 1]
+        a = colors_lab[i, 2]
+        b = colors_lab[i, 3]
+
+        # Original chroma and hue
+        C_orig = sqrt(a^2 + b^2)
+        H_rad = atan(b, a)
+        H_deg = H_rad * 180.0 / π
+
+        # Lightness factor for gamut bounds
+        L_norm = L / 100.0
+        L_gamut_factor = if L < 20.0
+            L / 20.0
+        elseif L > 80.0
+            (100.0 - L) / 20.0
+        else
+            1.0
+        end
+
+        # Hue factor for gamut bounds
+        H_gamut_factor = 1.0 + 0.2 * cos(H_rad - π/3)
+        max_chroma = base_chroma * L_gamut_factor * H_gamut_factor
+
+        # Compute chroma scale from parameters
+        L_scale = chroma_L_a * L_norm^2 + chroma_L_b * L_norm + chroma_L_c
+        H_scale = 1.0 + chroma_H_cos1 * cos(H_rad) + chroma_H_sin1 * sin(H_rad) +
+                  chroma_H_cos2 * cos(2*H_rad) + chroma_H_sin2 * sin(2*H_rad)
+
+        scale = chroma_compress * L_scale * H_scale
+        scale = min(max(scale, 0.1), 1.0)  # Clamp with differentiable min/max
+
+        # New chroma
+        C_new = C_orig * scale
+        C_new = min(C_new, max_chroma)
+
+        # Loss components
+        # 1. Gamut compliance (penalize if still outside)
+        compliance_loss = max(0.0, C_new - max_chroma)^2
+
+        # 2. Chroma preservation (penalize excessive reduction)
+        reduction = max(0.0, C_orig - C_new) / max(C_orig, 1e-6)
+        preservation_loss = reduction^2
+
+        # 3. Smoothness regularization
+        reg_loss = 0.001 * (chroma_H_cos1^2 + chroma_H_sin1^2 +
+                            chroma_H_cos2^2 + chroma_H_sin2^2)
+
+        # Weighted combination
+        total_loss += compliance_loss + 0.5 * preservation_loss + reg_loss
+    end
+
+    return total_loss / n_colors
+end
+
+"""
+    enzyme_train_gamut!(params::GamutParameters, colors::Vector{Lab};
+                        epochs=100, lr=0.01, verbose=true)
+
+Train GamutParameters using Enzyme autodiff.
+"""
+function enzyme_train_gamut!(params::GamutParameters, colors::Vector{Lab};
+                             epochs::Int=100, lr::Float64=0.01, verbose::Bool=true)
+
+    # Convert colors to matrix format
+    n_colors = length(colors)
+    colors_lab = zeros(n_colors, 3)
+    for i in 1:n_colors
+        colors_lab[i, 1] = colors[i].l
+        colors_lab[i, 2] = colors[i].a
+        colors_lab[i, 3] = colors[i].b
+    end
+
+    # Flatten parameters
+    params_vec = Float64[
+        params.chroma_compress,
+        params.chroma_L_a,
+        params.chroma_L_b,
+        params.chroma_L_c,
+        params.chroma_H_cos1,
+        params.chroma_H_sin1,
+        params.chroma_H_cos2,
+        params.chroma_H_sin2,
+        params.lightness_boost
+    ]
+
+    # Shadow for gradients
+    d_params = zeros(9)
+
+    for epoch in 1:epochs
+        # Compute loss
+        loss = enzyme_gamut_loss(params_vec, colors_lab, params.target_gamut)
+
+        if verbose && epoch % 10 == 0
+            println("Epoch $epoch: Loss = $(round(loss, digits=6))")
+        end
+
+        # Compute gradients using Enzyme
+        fill!(d_params, 0.0)
+        autodiff(
+            Reverse,
+            enzyme_gamut_loss,
+            Active,
+            Duplicated(params_vec, d_params),
+            Const(colors_lab),
+            Const(params.target_gamut)
+        )
+
+        # Update parameters with gradient descent
+        for i in 1:9
+            params_vec[i] -= lr * d_params[i]
+        end
+
+        # Clamp to valid ranges
+        params_vec[1] = clamp(params_vec[1], 0.1, 1.0)  # chroma_compress
+        params_vec[9] = clamp(params_vec[9], 0.0, 0.2)  # lightness_boost
+
+        # Early stopping
+        if loss < 1e-5
+            if verbose
+                println("Converged at epoch $epoch")
+            end
+            break
+        end
+    end
+
+    # Update params struct
+    params.chroma_compress = params_vec[1]
+    params.chroma_L_a = params_vec[2]
+    params.chroma_L_b = params_vec[3]
+    params.chroma_L_c = params_vec[4]
+    params.chroma_H_cos1 = params_vec[5]
+    params.chroma_H_sin1 = params_vec[6]
+    params.chroma_H_cos2 = params_vec[7]
+    params.chroma_H_sin2 = params_vec[8]
+    params.lightness_boost = params_vec[9]
+
+    return params
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
 # Export Enzyme-specific functions
 # ═══════════════════════════════════════════════════════════════════════════
 
 export enzyme_forward_color, enzyme_gradient_params, enzyme_learn_colorspace!
+export enzyme_gamut_loss, enzyme_train_gamut!
 
 function __init__()
-    @info "Gay.jl: Enzyme extension loaded - autodiff enabled for LearnableColorSpace"
+    @info "Gay.jl: Enzyme extension loaded - autodiff enabled for LearnableColorSpace and GamutLearnable"
 end
 
 end # module GayEnzymeExt
