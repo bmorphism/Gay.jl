@@ -45,6 +45,12 @@ export gay_color, gay_rgb, gay_hsv, gay_hash, gay_fingerprint, gay_verify_spi
 export to_runtime, to_colorspace, to_precision, to_eval
 export materialize, defer, force, gay_mix, gay_complement
 
+# Include GamutLearnable - Enzyme-optimized gamut mapping
+include("gamut_learnable.jl")
+using .GamutLearnable
+export GamutParameters, GamutMapper, map_to_gamut, train_gamut_mapper!
+export gamut_loss, in_gamut, get_gamut_bounds, map_color_chain
+
 # Include custom REPL
 include("repl.jl")
 
@@ -59,13 +65,13 @@ include("kernels.jl")
 include("parallel.jl")
 
 # Include maximally parallel seed search (Fugue-inspired minimal syncpoints)
-include("parallel_seed_search.jl")
-export find_seeds_parallel, TARGET_COLORS, SearchResult, demo_parallel_search
+# include("parallel_seed_search.jl")
+# export find_seeds_parallel, TARGET_COLORS, SearchResult, demo_parallel_search
 
 # Include maximally parallel genetic search
-include("genetic_search.jl")
-export GeneticSearchConfig, GeneticSearchResult
-export genetic_search_parallel, island_evolution, demo_genetic_search
+# include("genetic_search.jl")
+# export GeneticSearchConfig, GeneticSearchResult
+# export genetic_search_parallel, island_evolution, demo_genetic_search
 
 # Include GayMC - Colored Monte Carlo with SPI
 include("gaymc.jl")
@@ -116,16 +122,16 @@ export GaloisConnection, alpha, gamma, verify_closure, verify_all_closures
 export demo_fault_tolerant
 
 # Include Chaos Vibing - Maximal fault injection into parallel causal chains
-include("chaos_vibing.jl")
-export ChaosConfig, ChaosResult, ChaosVibe
-export inject_chaos!, run_chaos_campaign, chaos_vibe!
-export CausalChain, break_chain!, verify_chain, chain_fingerprint
-export demo_chaos_vibing
+# include("chaos_vibing.jl")
+# export ChaosConfig, ChaosResult, ChaosVibe
+# export inject_chaos!, run_chaos_campaign, chaos_vibe!
+# export CausalChain, break_chain!, verify_chain, chain_fingerprint
+# export demo_chaos_vibing
 
 # Include Push-Pull Sequence Verification
-include("push_pull_sequence.jl")
-using .PushPullSequence
-export SequenceColorStream, push_token!, pull_verify!
+# include("push_pull_sequence.jl")
+# using .PushPullSequence
+# export SequenceColorStream, push_token!, pull_verify!
 export StreamingVerifier, push_chunk!, verify_chunk!
 export demo_push_pull_sequence
 
@@ -136,19 +142,19 @@ include("abductive.jl")
 include("bench.jl")
 
 # Include SPI Regression Benchmarks
-include("bench_spi_regression.jl")
-using .SPIRegressionBench
-export run_spi_regression_tests, calibrate_baselines
+# include("bench_spi_regression.jl")
+# using .SPIRegressionBench
+# export run_spi_regression_tests, calibrate_baselines
 
 # Include Concept Tensor (69³ parallel interaction space)
-include("concept_tensor.jl")
-using .ConceptTensor
-export ConceptLattice, step_parallel!, verify_monoid_laws
-export interpolate_subtext!, extrapolate_superstructure!, interact!
-export lattice_magnetization, lattice_fingerprint, propagate_all!
-export demo_concept_tensor, demo_exponential, demo_higher_structure
-export ConceptMorphism, identity_morphism, compose, eval_morphism
-export concept_to_morphism, verify_exponential_laws, morphism_fingerprint
+# include("concept_tensor.jl")
+# using .ConceptTensor
+# export ConceptLattice, step_parallel!, verify_monoid_laws
+# export interpolate_subtext!, extrapolate_superstructure!, interact!
+# export lattice_magnetization, lattice_fingerprint, propagate_all!
+# export demo_concept_tensor, demo_exponential, demo_higher_structure
+# export ConceptMorphism, identity_morphism, compose, eval_morphism
+# export concept_to_morphism, verify_exponential_laws, morphism_fingerprint
 export step_as_morphism, iterate_morphism, fixed_points, orbit
 export trace_morphism, verify_trace_laws, self_application
 
