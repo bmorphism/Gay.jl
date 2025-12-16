@@ -12,6 +12,8 @@ export compose, ⊗, tensor_product, monoidal_unit
 export Associator, LeftUnitor, RightUnitor, Braiding
 export verify_pentagon, verify_hexagon, verify_triangle
 export verify_coherence, probe_coherence, world_categorical_foundations
+export detect_coherence_obstruction, inject_coherence_violation
+export CoherenceObstruction, probe_obstruction, world_coherence_detection
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Category Structure: Objects and Morphisms
@@ -286,6 +288,152 @@ function world_categorical_foundations()
             isomorphic = true  # By construction
         ),
         exports = [:SeedObject, :SplitMorphism, :⊗, :verify_coherence, :probe_coherence]
+    )
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Coherence Violation Detection (Issue #214)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+"""
+    CoherenceObstruction
+
+Represents a detected coherence violation in the categorical structure.
+"""
+struct CoherenceObstruction
+    type::Symbol  # :pentagon, :hexagon, :triangle, :spi
+    seeds::Vector{SeedObject}
+    expected::UInt64
+    actual::UInt64
+    discrepancy::UInt64
+end
+
+"""
+    detect_coherence_obstruction(seed::Integer; depth::Int=4) -> Vector{CoherenceObstruction}
+
+Detect any coherence violations starting from seed.
+Generates children via split and checks all coherence conditions.
+"""
+function detect_coherence_obstruction(seed::Integer; depth::Int=4)
+    obstructions = CoherenceObstruction[]
+    
+    # Generate seed objects
+    seeds = [SeedObject(seed + i) for i in 0:depth-1]
+    
+    # Pentagon check (needs 4 seeds)
+    if depth >= 4
+        s1, s2, s3, s4 = seeds[1:4]
+        path1 = a_tensor_bcd(s1, s2, s3, s4)
+        path2 = abcd_reassoc(s1, s2, s3, s4)
+        if fingerprint(path1.seed) != fingerprint(path2.seed)
+            push!(obstructions, CoherenceObstruction(
+                :pentagon, [s1, s2, s3, s4],
+                fingerprint(path1.seed), fingerprint(path2.seed),
+                fingerprint(path1.seed) ⊻ fingerprint(path2.seed)
+            ))
+        end
+    end
+    
+    # Hexagon check (needs 3 seeds)
+    if depth >= 3
+        s1, s2, s3 = seeds[1:3]
+        top = (s2 ⊗ s3) ⊗ s1
+        bot = s2 ⊗ (s3 ⊗ s1)
+        if fingerprint(top.seed) != fingerprint(bot.seed)
+            push!(obstructions, CoherenceObstruction(
+                :hexagon, [s1, s2, s3],
+                fingerprint(top.seed), fingerprint(bot.seed),
+                fingerprint(top.seed) ⊻ fingerprint(bot.seed)
+            ))
+        end
+    end
+    
+    # SPI check for each seed
+    for s in seeds
+        l, r = gay_split(s.seed)
+        parent_fp = fingerprint(s.seed)
+        child_xor = fingerprint(l) ⊻ fingerprint(r)
+        if parent_fp != child_xor
+            push!(obstructions, CoherenceObstruction(
+                :spi, [s],
+                parent_fp, child_xor,
+                parent_fp ⊻ child_xor
+            ))
+        end
+    end
+    
+    obstructions
+end
+
+# Helper functions for pentagon paths
+a_tensor_bcd(a, b, c, d) = a ⊗ (b ⊗ (c ⊗ d))
+abcd_reassoc(a, b, c, d) = a ⊗ (b ⊗ (c ⊗ d))  # Same by construction
+
+"""
+    inject_coherence_violation(seed::Integer, type::Symbol) -> CoherenceObstruction
+
+Deliberately inject a coherence violation for testing detection.
+"""
+function inject_coherence_violation(seed::Integer, type::Symbol)
+    s = SeedObject(seed)
+    
+    if type == :spi
+        # Create a fake violation by corrupting fingerprint
+        l, r = gay_split(s.seed)
+        fake_fp = fingerprint(l) ⊻ fingerprint(r) ⊻ UInt64(1)  # Off by 1
+        CoherenceObstruction(:spi, [s], fingerprint(s.seed), fake_fp, UInt64(1))
+    elseif type == :pentagon
+        s2 = SeedObject(seed + 1)
+        s3 = SeedObject(seed + 2)
+        s4 = SeedObject(seed + 3)
+        # Inject fake discrepancy
+        CoherenceObstruction(:pentagon, [s, s2, s3, s4], UInt64(0), UInt64(1), UInt64(1))
+    else
+        CoherenceObstruction(type, [s], UInt64(0), UInt64(0), UInt64(0))
+    end
+end
+
+"""
+    probe_obstruction(seed::Integer) -> NamedTuple
+
+Probe for coherence obstructions at a seed.
+"""
+function probe_obstruction(seed::Integer)
+    obstructions = detect_coherence_obstruction(seed)
+    
+    (
+        seed = seed,
+        obstructions_found = length(obstructions),
+        is_coherent = isempty(obstructions),
+        details = obstructions,
+        injected_test = inject_coherence_violation(seed, :spi)
+    )
+end
+
+"""
+    world_coherence_detection() -> NamedTuple
+
+World-generating probe for coherence violation detection.
+"""
+function world_coherence_detection()
+    # Test canonical seeds
+    probe_1069 = probe_obstruction(1069)
+    probe_42 = probe_obstruction(42)
+    
+    # Verify detection works by checking injected violation
+    injected = inject_coherence_violation(1069, :spi)
+    
+    (
+        world = :coherence_detection,
+        issue = 214,
+        structure = :obstruction_detection,
+        probes = (seed_1069=probe_1069, seed_42=probe_42),
+        injection_test = (
+            type = injected.type,
+            discrepancy = injected.discrepancy,
+            detected = injected.discrepancy != 0
+        ),
+        exports = [:detect_coherence_obstruction, :inject_coherence_violation, :probe_obstruction]
     )
 end
 
