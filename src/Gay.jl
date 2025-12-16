@@ -1893,6 +1893,14 @@ export spectral_quality, chi_squared_uniformity, serial_correlation
 export world_gayrng, world_incremental_hashing, world_distributed_fingerprint
 export world_monoidal_coherence, world_statistical_quality
 
+# Include Categorical Foundations - Symmetric Monoidal Category for gay_split (Issue #215)
+include("categorical_foundations.jl")
+using .CategoricalFoundations
+export SeedObject, SeedMorphism, SplitMorphism, NextMorphism
+export Associator, LeftUnitor, RightUnitor, Braiding
+export verify_pentagon, verify_hexagon, verify_triangle
+export verify_coherence, probe_coherence, world_categorical_foundations
+
 # Include Seed Sonification - HSL/Polarity/XOR → Audio (Issue #190)
 include("seed_sonification.jl")
 using .SeedSonification
