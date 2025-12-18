@@ -19,7 +19,7 @@ using Base.Threads: @threads, nthreads
 export SpectralColorBridge, ArpackSeed, HodgeLaplacian
 export color_eigenvector, verify_spectral_spi, eigencolor_fingerprint
 export simplicial_hodge, chromatic_spectral_clustering
-export demo_spectral_bridge
+export world_spectral_bridge
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Arpack Seed ↔ Gay Seed Bridge
@@ -418,108 +418,106 @@ function simple_kmeans(X::AbstractMatrix, k::Int; max_iter::Int = 100)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Demo
+# World Builder
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_spectral_bridge()
-    println("═" ^ 70)
-    println("  SPECTRAL BRIDGE: Eigenvectors ↔ Chromatic Identity ↔ TDL")
-    println("═" ^ 70)
-    println()
-    
+"""
+    world_spectral_bridge(; seed=GAY_SEED, matrix_dim=50, n_clusters=3, cluster_size=20)
+
+Build composable spectral bridge state linking eigenvectors, chromatic identity, and TDL.
+
+# Returns NamedTuple with:
+- `arpack_seeds`: Arpack ↔ Gay seed bridge mappings
+- `spi_verification`: Spectral SPI verification result with color bridge
+- `hodge_laplacians`: L0, L1, L2 Hodge Laplacians with Betti numbers
+- `spectral_clustering`: Chromatic spectral clustering result
+- `seed`: The seed used
+"""
+function world_spectral_bridge(; seed::UInt64=GAY_SEED, matrix_dim::Int=50,
+                                n_clusters::Int=3, cluster_size::Int=20)
     # 1. Arpack seed bridge
-    println("1. ARPACK SEED ↔ GAY SEED BRIDGE")
     arpack_default = ArpackSeed()
-    println("   Arpack iseed: $(arpack_default.iseed)")
-    println("   Gay seed: 0x$(string(arpack_default.gay_seed, base=16, pad=16))")
-    
-    # Reverse bridge
-    arpack_from_gay = ArpackSeed(GAY_SEED)
-    println("   GAY_SEED → iseed: $(arpack_from_gay.iseed)")
-    println()
-    
+    arpack_from_gay = ArpackSeed(seed)
+
     # 2. Spectral SPI verification
-    println("2. SPECTRAL SPI VERIFICATION")
-    n = 50
-    A = sprand(n, n, 0.2)
+    A = sprand(matrix_dim, matrix_dim, 0.2)
     A = A + A'  # Symmetric
-    
-    spi_ok, bridge = verify_spectral_spi(A; k=6)
-    println("   Matrix: $(n)×$(n) sparse symmetric")
-    println("   SPI verified: $(spi_ok ? "✓" : "✗")")
-    println("   Matrix fingerprint: 0x$(string(bridge.matrix_fingerprint, base=16, pad=16))")
-    println("   Eigenvector colors:")
-    for (i, color) in enumerate(bridge.eigenvalue_colors)
-        r, g, b = round.(Int, color .* 255)
-        println("     λ$i: RGB($r, $g, $b)")
-    end
-    println()
-    
-    # 3. Hodge Laplacian
-    println("3. HODGE LAPLACIAN (Simplicial Complex)")
-    vertices = 6
+    spi_ok, bridge = verify_spectral_spi(A; k=6, seed=seed)
+
+    # 3. Hodge Laplacian on simplicial complex
+    n_vertices = 6
     edges = [(1,2), (2,3), (3,1), (1,4), (2,5), (3,6), (4,5), (5,6), (6,4)]
     triangles = [(1,2,3), (4,5,6)]
-    
-    L0 = simplicial_hodge(vertices, edges, triangles; order=0)
-    L1 = simplicial_hodge(vertices, edges, triangles; order=1)
-    L2 = simplicial_hodge(vertices, edges, triangles; order=2)
-    
-    println("   L0 (vertices): $(L0.dimension)×$(L0.dimension), color RGB$(round.(Int, L0.color .* 255))")
-    println("   L1 (edges): $(L1.dimension)×$(L1.dimension), color RGB$(round.(Int, L1.color .* 255))")
-    println("   L2 (triangles): $(L2.dimension)×$(L2.dimension), color RGB$(round.(Int, L2.color .* 255))")
-    
+
+    L0 = simplicial_hodge(n_vertices, edges, triangles; order=0, seed=seed)
+    L1 = simplicial_hodge(n_vertices, edges, triangles; order=1, seed=seed)
+    L2 = simplicial_hodge(n_vertices, edges, triangles; order=2, seed=seed)
+
     # Betti numbers from kernel dimensions
     rank_B1 = rank(Matrix(L0.boundary_up))
     rank_B2 = rank(Matrix(L1.boundary_up))
-    β0 = vertices - rank_B1
+    β0 = n_vertices - rank_B1
     β1 = length(edges) - rank_B1 - rank_B2
     β2 = length(triangles) - rank_B2
-    println("   Betti numbers: β₀=$β0, β₁=$β1, β₂=$β2")
-    println()
-    
-    # 4. Chromatic spectral clustering
-    println("4. CHROMATIC SPECTRAL CLUSTERING")
-    # Create a graph with 3 clusters
-    cluster_size = 20
-    n_clusters = 3
+
+    # 4. Chromatic spectral clustering with deterministic graph
+    # Use seeded RNG for reproducibility
+    rng_state = seed
     A_cluster = zeros(n_clusters * cluster_size, n_clusters * cluster_size)
     for c in 1:n_clusters
         start_idx = (c - 1) * cluster_size + 1
         end_idx = c * cluster_size
         for i in start_idx:end_idx
             for j in (i+1):end_idx
-                if rand() < 0.5
+                rng_state = splitmix64_mix(rng_state ⊻ UInt64(i * 65537 + j))
+                if (rng_state & 1) == 0
                     A_cluster[i, j] = A_cluster[j, i] = 1.0
                 end
             end
         end
-        # Sparse inter-cluster connections
         if c < n_clusters
             next_start = c * cluster_size + 1
-            for _ in 1:3
-                i = rand(start_idx:end_idx)
-                j = rand(next_start:next_start + cluster_size - 1)
-                A_cluster[i, j] = A_cluster[j, i] = 1.0
+            for k in 1:3
+                rng_state = splitmix64_mix(rng_state ⊻ UInt64(c * 1000 + k))
+                i_idx = start_idx + Int(rng_state % (end_idx - start_idx + 1))
+                rng_state = splitmix64_mix(rng_state)
+                j_idx = next_start + Int(rng_state % cluster_size)
+                A_cluster[i_idx, j_idx] = A_cluster[j_idx, i_idx] = 1.0
             end
         end
     end
-    
-    result = chromatic_spectral_clustering(A_cluster, n_clusters)
-    println("   Graph: $(size(A_cluster, 1)) nodes, 3 clusters")
-    println("   Cluster colors:")
-    for (c, color) in enumerate(result.cluster_colors)
-        count = sum(result.clusters .== c)
-        r, g, b = round.(Int, color .* 255)
-        println("     Cluster $c: RGB($r, $g, $b) - $count nodes")
-    end
-    println("   Eigenvalues: $(round.(result.eigenvalues, digits=4))")
-    println("   Fingerprint: 0x$(string(result.fingerprint, base=16, pad=16))")
-    println()
-    
-    println("═" ^ 70)
-    println("  SPECTRAL BRIDGE COMPLETE")
-    println("═" ^ 70)
+
+    clustering_result = chromatic_spectral_clustering(A_cluster, n_clusters; seed=seed)
+
+    (
+        arpack_seeds = (
+            default = arpack_default,
+            from_gay_seed = arpack_from_gay,
+        ),
+        spi_verification = (
+            verified = spi_ok,
+            bridge = bridge,
+            matrix_dim = matrix_dim,
+        ),
+        hodge_laplacians = (
+            L0 = L0,
+            L1 = L1,
+            L2 = L2,
+            betti = (β0 = β0, β1 = β1, β2 = β2),
+            simplicial_complex = (
+                n_vertices = n_vertices,
+                edges = edges,
+                triangles = triangles,
+            ),
+        ),
+        spectral_clustering = (
+            result = clustering_result,
+            adjacency = A_cluster,
+            n_clusters = n_clusters,
+            cluster_size = cluster_size,
+        ),
+        seed = seed,
+    )
 end
 
 # end of spectral_bridge.jl

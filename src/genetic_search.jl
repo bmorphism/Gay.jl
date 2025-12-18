@@ -10,8 +10,8 @@ using Base.Threads: @spawn, nthreads, threadid, @threads
 using Colors
 using Random
 
-export GeneticSearchConfig, GeneticSearchResult
-export genetic_search_parallel, island_evolution, demo_genetic_search
+export GeneticSearchConfig, GeneticSearchResult, GeneticSearchWorld
+export genetic_search_parallel, island_evolution, world_genetic_search
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Configuration
@@ -267,67 +267,63 @@ function genetic_search_parallel(
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Demo
+# World Builder
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_genetic_search()
+    GeneticSearchWorld
 
-Demonstrate maximally parallel genetic search.
+Persistent world containing genetic search results.
+Implements length, merge, fingerprint for composability.
 """
-function demo_genetic_search()
-    println("═" ^ 70)
-    println("  Maximally Parallel Genetic Seed Search")
-    println("═" ^ 70)
-    println()
-    
-    println("Target colors:")
-    for (i, c) in enumerate(TARGET_COLORS)
-        r, g, b = round(Int, red(c)*255), round(Int, green(c)*255), round(Int, blue(c)*255)
-        println("  $i. RGB($r, $g, $b) = #$(string(r, base=16, pad=2))$(string(g, base=16, pad=2))$(string(b, base=16, pad=2))")
+struct GeneticSearchWorld
+    results::Vector{GeneticSearchResult}
+    config::GeneticSearchConfig
+    targets::Vector{RGB{Float64}}
+    elapsed_time::Float64
+end
+
+Base.length(w::GeneticSearchWorld) = length(w.results)
+
+function Base.merge(w1::GeneticSearchWorld, w2::GeneticSearchWorld)
+    combined = vcat(w1.results, w2.results)
+    sort!(combined, by=r -> -r.score)
+    GeneticSearchWorld(combined, w1.config, w1.targets, w1.elapsed_time + w2.elapsed_time)
+end
+
+function fingerprint(w::GeneticSearchWorld)::UInt64
+    h = UInt64(0x9e3779b97f4a7c15)
+    for r in w.results
+        h = xor(h, splitmix64(r.seed))
+        h = splitmix64(h)
     end
-    println()
-    
-    config = GeneticSearchConfig(
+    h
+end
+
+"""
+    world_genetic_search(; config=GeneticSearchConfig()) -> GeneticSearchWorld
+
+Build a persistent world from maximally parallel genetic search.
+Returns composable GeneticSearchWorld structure.
+"""
+function world_genetic_search(;
+    targets::Vector{<:Any} = TARGET_COLORS,
+    config::GeneticSearchConfig = GeneticSearchConfig(
         population_size = 512,
         generations = 100,
         n_islands = nthreads(),
         threshold = 0.98
     )
+)::GeneticSearchWorld
+    @debug "Starting genetic search" n_islands=config.n_islands generations=config.generations
     
-    println("Configuration:")
-    println("  Islands: $(config.n_islands)")
-    println("  Population per island: $(config.population_size ÷ config.n_islands)")
-    println("  Generations: $(config.generations)")
-    println("  Threshold: $(config.threshold)")
-    println()
+    elapsed = @elapsed results = genetic_search_parallel(targets; config=config)
     
-    println("Searching...")
-    t = @elapsed results = genetic_search_parallel(TARGET_COLORS; config=config)
+    target_rgbs = [RGB{Float64}(red(c), green(c), blue(c)) for c in targets]
     
-    println("\nResults ($(round(t, digits=3))s):")
-    for (i, r) in enumerate(results[1:min(5, length(results))])
-        println("  Island $i: score=$(round(r.score, digits=4)) gen=$(r.generation) seed=0x$(string(r.seed, base=16, pad=16))")
-    end
-    println()
+    @debug "Genetic search complete" elapsed=elapsed best_score=results[1].score
     
-    # Show best result
-    best = results[1]
-    println("═" ^ 70)
-    println("  BEST RESULT")
-    println("  Seed: 0x$(string(best.seed, base=16, pad=16))")
-    println("  Score: $(round(best.score, digits=6))")
-    println("  Found at generation: $(best.generation)")
-    println("  Colors:")
-    for (i, c) in enumerate(best.colors)
-        ri, gi, bi = round(Int, red(c)*255), round(Int, green(c)*255), round(Int, blue(c)*255)
-        t = TARGET_COLORS[i]
-        tri, tgi, tbi = round(Int, red(t)*255), round(Int, green(t)*255), round(Int, blue(t)*255)
-        println("    $i: RGB($ri,$gi,$bi) vs target RGB($tri,$tgi,$tbi)")
-    end
-    println("═" ^ 70)
-    
-    results
+    GeneticSearchWorld(results, config, target_rgbs, elapsed)
 end
 
 # end of genetic_search.jl

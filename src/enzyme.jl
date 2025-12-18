@@ -534,72 +534,71 @@ export gay_diff, gay_jacobian, gay_autodiff
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_enzyme_colors()
+    world_enzyme_colors(; seed::UInt64=0x42, expr=nothing)
 
-Demonstrate enzyme coloring on a simple expression.
-Shows how Forward/Reverse modes give different color streams.
+Build composable enzyme coloring state for an expression.
+Returns structures showing Forward/Reverse/Mixed modes with gradient flows.
+
+# Returns NamedTuple with:
+- `expression`: The S-expression being differentiated
+- `original`: Original magnetized S-expr with magnetization
+- `forward`: Forward mode enzyme (blue stream) with gradient magnetization
+- `reverse`: Reverse mode enzyme (red stream) with gradient magnetization
+- `mixed`: Mixed mode enzyme (purple) with alternating sign gradients
+- `seed`: The seed used for deterministic coloring
 """
-function demo_enzyme_colors()
-    println("\n╔══════════════════════════════════════════════════════════════╗")
-    println("║  Gay.jl + Enzyme.jl: SICP 4A \"Enzymes Attach to Expressions\" ║")
-    println("╚══════════════════════════════════════════════════════════════╝\n")
-    
-    # Sample expression: (+ (* x x) (* y y))  -- x² + y²
-    expr = [:+, [:*, :x, :x], [:*, :y, :y]]
-    
-    println("Expression: (+ (* x x) (* y y))  ≡  x² + y²\n")
-    
+function world_enzyme_colors(; seed::UInt64=UInt64(0x42), expr=nothing)
+    # Default expression: (+ (* x x) (* y y))  -- x² + y²
+    expr = isnothing(expr) ? [:+, [:*, :x, :x], [:*, :y, :y]] : expr
+
     # Original magnetized S-expr
-    gs = gay_magnetized_sexpr(expr, 0x42)
-    println("Original (magnetized):")
-    println("  ", gay_render_sexpr(gs))
-    println("  Magnetization ⟨M⟩ = ", round(gay_sexpr_magnetization(gs), digits=3))
-    println()
-    
+    gs = gay_magnetized_sexpr(expr, seed)
+    original_mag = gay_sexpr_magnetization(gs)
+
     # Forward mode (tangent propagation)
-    ge_fwd = enzyme_forward(expr, 0x42)
+    ge_fwd = enzyme_forward(expr, seed)
     n_bindings = length(ge_fwd.bindings)
-    # Simulate gradients: ∂(x²+y²)/∂x = 2x, ∂(x²+y²)/∂y = 2y
-    # For x=3, y=4: gradients at different nodes
-    fwd_grads = [1.0 + 0.5*i for i in 1:n_bindings]  # Increasing gradient magnitudes
+    fwd_grads = [1.0 + 0.5*i for i in 1:n_bindings]
     propagate_gradient(ge_fwd, fwd_grads)
-    
-    println("Forward mode ∂f/∂x (blue stream):")
-    println("  ", gay_render_enzyme(ge_fwd))
-    println("  Gradient magnetization ⟨M_∇⟩ = ", round(gradient_magnetization(ge_fwd), digits=3))
-    println()
-    
+    fwd_mag = gradient_magnetization(ge_fwd)
+
     # Reverse mode (adjoint propagation)
-    ge_rev = enzyme_reverse(expr, 0x42)
-    # Reverse gradients (backprop from output)
-    rev_grads = [n_bindings - i + 1.0 for i in 1:n_bindings]  # Decreasing
+    ge_rev = enzyme_reverse(expr, seed)
+    rev_grads = [n_bindings - i + 1.0 for i in 1:n_bindings]
     propagate_gradient(ge_rev, rev_grads)
-    
-    println("Reverse mode ∂L/∂f (red stream):")
-    println("  ", gay_render_enzyme(ge_rev))
-    println("  Gradient magnetization ⟨M_∇⟩ = ", round(gradient_magnetization(ge_rev), digits=3))
-    println()
-    
+    rev_mag = gradient_magnetization(ge_rev)
+
     # Mixed mode with negative gradients
-    ge_mix = enzyme_mixed(expr, 0x42)
-    mix_grads = [(-1.0)^i * (0.5 + 0.3*i) for i in 1:n_bindings]  # Alternating signs
+    ge_mix = enzyme_mixed(expr, seed)
+    mix_grads = [(-1.0)^i * (0.5 + 0.3*i) for i in 1:n_bindings]
     propagate_gradient(ge_mix, mix_grads)
-    
-    println("Mixed mode (purple, with sign flips):")
-    println("  ", gay_render_enzyme(ge_mix))
-    println("  Gradient magnetization ⟨M_∇⟩ = ", round(gradient_magnetization(ge_mix), digits=3))
-    println()
-    
-    println("Legend:")
-    println("  ⁺→  Forward mode, positive sensitivity")
-    println("  ⁻→  Forward mode, negative sensitivity")
-    println("  ⁺←  Reverse mode, positive sensitivity")
-    println("  ⁻←  Reverse mode, negative sensitivity")
-    println("  ⁺⇄  Mixed mode, positive sensitivity")
-    println("  ⁻⇄  Mixed mode, negative sensitivity")
-    println()
-    println("Color intensity indicates |∂f/∂x| magnitude")
+    mix_mag = gradient_magnetization(ge_mix)
+
+    (
+        expression = expr,
+        original = (
+            sexpr = gs,
+            magnetization = original_mag,
+        ),
+        forward = (
+            enzyme = ge_fwd,
+            gradients = fwd_grads,
+            magnetization = fwd_mag,
+        ),
+        reverse = (
+            enzyme = ge_rev,
+            gradients = rev_grads,
+            magnetization = rev_mag,
+        ),
+        mixed = (
+            enzyme = ge_mix,
+            gradients = mix_grads,
+            magnetization = mix_mag,
+        ),
+        seed = seed,
+        n_bindings = n_bindings,
+    )
 end
 
 # Export everything
-export demo_enzyme_colors
+export world_enzyme_colors

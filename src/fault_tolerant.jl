@@ -623,55 +623,57 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-Persistent world state for fault-tolerant SPI verification.
-"""
-struct FaultTolerantWorld
-    cluster::SimulatedCluster
-    tracker::BidirectionalTracker
-    galois_ok::Bool
-    clean_pass::Bool
-    fault_stats::Dict{Symbol, Any}
-    bidirectional_consistent::Bool
-    all_closure_ok::Bool
-end
+    world_fault_tolerant(; devices=nothing, n_layers=32, n_tokens=64, hidden_dim=256)
 
-Base.length(w::FaultTolerantWorld) = length(w.cluster.device_states)
-Base.merge(w1::FaultTolerantWorld, w2::FaultTolerantWorld) = w1  # Prefer first
-function fingerprint(w::FaultTolerantWorld)
-    h = UInt32(0)
-    for state in values(w.cluster.device_states)
-        h ⊻= state.expected_fingerprint
-    end
-    h
-end
+Build a fault-tolerant SPI verification world. Returns composable state.
 
+# Returns
+NamedTuple with:
+- `cluster`: The SimulatedCluster
+- `galois_verified`: Whether Galois closure holds for all colors
+- `clean_inference_pass`: Result of clean inference verification
+- `fault_detection`: Results of fault injection tests
+- `bidirectional_tracking`: Tracker state and consistency results
+- `statistics`: Fault detection statistics
 """
-    world_fault_tolerant() -> FaultTolerantWorld
+function world_fault_tolerant(;
+    devices::Union{Nothing, Vector{Tuple{String,Float64}}}=nothing,
+    n_layers::Int=32,
+    n_tokens::Int=64,
+    hidden_dim::Int=256,
+    n_stat_iterations::Int=20
+)
+    # Setup cluster
+    devs = devices === nothing ? [("MacBook Pro", 18.0), ("MacBook Air", 8.0)] : devices
+    cluster = SimulatedCluster(devs, n_layers; n_tokens=n_tokens, hidden_dim=hidden_dim)
 
-Build persistent fault-tolerant SPI verification world.
-"""
-function world_fault_tolerant()
-    devices = [("MacBook Pro", 18.0), ("MacBook Air", 8.0)]
-    cluster = SimulatedCluster(devices, 32; n_tokens=64, hidden_dim=256)
-    
-    @debug "Setting up simulated cluster" devices=length(devices)
-    
-    gc = cluster.galois
-    galois_ok = verify_all_closures(gc)
-    @debug "Galois connection" closures_ok=galois_ok palette_size=gc.palette_size
-    
+    partition_info = [(p.device_name, p.layer_range, cluster.device_states[p.device_id].expected_fingerprint)
+                      for p in cluster.partitions]
+
+    # Galois connection verification
+    galois_verified = verify_all_closures(cluster.galois)
+
+    # Clean inference
     run_inference!(cluster; with_faults=false)
-    clean_pass, _ = verify!(cluster)
-    @debug "Clean inference" pass=clean_pass
-    
+    clean_pass, clean_errors = verify!(cluster)
+
+    # Fault injection tests
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=10)
     run_inference!(cluster; with_faults=true)
-    
+    pass_10, _ = verify!(cluster)
+
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=100)
     run_inference!(cluster; with_faults=true)
-    
+    pass_100, _ = verify!(cluster)
+
+    fault_detection = (
+        bit_flip_10_detected = !pass_10,
+        bit_flip_100_detected = !pass_100,
+    )
+
+    # Bidirectional tracking
     tracker = BidirectionalTracker(GAY_SEED)
     for layer in 1:4
         for token in 1:10
@@ -679,25 +681,32 @@ function world_fault_tolerant()
             track_backward!(tracker, layer, token, 1)
         end
     end
-    
-    bidirectional_consistent, _ = verify_consistency!(tracker)
+    consistent, tracker_errors = verify_consistency!(tracker)
     all_closure_ok = all(step[:galois_closure] for step in tracker.proof_log)
-    @debug "Bidirectional tracking" consistent=bidirectional_consistent closure_ok=all_closure_ok
-    
-    fault_stats = verify_with_fault_injection(cluster; n_iterations=20)
-    @debug "Fault detection stats" detection_rate=fault_stats[:detection_rate]
-    
-    FaultTolerantWorld(
-        cluster,
-        tracker,
-        galois_ok,
-        clean_pass,
-        fault_stats,
-        bidirectional_consistent,
-        all_closure_ok
+
+    bidirectional = (
+        tracker = tracker,
+        consistent = consistent,
+        galois_closure_all_steps = all_closure_ok,
+        errors = tracker_errors,
+    )
+
+    # Statistics
+    heal_all!(cluster)
+    stats = verify_with_fault_injection(cluster; n_iterations=n_stat_iterations)
+
+    (
+        cluster = cluster,
+        partition_info = partition_info,
+        galois_verified = galois_verified,
+        galois_palette_size = cluster.galois.palette_size,
+        clean_inference_pass = clean_pass,
+        fault_detection = fault_detection,
+        bidirectional_tracking = bidirectional,
+        statistics = stats,
     )
 end
 
-export FaultTolerantWorld, world_fault_tolerant, fingerprint
+export world_fault_tolerant
 
 end # module FaultTolerant

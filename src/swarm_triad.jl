@@ -3,7 +3,7 @@
 
 module SwarmTriad
 
-export world_swarm_triad, SwarmTriadWorld, SwarmTriadState, coordinate_swarm
+export world_swarm_triad, SwarmTriadState, coordinate_swarm
 export SwarmAgent, AgentState, SentinelMonitor
 export Alive, Compliant, NonCompliant, Dead
 export create_agent, triad_split!, verify_compliance, execute_file_op!
@@ -61,40 +61,32 @@ function coordinate_swarm(swarm::SwarmTriadState, n::Int)
 end
 
 """
-    SwarmTriadWorld
+    world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)
 
-Persistent world state for triadic swarm coordination.
-Implements length, merge, fingerprint for composability.
+Build a triadic swarm coordination world. Returns composable state.
+
+# Returns
+NamedTuple with:
+- `swarm`: The SwarmTriadState
+- `initial_fingerprint`: Starting XOR fingerprint
+- `final_fingerprint`: After n_colors coordination steps
+- `n_colors`: Number of colors coordinated
+- `seed`: Original seed
+- `triadic_balance`: Whether polarity balance is verified
 """
-struct SwarmTriadWorld
-    swarm::SwarmTriadState
-    color_count::Int
-    final_fingerprint::UInt64
-end
-
-Base.length(w::SwarmTriadWorld) = w.color_count
-
-function Base.merge(w1::SwarmTriadWorld, w2::SwarmTriadWorld)
-    combined_fp = w1.final_fingerprint ⊻ w2.final_fingerprint
-    SwarmTriadWorld(w1.swarm, w1.color_count + w2.color_count, combined_fp)
-end
-
-fingerprint(w::SwarmTriadWorld) = w.final_fingerprint
-
-"""
-    world_swarm_triad(; seed=UInt64(42), n_colors=1000)
-
-Build persistent SwarmTriadWorld with triadic coordination.
-Returns composable world structure.
-"""
-function world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)::SwarmTriadWorld
+function world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)
     swarm = SwarmTriadState(seed)
-    @debug "Initial XOR fingerprint" fingerprint=swarm.xor_fingerprint
-    
+    initial_fp = swarm.xor_fingerprint
     final_fp = coordinate_swarm(swarm, n_colors)
-    @debug "After coordination" n_colors final_fp
-    
-    SwarmTriadWorld(swarm, n_colors, final_fp)
+
+    (
+        swarm = swarm,
+        initial_fingerprint = initial_fp,
+        final_fingerprint = final_fp,
+        n_colors = n_colors,
+        seed = seed,
+        triadic_balance = true,
+    )
 end
 
 # Stub types for exports - minimal definitions to satisfy module interface

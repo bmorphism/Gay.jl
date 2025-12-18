@@ -25,7 +25,7 @@ using Statistics: mean, std
 export ChaosConfig, ChaosResult, ChaosVibe
 export inject_chaos!, run_chaos_campaign, chaos_vibe!
 export CausalChain, break_chain!, verify_chain, chain_fingerprint
-export demo_chaos_vibing
+export world_chaos_vibing, ChaosVibingWorld
 export FaultClass, FaultSeverity, Fault
 export SEED_FAULT, INDEX_FAULT, HASH_FAULT, THREAD_FAULT, MEMORY_FAULT, TIMING_FAULT, CAUSAL_FAULT
 export BENIGN, MALIGNANT, TERMINAL

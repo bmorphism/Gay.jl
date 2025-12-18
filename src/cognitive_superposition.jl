@@ -523,105 +523,75 @@ function verify_cognitive_laws(; dim::Int=4, n_tests::Int=10, seed::UInt64=GAY_S
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Demo
+# World Builder
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_cognitive_superposition()
-    println("═" ^ 70)
-    println("  COGNITIVE SUPERPOSITION: Entities Entailing Inducing")
-    println("═" ^ 70)
-    println()
-    
-    seed = GAY_SEED
-    dim = 4
-    
-    # 1. Create cognitive states (word meanings)
-    println("1. COGNITIVE STATES (Word Meanings)")
+"""
+    world_cognitive_superposition(; seed=GAY_SEED, dim=4)
+
+Build a cognitive superposition world. Returns composable state with:
+- Cognitive states (cat, dog, animal, pet)
+- Reasoning scores (entailment, induction, abduction)
+- Braided tensor products
+- Frobenius spider operations
+- Categorical law verification results
+"""
+function world_cognitive_superposition(; seed::UInt64=GAY_SEED, dim::Int=4)
+    # Create cognitive states
     cat = CognitiveState(dim, :N; seed=seed)
     dog = CognitiveState(dim, :N; seed=seed ⊻ UInt64(0xD06))
     animal = CognitiveState(dim, :N; seed=seed ⊻ UInt64(0xA171A1))
-    
-    println("   cat:    fp=0x$(string(cat.fingerprint, base=16, pad=16))")
-    println("   dog:    fp=0x$(string(dog.fingerprint, base=16, pad=16))")
-    println("   animal: fp=0x$(string(animal.fingerprint, base=16, pad=16))")
-    println()
-    
-    # 2. Superposition (polysemy/ambiguity)
-    println("2. SUPERPOSITION (Polysemy)")
+
+    # Superposition (polysemy)
     pet = superpose([cat, dog], [ComplexF64(0.6), ComplexF64(0.4)])
-    println("   pet = 0.6·cat + 0.4·dog")
-    println("   pet fp: 0x$(string(pet.fingerprint, base=16, pad=16))")
     collapsed_idx, collapsed_color = collapse(pet)
-    r, g, b = round.(Int, collapsed_color .* 255)
-    println("   collapsed to basis $collapsed_idx, color RGB($r,$g,$b)")
-    println()
-    
-    # 3. Entailment (logical implication)
-    println("3. ENTAILMENT (cat ⊨ animal?)")
-    ent_score = entails(cat, animal)
-    println("   entails(cat, animal) = $(round(ent_score, digits=3))")
-    ent_score2 = entails(animal, cat)
-    println("   entails(animal, cat) = $(round(ent_score2, digits=3))")
-    println("   (asymmetric as expected)")
-    println()
-    
-    # 4. Induction (evidence → hypothesis)
-    println("4. INDUCTION (Evidence → Hypothesis)")
-    ind_score = induces(cat, animal)
-    println("   induces(cat, animal) = $(round(ind_score, digits=3))")
-    println("   (seeing cat supports animal hypothesis)")
-    println()
-    
-    # 5. Abduction (observation ← cause)
-    println("5. ABDUCTION (Observation ← Cause)")
-    abd_score = abduces(pet, cat)
-    println("   abduces(pet, cat) = $(round(abd_score, digits=3))")
-    println("   (cat as explanation for observing pet)")
-    println()
-    
-    # 6. Braided structure
-    println("6. BRAIDED TENSOR PRODUCT")
+
+    # Reasoning operations
+    entailment_cat_animal = entails(cat, animal)
+    entailment_animal_cat = entails(animal, cat)
+    induction_score = induces(cat, animal)
+    abduction_score = abduces(pet, cat)
+
+    # Braided structure
     cat_dog = cognitive_tensor(cat, dog)
     dog_cat = braid(cat_dog)
-    println("   cat ⊗ dog: phase=$(round(abs(cat_dog.braid_phase), digits=3))")
-    println("   σ(cat ⊗ dog) = dog ⊗ cat: phase=$(round(abs(dog_cat.braid_phase), digits=3))")
-    println()
-    
-    # 7. Spiders (Frobenius)
-    println("7. HYPERGRAPH SPIDERS (Frobenius)")
-    merge = cognitive_spider(2, 1, :N; seed=seed)
-    split = cognitive_spider(1, 2, :N; seed=seed)
-    merged = merge([cat, dog])
-    println("   μ(cat, dog) → merged state, fp=0x$(string(merged[1].fingerprint, base=16, pad=8)...)")
-    split_back = split(merged)
-    println("   δ(merged) → 2 states")
-    println()
-    
-    # 8. Verification
-    println("8. CATEGORICAL LAW VERIFICATION")
-    pass, results = verify_cognitive_laws(; dim=dim, seed=seed)
-    for (law, ok) in results
-        println("   $law: $(ok ? "✓" : "✗")")
-    end
-    println()
-    
-    # 9. Comparison with DisCoPy hierarchy
-    println("9. CATEGORY HIERARCHY (vs DisCoPy)")
-    println("   ┌────────────────┬──────────────────┬─────────────┐")
-    println("   │ Structure      │ DisCoPy          │ Gay.jl      │")
-    println("   ├────────────────┼──────────────────┼─────────────┤")
-    println("   │ Monoidal       │ monoidal.Diagram │ tensor_prod │")
-    println("   │ Braided        │ braided.Braid    │ braid()     │")
-    println("   │ Compact        │ compact.Cup/Cap  │ trace       │")
-    println("   │ Hypergraph     │ frobenius.Spider │ spider()    │")
-    println("   │ Traced         │ traced.Trace     │ TracedTensor│")
-    println("   │ Markov         │ markov.Copy      │ GayMC       │")
-    println("   └────────────────┴──────────────────┴─────────────┘")
-    println()
-    
-    println("═" ^ 70)
-    println("  COGNITIVE SUPERPOSITION COMPLETE")
-    println("═" ^ 70)
+
+    # Frobenius spiders
+    merge_spider = cognitive_spider(2, 1, :N; seed=seed)
+    split_spider = cognitive_spider(1, 2, :N; seed=seed)
+    merged = merge_spider([cat, dog])
+    split_back = split_spider(merged)
+
+    # Categorical law verification
+    laws_pass, law_results = verify_cognitive_laws(; dim=dim, seed=seed)
+
+    (
+        states = (cat=cat, dog=dog, animal=animal, pet=pet),
+        superposition = (
+            pet_fingerprint = pet.fingerprint,
+            collapsed_basis = collapsed_idx,
+            collapsed_color = collapsed_color,
+        ),
+        reasoning = (
+            entails_cat_animal = entailment_cat_animal,
+            entails_animal_cat = entailment_animal_cat,
+            entailment_asymmetric = entailment_cat_animal > entailment_animal_cat,
+            induces_cat_animal = induction_score,
+            abduces_pet_cat = abduction_score,
+        ),
+        braided = (
+            cat_dog_phase = abs(cat_dog.braid_phase),
+            dog_cat_phase = abs(dog_cat.braid_phase),
+        ),
+        frobenius = (
+            merged_fingerprint = merged[1].fingerprint,
+            split_count = length(split_back),
+        ),
+        laws_verified = laws_pass,
+        law_results = law_results,
+        seed = seed,
+        dim = dim,
+    )
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -36,7 +36,7 @@ using Base.Threads: @threads, nthreads
 export ColorPlot, ColorVDF, ProofOfColorParallelism
 export create_plot, verify_plot, plot_fingerprint
 export create_vdf, verify_vdf, vdf_output
-export create_pocp, verify_pocp, demo_pocp
+export create_pocp, verify_pocp, world_pocp, PoCPWorld
 export gay_seed, Seed
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -380,58 +380,65 @@ function verify_pocp(proof::ProofOfColorParallelism;
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Demo
+# World Builder: PoCPWorld
 # ══════════════════════════════════════════════════════════════════════════════
 
-function demo_pocp()
-    println("═" ^ 70)
-    println("🏳️‍🌈 PROOF OF COLOR PARALLELISM (PoCP) - Making Chia Gay 🏳️‍🌈")
-    println("═" ^ 70)
-    println()
+"""
+    PoCPWorld
+
+Persistent world containing Proof of Color Parallelism state.
+Implements monoidal composition via fingerprint XOR.
+"""
+struct PoCPWorld
+    proofs::Vector{ProofOfColorParallelism}
+    fingerprint::UInt64
+    verified::Bool
+    n_threads::Int
+    parallel_speedup::Float64
+end
+
+Base.length(w::PoCPWorld) = length(w.proofs)
+
+function Base.merge(w1::PoCPWorld, w2::PoCPWorld)
+    combined_proofs = vcat(w1.proofs, w2.proofs)
+    combined_fp = w1.fingerprint ⊻ w2.fingerprint
+    PoCPWorld(
+        combined_proofs,
+        combined_fp,
+        w1.verified && w2.verified,
+        max(w1.n_threads, w2.n_threads),
+        (w1.parallel_speedup + w2.parallel_speedup) / 2
+    )
+end
+
+fingerprint(w::PoCPWorld) = w.fingerprint
+
+"""
+    world_pocp(challenge; plot_size=10000, vdf_iterations=100000) -> PoCPWorld
+
+Build a persistent PoCPWorld with Proof of Color Parallelism.
+Returns composable structure suitable for merging with other worlds.
+"""
+function world_pocp(challenge; plot_size::Int=10000, vdf_iterations::Int=100000)
+    seed = gay_seed(challenge)
     
-    # Show seed flexibility
-    println("1. UNIVERSAL SEED CONVERSION")
-    println("   gay_seed(42)           = 0x$(string(gay_seed(42), base=16, pad=16))")
-    println("   gay_seed(\"chia\")       = 0x$(string(gay_seed("chia"), base=16, pad=16))")
-    println("   gay_seed(:rainbow)     = 0x$(string(gay_seed(:rainbow), base=16, pad=16))")
-    println("   gay_seed([1,2,3])      = 0x$(string(gay_seed([1,2,3]), base=16, pad=16))")
-    println()
+    proof = create_pocp(seed; plot_size=plot_size, vdf_iterations=vdf_iterations)
+    verified = verify_pocp(proof; full_vdf=false, n_plot_checks=100)
     
-    # Create proof
-    println("2. CREATING PROOF OF COLOR PARALLELISM")
-    challenge = "gay_chia_challenge_$(rand(1:1000))"
-    println("   Challenge: \"$challenge\"")
+    # Measure parallel speedup
+    t_par = @elapsed create_plot(seed, min(plot_size, 10000); parallel=true)
+    t_seq = @elapsed create_plot(seed, min(plot_size, 10000); parallel=false)
+    speedup = t_seq / max(t_par, 1e-9)
     
-    t = @elapsed proof = create_pocp(challenge; plot_size=10000, vdf_iterations=100000)
-    println("   Created in $(round(t*1000, digits=1))ms")
-    println("   Plot size: $(proof.plot.size) colors")
-    println("   VDF iterations: $(proof.vdf.iterations)")
-    println("   Combined proof: 0x$(string(proof.combined_proof, base=16, pad=16))")
-    println("   Quality: $(round(proof.quality, digits=4))")
-    println()
+    @debug "PoCPWorld created" seed plot_size vdf_iterations verified speedup
     
-    # Verify
-    println("3. VERIFICATION")
-    t_verify = @elapsed valid = verify_pocp(proof; full_vdf=false, n_plot_checks=100)
-    println("   Verified in $(round(t_verify*1000, digits=2))ms")
-    println("   Result: $(valid ? "✓ VALID" : "✗ INVALID")")
-    println()
-    
-    # Show parallelism proof
-    println("4. PARALLELISM PROOF")
-    println("   Threads used: $(nthreads())")
-    
-    # Time parallel vs sequential
-    t_par = @elapsed create_plot(123, 100000; parallel=true)
-    t_seq = @elapsed create_plot(123, 100000; parallel=false)
-    println("   Parallel 100k colors: $(round(t_par*1000, digits=1))ms")
-    println("   Sequential 100k colors: $(round(t_seq*1000, digits=1))ms")
-    println("   Speedup: $(round(t_seq/t_par, digits=2))x")
-    println()
-    
-    println("═" ^ 70)
-    println("🏳️‍🌈 CHIA IS NOW GAY 🏳️‍🌈")
-    println("═" ^ 70)
+    PoCPWorld(
+        [proof],
+        proof.combined_proof,
+        verified,
+        nthreads(),
+        speedup
+    )
 end
 
 end # module ProofOfColor
