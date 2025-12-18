@@ -116,7 +116,7 @@ function color_embeddings!(emb::Matrix{Float32}, token_ids::Vector{Int};
                               (UInt64(d) * 0x517cc1b727220a95)
             r, _, _ = hash_color(h, UInt64(d))
             # Additive coloring (preserves gradients better than XOR)
-            emb[t, d] += r * 1e-6f0
+            emb[t, d] += r * Float32(1e-6)
         end
     end
     emb
@@ -128,7 +128,7 @@ end
 Color hidden states after a transformer layer.
 Position-based coloring: (global_token_idx, layer, hidden_dim)
 """
-function color_hidden_states!(hidden::Matrix{Float32}, layer::Int,
+function color_hidden_states!(hidden::AbstractMatrix{Float32}, layer::Int,
                                partition::TensorPartition; seed::Integer=GAY_SEED)
     n_tokens, hidden_dim = size(hidden)
     
@@ -140,7 +140,7 @@ function color_hidden_states!(hidden::Matrix{Float32}, layer::Int,
                               (UInt64(layer) * 0x517cc1b727220a95) ⊻
                               (UInt64(d) * 0xc4ceb9fe1a85ec53)
             r, _, _ = hash_color(h, UInt64(global_t))
-            hidden[t, d] += r * 1e-7f0
+            hidden[t, d] += r * Float32(1e-7)
         end
     end
     hidden
@@ -160,7 +160,7 @@ function color_logits!(logits::Matrix{Float32}, partition::TensorPartition;
         for v in 1:vocab_shard
             global_v = partition.offset + v  # Global vocab index
             r, _, _ = cartesian_color(UInt64(seed), t, global_v)
-            logits[t, v] += r * 1e-7f0
+            logits[t, v] += r * Float32(1e-7)
         end
     end
     logits
@@ -243,7 +243,7 @@ function verify_allgather(gathered::Matrix{Float32},
                 expected_r, _, _ = hash_color(h, UInt64(t))
                 actual = gathered[t, d]
                 # Check if color component is present
-                if abs(actual - expected_r * 1e-7f0) > 1e-5
+                if abs(actual - expected_r * Float32(1e-7)) > 1e-5
                     @warn "Mismatch at (t=$t, d=$d)" expected_r actual
                     break
                 end

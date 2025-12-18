@@ -321,7 +321,7 @@ function inject_spi_colors(hidden_states::Matrix{Float32}, layer::Int;
                               (UInt64(d) * 0xc4ceb9fe1a85ec53)
             r, _, _ = hash_color(h, UInt64(t))
             # Tiny additive color (doesn't affect model output significantly)
-            colored[t, d] += r * 1e-7f0
+            colored[t, d] += r * Float32(1e-7)
         end
     end
     

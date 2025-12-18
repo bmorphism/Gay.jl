@@ -1,0 +1,356 @@
+# Gay.jl
+
+> Wide-gamut color sampling with splittable determinism — reproducible colors via SplittableRandoms.jl, inspired by Pigeons.jl's Strong Parallelism Invariance (SPI) pattern.
+
+Gay.jl provides deterministic, reproducible color generation that is invariant to execution order, thread count, and parallelization strategy. Same seed = same colors, always.
+
+## Core Principle: Strong Parallelism Invariance (SPI)
+
+The **Golden Rule**: Same seed produces identical colors regardless of:
+- Number of threads/processes
+- Execution order (parallel vs sequential)
+- Hardware (CPU, Metal GPU, CUDA)
+
+This is achieved through splittable random streams from SplittableRandoms.jl.
+
+## Quick Start
+
+```julia
+using Gay
+
+# Set deterministic seed
+gay_seed!(42)
+
+# Sequential generation
+c1 = next_color()
+c2 = next_color()
+
+# Reset and verify determinism
+gay_seed!(42)
+@assert c1 == next_color()  # Always true
+
+# Random access by index (O(1) for any index)
+color_at(1000; seed=42)  # 1000th color, instant access
+```
+
+## Best Practices for LLMs
+
+### 1. ALWAYS Use Domain Object Hashing for Seeds
+
+**DO NOT** use magic numbers. Derive seeds from meaningful identifiers:
+
+```julia
+using SHA
+
+# CORRECT: Seed from domain object
+function generate_seed(identifier::String)::UInt64
+    bytes = sha256(identifier)
+    return reinterpret(UInt64, bytes[1:8])[1]
+end
+
+seed = generate_seed("experiment_v1")
+gay_seed!(seed)
+
+# WRONG: Magic number
+gay_seed!(12345)  # Where did this come from? Not reproducible.
+```
+
+### 2. Use Sequential Generation for Streams
+
+For generating color sequences, use the stream API:
+
+```julia
+gay_seed!(seed)
+colors = [next_color() for _ in 1:100]
+```
+
+### 3. Use Random Access for Parallel/Sparse Patterns
+
+For parallel generation or sparse indexing, use `color_at`:
+
+```julia
+# Parallel-safe: each call is independent
+using OhMyThreads
+colors = tmap(i -> color_at(i; seed=seed), 1:1000)
+
+# Sparse access: jump to any index without iteration
+sparse = [color_at(i; seed=seed) for i in [1, 10, 100, 1000]]
+```
+
+### 4. Use Palettes for Visually Distinct Colors
+
+```julia
+palette = palette_at(1, 6)  # 6 distinct colors starting at index 1
+```
+
+## API Reference
+
+### RNG Control
+- `gay_seed!(seed)` — Reset global RNG with seed (Integer, String, Symbol, or Array)
+- `gay_rng()` — Get current RNG state
+- `gay_split()` — Get independent RNG stream (splits current)
+
+### Color Generation (Deterministic)
+- `next_color(cs)` — Next color from global stream
+- `next_colors(n, cs)` — Next n colors
+- `next_palette(n, cs)` — n visually distinct colors
+
+### Random Access (Parallel-Safe)
+- `color_at(index; seed)` — Color at specific index (O(1))
+- `colors_at(indices; seed)` — Colors at multiple indices
+- `palette_at(index, n; seed)` — Palette starting at index
+
+### Color Spaces
+- `SRGB()` — Standard RGB (default)
+- `DisplayP3()` — Apple Display P3
+- `Rec2020()` — ITU-R BT.2020 (HDR/UHDTV)
+
+### Pride Flags
+- `rainbow()`, `transgender()`, `bisexual()`
+- `nonbinary()`, `pansexual()`, `asexual()`
+- `pride_flag(:progress)` — Progress Pride flag
+
+### Display
+- `show_colors(colors)` — ANSI terminal blocks
+- `show_palette(colors)` — With hex codes
+
+## Seeding Strategies
+
+`gay_seed!` is the single entry point.
+
+### 1. Known (Deterministic)
+You provide the seed. Used for reproducibility.
+
+```julia
+gay_seed!("experiment_v1")
+gay_seed!(42)
+
+### 6. Content-Derived Seed (File/Bytes)
+Seed from a file or byte array using robust SHA-256 hashing.
+This is distinct from "Known Seed" which uses a simpler hash.
+
+```julia
+# Pass IO or Byte Array
+gay_seed!(open("config.json"))
+gay_seed!(read("image.png"))
+```
+
+### 2. Random, Known (Replay)
+Replay a previously recorded drand round.
+
+```julia
+gay_seed!(:record, 123456)
+```
+
+### 3. Random, Will Be Known (Live / Record New)
+Fetches fresh unbiasable randomness. Returns the round info so it becomes "Known".
+
+```julia
+# Use :record command
+round = gay_seed!(:record)
+# Save round.round for later replay
+```
+
+### 4. Random, Unknown (Live / New)
+Fetches fresh randomness but explicitly discards the proof.
+
+```julia
+gay_seed!(:new)
+```
+
+### 5. Random, Unknown, Local (Offline)
+System entropy. Fast, offline, but not unbiasable/verifiable.
+
+```julia
+gay_seed!(:offline)
+```
+scheduled = schedule_seed(delay_seconds=300, description="Color lottery")
+println("Will use drand round $(scheduled.round) at $(scheduled.scheduled_time)")
+
+# Wait for round to be published
+dr = await_future_round(scheduled)
+gay_seed!(to_seed(dr))
+winner_color = next_color()  # Provably fair!
+```
+
+### drand API
+- `drand_seed!()` — Seed RNG from latest drand round
+- `fetch_round(n)` — Get specific historical round
+- `schedule_seed(delay_seconds=60)` — Commit to future round
+- `cross_verify(round)` — Verify across multiple endpoints
+- `mainnet()` / `quicknet()` — Beacon configurations
+
+## Gamut Mapping (GamutLearnable Module)
+
+For colors exceeding display gamut boundaries:
+
+```julia
+mapper = GamutMapper(target_gamut=:srgb)
+mapped_colors = map_color_chain(colors, mapper)
+
+# With Enzyme autodiff training
+using Enzyme
+lab_colors = [convert(Lab, c) for c in colors]
+enzyme_train_gamut!(mapper.params, lab_colors, epochs=50)
+```
+
+## Interleaved Streams (Checkerboard/Lattice)
+
+For SSE QMC, parallel tempering, or lattice decomposition:
+
+```julia
+il = GayInterleaver(seed, 2)  # 2 sublattices (even/odd)
+
+# Checkerboard parity coloring
+parity = (i + j) % 2
+color = gay_sublattice(il, parity)
+
+# XOR bond coloring for Heisenberg model
+bond_color = gay_xor_color(il, i, j)
+```
+
+## S-Expression Coloring (Rainbow Parens)
+
+```julia
+using LispSyntax
+expr = lisp"(defn fib [n] (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))"
+colored = gay_magnetized_sexpr(expr, seed=42)
+println(gay_render_sexpr(colored))  # ANSI-colored output
+```
+
+## GPU Acceleration (KernelAbstractions)
+
+```julia
+# Generate 1 billion colors
+colors = ka_colors(1_000_000_000, seed)
+
+# Metal/CUDA/AMD GPU backends
+using Metal
+set_backend!(MetalBackend())
+```
+
+## Verification
+
+XOR fingerprinting proves bitwise identity across backends:
+
+```julia
+fp1 = xor_fingerprint(ka_colors(100_000_000, seed))  # CPU
+fp2 = gpu_fingerprint(100_000_000, seed)              # GPU
+@assert fp1 == fp2  # Proves SPI across hardware
+```
+
+## Common Patterns
+
+### Visualization Coloring
+```julia
+seed = generate_seed("my_visualization_$(today())")
+gay_seed!(seed)
+node_colors = Dict(node => next_color() for node in nodes)
+```
+
+### Reproducible Experiments
+```julia
+seed = generate_seed("$(experiment_name)_$(hyperparams_hash)")
+colors = [color_at(trial; seed=seed) for trial in 1:n_trials]
+```
+
+### Parallel Rendering
+```julia
+# All threads get identical colors for same indices
+@threads for i in 1:n_objects
+    object_color = color_at(i; seed=master_seed)
+    render(objects[i], object_color)
+end
+```
+
+## Dependencies
+
+Core:
+- SplittableRandoms.jl — Splittable PRNG streams
+- Colors.jl / ColorTypes.jl — Color representation
+- KernelAbstractions.jl — Portable GPU kernels
+
+Optional:
+- Enzyme.jl — Automatic differentiation for GamutLearnable
+- Metal.jl / CUDA.jl / AMDGPU.jl — GPU backends
+- OhMyThreads.jl — Parallel iteration
+
+## File Structure
+
+```
+src/
+├── Gay.jl              # Main module, exports
+├── splittable.jl       # Core SPI color generation
+├── colorspaces.jl      # Wide-gamut color spaces
+├── gamut_learnable.jl  # Enzyme-optimized gamut mapping
+├── kernels.jl          # KernelAbstractions SPMD kernels
+├── parallel.jl         # OhMyThreads integration
+├── comrade.jl          # Sky model DSL (EHT-inspired)
+└── ...
+
+ext/
+├── GayEnzymeExt.jl     # Enzyme autodiff extension
+└── GayMetalExt.jl      # Metal GPU extension
+
+examples/
+├── blackhole.jl        # EHT-style visualization
+├── sse_heisenberg.jl   # QMC lattice coloring
+├── spaceinvaders_colors.jl  # Game demo
+└── ...
+```
+
+## Anti-Patterns to Avoid
+
+```julia
+# ❌ DON'T: Use non-deterministic random
+c = rand(RGB)  # Not reproducible!
+
+# ✅ DO: Use Gay.jl deterministic generation
+gay_seed!(seed)
+c = next_color()
+
+# ❌ DON'T: Magic number seeds
+gay_seed!(69420)  # Where is this from?
+
+# ✅ DO: Domain-derived seeds
+gay_seed!(generate_seed("my_experiment_run_3"))
+
+# ❌ DON'T: Rely on generation order in parallel code
+@threads for i in 1:n
+    colors[i] = next_color()  # Race condition!
+end
+
+# ✅ DO: Use random access for parallel
+@threads for i in 1:n
+    colors[i] = color_at(i; seed=seed)  # Thread-safe!
+end
+```
+
+## Testing
+
+```julia
+using Gay, Test
+
+# Verify SPI: sequential == parallel
+seed = 42
+seq = [color_at(i; seed=seed) for i in 1:100]
+par = tmap(i -> color_at(i; seed=seed), 1:100)
+@test seq == par
+
+# Verify determinism: reset produces same sequence
+gay_seed!(seed)
+c1 = [next_color() for _ in 1:10]
+gay_seed!(seed)
+c2 = [next_color() for _ in 1:10]
+@test c1 == c2
+```
+
+## Links
+
+- Repository: https://github.com/bmorphism/Gay.jl
+- SplittableRandoms.jl: https://github.com/Julia-Tempering/SplittableRandoms.jl
+- Pigeons.jl (SPI inspiration): https://pigeons.run
+
+## License
+
+MIT
