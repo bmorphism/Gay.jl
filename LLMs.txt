@@ -2,16 +2,16 @@
 
 > Wide-gamut color sampling with splittable determinism — reproducible colors via SplittableRandoms.jl, inspired by Pigeons.jl's Strong Parallelism Invariance (SPI) pattern.
 
-Gay.jl provides deterministic, reproducible color generation that is invariant to execution order, thread count, and parallelization strategy. Same seed = same colors, always.
+Gay.jl provides deterministic, reproducible color generation that works identically regardless of execution order, number of threads, or parallel/sequential execution. Same seed → same colors, always.
 
 ## Core Principle: Strong Parallelism Invariance (SPI)
 
 The **Golden Rule**: Same seed produces identical colors regardless of:
 - Number of threads/processes
 - Execution order (parallel vs sequential)
-- Hardware (CPU, Metal GPU, CUDA)
+- Hardware (CPU, Metal GPU, CUDA, AMD)
 
-This is achieved through splittable random streams from SplittableRandoms.jl.
+This is achieved through splittable random streams from SplittableRandoms.jl, where each operation splits the RNG into independent substreams.
 
 ## Quick Start
 
@@ -22,15 +22,20 @@ using Gay
 gay_seed!(42)
 
 # Sequential generation
-c1 = next_color()
-c2 = next_color()
+c1 = next_color()           # First deterministic color
+c2 = next_color()           # Second color in sequence
 
 # Reset and verify determinism
 gay_seed!(42)
-@assert c1 == next_color()  # Always true
+@assert c1 == next_color()  # Always true!
 
 # Random access by index (O(1) for any index)
-color_at(1000; seed=42)  # 1000th color, instant access
+c42 = color_at(42)          # Color at index 42
+c42_again = color_at(42)    # Same color, no iteration needed
+@assert c42 == c42_again
+
+# Palettes (visually distinct colors)
+palette = next_palette(6)   # 6 distinct colors
 ```
 
 ## Best Practices for LLMs
@@ -116,69 +121,102 @@ palette = palette_at(1, 6)  # 6 distinct colors starting at index 1
 
 ## Seeding Strategies
 
-`gay_seed!` is the single entry point.
+`gay_seed!` supports 6 strategies for different use cases:
 
 ### 1. Known (Deterministic)
 You provide the seed. Used for reproducibility.
 
 ```julia
-gay_seed!("experiment_v1")
-gay_seed!(42)
-
-### 6. Content-Derived Seed (File/Bytes)
-Seed from a file or byte array using robust SHA-256 hashing.
-This is distinct from "Known Seed" which uses a simpler hash.
-
-```julia
-# Pass IO or Byte Array
-gay_seed!(open("config.json"))
-gay_seed!(read("image.png"))
+gay_seed!(42)                    # Integer seed
+gay_seed!("experiment_v1")       # String seed phrase (FNV-1a hash)
+gay_seed!(:test_run)             # Symbol seed
 ```
 
 ### 2. Random, Known (Replay)
-Replay a previously recorded drand round.
+Replay a previously recorded drand round. Fully reproducible.
 
 ```julia
-gay_seed!(:record, 123456)
+gay_seed!(:record, 12345678)     # Fetch and use specific round
 ```
 
-### 3. Random, Will Be Known (Live / Record New)
-Fetches fresh unbiasable randomness. Returns the round info so it becomes "Known".
+### 3. Random, Will Be Known (Live + Record)
+Fetches fresh unbiasable randomness from League of Entropy. Returns DrandRound for replay.
 
 ```julia
-# Use :record command
-round = gay_seed!(:record)
-# Save round.round for later replay
+dr = gay_seed!(:record)          # Returns DrandRound
+println("Round: $(dr.round)")    # Save for later replay
+c = next_color()
+# Later: gay_seed!(:record, dr.round) reproduces same sequence
 ```
 
-### 4. Random, Unknown (Live / New)
-Fetches fresh randomness but explicitly discards the proof.
+### 4. Random, Unknown (Live, No Proof)
+Fetches fresh drand randomness but explicitly discards the proof.
 
 ```julia
-gay_seed!(:new)
+gay_seed!(:new)                  # Uses quicknet (3s rounds)
 ```
 
 ### 5. Random, Unknown, Local (Offline)
-System entropy. Fast, offline, but not unbiasable/verifiable.
+System entropy via RandomDevice. Fast, offline, not verifiable.
 
 ```julia
-gay_seed!(:offline)
+gay_seed!(:offline)              # Returns the seed used
 ```
-scheduled = schedule_seed(delay_seconds=300, description="Color lottery")
-println("Will use drand round $(scheduled.round) at $(scheduled.scheduled_time)")
 
-# Wait for round to be published
+### 6. Content-Addressable (SHA-256)
+Seed from file or byte array using SHA-256 hashing. Same content = same seed.
+
+```julia
+gay_seed!(read("config.json"))   # SHA-256 of file content
+gay_seed!(open("large.bin"))     # Streaming read
+gay_seed!(Vector{UInt8}("data")) # Direct bytes
+```
+
+## drand Integration
+
+Gay.jl integrates with the League of Entropy drand network for verifiable public randomness:
+
+```julia
+# Fetch latest randomness
+dr = fetch_latest(quicknet())
+seed = to_seed(dr)
+
+# Time-based calculations
+round_num = round_at_time(now(), mainnet())
+time = time_of_round(12345678, quicknet())
+
+# Commitment schemes (fair lotteries)
+scheduled = schedule_seed(delay_seconds=300)
+println("Lottery uses drand round $(scheduled.round)")
+println("Available at: $(scheduled.scheduled_time)")
+
+# Wait for round
 dr = await_future_round(scheduled)
 gay_seed!(to_seed(dr))
-winner_color = next_color()  # Provably fair!
+winner = next_color()  # Provably fair!
+
+# Verification
+verify_round(dr)                    # SHA-256 check
+cross_verify(dr.round, quicknet())  # Multi-endpoint verification
 ```
 
-### drand API
-- `drand_seed!()` — Seed RNG from latest drand round
-- `fetch_round(n)` — Get specific historical round
-- `schedule_seed(delay_seconds=60)` — Commit to future round
-- `cross_verify(round)` — Verify across multiple endpoints
-- `mainnet()` / `quicknet()` — Beacon configurations
+### Beacon Networks
+
+| Network | Period | Mode | Use Case |
+|---------|--------|------|----------|
+| `mainnet()` | 30 sec | Chained | High-stakes, archival |
+| `quicknet()` | 3 sec | Unchained | Interactive, low-latency |
+
+### drand API Reference
+- `fetch_latest(beacon)` — Get most recent round
+- `fetch_round(n, beacon)` — Get specific historical round
+- `round_at_time(time, beacon)` — Calculate round for timestamp
+- `time_of_round(n, beacon)` — When round was/will be published
+- `schedule_seed(delay_seconds)` — Commit to future round
+- `await_future_round(scheduled)` — Wait for scheduled round
+- `verify_round(dr)` — Verify SHA-256(signature) = randomness
+- `cross_verify(n, beacon)` — Verify across multiple endpoints
+- `to_seed(dr)` — Convert DrandRound to UInt64 seed
 
 ## Gamut Mapping (GamutLearnable Module)
 
