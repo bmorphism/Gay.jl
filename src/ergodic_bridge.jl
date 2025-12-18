@@ -521,15 +521,15 @@ function world_ergodic_bridge()
     # 2. Verify bridge
     println("2. BIDIRECTIONAL VERIFICATION")
     valid = verify_bridge(bridge)
-    println("   Forward (time→colors): $(bridge.fingerprint != 0 ? "✓" : "✗")")
-    println("   Backward (colors→time): $(valid ? "✓" : "✗")")
+    println("   Forward (time→colors): $(bridge.fingerprint != 0 ? "◆" : "◇")")
+    println("   Backward (colors→time): $(valid ? "◆" : "◇")")
     println()
     
     # 3. Invariant status
     println("3. COMPOSITION INVARIANTS")
-    println("   Order independence: $(bridge.order_independent ? "✓" : "✗")")
-    println("   Bandwidth preserved: $(bridge.bandwidth_preserved ? "✓" : "✗")")
-    println("   Ergodic: $(bridge.ergodic ? "✓" : "✗")")
+    println("   Order independence: $(bridge.order_independent ? "◆" : "◇")")
+    println("   Bandwidth preserved: $(bridge.bandwidth_preserved ? "◆" : "◇")")
+    println("   Ergodic: $(bridge.ergodic ? "◆" : "◇")")
     println()
     
     # 4. Color bandwidth
@@ -565,10 +565,10 @@ function world_ergodic_bridge()
     println("7. COMPOSITION OBSTRUCTIONS")
     obs = detect_obstructions(seed, 100_000)
     if isempty(obs)
-        println("   ✓ No obstructions detected")
+        println("   ◆ No obstructions detected")
     else
         for o in obs
-            println("   ✗ $(o.type): $(o.description) (severity: $(round(o.severity, digits=2)))")
+            println("   ◇ $(o.type): $(o.description) (severity: $(round(o.severity, digits=2)))")
         end
     end
     println()

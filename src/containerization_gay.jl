@@ -959,7 +959,7 @@ function render_derangeable_timestamps(ts::DerangeableTimestamps)
     end
     
     push!(lines, "╠════════════════════════════════════════════════════════════╣")
-    push!(lines, "║  Deranged: $(ts.is_deranged ? "✓" : "✗")  Perm: $(ts.derangement_perm)")
+    push!(lines, "║  Deranged: $(ts.is_deranged ? "◆" : "◇")  Perm: $(ts.derangement_perm)")
     push!(lines, "║  Seed: 0x$(string(ts.derangement_seed, base=16, pad=16))")
     push!(lines, "╚════════════════════════════════════════════════════════════╝")
     
@@ -972,7 +972,7 @@ end
 
 function world_containerization_gay()
     println()
-    println("🏳️‍🌈 ContainerizationGay Demo")
+    println("◈ ContainerizationGay Demo")
     println("=" ^ 60)
     println()
     
@@ -1002,7 +1002,7 @@ function world_containerization_gay()
     
     # Verify chain
     result = verify_layer_chain(layers)
-    println("Chain verification: $(result.verified ? "✓" : "✗")")
+    println("Chain verification: $(result.verified ? "◆" : "◇")")
     println("Total parity: 0x$(string(result.total_parity, base=16))")
     println()
     
@@ -1022,7 +1022,7 @@ function world_containerization_gay()
     println(render_curriculum_progress(curriculum))
     
     println()
-    println("🏳️‍🌈 ContainerizationGay Complete")
+    println("◈ ContainerizationGay Complete")
 end
 
 end # module ContainerizationGay

@@ -30,7 +30,7 @@ gay_seed!(42)  # Reset to same seed
 @assert next_color() == c2
 @assert next_color() == c3
 
-println("✓ Determinism verified: seed 42 always produces the same sequence")
+println("◆ Determinism verified: seed 42 always produces the same sequence")
 
 # ## The Splittable RNG Model
 #
@@ -141,4 +141,4 @@ println("  Invocation: ", state.invocation)
 # Both use the same mathematical foundation: 
 # [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl)
 
-println("\n✓ Splittable determinism example complete")
+println("\n◆ Splittable determinism example complete")

@@ -574,9 +574,9 @@ function spi_parallel_demo(world::WhaleWorld; verbose::Bool=true)
     
     if verbose
         println("  Results:")
-        println("    Sequential == Parallel:     $seq_par ✓")
-        println("    Sequential == Reversed:     $seq_rev ✓")
-        println("    Sequential == Random Order: $seq_rnd ✓")
+        println("    Sequential == Parallel:     $seq_par ◆")
+        println("    Sequential == Reversed:     $seq_rev ◆")
+        println("    Sequential == Random Order: $seq_rnd ◆")
         println()
         println("  Timing:")
         println("    Sequential:   $(round(t_seq * 1000, digits=2)) ms")
@@ -769,7 +769,7 @@ function whale_world_demo()
     
     # Verify
     verification = verify_first_contact(world, challenge.expected_fingerprint)
-    println("    Verification: $(verification.verified ? "✓ PASSED" : "✗ FAILED")")
+    println("    Verification: $(verification.verified ? "◆ PASSED" : "◇ FAILED")")
     
     world
 end

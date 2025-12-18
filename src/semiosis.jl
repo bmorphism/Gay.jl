@@ -470,7 +470,7 @@ function world_abduce()
         b = round(Int, clamp(rgb.b, 0, 1) * 255)
         color_block = "\e[38;2;$(r);$(g);$(b)m████\e[0m"
         
-        status = exact ? "✓" : "≈"
+        status = exact ? "◆" : "≈"
         println("   $color_block → index $found_idx $status (actual: $test_idx)")
     end
     
@@ -488,7 +488,7 @@ function world_abduce()
         b = round(Int, clamp(rgb.b, 0, 1) * 255)
         color_block = "\e[38;2;$(r);$(g);$(b)m████\e[0m"
         
-        status = exact ? "✓" : "≈"
+        status = exact ? "◆" : "≈"
         println("   $color_block → seed 0x$(string(found_seed, base=16)) $status")
     end
     
@@ -519,7 +519,7 @@ function world_abduce()
     println("   Observed 5 colors with known indices")
     println("   Inferred seed: 0x$(string(inferred, base=16))")
     println("   Confidence: $(round(abducer.confidence * 100, digits=1))%")
-    println("   Actual seed: 0x$(string(seed, base=16)) $(inferred == seed ? "✓" : "✗")")
+    println("   Actual seed: 0x$(string(seed, base=16)) $(inferred == seed ? "◆" : "◇")")
     
     println()
     

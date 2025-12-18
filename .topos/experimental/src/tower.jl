@@ -451,18 +451,18 @@ function run_tower_tests()
     println("🧪 Tower Layer Tests:")
     
     # Run each layer
-    try run_layer_0!(state); println("  ✓ Layer 0: concept_tensor") catch e; println("  ✗ Layer 0: $e") end
-    try run_layer_1!(state); println("  ✓ Layer 1: exponential") catch e; println("  ✗ Layer 1: $e") end
-    try run_layer_2!(state); println("  ✓ Layer 2: higher") catch e; println("  ✗ Layer 2: $e") end
-    try run_layer_3!(state); println("  ✓ Layer 3: traced") catch e; println("  ✗ Layer 3: $e") end
-    try run_layer_4!(state); println("  ✓ Layer 4: tensor_network") catch e; println("  ✗ Layer 4: $e") end
-    try run_layer_5!(state); println("  ✓ Layer 5: two_monad") catch e; println("  ✗ Layer 5: $e") end
-    try run_layer_6!(state); println("  ✓ Layer 6: kripke") catch e; println("  ✗ Layer 6: $e") end
-    try run_layer_7!(state); println("  ✓ Layer 7: modal") catch e; println("  ✗ Layer 7: $e") end
-    try run_layer_8!(state); println("  ✓ Layer 8: sheaf") catch e; println("  ✗ Layer 8: $e") end
-    try run_layer_9!(state); println("  ✓ Layer 9: probability") catch e; println("  ✗ Layer 9: $e") end
-    try run_layer_10!(state); println("  ✓ Layer 10: random_topos") catch e; println("  ✗ Layer 10: $e") end
-    try run_layer_11!(state); println("  ✓ Layer 11: synthetic") catch e; println("  ✗ Layer 11: $e") end
+    try run_layer_0!(state); println("  ◆ Layer 0: concept_tensor") catch e; println("  ◇ Layer 0: $e") end
+    try run_layer_1!(state); println("  ◆ Layer 1: exponential") catch e; println("  ◇ Layer 1: $e") end
+    try run_layer_2!(state); println("  ◆ Layer 2: higher") catch e; println("  ◇ Layer 2: $e") end
+    try run_layer_3!(state); println("  ◆ Layer 3: traced") catch e; println("  ◇ Layer 3: $e") end
+    try run_layer_4!(state); println("  ◆ Layer 4: tensor_network") catch e; println("  ◇ Layer 4: $e") end
+    try run_layer_5!(state); println("  ◆ Layer 5: two_monad") catch e; println("  ◇ Layer 5: $e") end
+    try run_layer_6!(state); println("  ◆ Layer 6: kripke") catch e; println("  ◇ Layer 6: $e") end
+    try run_layer_7!(state); println("  ◆ Layer 7: modal") catch e; println("  ◇ Layer 7: $e") end
+    try run_layer_8!(state); println("  ◆ Layer 8: sheaf") catch e; println("  ◇ Layer 8: $e") end
+    try run_layer_9!(state); println("  ◆ Layer 9: probability") catch e; println("  ◇ Layer 9: $e") end
+    try run_layer_10!(state); println("  ◆ Layer 10: random_topos") catch e; println("  ◇ Layer 10: $e") end
+    try run_layer_11!(state); println("  ◆ Layer 11: synthetic") catch e; println("  ◇ Layer 11: $e") end
     
     println("\n  Collective: $(string(state.collective_fingerprint, base=16))")
     

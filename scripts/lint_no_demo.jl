@@ -59,7 +59,7 @@ function main()
     violations = find_violations(src_dir)
     
     if isempty(violations)
-        println("✓ No demo_ violations found")
+        println("◆ No demo_ violations found")
         exit(0)
     else
         println("Found $(length(violations)) violation(s):\n")

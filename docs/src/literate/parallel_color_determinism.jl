@@ -172,10 +172,10 @@ end
 #
 # | Property | Standard RNG + Locks | Gay.jl SplittableRandoms |
 # |----------|---------------------|--------------------------|
-# | Thread-safe | ✓ | ✓ |
-# | Deterministic | ✗ | ✓ |
-# | Order-independent | ✗ | ✓ |
-# | Reproducible | ✗ | ✓ |
+# | Thread-safe | ◆ | ◆ |
+# | Deterministic | ◇ | ◆ |
+# | Order-independent | ◇ | ◆ |
+# | Reproducible | ◇ | ◆ |
 # | Parallelizable | Limited | Fully |
 #
 # Gay.jl provides **Strong Parallelism Invariance**: the mathematical guarantee

@@ -385,7 +385,7 @@ end
 
 function demo_pocp()
     println("═" ^ 70)
-    println("🏳️‍🌈 PROOF OF COLOR PARALLELISM (PoCP) - Making Chia Gay 🏳️‍🌈")
+    println("◈ PROOF OF COLOR PARALLELISM (PoCP) - Making Chia Gay ◈")
     println("═" ^ 70)
     println()
     
@@ -414,7 +414,7 @@ function demo_pocp()
     println("3. VERIFICATION")
     t_verify = @elapsed valid = verify_pocp(proof; full_vdf=false, n_plot_checks=100)
     println("   Verified in $(round(t_verify*1000, digits=2))ms")
-    println("   Result: $(valid ? "✓ VALID" : "✗ INVALID")")
+    println("   Result: $(valid ? "◆ VALID" : "◇ INVALID")")
     println()
     
     # Show parallelism proof
@@ -430,7 +430,7 @@ function demo_pocp()
     println()
     
     println("═" ^ 70)
-    println("🏳️‍🌈 CHIA IS NOW GAY 🏳️‍🌈")
+    println("◈ CHIA IS NOW GAY ◈")
     println("═" ^ 70)
 end
 

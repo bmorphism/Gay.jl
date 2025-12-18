@@ -242,24 +242,24 @@ Separate package repo (if extractable)
 ### Criteria for Graduation
 
 **To `src/` (Core)**:
-- ✓ Full test coverage (unit + integration)
-- ✓ Passes SPI verification (if parallel)
-- ✓ Documented in API docs
-- ✓ No breaking changes to exports
-- ✓ Performance profiled
+- ◆ Full test coverage (unit + integration)
+- ◆ Passes SPI verification (if parallel)
+- ◆ Documented in API docs
+- ◆ No breaking changes to exports
+- ◆ Performance profiled
 
 **To `examples/` (Illustrations)**:
-- ✓ Runnable without errors
-- ✓ Demonstrates a concept
-- ✓ Has docstring explaining purpose
-- ✓ Appropriate for new users
+- ◆ Runnable without errors
+- ◆ Demonstrates a concept
+- ◆ Has docstring explaining purpose
+- ◆ Appropriate for new users
 
 **To Separate Package** (if high-extractability):
-- ✓ No dependencies on internal src/ modules
-- ✓ Complete API design
-- ✓ Comprehensive tests
-- ✓ Published as independent package
-- ✓ Cross-linked in main README
+- ◆ No dependencies on internal src/ modules
+- ◆ Complete API design
+- ◆ Comprehensive tests
+- ◆ Published as independent package
+- ◆ Cross-linked in main README
 
 ---
 

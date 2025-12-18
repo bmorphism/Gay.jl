@@ -25,13 +25,13 @@ Use `world_` prefix for functions that:
 - Can be merged with other worlds
 
 ```julia
-# ✗ FORBIDDEN
+# ◇ FORBIDDEN
 function demo_ancestry_tracing(threads)
     println("Tracing ancestry...")  # Side effect!
     # ... computation discarded
 end
 
-# ✓ REQUIRED
+# ◆ REQUIRED
 function world_ancestry_tracing(threads)::AncestryWorld
     # Returns persistent, composable structure
     AncestryWorld(materialize_ancestry!(threads))
@@ -52,8 +52,8 @@ Run `scripts/lint_no_demo.jl` before committing. CI will fail on violations.
 ## Ontology: We, Not I/You
 
 Use collective pronouns in code and documentation:
-- ✗ `MyWorld`, `YourType`, `my_config`
-- ✓ `OurWorld`, `SharedType`, `our_config`
+- ◇ `MyWorld`, `YourType`, `my_config`
+- ◆ `OurWorld`, `SharedType`, `our_config`
 
 This reflects the collaborative, compositional nature of the Gay.jl ecosystem.
 

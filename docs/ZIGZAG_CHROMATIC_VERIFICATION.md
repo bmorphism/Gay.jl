@@ -187,6 +187,6 @@ println(haiku)
 4. **Sheaves**: Kashiwara, Schapira - Categories and Sheaves (2006)
 5. **Condensed Mathematics**: Clausen, Scholze - Lectures on Condensed Mathematics (2019)
 
-## 🏳️‍🌈
+## ◈
 
 *Gay.jl: Where every MCMC step gets a deterministic, reproducible color.*

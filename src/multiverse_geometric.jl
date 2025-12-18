@@ -681,7 +681,7 @@ function world_multiverse(; seed::UInt64=GAY_SEED)
     println("-" ^ 40)
     pass, results = verify_multiverse_laws(; seed=seed)
     for (law, ok) in results
-        status = ok ? "✓" : "✗"
+        status = ok ? "◆" : "◇"
         println("   $status $law")
     end
     println()
@@ -767,7 +767,7 @@ function world_holographic_game(; n::Int=4, m::Int=4, seed::UInt64=GAY_SEED)
     println("   Total moves: $(game.moves)")
     println("   Score: $(round(game.score, digits=1))")
     println("   Won: $(game.won)")
-    println("   Holographic principle: $(holographic_principle(game) ? "✓" : "✗")")
+    println("   Holographic principle: $(holographic_principle(game) ? "◆" : "◇")")
     println()
     
     println("═" ^ 70)

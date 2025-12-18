@@ -472,7 +472,7 @@ function world_kripke(; n_worlds::Int=11, seed::UInt64=GAY_SEED)
     println("-" ^ 40)
     laws = verify_modal_laws(frame; seed=seed)
     for (law, valid) in laws
-        status = valid ? "✓" : "✗"
+        status = valid ? "◆" : "◇"
         println("   $status $law")
     end
     println()
@@ -501,8 +501,8 @@ function world_kripke(; n_worlds::Int=11, seed::UInt64=GAY_SEED)
     δ = comultiplication(cm, p)
     ε_valid = all(w -> truth_at(ε, w), frame.worlds)
     δ_valid = all(w -> truth_at(δ, w), frame.worlds)
-    println("   ε : □p → p  $(ε_valid ? "✓" : "✗") [reflexive]")
-    println("   δ : □p → □□p  $(δ_valid ? "✓" : "✗") [transitive]")
+    println("   ε : □p → p  $(ε_valid ? "◆" : "◇") [reflexive]")
+    println("   δ : □p → □□p  $(δ_valid ? "◆" : "◇") [transitive]")
     println()
     
     println("WORLD 7: SPI Attestation")
@@ -511,7 +511,7 @@ function world_kripke(; n_worlds::Int=11, seed::UInt64=GAY_SEED)
     println("   World: W_$(string(w0.id, base=16)[1:8])")
     println("   Local fp: 0x$(string(attest.local_fingerprint, base=16, pad=8))")
     println("   Accessible: $(length(attest.accessible_fingerprints)) worlds")
-    println("   Valid: $(verify_accessibility(attest) ? "✓" : "✗")")
+    println("   Valid: $(verify_accessibility(attest) ? "◆" : "◇")")
     println()
     
     println("══════════════════════════════════════════════════════════════════════")
@@ -572,20 +572,20 @@ function run_kripke_tests(; verbose::Bool=true)
         try
             result = test_fn()
             if result
-                verbose && println("  ✓ $name")
+                verbose && println("  ◆ $name")
             else
                 all_pass = false
-                verbose && println("  ✗ $name")
+                verbose && println("  ◇ $name")
             end
         catch e
             all_pass = false
-            verbose && println("  ✗ $name (ERROR: $e)")
+            verbose && println("  ◇ $name (ERROR: $e)")
         end
     end
     
     verbose && println()
     verbose && println("═══════════════════════════════════════════════════════════════════")
-    verbose && println(all_pass ? "  ALL 3 KRIPKE TESTS PASSED ✓" : "  SOME TESTS FAILED ✗")
+    verbose && println(all_pass ? "  ALL 3 KRIPKE TESTS PASSED ◆" : "  SOME TESTS FAILED ◇")
     verbose && println("═══════════════════════════════════════════════════════════════════")
     
     all_pass

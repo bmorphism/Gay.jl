@@ -9,9 +9,9 @@
 # We combine them: each π digit determines a color from a splittable stream.
 #
 # Properties shared with Gay.jl:
-#   ✓ Same seed always produces same colors
-#   ✓ Parallel execution is reproducible  
-#   ✓ Random access by index is efficient
+#   ◆ Same seed always produces same colors
+#   ◆ Parallel execution is reproducible  
+#   ◆ Random access by index is efficient
 
 using Gay
 using Colors
@@ -345,9 +345,9 @@ function render_pi_spiral(; max_radius::Int=12, seed::Integer=314159,
     end
     
     println("\n  Properties:")
-    println("  ✓ Same seed always produces same colors")
-    println("  ✓ Parallel execution is reproducible")
-    println("  ✓ Random access by index is efficient (BBP formula)")
+    println("  ◆ Same seed always produces same colors")
+    println("  ◆ Parallel execution is reproducible")
+    println("  ◆ Random access by index is efficient (BBP formula)")
 end
 
 """
@@ -376,12 +376,12 @@ function compare_access_methods()
     println("  Position 1000:")
     println("    Direct extraction: 0x$(string(d1000_direct, base=16))")
     println("    Second extraction: 0x$(string(d1000_again, base=16))")
-    println("    Match: $(d1000_direct == d1000_again ? "✓" : "✗")")
+    println("    Match: $(d1000_direct == d1000_again ? "◆" : "◇")")
     println()
     println("  Colors at position 1000:")
     print("    First:  "); show_colors([c1])
     print("    Second: "); show_colors([c2])
-    println("    Match: $(c1 == c2 ? "✓" : "✗")")
+    println("    Match: $(c1 == c2 ? "◆" : "◇")")
     println()
     
     # Parallel extraction demo

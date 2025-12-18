@@ -87,7 +87,7 @@ function section_concept_tensor(seed::UInt64, size::Int)
     push!(section.details, ("Odd parity sites", length(lat.odd_parity)))
     
     for (law, ok) in monoid_results
-        push!(section.details, ("Monoid: $law", ok ? "✓" : "✗"))
+        push!(section.details, ("Monoid: $law", ok ? "◆" : "◇"))
     end
     
     ReportSection(
@@ -119,7 +119,7 @@ function section_exponential(seed::UInt64, size::Int)
     push!(section.details, ("Fixed points", tr.fixed_count))
     
     for (law, ok) in exp_results
-        push!(section.details, ("Exp: $law", ok ? "✓" : "✗"))
+        push!(section.details, ("Exp: $law", ok ? "◆" : "◇"))
     end
     
     ReportSection(
@@ -156,7 +156,7 @@ function section_higher(seed::UInt64, size::Int)
     push!(section.details, ("Step morphism transform", "0x" * string(step_φ.transform, base=16, pad=8)[1:8] * "..."))
     
     for (law, ok) in trace_results
-        push!(section.details, ("Trace: $law", ok ? "✓" : "✗"))
+        push!(section.details, ("Trace: $law", ok ? "◆" : "◇"))
     end
     
     # Fingerprint from φ⁸
@@ -192,7 +192,7 @@ function section_traced(seed::UInt64, size::Int)
     push!(section.details, ("feedback(φ, 10)", "0x" * string(fb10.transform, base=16, pad=8)[1:8] * "..."))
     
     for (law, ok) in traced_results
-        push!(section.details, ("Traced: $law", ok ? "✓" : "✗"))
+        push!(section.details, ("Traced: $law", ok ? "◆" : "◇"))
     end
     
     fp = UInt32(fb10.transform & 0xFFFFFFFF)
@@ -335,14 +335,14 @@ function export_report_markdown(report::FullReport)
     push!(lines, "**Generated:** $(report.timestamp)")
     push!(lines, "**Seed:** `0x$(string(report.seed, base=16, pad=16))`")
     push!(lines, "**Attestation:** `0x$(string(report.attestation, base=16, pad=8))`")
-    push!(lines, "**Status:** $(report.coherent ? "✅ COHERENT" : "❌ INCOHERENT")")
+    push!(lines, "**Status:** $(report.coherent ? "▣ COHERENT" : "◇ INCOHERENT")")
     push!(lines, "")
     
     for section in report.sections
         push!(lines, "## Layer $(section.layer): $(section.name)")
         push!(lines, "")
         push!(lines, "**Fingerprint:** `0x$(string(section.fingerprint, base=16, pad=8))`")
-        push!(lines, "**Passed:** $(section.passed ? "✅" : "❌")")
+        push!(lines, "**Passed:** $(section.passed ? "▣" : "◇")")
         push!(lines, "")
         push!(lines, "| Property | Value |")
         push!(lines, "|----------|-------|")
@@ -385,13 +385,13 @@ function demo_report(; tensor_size::Int=23, n_threads::Int=69)
     println("SUMMARY:")
     println("  Timestamp: $(report.timestamp)")
     println("  Seed: 0x$(string(report.seed, base=16, pad=16))")
-    println("  Coherent: $(report.coherent ? "✓ YES" : "✗ NO")")
+    println("  Coherent: $(report.coherent ? "◆ YES" : "◇ NO")")
     println("  Attestation: 0x$(string(report.attestation, base=16, pad=8))")
     println()
     
     println("SECTIONS:")
     for section in report.sections
-        status = section.passed ? "✓" : "✗"
+        status = section.passed ? "◆" : "◇"
         fp = "0x" * string(section.fingerprint, base=16, pad=8)
         println("  [$status] Layer $(section.layer): $(section.name)")
         println("      Fingerprint: $fp")
@@ -410,7 +410,7 @@ function demo_report(; tensor_size::Int=23, n_threads::Int=69)
     
     println("VERIFICATION:")
     verified = verify_coherence(report)
-    println("  Coherence check: $(verified ? "✓ PASSED" : "✗ FAILED")")
+    println("  Coherence check: $(verified ? "◆ PASSED" : "◇ FAILED")")
     println()
     
     println("═" ^ 70)

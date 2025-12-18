@@ -478,7 +478,7 @@ function demo_traced_tensor(; size::Int=11)
     println("7. Traced category law verification:")
     pass, results = verify_traced_laws(; size=size)
     for (law, ok) in results
-        println("   $(ok ? "✓" : "✗") $law")
+        println("   $(ok ? "◆" : "◇") $law")
     end
     println()
     

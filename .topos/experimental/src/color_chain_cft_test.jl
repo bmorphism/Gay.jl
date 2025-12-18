@@ -112,7 +112,7 @@ function test_color_spi(n_colors::Int=100, n_shuffles::Int=50)
         shuffled = shuffle(colors)
         fp_shuffled = collective_fingerprint(shuffled)
         if fp_shuffled != fp_original
-            println("  ✗ Shuffle $i failed!")
+            println("  ◇ Shuffle $i failed!")
             all_match = false
             break
         end
@@ -127,13 +127,13 @@ function test_color_spi(n_colors::Int=100, n_shuffles::Int=50)
     fp_interleaved = collective_fingerprint(vcat(odd_colors, even_colors))
     
     if all_match && fp_reversed == fp_original && fp_interleaved == fp_original
-        println("  ✓ $n_shuffles random permutations: all match")
-        println("  ✓ Reversed order: matches")
-        println("  ✓ Interleaved (odd/even): matches")
-        println("  ✓ COLOR SPI VERIFIED")
+        println("  ◆ $n_shuffles random permutations: all match")
+        println("  ◆ Reversed order: matches")
+        println("  ◆ Interleaved (odd/even): matches")
+        println("  ◆ COLOR SPI VERIFIED")
         return true
     else
-        println("  ✗ SPI FAILED")
+        println("  ◇ SPI FAILED")
         return false
     end
 end
@@ -189,11 +189,11 @@ function test_split_independence(n_streams::Int=4, n_per_stream::Int=50)
     # But both should be ORDER-INDEPENDENT within their own sequences
     
     if all_different
-        println("  ✓ All $n_streams streams have distinct fingerprints")
-        println("  ✓ Streams are independent (different cosets)")
+        println("  ◆ All $n_streams streams have distinct fingerprints")
+        println("  ◆ Streams are independent (different cosets)")
         return true
     else
-        println("  ✗ Stream fingerprints collided!")
+        println("  ◇ Stream fingerprints collided!")
         return false
     end
 end
@@ -248,9 +248,9 @@ function test_tree_determinism()
     
     if path_deterministic && different_seed_different && seq_deterministic && fp_deterministic
         println()
-        println("  ✓ Tree traversal is deterministic from seed")
-        println("  ✓ Different seeds produce different trees")
-        println("  ✓ Splittable RNG semantics verified")
+        println("  ◆ Tree traversal is deterministic from seed")
+        println("  ◆ Different seeds produce different trees")
+        println("  ◆ Splittable RNG semantics verified")
         println()
         println("  Note: This is a TREE structure, not a linear sequence.")
         println("  The SPI guarantee applies to XOR over any traversal.")
@@ -303,11 +303,11 @@ function test_frobenius_analogy()
     end
     
     if verify_fp == orbit_fps[end]
-        println("  ✓ Orbit fingerprint reproducible from seed")
-        println("  ✓ Frobenius analogy: split() generates deterministic orbit")
+        println("  ◆ Orbit fingerprint reproducible from seed")
+        println("  ◆ Frobenius analogy: split() generates deterministic orbit")
         return true
     else
-        println("  ✗ Orbit fingerprint not reproducible!")
+        println("  ◇ Orbit fingerprint not reproducible!")
         return false
     end
 end
@@ -346,14 +346,14 @@ function test_parallel_color_reduction(n_colors::Int=1000, n_chunks::Int=8)
     println("  Parallel fingerprint:   0x$(string(fp_parallel, base=16))")
     
     if fp_sequential == fp_parallel
-        println("  ✓ Sequential == Parallel")
-        println("  ✓ PARALLEL COLOR REDUCTION THEOREM VERIFIED")
+        println("  ◆ Sequential == Parallel")
+        println("  ◆ PARALLEL COLOR REDUCTION THEOREM VERIFIED")
         println()
         println("  Mathematical statement:")
         println("    ⊻_{i=1}^n fp(color_i) = ⊻_{j=1}^k (⊻_{i∈chunk_j} fp(color_i))")
         return true
     else
-        println("  ✗ Mismatch!")
+        println("  ◇ Mismatch!")
         return false
     end
 end
@@ -410,15 +410,15 @@ function test_interleaved_decomposition()
     # because XOR is order-independent!
     
     if fp_combined == fp_interleaved
-        println("  ✓ Stream 0 ⊻ Stream 1 == Interleaved")
-        println("  ✓ Decomposition into cosets preserves fingerprint")
+        println("  ◆ Stream 0 ⊻ Stream 1 == Interleaved")
+        println("  ◆ Decomposition into cosets preserves fingerprint")
         println()
         println("  CFT Analogy:")
         println("    Gal(L/K) = Stream_0 ⊔ Stream_1 (coset decomposition)")
         println("    ∏_{σ∈Gal} f(σ) = ∏_{σ∈Stream_0} f(σ) × ∏_{σ∈Stream_1} f(σ)")
         return true
     else
-        println("  ✗ Decomposition mismatch!")
+        println("  ◇ Decomposition mismatch!")
         return false
     end
 end
@@ -450,7 +450,7 @@ function test_kronecker_weber_analogy()
         fp2 = collective_fingerprint(colors2)
         
         match = fp1 == fp2
-        status = match ? "✓" : "✗"
+        status = match ? "◆" : "◇"
         
         println("  Seed 0x$(string(seed, base=16)): $status (fp = 0x$(string(fp1, base=16)))")
         
@@ -461,8 +461,8 @@ function test_kronecker_weber_analogy()
     
     if all_deterministic
         println()
-        println("  ✓ All seeds produce deterministic color sequences")
-        println("  ✓ Kronecker-Weber analogy: seed determines entire 'extension'")
+        println("  ◆ All seeds produce deterministic color sequences")
+        println("  ◆ Kronecker-Weber analogy: seed determines entire 'extension'")
         println()
         println("  Mathematical statement:")
         println("    Just as ℚ(ζ_n) determines all abelian extensions,")
@@ -500,7 +500,7 @@ function run_color_chain_tests()
     
     all_passed = true
     for (name, passed) in sort(collect(results))
-        status = passed ? "✓ PASS" : "✗ FAIL"
+        status = passed ? "◆ PASS" : "◇ FAIL"
         println("  $status: $name")
         all_passed = all_passed && passed
     end

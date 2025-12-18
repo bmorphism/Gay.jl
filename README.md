@@ -1,4 +1,4 @@
-# Gay.jl 🏳️‍🌈
+# Gay.jl ◈
 
 Wide-gamut color sampling with **splittable determinism** — reproducible colors via [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl), inspired by [Pigeons.jl](https://pigeons.run)'s Strong Parallelism Invariance (SPI) pattern.
 
@@ -78,7 +78,7 @@ colors_at([1, 10, 100])  # Batch access
 palette_at(5, 6)         # 6-color palette at index 5
 ```
 
-### 🏳️‍🌈 Pride Flag Palettes
+### ◈ Pride Flag Palettes
 ```julia
 rainbow()                # 6-color rainbow
 transgender()            # Trans flag colors
@@ -183,9 +183,9 @@ render_pi_spiral(seed=314159, colorspace=Rec2020())
 
 **Shared properties with Gay.jl:**
 ```
-✓ Same seed always produces same colors
-✓ Parallel execution is reproducible  
-✓ Random access by index is efficient
+◆ Same seed always produces same colors
+◆ Parallel execution is reproducible  
+◆ Random access by index is efficient
 ```
 
 ## Black Hole Imaging Demo
@@ -401,27 +401,27 @@ SPI VERIFICATION: Strong Parallelism Invariance
 
 1. CPU Sequential Reference
    XOR Fingerprint: 0x043aba9b
-   ✓ Generated
+   ◆ Generated
 
 2. CPU Parallel (KernelAbstractions)
    XOR Fingerprint: 0x043aba9b
-   Colors match: ✓ PASS
-   Fingerprint match: ✓ PASS
+   Colors match: ◆ PASS
+   Fingerprint match: ◆ PASS
 
 3. Workgroup Size Independence
-   workgroup=32: ✓ PASS
-   workgroup=64: ✓ PASS
-   workgroup=128: ✓ PASS
-   workgroup=256: ✓ PASS
-   workgroup=512: ✓ PASS
+   workgroup=32: ◆ PASS
+   workgroup=64: ◆ PASS
+   workgroup=128: ◆ PASS
+   workgroup=256: ◆ PASS
+   workgroup=512: ◆ PASS
 
 4. GPU Backend: MetalBackend
    XOR Fingerprint: 0x043aba9b
-   Colors match CPU: ✓ PASS
-   Fingerprint match CPU: ✓ PASS
+   Colors match CPU: ◆ PASS
+   Fingerprint match CPU: ◆ PASS
 
 ════════════════════════════════════════════════════════════
-ALL SPI INVARIANTS VERIFIED ✓
+ALL SPI INVARIANTS VERIFIED ◆
 ════════════════════════════════════════════════════════════
 ```
 
@@ -455,11 +455,11 @@ This is how Gay.jl guarantees that the 1069 parallel-generated sky models in the
 ## Code Quality
 
 Tested with [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl) for:
-- ✅ No method ambiguities
-- ✅ No unbound type parameters
-- ✅ No undefined exports
-- ✅ No stale dependencies
-- ✅ Proper compat bounds
+- ▣ No method ambiguities
+- ▣ No unbound type parameters
+- ▣ No undefined exports
+- ▣ No stale dependencies
+- ▣ Proper compat bounds
 
 ## License
 

@@ -64,7 +64,7 @@ function world_whale_bridge()
     
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
-    println("║  ✓ Demo complete!                                             ║")
+    println("║  ◆ Demo complete!                                             ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
 end
 
@@ -131,7 +131,7 @@ function world_trajectory()
     
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
-    println("║  ✓ Trajectory demo complete!                                  ║")
+    println("║  ◆ Trajectory demo complete!                                  ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
 end
 
@@ -219,7 +219,7 @@ function world_multi_agent()
     
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
-    println("║  ✓ Multi-agent demo complete!                                 ║")
+    println("║  ◆ Multi-agent demo complete!                                 ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
 end
 
@@ -258,7 +258,7 @@ function world_full_pipeline()
     
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
-    println("║  ✓ FULL PIPELINE COMPLETE                                     ║")
+    println("║  ◆ FULL PIPELINE COMPLETE                                     ║")
     println("║                                                               ║")
     println("║  The Gay.jl whale translation system is ready for:           ║")
     println("║  • Real whale audio analysis (via ICI extraction)            ║")

@@ -219,7 +219,7 @@ function modal_descent(seed::UInt64; max_depth::Int=7)
         world = ModalWorld(seed, depth, world.fingerprint, result.valid)
         push!(path, world)
         
-        println("Depth $depth: S5=$(result.valid ? "✓" : "✗") laxity=$(round(result.laxity, digits=3))")
+        println("Depth $depth: S5=$(result.valid ? "◆" : "◇") laxity=$(round(result.laxity, digits=3))")
         
         if result.valid
             println("  → Potentialist maximality achieved!")

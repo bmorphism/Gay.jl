@@ -391,7 +391,7 @@ function generate_collage(seed::UInt64, n_diagrams::Int)::CollageResult
     # Show top regrets
     println("\n  Top 5 regrets:")
     for r in regrets[1:min(5, length(regrets))]
-        galois = r.galois_closure ? "✓" : "✗"
+        galois = r.galois_closure ? "◆" : "◇"
         println("    D$(r.from_id) ↔ D$(r.to_id): regret=$(round(r.regret, digits=2)) galois=$galois")
     end
     
@@ -410,7 +410,7 @@ function generate_collage(seed::UInt64, n_diagrams::Int)::CollageResult
     println("\n▸ Computing derangement coloring...")
     coloring = derangement_coloring(nodes, adjacency)
     println("  Colors used: $(coloring.n_colors)")
-    println("  Valid derangement: $(coloring.is_valid_derangement ? "✓ YES" : "✗ NO")")
+    println("  Valid derangement: $(coloring.is_valid_derangement ? "◆ YES" : "◇ NO")")
     
     CollageResult(
         nodes, adjacency, shortest, regrets, additions,
@@ -491,7 +491,7 @@ function generate_markdown_docs(result::CollageResult)::String
     push!(lines, "| From | To | Regret | Galois |")
     push!(lines, "|------|-----|--------|--------|")
     for r in result.regrets[1:min(10, length(result.regrets))]
-        galois = r.galois_closure ? "✓" : "✗"
+        galois = r.galois_closure ? "◆" : "◇"
         push!(lines, "| D$(r.from_id) | D$(r.to_id) | $(round(r.regret, digits=2)) | $galois |")
     end
     push!(lines, "")

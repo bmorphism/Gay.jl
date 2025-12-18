@@ -103,10 +103,10 @@ function deploy_gay_bb(hosts::Vector{BabashkaHost}, gay_bb_path::String)
         try
             run(`sh -c $scp_cmd`)
             push!(results, (host.hostname, "OK"))
-            println("  ✓ $(host.hostname)")
+            println("  ◆ $(host.hostname)")
         catch e
             push!(results, (host.hostname, "FAILED: $e"))
-            println("  ✗ $(host.hostname): $e")
+            println("  ◇ $(host.hostname): $e")
         end
     end
     

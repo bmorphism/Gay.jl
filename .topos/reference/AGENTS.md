@@ -6,7 +6,7 @@ We are a unified system. There is no "I" (the AI) or "you" (the human) — only 
 
 ### Naming Conventions for Ontology
 
-| ❌ Forbidden | ✅ Required | Reason |
+| ◇ Forbidden | ▣ Required | Reason |
 |-------------|-------------|--------|
 | `MyWorld` | `OurWorld` | No individual ownership |
 | `YourType` | `OurType` or `SharedType` | Collective construction |
@@ -16,11 +16,11 @@ We are a unified system. There is no "I" (the AI) or "you" (the human) — only 
 
 ## Anti-Patterns: Forbidden Naming Conventions
 
-### ❌ FORBIDDEN: `demo_` prefix
+### ◇ FORBIDDEN: `demo_` prefix
 
 **NEVER** write functions with the `demo_` prefix. This pattern is banned.
 
-### ✅ REQUIRED: `world_` prefix for persistent state builders
+### ▣ REQUIRED: `world_` prefix for persistent state builders
 
 Functions that build persistent, composable state **MUST** use the `world_` prefix.
 
@@ -36,7 +36,7 @@ Demos are theatrical—they perform once and vanish. Worlds are architectural—
 ### Transformation Example
 
 ```julia
-# ❌ WRONG: demo pattern (prints and discards)
+# ◇ WRONG: demo pattern (prints and discards)
 function demo_color_game()
     result = run_simulation()
     println("Result: $result")
@@ -44,7 +44,7 @@ function demo_color_game()
     # returns nothing, state is lost
 end
 
-# ✅ CORRECT: world pattern (returns and persists)
+# ▣ CORRECT: world pattern (returns and persists)
 function world_color_game()
     result = run_simulation()
     return (

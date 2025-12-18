@@ -252,7 +252,7 @@ function verify_allgather(gathered::Matrix{Float32},
         return false
     end
     
-    @info "AllGather verified ✓" fingerprint=string(actual_fp, base=16, pad=8)
+    @info "AllGather verified ◆" fingerprint=string(actual_fp, base=16, pad=8)
     true
 end
 
@@ -280,7 +280,7 @@ function verify_allreduce(reduced::Matrix{Float32}, n_ranks::Int;
         return false
     end
     
-    @info "AllReduce verified ✓" fingerprint=string(actual_fp, base=16, pad=8)
+    @info "AllReduce verified ◆" fingerprint=string(actual_fp, base=16, pad=8)
     true
 end
 
@@ -322,7 +322,7 @@ function verify_pipeline_handoff(activations::Matrix{Float32},
         return false
     end
     
-    @info "Pipeline handoff verified ✓" from_rank to_rank layer
+    @info "Pipeline handoff verified ◆" from_rank to_rank layer
     true
 end
 
@@ -395,7 +395,7 @@ function verify_exo_ring(activations::Matrix{Float32},
         return false
     end
     
-    @info "Exo ring verified ✓" device=partition.device_name layers=partition.layer_range
+    @info "Exo ring verified ◆" device=partition.device_name layers=partition.layer_range
     true
 end
 
@@ -503,7 +503,7 @@ function verify_distributed_inference(; n_tokens::Int=128,
     println()
     
     println("═" ^ 70)
-    println(all_pass ? "ALL VERIFICATIONS PASSED ✓" : "SOME VERIFICATIONS FAILED ✗")
+    println(all_pass ? "ALL VERIFICATIONS PASSED ◆" : "SOME VERIFICATIONS FAILED ◇")
     println("═" ^ 70)
     
     all_pass

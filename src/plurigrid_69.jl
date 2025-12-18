@@ -769,7 +769,7 @@ function world_plurigrid_69()
     fp = autopoietic_fixed_point(seed)
     println("  Seed: 0x$(string(fp.seed, base=16))")
     println("  Iterations: $(fp.iteration)")
-    println("  Fixed: $(fp.fixed ? "✓" : "✗")")
+    println("  Fixed: $(fp.fixed ? "◆" : "◇")")
     println()
     
     # Full cross-product
@@ -792,7 +792,7 @@ function world_plurigrid_69()
     end
     println()
     
-    println("🏳️‍🌈 Plurigrid × Igor: 69 Ways Complete")
+    println("◈ Plurigrid × Igor: 69 Ways Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

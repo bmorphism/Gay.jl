@@ -187,4 +187,4 @@ println("After transforms applied")
 #
 # The colors help distinguish components in complex fits.
 
-println("\n✓ Comrade sky models example complete")
+println("\n◆ Comrade sky models example complete")

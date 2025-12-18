@@ -537,15 +537,15 @@ function hardest_edge_cases(seed::UInt64=UInt64(0x6761795f636f6c6f))
         witness = verify_spi_at_boundary(class, seed, n)
         push!(witnesses, witness)
         
-        println("$(class): $(witness.success ? "✓" : "✗") SPI - $(witness.description)")
+        println("$(class): $(witness.success ? "◆" : "◇") SPI - $(witness.description)")
     end
     
     # Summary
     all_passed = all(w.success for w in witnesses)
     println()
     println("═" ^ 60)
-    println(all_passed ? "✓ ALL SPI TESTS PASSED AT COMPLEXITY BOUNDARIES" : 
-                         "✗ SPI VIOLATION DETECTED")
+    println(all_passed ? "◆ ALL SPI TESTS PASSED AT COMPLEXITY BOUNDARIES" : 
+                         "◇ SPI VIOLATION DETECTED")
     println("═" ^ 60)
     
     return witnesses
@@ -709,14 +709,14 @@ function main()
     # Para(Derangeable)
     pd = ParaDerangeable(:even_parity, 6; seed=seed)
     perm = sample_derangement(pd, UInt64(1))
-    println("  Para(Derangeable): σ = $perm (no fixed points: $(all(i != perm[i] for i in 1:6) ? "✓" : "✗"))")
+    println("  Para(Derangeable): σ = $perm (no fixed points: $(all(i != perm[i] for i in 1:6) ? "◆" : "◇"))")
     
     # Para(Colorable)
     g = SimpleGraph(5)
     add_edge!(g, 1, 2); add_edge!(g, 2, 3); add_edge!(g, 3, 4); add_edge!(g, 4, 5)
     pc = ParaColorable(g, 3; seed=seed)
     colors, success = greedy_coloring(pc, UInt64(1))
-    println("  Para(Colorable): colors = $colors (valid: $(success ? "✓" : "✗"))")
+    println("  Para(Colorable): colors = $colors (valid: $(success ? "◆" : "◇"))")
     
     # Para(TropicalRing)
     ptr = ParaTropicalRing(4; seed=seed)
@@ -724,7 +724,7 @@ function main()
     println("  Para(TropicalRing): closure computed (dim=$(ptr.dim))")
     
     println()
-    println("🏳️‍🌈 Gay.jl Complexity Boundary Verification Complete")
+    println("◈ Gay.jl Complexity Boundary Verification Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

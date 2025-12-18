@@ -22,7 +22,7 @@ using Gay
 const IRREDUCIBLE = Gay.GAY_SEED  # 0x6761795f636f6c6f
 
 println("═══════════════════════════════════════════════════════════════════════")
-println("  🏳️‍🌈 Gay Seed Differentiation")
+println("  ◈ Gay Seed Differentiation")
 println("  From the irreducible GAY_SEED, differentiate the full API")
 println("═══════════════════════════════════════════════════════════════════════")
 println()
@@ -183,7 +183,7 @@ println("         │              │              │              │")
 println("     split(rng)   skip-to(i)    rejection      flag→RGB")
 println("         │              │         sampling           │")
 println("         ▼              ▼              ▼              ▼")
-println("     color₁,₂,₃   color@i      [c₁...cₙ]     🏳️‍🌈 colors")
+println("     color₁,₂,₃   color@i      [c₁...cₙ]     ◈ colors")
 println("         │              │              │              │")
 println("         └──────────────┴──────────────┴──────────────┘")
 println("                               │")
@@ -216,7 +216,7 @@ println("  │ (comrade-show m)    │ Display sky model                        
 println("  └─────────────────────┴───────────────────────────────────────────┘")
 println()
 
-println("\e[32m✓ All differentiations from GAY_SEED demonstrated\e[0m")
-println("\e[32m✓ Lisp interface maps kebab-case → snake_case\e[0m")
-println("\e[32m✓ Strong Parallelism Invariance maintained\e[0m")
+println("\e[32m◆ All differentiations from GAY_SEED demonstrated\e[0m")
+println("\e[32m◆ Lisp interface maps kebab-case → snake_case\e[0m")
+println("\e[32m◆ Strong Parallelism Invariance maintained\e[0m")
 println()

@@ -3,12 +3,12 @@
 **Generated:** 2025-12-09T05:34:49.342
 **Seed:** `0x4fbe8a69e2b7b26c`
 **Attestation:** `0x5a5aabc0`
-**Status:** ✅ COHERENT
+**Status:** ▣ COHERENT
 
 ## Layer 0: concept_tensor
 
 **Fingerprint:** `0x822dbf76`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|
@@ -16,15 +16,15 @@
 | Fingerprint | 0x822dbf76 |
 | Even parity sites | 164254 |
 | Odd parity sites | 164255 |
-| Monoid: identity | ✓ |
-| Monoid: commutativity | ✓ |
-| Monoid: associativity | ✓ |
-| Monoid: self_inverse | ✓ |
+| Monoid: identity | ◆ |
+| Monoid: commutativity | ◆ |
+| Monoid: associativity | ◆ |
+| Monoid: self_inverse | ◆ |
 
 ## Layer 1: exponential_XX
 
 **Fingerprint:** `0x87a70017`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|
@@ -33,15 +33,15 @@
 | Rotation | 18 |
 | Trace fingerprint | 0x87a70017 |
 | Fixed points | 0 |
-| Exp: curry_eval | ✓ |
-| Exp: identity_left | ✓ |
-| Exp: associativity | ✓ |
-| Exp: identity_right | ✓ |
+| Exp: curry_eval | ◆ |
+| Exp: identity_left | ◆ |
+| Exp: associativity | ◆ |
+| Exp: identity_right | ◆ |
 
 ## Layer 2: higher_XXXX
 
 **Fingerprint:** `0x49299744`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|
@@ -50,29 +50,29 @@
 | φ⁸ rotation | 16 |
 | Step morphism rotation | 1 |
 | Step morphism transform | 0xad6be4d7... |
-| Trace: trace_identity | ✓ |
-| Trace: iteration_pattern | ✓ |
-| Trace: trace_determinism | ✓ |
+| Trace: trace_identity | ◆ |
+| Trace: iteration_pattern | ◆ |
+| Trace: trace_determinism | ◆ |
 
 ## Layer 3: traced_monoidal
 
 **Fingerprint:** `0x243284c1`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|
 | φ ⊗ ψ rotation | 43 |
 | feedback(φ, 5) | 0xf519ed3e... |
 | feedback(φ, 10) | 0xc36c97b4... |
-| Traced: feedback_determinism | ✓ |
-| Traced: tensor_unit_left | ✓ |
-| Traced: vanishing_unit | ✓ |
-| Traced: tensor_unit_right | ✓ |
+| Traced: feedback_determinism | ◆ |
+| Traced: tensor_unit_left | ◆ |
+| Traced: vanishing_unit | ◆ |
+| Traced: tensor_unit_right | ◆ |
 
 ## Layer 4: tensor_network
 
 **Fingerprint:** `0x821e8e83`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|
@@ -84,7 +84,7 @@
 ## Layer 5: thread_findings
 
 **Fingerprint:** `0xb0d589a7`
-**Passed:** ✅
+**Passed:** ▣
 
 | Property | Value |
 |----------|-------|

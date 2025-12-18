@@ -66,7 +66,7 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 | Morphisms | `Arrow`, `Box` | `ConceptMorphism`, `CognitiveMorphism` |
 | Identity | `Id(x)` | `identity_morphism(seed)` |
 | Composition | `f >> g` | `compose(f, g)` |
-| **Coloring** | ❌ | ✓ `hash_color(seed, fp)` |
+| **Coloring** | ◇ | ◆ `hash_color(seed, fp)` |
 
 ### Layer 1: Monoidal Category
 
@@ -75,9 +75,9 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 | Module | `discopy.monoidal` | `TracedTensor` |
 | Tensor | `f @ g` | `tensor_product(φ, ψ)` |
 | Unit | `Ty()` | `monoidal_unit(seed)` |
-| Interchange | `(f @ g) >> (h @ k) = (f >> h) @ (g >> k)` | ✓ via XOR |
-| **Colorable** | ❌ | ✓ `φ.color`, `ψ.color` |
-| **Derangeable** | ❌ | ✓ `GayInterleaver` |
+| Interchange | `(f @ g) >> (h @ k) = (f >> h) @ (g >> k)` | ◆ via XOR |
+| **Colorable** | ◇ | ◆ `φ.color`, `ψ.color` |
+| **Derangeable** | ◇ | ◆ `GayInterleaver` |
 
 ### Layer 2: Braided Symmetric Monoidal
 
@@ -86,8 +86,8 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 | Module | `discopy.braided` | `CognitiveSuperposition` |
 | Braiding | `Braid(left, right)` | `braid(bs::BraidedSuperposition)` |
 | Hexagons | `left_hexagon`, `right_hexagon` | Verified in `verify_cognitive_laws` |
-| Naturality | ✓ | ✓ via fingerprint |
-| **Tropicalizable** | ❌ | ✓ Braid phase = tropical weight |
+| Naturality | ◆ | ◆ via fingerprint |
+| **Tropicalizable** | ◇ | ◆ Braid phase = tropical weight |
 
 ### Layer 3: Compact Closed
 
@@ -96,8 +96,8 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 | Module | `discopy.compact` | `TracedTensor` |
 | Cup | `Cup(left, right)` | via `categorical_trace` |
 | Cap | `Cap(left, right)` | via `feedback_loop` |
-| Yanking | `Cup >> Cap = Id` | ✓ `verify_traced_laws` |
-| **Chromatic** | ❌ | ✓ Cups/Caps have colors |
+| Yanking | `Cup >> Cap = Id` | ◆ `verify_traced_laws` |
+| **Chromatic** | ◇ | ◆ Cups/Caps have colors |
 
 ### Layer 4: Traced Monoidal
 
@@ -105,10 +105,10 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 |--------|---------|--------|
 | Module | `discopy.traced` | `TracedTensor` |
 | Trace | `Trace(f, n)` | `categorical_trace(tm, lat)` |
-| Vanishing | `Tr^I(f) = f` | ✓ |
-| Superposing | `Tr(g ⊗ f) = g ⊗ Tr(f)` | ✓ |
-| Dinaturality | ✓ | ✓ |
-| **Feedback Color** | ❌ | ✓ `feedback_transform` |
+| Vanishing | `Tr^I(f) = f` | ◆ |
+| Superposing | `Tr(g ⊗ f) = g ⊗ Tr(f)` | ◆ |
+| Dinaturality | ◆ | ◆ |
+| **Feedback Color** | ◇ | ◆ `feedback_transform` |
 
 ### Layer 5: Hypergraph (Frobenius)
 
@@ -116,9 +116,9 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 |--------|---------|--------|
 | Module | `discopy.frobenius` | `CognitiveSuperposition` |
 | Spider | `Spider(n_in, n_out, typ)` | `cognitive_spider(n_in, n_out, typ)` |
-| Frobenius | `split @ x >> x @ merge` | ✓ Verified |
-| Speciality | `split >> merge = id` | ✓ |
-| **Spider Color** | `Spider.color = "black"` | ✓ SPI-derived per spider |
+| Frobenius | `split @ x >> x @ merge` | ◆ Verified |
+| Speciality | `split >> merge = id` | ◆ |
+| **Spider Color** | `Spider.color = "black"` | ◆ SPI-derived per spider |
 
 ### Layer 6: Markov Category
 
@@ -127,8 +127,8 @@ This document compares the categorical structures in Gay.jl with DisCoPy's imple
 | Module | `discopy.markov` | `GayMC` |
 | Copy | `Copy(x)` | Implicit in spider |
 | Discard | `Discard(x)` | `gay_measure!` |
-| Causality | Arrows copy-discard | ✓ via checkpointing |
-| **Stochastic Color** | ❌ | ✓ `color_sweep` |
+| Causality | Arrows copy-discard | ◆ via checkpointing |
+| **Stochastic Color** | ◇ | ◆ `color_sweep` |
 
 ## Tropicalization
 

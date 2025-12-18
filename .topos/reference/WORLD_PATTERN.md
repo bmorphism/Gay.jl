@@ -8,8 +8,8 @@
 
 | Pattern | Returns | Composes | Persists | Use Case |
 |---------|---------|----------|----------|----------|
-| `demo_*` | `nothing` | ❌ | ❌ | ~~Never~~ |
-| `world_*` | Struct | ✅ | ✅ | Always |
+| `demo_*` | `nothing` | ◇ | ◇ | ~~Never~~ |
+| `world_*` | Struct | ▣ | ▣ | Always |
 
 ---
 
@@ -37,7 +37,7 @@ end
 ### The Demo Disease
 
 ```julia
-# ❌ FORBIDDEN: demo pattern
+# ◇ FORBIDDEN: demo pattern
 function demo_ultrametric()
     println("═══════════════════════════════")
     println("  P-ADIC ULTRAMETRIC COLORS")

@@ -127,7 +127,7 @@ function cmd_verify(args::CLIArgs)
     !args.quiet && println()
     !args.quiet && println("Results:")
     !args.quiet && println("  Attestation: 0x$(string(attestation_fingerprint(report), base=16, pad=8))")
-    !args.quiet && println("  Coherent: $(verify_coherence(report) ? "✓" : "✗")")
+    !args.quiet && println("  Coherent: $(verify_coherence(report) ? "◆" : "◇")")
     
     if args.quiet
         println(result && verify_coherence(report) ? "PASS" : "FAIL")

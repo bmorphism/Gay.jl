@@ -21,10 +21,10 @@
 
 | Type | Definition | SPI Property |
 |------|------------|--------------|
-| `ColorFlavor` | `Color × Flavor` | ✅ Deterministic fingerprint |
-| `SPIColorable` | `seed → color` bijection | ✅ Order-independent |
-| `BothThread` | `Colorable ∧ Flavorable` | ✅ Maximum tractability |
-| `ChromaFlavorable{T}` | `α|color⟩ + β|flavor⟩` | ✅ Superposition preserved |
+| `ColorFlavor` | `Color × Flavor` | ▣ Deterministic fingerprint |
+| `SPIColorable` | `seed → color` bijection | ▣ Order-independent |
+| `BothThread` | `Colorable ∧ Flavorable` | ▣ Maximum tractability |
+| `ChromaFlavorable{T}` | `α|color⟩ + β|flavor⟩` | ▣ Superposition preserved |
 
 ### Partial Products (Incomplete ×)
 

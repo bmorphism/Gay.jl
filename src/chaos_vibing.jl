@@ -604,16 +604,16 @@ function world_chaos_vibing()
     println("4. PARALLEL FINGERPRINT STRESS TEST")
     for n in [1000, 10000, 100000]
         pass, failures = stress_parallel_fingerprints(n, 100)
-        println("   $(lpad(n, 6)) colors × 100 iterations: $(pass ? "✓ PASS" : "✗ FAIL ($failures failures)")")
+        println("   $(lpad(n, 6)) colors × 100 iterations: $(pass ? "◆ PASS" : "◇ FAIL ($failures failures)")")
     end
     println()
     
     # 5. Ergodic bridge stress
     println("5. ERGODIC BRIDGE STRESS TEST")
     bridge_results = stress_ergodic_bridge(10000; intensity=0.8)
-    println("   Clean bridge valid: $(bridge_results[:clean_valid] ? "✓" : "✗")")
-    println("   Corrupt bridge valid: $(bridge_results[:corrupt_valid] ? "✓" : "✗")")
-    println("   Fingerprint divergence: $(bridge_results[:fingerprint_divergence] ? "✓ DETECTED" : "✗ COLLISION")")
+    println("   Clean bridge valid: $(bridge_results[:clean_valid] ? "◆" : "◇")")
+    println("   Corrupt bridge valid: $(bridge_results[:corrupt_valid] ? "◆" : "◇")")
+    println("   Fingerprint divergence: $(bridge_results[:fingerprint_divergence] ? "◆ DETECTED" : "◇ COLLISION")")
     println("   Clean entropy: $(round(bridge_results[:clean_entropy], digits=4))")
     println("   Corrupt entropy: $(round(bridge_results[:corrupt_entropy], digits=4))")
     println()

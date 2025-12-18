@@ -957,7 +957,7 @@ function world_metatheory_brushes()
     println("  2-morphism (1→2) on 10: $(apply_two_morphism(tpg, 1, 2, :blend, 10))")
     println()
     
-    println("🏳️‍🌈 Metatheory Brushes Complete")
+    println("◈ Metatheory Brushes Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

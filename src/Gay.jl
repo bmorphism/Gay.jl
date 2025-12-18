@@ -1130,7 +1130,7 @@ function main(; seed::Int=42, n::Int=6)
     show_colors(colors; width=4)
     println()
     
-    println(rainbow_text("  Press SPC in REPL to enter Gay mode! 🏳️‍🌈"))
+    println(rainbow_text("  Press SPC in REPL to enter Gay mode! ◈"))
     println()
     
     return nothing
@@ -1942,7 +1942,7 @@ function __init__()
             init_spc_repl()
         end
     else
-        @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
+        @info "Gay.jl loaded ◈ - Wide-gamut colors + splittable determinism"
         @info "In REPL: init_spc_repl() for SPC mode (press SPACE to enter)"
     end
 end

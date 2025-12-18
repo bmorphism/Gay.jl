@@ -561,7 +561,7 @@ function world_chromatic_propagator()
     
     # Verify curriculum
     result = verify_curriculum_colors(cli, get_chromatic_env())
-    println("\n🏳️‍🌈 Curriculum verification: $result")
+    println("\n◈ Curriculum verification: $result")
     
     # Export for cross-runtime
     println("\n📤 Cross-runtime schema:")

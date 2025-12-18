@@ -617,7 +617,7 @@ function demo_concept_tensor(; size::Int=23, n_steps::Int=5)
     println("2. Verifying XOR monoid laws...")
     pass, results = verify_monoid_laws(; n_tests=50, size=min(size, 17))
     for (law, ok) in results
-        println("   $(ok ? "✓" : "✗") $law")
+        println("   $(ok ? "◆" : "◇") $law")
     end
     println()
     
@@ -652,9 +652,9 @@ function demo_concept_tensor(; size::Int=23, n_steps::Int=5)
     lat2 = ConceptLattice(; seed=GAY_SEED, size=size)
     propagate_all!(lat2; n_steps=n_steps)
     if lat.fingerprint == lat2.fingerprint
-        println("   ✓ Same seed, same steps → same fingerprint")
+        println("   ◆ Same seed, same steps → same fingerprint")
     else
-        println("   ✗ DETERMINISM VIOLATION")
+        println("   ◇ DETERMINISM VIOLATION")
     end
     println()
     
@@ -991,7 +991,7 @@ function demo_exponential(; size::Int=11)
     println("6. Verifying CCC laws:")
     pass, results = verify_exponential_laws(; size=size)
     for (law, ok) in results
-        println("   $(ok ? "✓" : "✗") $law")
+        println("   $(ok ? "◆" : "◇") $law")
     end
     println()
     
@@ -1385,7 +1385,7 @@ function demo_higher_structure(; size::Int=11)
     println("9. Trace law verification:")
     pass, results = verify_trace_laws(; size=size)
     for (law, ok) in results
-        println("   $(ok ? "✓" : "✗") $law")
+        println("   $(ok ? "◆" : "◇") $law")
     end
     println()
     

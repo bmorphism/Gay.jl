@@ -733,7 +733,7 @@ function world_parallel_scheduler(; n::Int=100, seed::UInt64=UInt64(42))
     end
     
     identical = colors1 == colors2
-    println("  Run 1 == Run 2: $identical $(identical ? "✓" : "✗")")
+    println("  Run 1 == Run 2: $identical $(identical ? "◆" : "◇")")
     println()
     
     println("═" ^ 70)

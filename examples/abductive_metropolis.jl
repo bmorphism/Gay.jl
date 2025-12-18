@@ -131,7 +131,7 @@ lisp"(defn find-equilibrium (ctx n-max threshold)
 # Main Simulation: Abduction → Conservative Transition
 # ═══════════════════════════════════════════════════════════════════════════
 
-println("\n🏳️‍🌈 Abductive Metropolis with LispSyntax.jl")
+println("\n◈ Abductive Metropolis with LispSyntax.jl")
 println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
 # Create context using Lisp
@@ -262,7 +262,7 @@ if haskey(result, :state_color) || haskey(result, Symbol("state-color"))
     end
 end
 
-println("\n🏳️‍🌈 Abductive → Conservative transition complete!")
+println("\n◈ Abductive → Conservative transition complete!")
 println()
 println("   Abduction:    Infer equilibrium from colored observations")
 println("   Conservative: Preserve detailed balance with reversible colors")

@@ -382,7 +382,7 @@ function print_tropical_regression(results::Vector{TropicalRegressionResult})
     
     for result in results
         name = semiring_name(result.semiring)
-        status = result.all_passed ? "✓" : "✗"
+        status = result.all_passed ? "◆" : "◇"
         h = _hex(result.color)
         
         println("$(_ansi_bg(result.color))  $(_R) $(_B)$(name)$(_R) $h")
@@ -391,9 +391,9 @@ function print_tropical_regression(results::Vector{TropicalRegressionResult})
             total_tests += 1
             if law.passed
                 total_passed += 1
-                println("    $(_ansi_fg(law.color))✓$(_R) $(law.law)")
+                println("    $(_ansi_fg(law.color))◆$(_R) $(law.law)")
             else
-                println("    $(_ansi_fg(law.color))✗$(_R) $(law.law): $(law.details)")
+                println("    $(_ansi_fg(law.color))◇$(_R) $(law.law): $(law.details)")
             end
         end
         
@@ -409,9 +409,9 @@ function print_tropical_regression(results::Vector{TropicalRegressionResult})
     println("  $(_ansi_fg(status_color))$(total_passed)/$(total_tests) tests passed$(_R)")
     
     if all_pass
-        println("  $(_ansi_fg(status_color))✓ All semiring laws verified$(_R)")
+        println("  $(_ansi_fg(status_color))◆ All semiring laws verified$(_R)")
     else
-        println("  $(_ansi_fg(status_color))✗ Some tests failed$(_R)")
+        println("  $(_ansi_fg(status_color))◇ Some tests failed$(_R)")
     end
     
     println()

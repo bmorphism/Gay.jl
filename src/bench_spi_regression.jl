@@ -58,11 +58,11 @@ function Base.show(io::IO, r::SPIBenchResult)
     status = if r.baseline_ns > 0
         ratio = r.median_ns / r.baseline_ns
         if r.regression
-            "✗ REGRESSION ($(round(ratio, digits=2))x)"
+            "◇ REGRESSION ($(round(ratio, digits=2))x)"
         elseif ratio < 0.9
-            "✓ FASTER ($(round(ratio, digits=2))x)"
+            "◆ FASTER ($(round(ratio, digits=2))x)"
         else
-            "✓ OK"
+            "◆ OK"
         end
     else
         "○ (no baseline)"
@@ -386,9 +386,9 @@ function run_spi_regression_tests(; verbose::Bool=true)
     n_regressions = length(regressions)
     
     if n_regressions == 0
-        verbose && println("✓ All $(n_total) benchmarks passed ($(n_with_baseline) with baselines)")
+        verbose && println("◆ All $(n_total) benchmarks passed ($(n_with_baseline) with baselines)")
     else
-        verbose && println("✗ $(n_regressions) regressions detected:")
+        verbose && println("◇ $(n_regressions) regressions detected:")
         for r in regressions
             verbose && println("  - $(r.name): $(format_time(r.median_ns)) vs baseline $(format_time(r.baseline_ns))")
         end

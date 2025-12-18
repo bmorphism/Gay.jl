@@ -566,7 +566,7 @@ function world_gay_mcp_seeds()
     println("  Seed: 0x$(string(dep.seed, base=16))")
     println()
     
-    println("🏳️‍🌈 GayMCP Seeds Complete")
+    println("◈ GayMCP Seeds Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

@@ -225,6 +225,6 @@ The primitives map to actual VLBISkyModels.jl types:
 The colors help distinguish components in complex fits.
 
 ````@example comrade_sky_models
-println("\n✓ Comrade sky models example complete")
+println("\n◆ Comrade sky models example complete")
 ````
 

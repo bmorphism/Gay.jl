@@ -550,7 +550,7 @@ function main(; seed::Int=42, splash::Bool=true)
     
     # Clear screen on exit
     print("\e[H\e[2J")
-    println(rainbow_text("Thanks for playing Gay Invaders! 🏳️‍🌈"))
+    println(rainbow_text("Thanks for playing Gay Invaders! ◈"))
     println("Seed was: $seed - use same seed for same colors!")
 end
 

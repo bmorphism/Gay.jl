@@ -321,7 +321,7 @@ end
 Demonstrate QUIC interleaved streams with SPI verification.
 """
 function world_quic_interleave(; n_streams::Int=4, n_colors::Int=32)
-    println("🏳️‍🌈 QUIC Interleaved Streams Demo")
+    println("◈ QUIC Interleaved Streams Demo")
     println("=" ^ 60)
     println()
     
@@ -379,7 +379,7 @@ function world_quic_interleave(; n_streams::Int=4, n_colors::Int=32)
     il3 = from_hop_state(state)
     println("   Original fp:    0x$(string(combined_fingerprint(il1), base=16))")
     println("   Hopped fp:      0x$(string(combined_fingerprint(il3), base=16))")
-    println("   Match: $(combined_fingerprint(il1) == combined_fingerprint(il3) ? "✓" : "✗")")
+    println("   Match: $(combined_fingerprint(il1) == combined_fingerprint(il3) ? "◆" : "◇")")
     
     return il1
 end

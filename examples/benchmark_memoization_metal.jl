@@ -287,7 +287,7 @@ function benchmark_metal_gpu()
         gpu_fp = xor_fingerprint(gpu_result)
         
         if cpu_fp != gpu_fp
-            println("    ⚠️  SPI VIOLATION: CPU fp=0x$(string(cpu_fp, base=16)) ≠ GPU fp=0x$(string(gpu_fp, base=16))")
+            println("    △  SPI VIOLATION: CPU fp=0x$(string(cpu_fp, base=16)) ≠ GPU fp=0x$(string(gpu_fp, base=16))")
         end
     end
     println()
@@ -359,17 +359,17 @@ function verify_spi_consistency()
     println("  Method                  Fingerprint       Match")
     println("  " * "─" ^ 50)
     println("  Sequential loop         0x$(string(fp1, base=16, pad=8))    (reference)")
-    println("  KA CPU workgroup=64     0x$(string(fp2, base=16, pad=8))    $(fp1 == fp2 ? "✓" : "✗")")
-    println("  KA CPU workgroup=256    0x$(string(fp3, base=16, pad=8))    $(fp1 == fp3 ? "✓" : "✗")")
-    println("  KA CPU workgroup=512    0x$(string(fp4, base=16, pad=8))    $(fp1 == fp4 ? "✓" : "✗")")
+    println("  KA CPU workgroup=64     0x$(string(fp2, base=16, pad=8))    $(fp1 == fp2 ? "◆" : "◇")")
+    println("  KA CPU workgroup=256    0x$(string(fp3, base=16, pad=8))    $(fp1 == fp3 ? "◆" : "◇")")
+    println("  KA CPU workgroup=512    0x$(string(fp4, base=16, pad=8))    $(fp1 == fp4 ? "◆" : "◇")")
     println()
     
     all_match = (fp1 == fp2 == fp3 == fp4)
     if all_match
-        println("  ✓ ALL METHODS PRODUCE IDENTICAL FINGERPRINTS")
+        println("  ◆ ALL METHODS PRODUCE IDENTICAL FINGERPRINTS")
         println("    SPI GUARANTEE: Parallel execution order doesn't matter!")
     else
-        println("  ✗ FINGERPRINT MISMATCH - SPI VIOLATION")
+        println("  ◇ FINGERPRINT MISMATCH - SPI VIOLATION")
     end
 end
 

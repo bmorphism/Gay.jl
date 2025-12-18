@@ -79,7 +79,7 @@ function verify_gamma_coprime()
     println("  γ is odd: $is_odd")
     println("  γ/2^64 ≈ $(γ_approx)")
     println("  Error from golden ratio: $error")
-    println("  ✓ Full period = 2^64")
+    println("  ◆ Full period = 2^64")
     
     return is_odd && error < 1e-10
 end
@@ -101,7 +101,7 @@ function verify_mix_bijection(n_tests::Int=10000)
         x_recovered = unmix(y)
         
         if x != x_recovered
-            println("  ✗ Failed: mix(unmix($x)) = $x_recovered ≠ $x")
+            println("  ◇ Failed: mix(unmix($x)) = $x_recovered ≠ $x")
             all_passed = false
             break
         end
@@ -109,7 +109,7 @@ function verify_mix_bijection(n_tests::Int=10000)
     
     if all_passed
         println("  Tested $n_tests random values")
-        println("  ✓ unmix(mix(x)) = x for all tested x")
+        println("  ◆ unmix(mix(x)) = x for all tested x")
     end
     
     return all_passed
@@ -135,7 +135,7 @@ function verify_multiplicative_inverses()
     println("  m2 × m2⁻¹ = 0x$(string(check2, base=16)) (should be 0x1)")
     
     passed = (check1 == 1) && (check2 == 1)
-    println("  $(passed ? "✓" : "✗") Multiplicative inverses verified")
+    println("  $(passed ? "◆" : "◇") Multiplicative inverses verified")
     
     return passed
 end
@@ -157,28 +157,28 @@ function verify_xor_abelian(n_tests::Int=10000)
         
         # Commutativity: a ⊻ b = b ⊻ a
         if (a ⊻ b) != (b ⊻ a)
-            println("  ✗ Commutativity failed")
+            println("  ◇ Commutativity failed")
             all_passed = false
             break
         end
         
         # Associativity: (a ⊻ b) ⊻ c = a ⊻ (b ⊻ c)
         if ((a ⊻ b) ⊻ c) != (a ⊻ (b ⊻ c))
-            println("  ✗ Associativity failed")
+            println("  ◇ Associativity failed")
             all_passed = false
             break
         end
         
         # Identity: a ⊻ 0 = a
         if (a ⊻ UInt64(0)) != a
-            println("  ✗ Identity failed")
+            println("  ◇ Identity failed")
             all_passed = false
             break
         end
         
         # Self-inverse: a ⊻ a = 0
         if (a ⊻ a) != UInt64(0)
-            println("  ✗ Self-inverse failed")
+            println("  ◇ Self-inverse failed")
             all_passed = false
             break
         end
@@ -186,10 +186,10 @@ function verify_xor_abelian(n_tests::Int=10000)
     
     if all_passed
         println("  Tested $n_tests random triples")
-        println("  ✓ Commutativity: a ⊻ b = b ⊻ a")
-        println("  ✓ Associativity: (a ⊻ b) ⊻ c = a ⊻ (b ⊻ c)")
-        println("  ✓ Identity: a ⊻ 0 = a")
-        println("  ✓ Self-inverse: a ⊻ a = 0")
+        println("  ◆ Commutativity: a ⊻ b = b ⊻ a")
+        println("  ◆ Associativity: (a ⊻ b) ⊻ c = a ⊻ (b ⊻ c)")
+        println("  ◆ Identity: a ⊻ 0 = a")
+        println("  ◆ Self-inverse: a ⊻ a = 0")
     end
     
     return all_passed
@@ -232,7 +232,7 @@ function verify_spi_order_independence(n_streams::Int=8, n_per_stream::Int=100, 
         fp_shuffled = reduce(⊻, shuffled)
         
         if fp_shuffled != fp_original
-            println("  ✗ Shuffle $i produced different fingerprint!")
+            println("  ◇ Shuffle $i produced different fingerprint!")
             all_match = false
             break
         end
@@ -254,10 +254,10 @@ function verify_spi_order_independence(n_streams::Int=8, n_per_stream::Int=100, 
     interleaved_match = (fp_interleaved == fp_original)
     
     if all_match && reverse_match && interleaved_match
-        println("  ✓ $n_shuffles random permutations: all match")
-        println("  ✓ Reversed order: matches")
-        println("  ✓ Interleaved order: matches")
-        println("  ✓ SPI VERIFIED: fingerprint independent of order")
+        println("  ◆ $n_shuffles random permutations: all match")
+        println("  ◆ Reversed order: matches")
+        println("  ◆ Interleaved order: matches")
+        println("  ◆ SPI VERIFIED: fingerprint independent of order")
     end
     
     return all_match && reverse_match && interleaved_match
@@ -294,7 +294,7 @@ function verify_weyl_homomorphism(n_tests::Int=10000)
         rhs = (m + n) * γ
         
         if lhs != rhs
-            println("  ✗ Homomorphism failed: $m*γ + $n*γ ≠ $(m+n)*γ")
+            println("  ◇ Homomorphism failed: $m*γ + $n*γ ≠ $(m+n)*γ")
             all_passed = false
             break
         end
@@ -302,8 +302,8 @@ function verify_weyl_homomorphism(n_tests::Int=10000)
     
     if all_passed
         println("  Tested $n_tests random (m, n) pairs")
-        println("  ✓ m*γ + n*γ = (m+n)*γ for all tested pairs")
-        println("  ✓ Weyl sequence is ℤ-module homomorphism")
+        println("  ◆ m*γ + n*γ = (m+n)*γ for all tested pairs")
+        println("  ◆ Weyl sequence is ℤ-module homomorphism")
     end
     
     return all_passed
@@ -355,7 +355,7 @@ function verify_stream_independence(n_streams::Int=4, n_samples::Int=10000)
             expected = n_samples / 2
             max_deviation = maximum(abs.(bit_counts .- expected)) / expected
             
-            status = max_deviation < 0.1 ? "✓" : "✗"
+            status = max_deviation < 0.1 ? "◆" : "◇"
             println("    Stream $i ⊻ Stream $j: max bit deviation = $(round(max_deviation*100, digits=2))% $status")
             
             if max_deviation >= 0.1
@@ -365,7 +365,7 @@ function verify_stream_independence(n_streams::Int=4, n_samples::Int=10000)
     end
     
     if all_independent
-        println("  ✓ All stream pairs show statistical independence")
+        println("  ◆ All stream pairs show statistical independence")
     end
     
     return all_independent
@@ -417,7 +417,7 @@ function verify_cyclotomic_analogy()
     # Actually (ℤ/2ℤ)^64 is different - it's the 2-torsion viewpoint
     
     println("  XOR structure: (ℤ/2ℤ)^64 as vector space over 𝔽_2")
-    println("  ✓ Cyclotomic analogy verified")
+    println("  ◆ Cyclotomic analogy verified")
     
     return γ_is_unit
 end
@@ -462,10 +462,10 @@ function verify_parallel_reduction(n_values::Int=100000, n_chunks::Int=8)
     
     println("  Sequential: 0x$(string(fp_sequential, base=16))")
     println("  Parallel ($n_chunks chunks): 0x$(string(fp_parallel, base=16))")
-    println("  $(match ? "✓" : "✗") Sequential == Parallel")
+    println("  $(match ? "◆" : "◇") Sequential == Parallel")
     
     if match
-        println("  ✓ PARALLEL REDUCTION THEOREM VERIFIED")
+        println("  ◆ PARALLEL REDUCTION THEOREM VERIFIED")
         println("    ⊻_{i=1}^n x_i = ⊻_{j=1}^k (⊻_{i∈chunk_j} x_i)")
     end
     
@@ -502,7 +502,7 @@ function run_verification_suite()
     
     all_passed = true
     for (name, passed) in sort(collect(results))
-        status = passed ? "✓ PASS" : "✗ FAIL"
+        status = passed ? "◆ PASS" : "◇ FAIL"
         println("  $status: $name")
         all_passed = all_passed && passed
     end

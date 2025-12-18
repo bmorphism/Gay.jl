@@ -592,7 +592,7 @@ function full_curriculum(student::WhaleStudent; verbose::Bool=true)::LearningSes
     refinement = hierarchical_refine!(student)
     
     for lr in refinement.level_results
-        status = lr.passed ? "✓" : "✗"
+        status = lr.passed ? "◆" : "◇"
         verbose && println("  $(LEVEL_NAMES[lr.level]): $(status) $(round(lr.accuracy * 100))% ($(lr.n_correct)/$(lr.n_total))")
     end
     push!(session.events, (phase=:refinement, result=refinement))
@@ -601,7 +601,7 @@ function full_curriculum(student::WhaleStudent; verbose::Bool=true)::LearningSes
     # Phase 4: SPI proof
     verbose && println("Phase 4: SPI Proof")
     spi_result = prove_spi_understanding(student, GAY_SEED)
-    verbose && println("  Order independence: $(spi_result.proved ? "✓ PROVED" : "✗ FAILED")")
+    verbose && println("  Order independence: $(spi_result.proved ? "◆ PROVED" : "◇ FAILED")")
     push!(session.events, (phase=:spi_proof, result=spi_result))
     verbose && println()
     
@@ -614,7 +614,7 @@ function full_curriculum(student::WhaleStudent; verbose::Bool=true)::LearningSes
         generated = generate_from_seed(student, test_seed)
         
         match = expected == generated
-        verbose && println("  Generated chain matches expected: $(match ? "✓" : "✗")")
+        verbose && println("  Generated chain matches expected: $(match ? "◆" : "◇")")
         
         if match
             verbose && println("  🎉 Whale proves understanding!")

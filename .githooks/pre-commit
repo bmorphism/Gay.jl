@@ -68,7 +68,7 @@ function verify_interactions(n_steps::Int=N_STEPS)
     end
     
     if all_match
-        println("    ✓ All $n_steps interactions match")
+        println("    ◆ All $n_steps interactions match")
     else
         println("    ❌ Mismatches at steps: $(mismatches)")
     end
@@ -81,20 +81,20 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 function verify_spi()
-    println("🏳️‍🌈 Gay.jl SPI Pre-Commit Hook")
+    println("◈ Gay.jl SPI Pre-Commit Hook")
     println("=" ^ 50)
     
     # 1. Sequential generation
     print("  Sequential generation... ")
     seq_colors = ka_colors(N_COLORS, SEED)
     seq_fp = xor_fingerprint(seq_colors)
-    println("✓ ($(string(seq_fp, base=16)))")
+    println("◆ ($(string(seq_fp, base=16)))")
     
     # 2. Parallel generation (different order)
     print("  Parallel generation...   ")
     par_colors = ka_colors(N_COLORS, SEED)
     par_fp = xor_fingerprint(par_colors)
-    println("✓ ($(string(par_fp, base=16)))")
+    println("◆ ($(string(par_fp, base=16)))")
     
     # 3. Verify match
     if seq_fp != par_fp
@@ -138,10 +138,10 @@ function verify_spi()
             return false
         end
     end
-    println("✓")
+    println("◆")
     
     println("=" ^ 50)
-    println("✓ All SPI invariants verified. Commit allowed.")
+    println("◆ All SPI invariants verified. Commit allowed.")
     println()
     
     return true

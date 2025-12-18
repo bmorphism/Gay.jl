@@ -196,7 +196,7 @@ function demo_galperin_spi()
     end
     println()
     
-    println("\n  Branches are independent: $(galperin_colors != pi_colors ? "✓" : "✗")")
+    println("\n  Branches are independent: $(galperin_colors != pi_colors ? "◆" : "◇")")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -215,9 +215,9 @@ function main()
     demo_galperin_spi()
     
     println("\n  Properties:")
-    println("  ✓ Each collision maps to deterministic color")
-    println("  ✓ :galperin branch independent of :bbp_pi")
-    println("  ✓ Same seed → same collision colors")
+    println("  ◆ Each collision maps to deterministic color")
+    println("  ◆ :galperin branch independent of :bbp_pi")
+    println("  ◆ Same seed → same collision colors")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

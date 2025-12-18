@@ -508,19 +508,19 @@ function meta_fuzz(; duration::Float64=30.0)
     # 1. Fuzz the fingerprint fuzzer
     print("  1. Fuzzing fingerprint fuzzer... ")
     t1 = @elapsed r1 = fuzz_fingerprint_fuzzer(iterations=1000)
-    println(r1.passed ? "✓ PASS" : "✗ FAIL", " ($(round(t1, digits=2))s)")
+    println(r1.passed ? "◆ PASS" : "◇ FAIL", " ($(round(t1, digits=2))s)")
     results["fingerprint_fuzzer"] = r1
     
     # 2. Fuzz the hash fuzzer
     print("  2. Fuzzing hash fuzzer... ")
     t2 = @elapsed r2 = fuzz_hash_fuzzer(iterations=1000)
-    println(r2.passed ? "✓ PASS" : "✗ FAIL", " ($(round(t2, digits=2))s)")
+    println(r2.passed ? "◆ PASS" : "◇ FAIL", " ($(round(t2, digits=2))s)")
     results["hash_fuzzer"] = r2
     
     # 3. Fuzz the SPI verifier
     print("  3. Fuzzing SPI verifier... ")
     t3 = @elapsed r3 = fuzz_spi_verifier(iterations=100)
-    println(r3.passed ? "✓ PASS" : "✗ FAIL", " ($(round(t3, digits=2))s)")
+    println(r3.passed ? "◆ PASS" : "◇ FAIL", " ($(round(t3, digits=2))s)")
     results["spi_verifier"] = r3
     
     # 4. Run Jepsen-style test with nemesis
@@ -533,7 +533,7 @@ function meta_fuzz(; duration::Float64=30.0)
     println("     Violations detected: $(jepsen_result.violations_detected)")
     println("     Violations expected: $(jepsen_result.violations_expected)")
     println("     Anomalies: $(length(jepsen_result.anomalies))")
-    println("     Linearizable: $(jepsen_result.linearizable ? "✓ YES" : "✗ NO")")
+    println("     Linearizable: $(jepsen_result.linearizable ? "◆ YES" : "◇ NO")")
     
     results["jepsen"] = jepsen_result
     
@@ -545,7 +545,7 @@ function meta_fuzz(; duration::Float64=30.0)
         self_results = [run_jepsen_test(duration=2.0, seed=i) for i in 1:3]
         self_passed = all(r -> r.linearizable, self_results)
     end
-    println(self_passed ? "✓ PASS" : "✗ FAIL", " ($(round(t5, digits=2))s)")
+    println(self_passed ? "◆ PASS" : "◇ FAIL", " ($(round(t5, digits=2))s)")
     results["self_referential"] = self_passed
     
     # Summary
@@ -555,10 +555,10 @@ function meta_fuzz(; duration::Float64=30.0)
                  jepsen_result.linearizable && self_passed
     
     if all_passed
-        println("  ✓ ALL META-FUZZ TESTS PASSED")
+        println("  ◆ ALL META-FUZZ TESTS PASSED")
         println("  The fuzzers are sound. The verification system verifies.")
     else
-        println("  ✗ SOME META-FUZZ TESTS FAILED")
+        println("  ◇ SOME META-FUZZ TESTS FAILED")
         for (name, result) in results
             if result isa NamedTuple && haskey(result, :passed) && !result.passed
                 println("    - $name: FAILED")

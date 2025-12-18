@@ -184,5 +184,5 @@ fingerprint = Gay.xor_fingerprint(r_sum, g_sum, b_sum)
 println()
 
 println("=" ^ 60)
-println("✅ Test complete - no thermal runaway!")
+println("▣ Test complete - no thermal runaway!")
 println("=" ^ 60)

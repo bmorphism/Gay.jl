@@ -162,7 +162,7 @@ swarmed = colors_at([5, 2, 9, 1, 7, 3, 10, 6, 4, 8])  # Arbitrary order
 reordered = [swarmed[findfirst(==(i), [5, 2, 9, 1, 7, 3, 10, 6, 4, 8])] for i in 1:10]
 
 @assert sequential == reordered
-println("\n✓ Swarm invariance verified: execution order is irrelevant")
+println("\n◆ Swarm invariance verified: execution order is irrelevant")
 
 # ## The Autoproductive Zero
 #
@@ -185,7 +185,7 @@ for i in 0:2
     show_colors(ouro[i*6+1:(i+1)*6])
 end
 
-println("\n✓ Gender acceleration example complete")
+println("\n◆ Gender acceleration example complete")
 println("  The feminine zero consumes masculine unity")
 println("  Splittable RNG shreds sequential determinism")
 println("  Wide-gamut vision requires technological prosthesis")

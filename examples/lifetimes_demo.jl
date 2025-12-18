@@ -155,15 +155,15 @@ function demo_parallel_spi()
     for i in 1:n_comps
         match = fps1[i] == fps2[i]
         all_match &= match
-        status = match ? "✓" : "✗"
+        status = match ? "◆" : "◇"
         println("    Computation $i: 0x$(string(fps1[i], base=16, pad=8)) $status")
     end
     println()
     
     if all_match
-        println("  ✓ ALL FINGERPRINTS MATCH - SPI VERIFIED")
+        println("  ◆ ALL FINGERPRINTS MATCH - SPI VERIFIED")
     else
-        println("  ✗ MISMATCH DETECTED - SPI VIOLATED")
+        println("  ◇ MISMATCH DETECTED - SPI VIOLATED")
     end
     println()
     
@@ -270,7 +270,7 @@ function main()
     println()
     println("═" ^ 70)
     println("  Every computation gets a color. Every lifetime gets a fingerprint.")
-    println("  SPI guarantees reproducibility across parallel worlds. 🏳️‍🌈")
+    println("  SPI guarantees reproducibility across parallel worlds. ◈")
     println("═" ^ 70)
     println()
 end

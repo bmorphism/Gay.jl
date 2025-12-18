@@ -1,4 +1,4 @@
-# # Pride Flag Palettes 🏳️‍🌈
+# # Pride Flag Palettes ◈
 #
 # Gay.jl provides accurate color palettes for pride flags,
 # available in any supported color space.
@@ -8,7 +8,7 @@
 using Gay
 using Colors: RGB
 
-# ## Classic Rainbow 🏳️‍🌈
+# ## Classic Rainbow ◈
 #
 # Gilbert Baker's 1978 design — the original six-stripe flag.
 
@@ -29,7 +29,7 @@ show_colors(rainbow(DisplayP3()))
 println("Rec.2020:")
 show_colors(rainbow(Rec2020()))
 
-# ## Transgender Flag 🏳️‍⚧️
+# ## Transgender Flag ◇◈◇
 
 println("\n=== Transgender Flag ===")
 show_colors(transgender())
@@ -110,6 +110,6 @@ for c in base_rainbow
 end
 
 @assert custom == custom2
-println("✓ Custom pride palette is reproducible")
+println("◆ Custom pride palette is reproducible")
 
-println("\n✓ Pride palettes example complete 🏳️‍🌈")
+println("\n◆ Pride palettes example complete ◈")

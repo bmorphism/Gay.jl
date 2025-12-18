@@ -136,7 +136,7 @@ with wave.open('/tmp/spc_chain.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_chain.wav`, wait=true)
-        println("    ✓ Audio complete")
+        println("    ◆ Audio complete")
     catch e
         println("    (audio unavailable: $e)")
     end
@@ -245,9 +245,9 @@ SPC_CMDS["obs"] = function(args...)  # obstructions
     if closure_fail
         missing = setdiff(1:11, ivs)
         push!(w.obstructions, "Interval closure: missing $(collect(missing))")
-        println("    ✗ Interval closure fails: missing $(collect(missing))")
+        println("    ◇ Interval closure fails: missing $(collect(missing))")
     else
-        println("    ✓ All 11 interval classes present")
+        println("    ◆ All 11 interval classes present")
     end
     
     # Check tritone balance
@@ -269,7 +269,7 @@ SPC_CMDS["obs"] = function(args...)  # obstructions
         println("    ⚠ Chromatic clusters: $clusters (voice leading tension)")
     end
     
-    isempty(w.obstructions) && println("    ✓ No obstructions detected")
+    isempty(w.obstructions) && println("    ◆ No obstructions detected")
 end
 
 SPC_CMDS["tensor"] = function(args...)  # ⊗ composition
@@ -281,7 +281,7 @@ SPC_CMDS["tensor"] = function(args...)  # ⊗ composition
         a, b = w.notes[i], w.notes[i+1]
         c = (a + b) % 12  # tropical addition in Z/12
         actual = w.notes[min(i+2, 12)]
-        match = c == actual ? "✓" : "✗"
+        match = c == actual ? "◆" : "◇"
         println("    $(NOTE_NAMES[a+1]) ⊗ $(NOTE_NAMES[b+1]) = $(NOTE_NAMES[c+1]) $match (actual: $(NOTE_NAMES[actual+1]))")
     end
 end
@@ -336,7 +336,7 @@ SPC_CMDS["distill"] = function(args...)
     missing_ivs = setdiff(1:11, ivs)
     
     if !isempty(missing_ivs)
-        println("  ✗ Interval closure fails:")
+        println("  ◇ Interval closure fails:")
         println("    Missing: $(collect(missing_ivs))")
         
         # Find seeds that would add these intervals
@@ -352,12 +352,12 @@ SPC_CMDS["distill"] = function(args...)
             end
         end
     else
-        println("  ✓ Interval closure: complete!")
+        println("  ◆ Interval closure: complete!")
     end
     
     # 2. Fixed point obstruction (for derangement)
     if !isempty(w.fixpoints)
-        println("  ✗ Fixed points obstruct derangement:")
+        println("  ◇ Fixed points obstruct derangement:")
         for fp in w.fixpoints
             println("    Position $fp is fixed (σ($fp) = $fp)")
         end
@@ -373,14 +373,14 @@ SPC_CMDS["distill"] = function(args...)
             end
         end
     else
-        println("  ✓ No fixed points: valid derangement")
+        println("  ◆ No fixed points: valid derangement")
     end
     
     # 3. Chromatic coverage obstruction
     coverage = length(unique(w.notes))
     if coverage < 12
         missing_pcs = setdiff(0:11, w.notes)
-        println("  ✗ Chromatic coverage: $(coverage)/12")
+        println("  ◇ Chromatic coverage: $(coverage)/12")
         println("    Missing PCs: {$(join([NOTE_NAMES[n+1] for n in missing_pcs], ","))}")
         
         # Find seed with better coverage
@@ -397,7 +397,7 @@ SPC_CMDS["distill"] = function(args...)
             println("    → Δ=$(best.delta) achieves $(best.coverage)/12 coverage")
         end
     else
-        println("  ✓ Full chromatic coverage: 12/12")
+        println("  ◆ Full chromatic coverage: 12/12")
     end
     
     # 4. Tensor associativity check
@@ -412,9 +412,9 @@ SPC_CMDS["distill"] = function(args...)
         end
     end
     if assoc_fails == 0
-        println("    ✓ Associative (mod 12 addition)")
+        println("    ◆ Associative (mod 12 addition)")
     else
-        println("    ✗ $assoc_fails failures (expected - ⊗ is associative in Z/12)")
+        println("    ◇ $assoc_fails failures (expected - ⊗ is associative in Z/12)")
     end
 end
 
@@ -643,7 +643,7 @@ SPC_CMDS["derange"] = function(args...)
     is_derangement = all(perm[i] != i for i in 1:12)
     
     println("    Permutation: $(perm)")
-    println("    Is derangement: $(is_derangement ? "✓ Yes" : "✗ No")")
+    println("    Is derangement: $(is_derangement ? "◆ Yes" : "◇ No")")
     
     # Apply to notes
     deranged_notes = w.notes[perm]
@@ -655,7 +655,7 @@ SPC_CMDS["derange"] = function(args...)
     # Check if derangement changes coverage
     cov_orig = length(unique(w.notes))
     cov_deranged = length(unique(deranged_notes))
-    println("    Coverage preserved: $(cov_orig == cov_deranged ? "✓" : "✗")")
+    println("    Coverage preserved: $(cov_orig == cov_deranged ? "◆" : "◇")")
     
     # Cycle structure
     visited = falses(12)
@@ -756,7 +756,7 @@ print(f'Generated {sample_idx} samples')
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_theremin.wav`, wait=true)
-        println("    ✓ Theremin complete")
+        println("    ◆ Theremin complete")
     catch e
         println("    (audio error: $e)")
     end
@@ -825,7 +825,7 @@ with wave.open('/tmp/spc_glide.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_glide.wav`, wait=true)
-        println("    ✓ Glide complete")
+        println("    ◆ Glide complete")
     catch e
         println("    (audio error: $e)")
     end
@@ -915,7 +915,7 @@ with wave.open('/tmp/spc_spectrum.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_spectrum.wav`, wait=true)
-        println("  ✓ Spectral render complete")
+        println("  ◆ Spectral render complete")
     catch e
         println("  (audio error: $e)")
     end
@@ -1066,7 +1066,7 @@ with wave.open('/tmp/spc_samovar.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_samovar.wav`, wait=true)
-        println("    ✓ Samovar complete")
+        println("    ◆ Samovar complete")
     catch e
         println("    (error: $e)")
     end
@@ -1142,7 +1142,7 @@ with wave.open('/tmp/spc_involution.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_involution.wav`, wait=true)
-        println("    ✓ Involution complete")
+        println("    ◆ Involution complete")
     catch e
         println("    (error: $e)")
     end
@@ -1225,7 +1225,7 @@ with wave.open('/tmp/spc_peptide.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_peptide.wav`, wait=true)
-        println("    ✓ Peptide folded")
+        println("    ◆ Peptide folded")
     catch e
         println("    (error: $e)")
     end
@@ -1299,7 +1299,7 @@ with wave.open('/tmp/spc_mobius.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_mobius.wav`, wait=true)
-        println("    ✓ Möbius complete")
+        println("    ◆ Möbius complete")
     catch e
         println("    (error: $e)")
     end
@@ -1372,7 +1372,7 @@ with wave.open('/tmp/spc_quine.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_quine.wav`, wait=true)
-        println("    ✓ Quine: The seed sings itself")
+        println("    ◆ Quine: The seed sings itself")
     catch e
         println("    (error: $e)")
     end
@@ -1432,7 +1432,7 @@ with wave.open('/tmp/spc_ribosome.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_ribosome.wav`, wait=true)
-        println("    ✓ Translation complete")
+        println("    ◆ Translation complete")
     catch e
         println("    (error: $e)")
     end
@@ -1491,7 +1491,7 @@ with wave.open('/tmp/spc_enzyme.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_enzyme.wav`, wait=true)
-        println("    ✓ Reaction catalyzed")
+        println("    ◆ Reaction catalyzed")
     catch e
         println("    (error: $e)")
     end
@@ -1561,7 +1561,7 @@ with wave.open('/tmp/spc_helicase.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_helicase.wav`, wait=true)
-        println("    ✓ Helix unwound")
+        println("    ◆ Helix unwound")
     catch e
         println("    (error: $e)")
     end
@@ -1631,7 +1631,7 @@ with wave.open('/tmp/spc_prion.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_prion.wav`, wait=true)
-        println("    ✓ Infection complete")
+        println("    ◆ Infection complete")
     catch e
         println("    (error: $e)")
     end
@@ -1700,7 +1700,7 @@ with wave.open('/tmp/spc_mitosis.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_mitosis.wav`, wait=true)
-        println("    ✓ Division complete")
+        println("    ◆ Division complete")
     catch e
         println("    (error: $e)")
     end
@@ -1765,7 +1765,7 @@ with wave.open('/tmp/spc_telomere.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_telomere.wav`, wait=true)
-        println("    ✓ Senescence reached")
+        println("    ◆ Senescence reached")
     catch e
         println("    (error: $e)")
     end
@@ -1826,7 +1826,7 @@ with wave.open('/tmp/spc_apoptosis.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_apoptosis.wav`, wait=true)
-        println("    ✓ Cellular death complete")
+        println("    ◆ Cellular death complete")
     catch e
         println("    (error: $e)")
     end
@@ -1923,7 +1923,7 @@ with wave.open('/tmp/spc_elegans.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_elegans.wav`, wait=true)
-        println("    ✓ Neural cascade complete")
+        println("    ◆ Neural cascade complete")
     catch e
         println("    (error: $e)")
     end
@@ -2027,7 +2027,7 @@ with wave.open('/tmp/spc_immune.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_immune.wav`, wait=true)
-        println("    ✓ Immune response complete (memory formed)")
+        println("    ◆ Immune response complete (memory formed)")
     catch e
         println("    (error: $e)")
     end
@@ -2112,7 +2112,7 @@ with wave.open('/tmp/spc_fisher.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_fisher.wav`, wait=true)
-        println("    ✓ Information geodesic traced")
+        println("    ◆ Information geodesic traced")
     catch e
         println("    (error: $e)")
     end
@@ -2227,7 +2227,7 @@ with wave.open('/tmp/spc_solomonoff.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_solomonoff.wav`, wait=true)
-        println("    ✓ Universal prior sonified")
+        println("    ◆ Universal prior sonified")
     catch e
         println("    (error: $e)")
     end
@@ -2383,7 +2383,7 @@ SPC_CMDS["anticipate"] = function(args...)
     fixed = count(i -> w.notes[i] == i - 1, 1:12)
     println("    Intervals: $(join(intervals, "-"))")
     println("    Tritones: $tritones, Fixed points: $fixed")
-    println("    ✓ World updated to refined state")
+    println("    ◆ World updated to refined state")
     
     # Play the refined configuration with richer synthesis
     try
@@ -2449,7 +2449,7 @@ with wave.open('/tmp/spc_anticipate.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_anticipate.wav`, wait=true)
-        println("    ✓ Anticipatory sequence complete")
+        println("    ◆ Anticipatory sequence complete")
     catch e
         println("    (error: $e)")
     end
@@ -2524,7 +2524,7 @@ with wave.open('/tmp/spc_crispr.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_crispr.wav`, wait=true)
-        println("    ✓ Gene edited")
+        println("    ◆ Gene edited")
     catch e
         println("    (error: $e)")
     end
@@ -2609,7 +2609,7 @@ with wave.open('/tmp/spc_coda.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_coda.wav`, wait=true)
-        println("    ✓ Coda transmitted")
+        println("    ◆ Coda transmitted")
     catch e
         println("    (error: $e)")
     end
@@ -2680,7 +2680,7 @@ with wave.open('/tmp/spc_rubato.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_rubato.wav`, wait=true)
-        println("    ✓ Rubato sequence complete")
+        println("    ◆ Rubato sequence complete")
     catch e
         println("    (error: $e)")
     end
@@ -2754,7 +2754,7 @@ print(f'Ornaments at positions 1 and 5')
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_ornament.wav`, wait=true)
-        println("    ✓ Ornamented sequence complete")
+        println("    ◆ Ornamented sequence complete")
     catch e
         println("    (error: $e)")
     end
@@ -2784,9 +2784,9 @@ SPC_CMDS["upswell"] = function(args...)
     println("    Whale C rhythm: $(rhythm_c) (Σ=$(sum(rhythm_c)))")
     println()
     println("    Tripartite constraints:")
-    println("      A↔B parity: $(parity_ab ? "✓ match" : "✗ differ")")
-    println("      B↔C parity: $(parity_bc ? "✓ match" : "✗ differ")")
-    println("      C↔A parity: $(parity_ca ? "✓ match" : "✗ differ")")
+    println("      A↔B parity: $(parity_ab ? "◆ match" : "◇ differ")")
+    println("      B↔C parity: $(parity_bc ? "◆ match" : "◇ differ")")
+    println("      C↔A parity: $(parity_ca ? "◆ match" : "◇ differ")")
     
     # Gadget class: count matching edges
     n_matches = sum([parity_ab, parity_bc, parity_ca])
@@ -2901,7 +2901,7 @@ print(f'Upswell complete: A↔B={parity_ab}, B↔C={parity_bc}, C↔A={parity_ca
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_upswell.wav`, wait=true)
-        println("    ✓ Upswell complete")
+        println("    ◆ Upswell complete")
     catch e
         println("    (error: $e)")
     end
@@ -3126,7 +3126,7 @@ print('Two whales exchanging codas with rubato matching')
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/spc_chorus.wav`, wait=true)
-        println("    ✓ Chorus exchange complete")
+        println("    ◆ Chorus exchange complete")
     catch e
         println("    (error: $e)")
     end
@@ -3237,7 +3237,7 @@ SPC_CMDS["listen"] = function(args...)
     
     if !isempty(sorted)
         best = first(sorted)
-        println("    ✓ Found $(length(sorted)) candidate worlds")
+        println("    ◆ Found $(length(sorted)) candidate worlds")
         println("    Best: 0x$(string(best[1], base=16)) (score=$(round(best[2], digits=3)))")
         
         # Update bridge
@@ -3331,7 +3331,7 @@ with wave.open('/tmp/dialogue.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/dialogue.wav`, wait=true)
-        println("    ✓ Dialogue sonified")
+        println("    ◆ Dialogue sonified")
     catch e
         println("    (audio: $e)")
     end
@@ -3429,7 +3429,7 @@ SPC_CMDS["couple"] = function(args...)
     end
     
     if converged
-        println("    ✓ Converged in $iters iterations!")
+        println("    ◆ Converged in $iters iterations!")
         println("    Fixpoint intervals: $current")
         
         # Count fixpoints (positions where interval is preserved)
@@ -3631,7 +3631,7 @@ SPC_CMDS["zipf"] = function(args...)
         println("    (α ≈ 1.0 indicates Zipf's law)")
         
         if α > 0.8 && α < 1.3
-            println("    ✓ Distribution follows Zipf's law!")
+            println("    ◆ Distribution follows Zipf's law!")
         end
     end
 end
@@ -3911,7 +3911,7 @@ SPC_CMDS["midi"] = function(args...)
         write(f, track_data)
     end
     
-    println("    ✓ Exported to $filename")
+    println("    ◆ Exported to $filename")
     println("    Notes: $(join([NOTE_NAMES[n+1] for n in notes], "-"))")
 end
 
@@ -3968,7 +3968,7 @@ SPC_CMDS["clan"] = function(args...)
     
     println()
     if best_score > 0.8
-        println("    ✓ Strong match: $best_match")
+        println("    ◆ Strong match: $best_match")
         println("    Likely EC-1 clan dialect!")
     elseif best_score > 0.5
         println("    ~ Partial match: $best_match")
@@ -4112,7 +4112,7 @@ SPC_CMDS["simulate"] = function(args...)
     
     if best_score >= length(intervals) * 0.75
         println()
-        println("    ✓ Good match! Updating world...")
+        println("    ◆ Good match! Updating world...")
         init_world(best_seed)
         SPC_CMDS["chain"]()
         
@@ -4212,7 +4212,7 @@ with wave.open('/tmp/exchange.wav', 'w') as w:
 "```
         run(cmd, wait=true)
         run(`afplay /tmp/exchange.wav`, wait=true)
-        println("    ✓ Exchange complete")
+        println("    ◆ Exchange complete")
     catch e
         println("    (audio: $e)")
     end
@@ -4273,7 +4273,7 @@ SPC_CMDS["session"] = function(args...)
         println("      1. consensus - 3-whale resolution")
         println("      2. couple    - Find Galois fixpoints")
     else
-        println("      ✓ Fully coupled! Use 'translate' to verify")
+        println("      ◆ Fully coupled! Use 'translate' to verify")
     end
 end
 
@@ -4347,7 +4347,7 @@ SPC_CMDS["world"] = function(args...)
         println("     Expected fingerprint: 0x$(string(challenge.expected_fingerprint, base=16))")
         
         verification = verify_first_contact(world, challenge.expected_fingerprint)
-        status = verification.verified ? "\e[32m✓ VERIFIED\e[0m" : "\e[31m✗ FAILED\e[0m"
+        status = verification.verified ? "\e[32m◆ VERIFIED\e[0m" : "\e[31m◇ FAILED\e[0m"
         println("     Status: $status")
         
     elseif action == "matrix"
@@ -4428,7 +4428,7 @@ SPC_CMDS["triads"] = function(args...)
         println("  $(key[1]) + $(key[2]) + $(key[3])")
         println("     $(gadget_color)$(syn.gadget_class)\e[0m  │$bar│ $(round(syn.coupling_score, digits=3))")
         if syn.xor_residue == 0
-            println("     XOR cancellation: ✓ (residue = 0)")
+            println("     XOR cancellation: ◆ (residue = 0)")
         end
         println()
     end

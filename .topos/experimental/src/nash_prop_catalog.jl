@@ -477,8 +477,8 @@ function Base.show(io::IO, catalog::GaySeedCatalog)
     end
     println(io)
     println(io, "  Verification:")
-    println(io, "    All closures verified: $(catalog.all_closures_verified ? "✓" : "✗")")
-    println(io, "    All morphisms verified: $(catalog.all_morphisms_verified ? "✓" : "✗")")
+    println(io, "    All closures verified: $(catalog.all_closures_verified ? "◆" : "◇")")
+    println(io, "    All morphisms verified: $(catalog.all_morphisms_verified ? "◆" : "◇")")
     println(io)
     println(io, "  Top 5 by synergy:")
     sorted = sort(catalog.entries, by=e->e.synergy_score, rev=true)
@@ -503,14 +503,14 @@ function demo_catalog()
     println("-"^50)
     for (seed, g) in Iterators.take(catalog.galois_connections, 3)
         passed, rate = verify_closure(g)
-        status = passed ? "✓" : "✗"
+        status = passed ? "◆" : "◇"
         println("  Seed 0x$(string(seed, base=16)[1:8]): closure=$status ($(round(rate*100, digits=1))%)")
     end
     
     println("\n2. GEOMETRIC MORPHISMS")
     println("-"^50)
     for (seed, gm) in Iterators.take(catalog.geometric_morphisms, 3)
-        status = verify_morphism(gm) ? "✓" : "✗"
+        status = verify_morphism(gm) ? "◆" : "◇"
         println("  Seed 0x$(string(seed, base=16)[1:8]): verified=$status")
         println("    $(gm.source_topos) → $(gm.target_topos)")
     end
@@ -518,7 +518,7 @@ function demo_catalog()
     println("\n3. NASH PROPOSITIONS")
     println("-"^50)
     for np in catalog.nash_props[1:min(3, length(catalog.nash_props))]
-        eq_check = nash_equilibrium_check(np) ? "✓" : "✗"
+        eq_check = nash_equilibrium_check(np) ? "◆" : "◇"
         println("  $(np.name): equilibrium=$eq_check, players=$(length(np.players))")
         println("    CRDT type: $(np.crdt_type)")
         println("    Equilibrium seed: 0x$(string(np.equilibrium_seed, base=16)[1:8])")

@@ -287,25 +287,25 @@ function run_regression_suite(; verbose::Bool=true)
             result = test_fn()
             if result
                 passed += 1
-                verbose && println("  ✓ $name")
+                verbose && println("  ◆ $name")
             else
                 failed += 1
                 all_pass = false
-                verbose && println("  ✗ $name")
+                verbose && println("  ◇ $name")
             end
         catch e
             failed += 1
             all_pass = false
-            verbose && println("  ✗ $name (ERROR: $e)")
+            verbose && println("  ◇ $name (ERROR: $e)")
         end
     end
     
     verbose && println()
     verbose && println("═══════════════════════════════════════════════════════════════════")
     if all_pass
-        verbose && println("  ALL $(passed) TESTS PASSED ✓")
+        verbose && println("  ALL $(passed) TESTS PASSED ◆")
     else
-        verbose && println("  PASSED: $passed, FAILED: $failed ✗")
+        verbose && println("  PASSED: $passed, FAILED: $failed ◇")
     end
     verbose && println("═══════════════════════════════════════════════════════════════════")
     

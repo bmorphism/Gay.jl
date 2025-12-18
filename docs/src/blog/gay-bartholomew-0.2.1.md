@@ -185,7 +185,7 @@ His tests check compositional properties:
 When we ran `birthday_spacing_test`, it failed catastrophically:
 
 ```
-1. Birthday Spacings Test... ✗ FAIL
+1. Birthday Spacings Test... ◇ FAIL
    Collisions: 33 (expected λ=9320.68), p=0.0000
 ```
 
@@ -204,7 +204,7 @@ The birthday problem expects `n²/2m` collisions, not `n³/4m`. A single exponen
 After the fix:
 
 ```
-1. Birthday Spacings Test... ✓ PASS
+1. Birthday Spacings Test... ◆ PASS
    Collisions: 33 (expected λ=36.41), p=0.2861
 ```
 
@@ -234,11 +234,11 @@ Results across multiple seeds:
 
 | Seed | Correlation | Status |
 |------|-------------|--------|
-| GAY_SEED | -0.000172 | ✓ |
-| 42 | 0.005321 | ✓ |
-| 69 | -0.015607 | ✓ |
-| 1337 | -0.009525 | ✓ |
-| 0xDEADBEEF | -0.016198 | ✓ |
+| GAY_SEED | -0.000172 | ◆ |
+| 42 | 0.005321 | ◆ |
+| 69 | -0.015607 | ◆ |
+| 1337 | -0.009525 | ◆ |
+| 0xDEADBEEF | -0.016198 | ◆ |
 
 All correlations below 0.05. Left and Right are independent.
 
@@ -256,9 +256,9 @@ end
 Results:
 
 ```
-✓ Deterministic: Same seed → same tree (always)
-✓ Siblings Independent: L ≠ R at every node
-✓ Collision-Free: 63/63 unique fingerprints
+◆ Deterministic: Same seed → same tree (always)
+◆ Siblings Independent: L ≠ R at every node
+◆ Collision-Free: 63/63 unique fingerprints
 ```
 
 No collisions in 63 nodes. No sibling matches. Parent state is properly isolated.
@@ -285,7 +285,7 @@ Seed 0x6761795f636f6c6f:
   Shuffle1:    0xd0da42325fe1b159
   Shuffle2:    0xd0da42325fe1b159
   Interleaved: 0xd0da42325fe1b159
-  All Match: ✓ YES
+  All Match: ◆ YES
 ```
 
 Same fingerprint regardless of order. **SPI holds.**
@@ -317,7 +317,7 @@ The Marsaglia-Bumpus framework caught what unit tests missed: **statistical corr
 
 ```julia
 full_spi_audit(69)
-# ✓ COMPLETE SPI VERIFICATION: ALL TESTS PASS
+# ◆ COMPLETE SPI VERIFICATION: ALL TESTS PASS
 ```
 
 | Suite | Tests | Iterations |

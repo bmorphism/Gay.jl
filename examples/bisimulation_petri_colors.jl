@@ -365,15 +365,15 @@ function demo_spi_as_bisimulation()
     # Check bisimilarity
     println("  Bisimulation Checks (P ∼ Q iff observe(P) == observe(Q)):")
     println("  ─────────────────────────────────────────────────────────")
-    println("    Sequential ≃ Parallel(64):  $(seq ≃ par64 ? "✓" : "✗")")
-    println("    Sequential ≃ Parallel(256): $(seq ≃ par256 ? "✓" : "✗")")
-    println("    Parallel(64) ≃ Parallel(256): $(par64 ≃ par256 ? "✓" : "✗")")
-    println("    Sequential ≃ GPU:           $(seq ≃ gpu ? "✓" : "✗")")
+    println("    Sequential ≃ Parallel(64):  $(seq ≃ par64 ? "◆" : "◇")")
+    println("    Sequential ≃ Parallel(256): $(seq ≃ par256 ? "◆" : "◇")")
+    println("    Parallel(64) ≃ Parallel(256): $(par64 ≃ par256 ? "◆" : "◇")")
+    println("    Sequential ≃ GPU:           $(seq ≃ gpu ? "◆" : "◇")")
     println()
     
     all_bisimilar = (seq ≃ par64) && (seq ≃ par256) && (seq ≃ gpu)
     if all_bisimilar
-        println("  ✓ ALL PROCESSES ARE BISIMILAR")
+        println("  ◆ ALL PROCESSES ARE BISIMILAR")
         println("    This is the SPI guarantee: same seed → same observation")
     end
     println()
@@ -413,7 +413,7 @@ function demo_span_structure()
     
     # Show that span projections are bisimilar
     all_same = observe(seq) == observe(par) == observe(gpu)
-    println("  Span coherence: all projections bisimilar? $(all_same ? "✓ YES" : "✗ NO")")
+    println("  Span coherence: all projections bisimilar? $(all_same ? "◆ YES" : "◇ NO")")
     println()
 end
 
@@ -451,7 +451,7 @@ function demo_xor_commutativity()
     println()
     
     all_same = fp_original == fp_reversed == fp_random
-    println("  All identical? $(all_same ? "✓ YES - XOR is order-invariant!" : "✗ NO")")
+    println("  All identical? $(all_same ? "◆ YES - XOR is order-invariant!" : "◇ NO")")
     println()
     
     println("  This is why parallel execution produces same fingerprint:")
@@ -532,7 +532,7 @@ function main()
     println("  Same seed → same fingerprint → bisimilar processes")
     println("  CPU ∼ GPU ∼ Parallel ∼ Sequential")
     println()
-    println("  This is the mathematical guarantee behind reproducible science! 🏳️‍🌈")
+    println("  This is the mathematical guarantee behind reproducible science! ◈")
     println()
 end
 

@@ -77,9 +77,9 @@ end
 
 inferred = infer_seed(abducer; seed_candidates=[seed_a])
 if inferred == seed_a && abducer.confidence == 1.0
-    println("✓ SPI verified: machines agree!")
+    println("◆ SPI verified: machines agree!")
 else
-    println("✗ SPI violation: colors differ")
+    println("◇ SPI violation: colors differ")
 end
 ```
 

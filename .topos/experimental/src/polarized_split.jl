@@ -533,9 +533,9 @@ function verify_polarity_spi(seed::UInt64)
     # But CBV ≠ CBN (different evaluation order)
     cbv_cbn_differ = cbv1 != cbn1
     
-    println("CBV SPI: ", cbv_spi ? "✓ PASS" : "✗ FAIL")
-    println("CBN SPI: ", cbn_spi ? "✓ PASS" : "✗ FAIL")
-    println("CBV ≠ CBN: ", cbv_cbn_differ ? "✓ (expected)" : "✗ (unexpected)")
+    println("CBV SPI: ", cbv_spi ? "◆ PASS" : "◇ FAIL")
+    println("CBN SPI: ", cbn_spi ? "◆ PASS" : "◇ FAIL")
+    println("CBV ≠ CBN: ", cbv_cbn_differ ? "◆ (expected)" : "◇ (unexpected)")
     
     (cbv_spi=cbv_spi, cbn_spi=cbn_spi, cbv_cbn_differ=cbv_cbn_differ)
 end

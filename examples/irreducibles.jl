@@ -265,10 +265,10 @@ function main()
     # Summary
     println("$(ansi_bold)═══ $(length(IRREDUCIBLES)) Irreducibles Defined ═══$(ansi_reset)")
     println()
-    println("\e[32m✓ Each irreducible generates infinite deterministic colors\e[0m")
-    println("\e[32m✓ Differentiation (∂) splits seeds into child universes\e[0m")
-    println("\e[32m✓ Morphisms interpolate between seed spaces\e[0m")
-    println("\e[32m✓ Any text can become an irreducible via FNV-1a\e[0m")
+    println("\e[32m◆ Each irreducible generates infinite deterministic colors\e[0m")
+    println("\e[32m◆ Differentiation (∂) splits seeds into child universes\e[0m")
+    println("\e[32m◆ Morphisms interpolate between seed spaces\e[0m")
+    println("\e[32m◆ Any text can become an irreducible via FNV-1a\e[0m")
     println()
 end
 

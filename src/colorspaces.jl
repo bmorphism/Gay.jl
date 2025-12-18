@@ -231,7 +231,7 @@ function gamut_map(c::Color, from::ColorSpace, to::ColorSpace)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Pride flag color palettes 🏳️‍🌈
+# Pride flag color palettes ◈
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
@@ -741,7 +741,7 @@ function p3_perceptual_report(colors::Vector{<:Color}; verbose::Bool=true)
         if min_diff < 10
             println("║ ⚠ Warning: Colors $min_i and $min_j may be too similar (ΔE < 10)   ║")
         else
-            println("║ ✓ All color pairs are perceptually distinct                   ║")
+            println("║ ◆ All color pairs are perceptually distinct                   ║")
         end
         println("╚════════════════════════════════════════════════════════════════╝")
     end

@@ -620,7 +620,7 @@ function world_para_zigzag()
     for (idx, ev) in enumerate(trace.events[1:min(5, length(trace.events))])
         c = ev.color
         r, g, b = Int.(round.((c[1], c[2], c[3]) .* 255))
-        acc = ev.accepted ? "✓" : "✗"
+        acc = ev.accepted ? "◆" : "◇"
         igor = ev.igor_aligned ? "+" : "-"
         println("  [$idx] t=$(round(ev.t, digits=3)) i=$(ev.i) θ=$(ev.θ_i > 0 ? '+' : '-') " *
                 "$acc $igor \e[48;2;$(r);$(g);$(b)m  \e[0m")
@@ -633,7 +633,7 @@ function world_para_zigzag()
     for (i, fp) in enumerate(result.fingerprints)
         println("  Run $i: 0x$(string(fp, base=16, pad=8))")
     end
-    println("  SPI Verified: $(result.spi_verified ? "✓ YES" : "✗ NO")")
+    println("  SPI Verified: $(result.spi_verified ? "◆ YES" : "◇ NO")")
     println()
     
     # Tropical path
@@ -652,7 +652,7 @@ function world_para_zigzag()
     end
     
     println()
-    println("🏳️‍🌈 Para(ZigZag) Complete")
+    println("◈ Para(ZigZag) Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

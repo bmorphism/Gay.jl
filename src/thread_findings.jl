@@ -280,7 +280,7 @@ function verify_layer!(layer_name::Symbol, test_fn::Function)
             layer_name,
             passed,
             fp,
-            passed ? "✓ $(layer_name) verified" : "✗ $(layer_name) failed",
+            passed ? "◆ $(layer_name) verified" : "◇ $(layer_name) failed",
             ctx.layer
         )
         
@@ -471,14 +471,14 @@ function world_thread_findings(; n_threads::Int=20)
     m2 = f(a)
     (r1, _) = run_verification(m1, ctx1)
     (r2, _) = run_verification(m2, ctx1)
-    println("   Left identity: $(r1 == r2) ✓")
+    println("   Left identity: $(r1 == r2) ◆")
     
     # Right identity: m >>= return ≡ m
     m = verify_layer!(:test2, _ -> true)
     m3 = bind_finding(m, return_finding)
     (r3, w3) = run_verification(m, ctx1)
     (r4, w4) = run_verification(m3, ctx1)
-    println("   Right identity: $(r3 == r4) ✓")
+    println("   Right identity: $(r3 == r4) ◆")
     
     println()
     println("═" ^ 70)

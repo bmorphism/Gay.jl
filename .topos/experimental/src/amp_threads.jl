@@ -240,7 +240,7 @@ function demo_amp_threads()
     
     println("   Threads in chain: $(length(gen.threads))")
     println("   Combined fingerprint: 0x$(string(genealogy_fingerprint(gen), base=16, pad=8))")
-    println("   Chain verified: $(verify_thread_chain(gen) ? "✓" : "✗")")
+    println("   Chain verified: $(verify_thread_chain(gen) ? "◆" : "◇")")
     println()
     
     # Distance
@@ -272,7 +272,7 @@ function demo_amp_threads()
     println("   Final genealogy:")
     println("     Threads: $(length(gen.threads))")
     println("     Combined: 0x$(string(genealogy_fingerprint(gen), base=16, pad=8))")
-    println("     Verified: $(verify_thread_chain(gen) ? "✓" : "✗")")
+    println("     Verified: $(verify_thread_chain(gen) ? "◆" : "◇")")
     println()
     
     println("═" ^ 70)

@@ -74,7 +74,7 @@ parallel_colors = generate_colors_parallel(n, seed)
 sequential_colors = generate_colors_sequential(n, seed)
 
 @assert parallel_colors == sequential_colors
-println("✓ SPI verified: parallel == sequential for $n colors")
+println("◆ SPI verified: parallel == sequential for $n colors")
 ````
 
 Run again to verify reproducibility
@@ -82,7 +82,7 @@ Run again to verify reproducibility
 ````@example parallel_spi
 parallel_colors_2 = generate_colors_parallel(n, seed)
 @assert parallel_colors == parallel_colors_2
-println("✓ Reproducibility verified: parallel runs are identical")
+println("◆ Reproducibility verified: parallel runs are identical")
 ````
 
 ## Palette Generation
@@ -99,7 +99,7 @@ Indexed palette access
 p_at_5 = palette_at(5, 6)
 p_at_5_again = palette_at(5, 6)
 @assert p_at_5 == p_at_5_again
-println("✓ Indexed palette access is reproducible")
+println("◆ Indexed palette access is reproducible")
 ````
 
 ## Connection to Pigeons.jl
@@ -139,8 +139,8 @@ Anyone with the same seed gets identical colors!
 ````@example parallel_spi
 viz2 = reproducible_visualization([1,2,3,4,5]; seed=2024)
 @assert viz.colors == viz2.colors
-println("✓ Shareable reproducibility confirmed")
+println("◆ Shareable reproducibility confirmed")
 
-println("\n✓ Parallel SPI example complete")
+println("\n◆ Parallel SPI example complete")
 ````
 

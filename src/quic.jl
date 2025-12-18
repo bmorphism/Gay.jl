@@ -386,7 +386,7 @@ function visualize_probes(conn::QUICConnection; width::Int=4)
     for (path_id, path) in sort(collect(conn.paths), by=first)
         c = path.color
         r, g, b = round(Int, c.r*255), round(Int, c.g*255), round(Int, c.b*255)
-        status = path.validated ? "✓" : "?"
+        status = path.validated ? "◆" : "?"
         print(buf, "    [$path_id] \e[48;2;$(r);$(g);$(b)m", " "^width, "\e[0m")
         println(buf, " $(status) RTT=$(round(path.rtt_us, digits=1))μs sent=$(path.probes_sent) recv=$(path.probes_received)")
     end

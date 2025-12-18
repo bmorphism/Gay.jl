@@ -480,7 +480,7 @@ function world_hyperdoctrine()
     r2, g2, b2 = round.(Int, bc_result[:path2_color] .* 255)
     println("   Path 1 color: RGB($r1,$g1,$b1)")
     println("   Path 2 color: RGB($r2,$g2,$b2)")
-    println("   Beck-Chevalley: $(bc_ok ? "✓ VERIFIED" : "✗ FAILED")")
+    println("   Beck-Chevalley: $(bc_ok ? "◆ VERIFIED" : "◇ FAILED")")
     println()
     
     # 8. Fingerprint summary
