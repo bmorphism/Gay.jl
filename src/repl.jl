@@ -20,8 +20,9 @@ const RAINBOW_COLORS = [
 
 """
 Generate a rainbow-colored string for the REPL prompt.
+Simple version without seed parameter (uses static rainbow colors).
 """
-function rainbow_text(text::String)
+function rainbow_text_prompt(text::String)
     chars = collect(text)
     n = length(RAINBOW_COLORS)
     buf = IOBuffer()
@@ -251,15 +252,8 @@ end
 COMMANDS["blackhole"] = blackhole_command
 COMMANDS["bh"] = blackhole_command
 
-# Current color space state
-const CURRENT_COLORSPACE = Ref{ColorSpace}(SRGB())
-
-"""
-    current_colorspace()
-
-Get the currently active color space (SRGB, DisplayP3, or Rec2020).
-"""
-current_colorspace() = CURRENT_COLORSPACE[]
+# NOTE: CURRENT_COLORSPACE and current_colorspace() are defined in colorspaces.jl
+# We reuse them here to avoid redefinition errors during precompilation.
 
 function space_command(args...)
     if isempty(args)
@@ -493,9 +487,9 @@ function init_gay_repl(; start_key::Char = ' ', sticky::Bool = true)
     # Dynamic rainbow prompt based on invocation
     function gay_prompt()
         inv = prompt_invocation()
-        rainbow_text("gay[$inv]> ")
+        rainbow_text_prompt("gay[$inv]> ")
     end
-    
+
     ReplMaker.initrepl(
         gay_eval,
         repl = Base.active_repl,
@@ -505,13 +499,13 @@ function init_gay_repl(; start_key::Char = ' ', sticky::Bool = true)
         sticky_mode = sticky,
         mode_name = "Gay"
     )
-    
+
     println()
-    println(rainbow_text("  ╔═══════════════════════════════════════╗"))
-    println(rainbow_text("  ║     Gay.jl REPL Initialized 🏳️‍🌈      ║"))
-    println(rainbow_text("  ╚═══════════════════════════════════════╝"))
+    println(rainbow_text_prompt("  ╔═══════════════════════════════════════╗"))
+    println(rainbow_text_prompt("  ║     Gay.jl REPL Initialized 🏳️‍🌈      ║"))
+    println(rainbow_text_prompt("  ╚═══════════════════════════════════════╝"))
     println("  Press SPC (space bar) to enter Gay mode. Type !help for commands.")
     println()
 end
 
-export init_gay_repl, current_colorspace, show_color_inline, rainbow_text
+export init_gay_repl, show_color_inline, rainbow_text_prompt

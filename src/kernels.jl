@@ -9,9 +9,11 @@
 
 using KernelAbstractions
 using SplittableRandoms: SplittableRandom, split
+using Colors: RGB
 
 export ka_colors!, ka_colors, ka_palette!, ka_color_sums, ka_rgb_colors
 export ka_benchmark, KABackend, get_backend, CPU
+export splitmix64, hash_color, hash_color_rgb, hash_color_lch
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Backend selection
@@ -120,6 +122,17 @@ Returns values in [0, 1] range.
     b = Float32((h >> 16) & 0xFF) / 255.0f0
     
     (r, g, b)
+end
+
+"""
+    hash_color_rgb(index::UInt64, seed::UInt64) -> RGB{Float32}
+
+Generate deterministic RGB{Float32} color from index and seed.
+Note: argument order is (index, seed) for consistency with color_at.
+"""
+@inline function hash_color_rgb(index::UInt64, seed::UInt64)
+    r, g, b = hash_color(seed, index)
+    RGB{Float32}(r, g, b)
 end
 
 """
