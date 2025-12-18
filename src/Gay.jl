@@ -31,7 +31,7 @@ export create_sentinel, register_agent!, monitor_swarm!, compliance_report
 export record_split!, record_file_op!
 export agent_color, agent_identity, seed_lineage
 export FileOperation, ReadFile, WriteFile, DeleteFile
-export demo_swarm_triad
+export world_swarm_triad, SwarmTriadWorld
 
 # Include Universal Gay Color - maximally flexible multiparadigm color type
 include("universal_color.jl")
@@ -60,12 +60,13 @@ include("parallel.jl")
 
 # Include maximally parallel seed search (Fugue-inspired minimal syncpoints)
 include("parallel_seed_search.jl")
-export find_seeds_parallel, TARGET_COLORS, SearchResult, demo_parallel_search
+export find_seeds_parallel, TARGET_COLORS, SearchResult
+export ParallelSearchWorld, world_parallel_search
 
 # Include maximally parallel genetic search
 include("genetic_search.jl")
-export GeneticSearchConfig, GeneticSearchResult
-export genetic_search_parallel, island_evolution, demo_genetic_search
+export GeneticSearchConfig, GeneticSearchResult, GeneticSearchWorld
+export genetic_search_parallel, island_evolution, world_genetic_search
 
 # Include GayMC - Colored Monte Carlo with SPI
 include("gaymc.jl")
@@ -113,7 +114,7 @@ export SimulatedCluster, DeviceState, FaultInjector
 export inject!, heal!, heal_all!, run_inference!
 export BidirectionalTracker, track_forward!, track_backward!, verify_consistency!
 export GaloisConnection, alpha, gamma, verify_closure, verify_all_closures
-export demo_fault_tolerant
+export FaultTolerantWorld, world_fault_tolerant
 
 # Include Chaos Vibing - Maximal fault injection into parallel causal chains
 include("chaos_vibing.jl")

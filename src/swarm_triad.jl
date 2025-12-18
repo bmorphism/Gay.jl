@@ -3,7 +3,7 @@
 
 module SwarmTriad
 
-export demo_swarm_triad, SwarmTriadState, coordinate_swarm
+export world_swarm_triad, SwarmTriadWorld, SwarmTriadState, coordinate_swarm
 export SwarmAgent, AgentState, SentinelMonitor
 export Alive, Compliant, NonCompliant, Dead
 export create_agent, triad_split!, verify_compliance, execute_file_op!
@@ -61,30 +61,40 @@ function coordinate_swarm(swarm::SwarmTriadState, n::Int)
 end
 
 """
-    demo_swarm_triad()
+    SwarmTriadWorld
 
-Demo of triadic swarm coordination.
+Persistent world state for triadic swarm coordination.
+Implements length, merge, fingerprint for composability.
 """
-function demo_swarm_triad()
-    println("═══════════════════════════════════════════════════════")
-    println("  GAY SWARM TRIAD - Distributed Triadic Coordination")
-    println("═══════════════════════════════════════════════════════")
-    println()
+struct SwarmTriadWorld
+    swarm::SwarmTriadState
+    color_count::Int
+    final_fingerprint::UInt64
+end
+
+Base.length(w::SwarmTriadWorld) = w.color_count
+
+function Base.merge(w1::SwarmTriadWorld, w2::SwarmTriadWorld)
+    combined_fp = w1.final_fingerprint ⊻ w2.final_fingerprint
+    SwarmTriadWorld(w1.swarm, w1.color_count + w2.color_count, combined_fp)
+end
+
+fingerprint(w::SwarmTriadWorld) = w.final_fingerprint
+
+"""
+    world_swarm_triad(; seed=UInt64(42), n_colors=1000)
+
+Build persistent SwarmTriadWorld with triadic coordination.
+Returns composable world structure.
+"""
+function world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)::SwarmTriadWorld
+    swarm = SwarmTriadState(seed)
+    @debug "Initial XOR fingerprint" fingerprint=swarm.xor_fingerprint
     
-    swarm = SwarmTriadState(UInt64(42))
+    final_fp = coordinate_swarm(swarm, n_colors)
+    @debug "After coordination" n_colors final_fp
     
-    println("Initial XOR fingerprint: 0x$(string(swarm.xor_fingerprint, base=16))")
-    println()
-    
-    # Coordinate 1000 colors
-    final_fp = coordinate_swarm(swarm, 1000)
-    println("After 1000 colors: 0x$(string(final_fp, base=16))")
-    
-    # Verify triadic balance
-    println()
-    println("Triadic polarity balance verified ✓")
-    
-    final_fp
+    SwarmTriadWorld(swarm, n_colors, final_fp)
 end
 
 # Stub types for exports - minimal definitions to satisfy module interface

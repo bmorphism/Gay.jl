@@ -162,39 +162,54 @@ function find_seeds_parallel(
 end
 
 """
-    demo_parallel_search()
+    ParallelSearchWorld
 
-Demonstrate the parallel search finding seeds for target colors.
+Persistent world structure for parallel seed search results.
+Implements world_ pattern: composable, mergeable, fingerprinted.
 """
-function demo_parallel_search()
-    println("═" ^ 70)
-    println("  Parallel Seed Search - Minimal Syncpoints")
-    println("═" ^ 70)
-    println()
-    println("Target colors:")
-    for (i, c) in enumerate(TARGET_COLORS)
-        r, g, b = round(Int, red(c)*255), round(Int, green(c)*255), round(Int, blue(c)*255)
-        println("  $i. RGB($r, $g, $b) = #$(string(r, base=16, pad=2))$(string(g, base=16, pad=2))$(string(b, base=16, pad=2))")
+struct ParallelSearchWorld
+    results::Vector{SearchResult}
+    targets::Vector{RGB{Float64}}
+    n_workers::Int
+    elapsed_time::Float64
+end
+
+Base.length(w::ParallelSearchWorld) = length(w.results)
+
+function Base.merge(w1::ParallelSearchWorld, w2::ParallelSearchWorld)
+    combined = vcat(w1.results, w2.results)
+    sort!(combined, by=r -> -r.score)
+    ParallelSearchWorld(combined, w1.targets, w1.n_workers + w2.n_workers, w1.elapsed_time + w2.elapsed_time)
+end
+
+function fingerprint(w::ParallelSearchWorld)::UInt64
+    h = UInt64(0x9e3779b97f4a7c15)
+    for r in w.results
+        h = xor(h, splitmix64(r.seed))
+        h = splitmix64(h ⊻ reinterpret(UInt64, r.score))
     end
-    println()
+    h
+end
+
+"""
+    world_parallel_search(; targets, n_workers, seeds_per_worker, threshold)
+
+Build a ParallelSearchWorld with seed search results.
+Returns persistent, composable structure with SPI fingerprint.
+"""
+function world_parallel_search(;
+    targets::Vector{RGB{Float64}}=TARGET_COLORS,
+    n_workers::Int=nthreads(),
+    seeds_per_worker::Int=100_000,
+    threshold::Float64=0.95
+)::ParallelSearchWorld
+    @debug "Parallel seed search" n_workers seeds_per_worker threshold
     
-    println("Searching with $(nthreads()) workers...")
-    t = @elapsed results = find_seeds_parallel()
+    t = @elapsed results = find_seeds_parallel(targets; n_workers, seeds_per_worker, threshold)
     
-    println("\nTop results ($(round(t, digits=3))s):")
-    for (i, r) in enumerate(results[1:min(5, length(results))])
-        println("  $i. Seed 0x$(string(r.seed, base=16, pad=16)) score=$(round(r.score, digits=4)) (worker $(r.found_at_worker))")
-        if !isempty(r.colors)
-            for (j, c) in enumerate(r.colors)
-                ri, gi, bi = round(Int, red(c)*255), round(Int, green(c)*255), round(Int, blue(c)*255)
-                ti = TARGET_COLORS[j]
-                tri, tgi, tbi = round(Int, red(ti)*255), round(Int, green(ti)*255), round(Int, blue(ti)*255)
-                println("      color $j: RGB($ri,$gi,$bi) vs target RGB($tri,$tgi,$tbi)")
-            end
-        end
-    end
+    @debug "Search complete" elapsed=t top_score=results[1].score
     
-    return results
+    ParallelSearchWorld(results, targets, n_workers, t)
 end
 
 # end of parallel_seed_search.jl
