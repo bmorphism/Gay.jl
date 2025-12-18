@@ -619,71 +619,60 @@ function verify_with_fault_injection(cluster::SimulatedCluster;
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Demonstration
+# World Builder
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_fault_tolerant()
-
-Demonstrate fault-tolerant SPI verification.
+Persistent world state for fault-tolerant SPI verification.
 """
-function demo_fault_tolerant()
-    println("═" ^ 70)
-    println("FAULT-TOLERANT SPI VERIFICATION DEMO")
-    println("═" ^ 70)
-    println()
-    
-    # 1. Setup cluster
-    println("1. Setting up simulated cluster...")
+struct FaultTolerantWorld
+    cluster::SimulatedCluster
+    tracker::BidirectionalTracker
+    galois_ok::Bool
+    clean_pass::Bool
+    fault_stats::Dict{Symbol, Any}
+    bidirectional_consistent::Bool
+    all_closure_ok::Bool
+end
+
+Base.length(w::FaultTolerantWorld) = length(w.cluster.device_states)
+Base.merge(w1::FaultTolerantWorld, w2::FaultTolerantWorld) = w1  # Prefer first
+function fingerprint(w::FaultTolerantWorld)
+    h = UInt32(0)
+    for state in values(w.cluster.device_states)
+        h ⊻= state.expected_fingerprint
+    end
+    h
+end
+
+"""
+    world_fault_tolerant() -> FaultTolerantWorld
+
+Build persistent fault-tolerant SPI verification world.
+"""
+function world_fault_tolerant()
     devices = [("MacBook Pro", 18.0), ("MacBook Air", 8.0)]
     cluster = SimulatedCluster(devices, 32; n_tokens=64, hidden_dim=256)
     
-    for p in cluster.partitions
-        state = cluster.device_states[p.device_id]
-        println("   $(p.device_name): layers $(p.layer_range), " *
-               "expected fp=0x$(string(state.expected_fingerprint, base=16, pad=8))")
-    end
-    println()
+    @debug "Setting up simulated cluster" devices=length(devices)
     
-    # 2. Test Galois connection
-    println("2. Verifying Galois connection...")
     gc = cluster.galois
-    if verify_all_closures(gc)
-        println("   ✓ All $(gc.palette_size) colors satisfy α(γ(c)) = c")
-    else
-        println("   ✗ Galois closure property violated!")
-    end
-    println()
+    galois_ok = verify_all_closures(gc)
+    @debug "Galois connection" closures_ok=galois_ok palette_size=gc.palette_size
     
-    # 3. Run clean inference
-    println("3. Running clean inference...")
     run_inference!(cluster; with_faults=false)
-    pass, errors = verify!(cluster)
-    println("   Result: $(pass ? "✓ PASS" : "✗ FAIL")")
-    println()
+    clean_pass, _ = verify!(cluster)
+    @debug "Clean inference" pass=clean_pass
     
-    # 4. Inject faults
-    println("4. Testing fault injection...")
-    
-    # Test bit flips
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=10)
     run_inference!(cluster; with_faults=true)
-    pass, errors = verify!(cluster)
-    println("   Bit flip (10 bits): $(pass ? "✓ PASS (not detected)" : "✗ DETECTED")")
     
-    # Test more bits
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=100)
     run_inference!(cluster; with_faults=true)
-    pass, errors = verify!(cluster)
-    println("   Bit flip (100 bits): $(pass ? "✓ PASS (not detected)" : "✗ DETECTED")")
-    println()
     
-    # 5. Bidirectional tracking
-    println("5. Testing bidirectional color tracking...")
     tracker = BidirectionalTracker(GAY_SEED)
-    
     for layer in 1:4
         for token in 1:10
             track_forward!(tracker, layer, token, 1)
@@ -691,27 +680,24 @@ function demo_fault_tolerant()
         end
     end
     
-    consistent, errors = verify_consistency!(tracker)
-    println("   Forward/backward consistency: $(consistent ? "✓ PASS" : "✗ FAIL")")
-    
-    # Check Galois closure in proof log
+    bidirectional_consistent, _ = verify_consistency!(tracker)
     all_closure_ok = all(step[:galois_closure] for step in tracker.proof_log)
-    println("   Galois closure at all steps: $(all_closure_ok ? "✓ PASS" : "✗ FAIL")")
-    println()
+    @debug "Bidirectional tracking" consistent=bidirectional_consistent closure_ok=all_closure_ok
     
-    # 6. Statistical fault detection
-    println("6. Running fault detection statistics...")
-    stats = verify_with_fault_injection(cluster; n_iterations=20)
-    println("   Detection rate: $(round(stats[:detection_rate] * 100, digits=1))%")
-    println("   False positive rate: $(round(stats[:false_positive_rate] * 100, digits=1))%")
-    println("   Galois violations: $(stats[:galois_violations])")
-    println()
+    fault_stats = verify_with_fault_injection(cluster; n_iterations=20)
+    @debug "Fault detection stats" detection_rate=fault_stats[:detection_rate]
     
-    println("═" ^ 70)
-    println("DEMO COMPLETE")
-    println("═" ^ 70)
+    FaultTolerantWorld(
+        cluster,
+        tracker,
+        galois_ok,
+        clean_pass,
+        fault_stats,
+        bidirectional_consistent,
+        all_closure_ok
+    )
 end
 
-export demo_fault_tolerant
+export FaultTolerantWorld, world_fault_tolerant, fingerprint
 
 end # module FaultTolerant
