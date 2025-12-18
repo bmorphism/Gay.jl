@@ -30,7 +30,7 @@ using OhMyThreads: @tasks, @set
 
 export TracedMorphism, tensor_product, monoidal_unit, categorical_trace
 export feedback_loop, propagator_as_morphism, morphism_as_propagator
-export verify_traced_laws, demo_traced_tensor
+export verify_traced_laws, world_traced_tensor
 export TensorNetwork, add_node!, add_edge!, run_network!, network_fingerprint
 
 # Import from parent
@@ -402,11 +402,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_traced_tensor(; size=11)
+    world_traced_tensor(; size=11)
 
 Demonstrate the traced monoidal category structure.
 """
-function demo_traced_tensor(; size::Int=11)
+function world_traced_tensor(; size::Int=11)
     println("═" ^ 70)
     println("TRACED MONOIDAL CATEGORY: FEEDBACK AND PROPAGATORS")
     println("═" ^ 70)

@@ -722,7 +722,7 @@ end
 """
 Create a demo whale world with EC-1 clan whales.
 """
-function demo_whale_world(; n_whales::Int=6, seed::UInt64=GAY_SEED)
+function world_whale_world(; n_whales::Int=6, seed::UInt64=GAY_SEED)
     world = WhaleWorld(seed)
     
     # Add whales with EC-1 naming convention
@@ -744,7 +744,7 @@ function whale_world_demo()
     println()
     
     # Create world with 6 whales
-    world = demo_whale_world(n_whales=6)
+    world = world_whale_world(n_whales=6)
     
     println("  Created world with $(length(world.whales)) whales")
     for (id, w) in sort(collect(world.whales))

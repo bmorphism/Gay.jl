@@ -738,7 +738,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_whale_curriculum()
+function world_whale_curriculum()
     println()
     student = WhaleStudent("Kiki")  # Named after a famous cetacean research subject
     session = full_curriculum(student; verbose=true)

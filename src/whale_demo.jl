@@ -1,15 +1,15 @@
 # Whale-Human Translation Demo
 # Run this to see the complete whale communication system in action
 
-export demo_whale_bridge, demo_trajectory, demo_multi_agent
+export world_whale_bridge, world_trajectory, world_multi_agent
 
 """
-    demo_whale_bridge()
+    world_whale_bridge()
 
 Demonstrate the whale-human semantic bridge with rapid world exchange.
 Shows: listen → dialogue → consensus → couple workflow.
 """
-function demo_whale_bridge()
+function world_whale_bridge()
     println("╔═══════════════════════════════════════════════════════════════╗")
     println("║  🐋 WHALE-HUMAN SEMANTIC BRIDGE DEMO                          ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
@@ -69,12 +69,12 @@ function demo_whale_bridge()
 end
 
 """
-    demo_trajectory()
+    world_trajectory()
 
 Demonstrate trajectory tracking with Zipf analysis.
 Shows: track → zipf → promising workflow.
 """
-function demo_trajectory()
+function world_trajectory()
     println("╔═══════════════════════════════════════════════════════════════╗")
     println("║  📈 TRAJECTORY TRACKING DEMO                                  ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
@@ -136,12 +136,12 @@ function demo_trajectory()
 end
 
 """
-    demo_multi_agent()
+    world_multi_agent()
 
 Simulate multi-human collaboration with whale translation.
 Shows how multiple interpreters can converge on shared meanings.
 """
-function demo_multi_agent()
+function world_multi_agent()
     println("╔═══════════════════════════════════════════════════════════════╗")
     println("║  👥🐋 MULTI-AGENT COLLABORATION DEMO                          ║")
     println("╚═══════════════════════════════════════════════════════════════╝")
@@ -224,11 +224,11 @@ function demo_multi_agent()
 end
 
 """
-    demo_full_pipeline()
+    world_full_pipeline()
 
 Run the complete whale translation pipeline from papers to translation.
 """
-function demo_full_pipeline()
+function world_full_pipeline()
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
     println("║  🐋 FULL WHALE TRANSLATION PIPELINE                           ║")
@@ -244,17 +244,17 @@ function demo_full_pipeline()
     
     println("Phase 1: Whale Bridge Protocol")
     println("──────────────────────────────")
-    demo_whale_bridge()
+    world_whale_bridge()
     
     println()
     println("Phase 2: Trajectory Tracking")
     println("────────────────────────────")
-    demo_trajectory()
+    world_trajectory()
     
     println()
     println("Phase 3: Multi-Agent Collaboration")
     println("───────────────────────────────────")
-    demo_multi_agent()
+    world_multi_agent()
     
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")

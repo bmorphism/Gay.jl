@@ -19,7 +19,7 @@ using Dates
 
 export AmpThread, thread_seed, thread_color, thread_fingerprint
 export ThreadGenealogy, add_thread!, genealogy_fingerprint
-export verify_thread_chain, demo_amp_threads
+export verify_thread_chain, world_amp_threads
 
 # Import from parent
 using ..Gay: GAY_SEED, splitmix64, hash_color, color_at, SRGB
@@ -183,101 +183,51 @@ thread_xor(t1::AmpThread, t2::AmpThread) = t1.attestation ⊻ t2.attestation
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_amp_threads()
+    world_amp_threads(; current_id=nothing, parent_id=nothing, n_children=5)
 
-Demonstrate Amp thread connection to color verification.
+Build composable Amp thread verification state.
 """
-function demo_amp_threads()
-    println("═" ^ 70)
-    println("AMP THREAD COLOR VERIFICATION")
-    println("═" ^ 70)
-    println()
-    
-    # Current and parent thread IDs (from the conversation context)
-    current_id = "T-019b01e9-4119-759c-b70e-9be7e1e1b3d4"
-    parent_id = "T-019b01ae-24a5-73ea-8261-e85e67f61db7"
-    
-    println("1. Thread IDs:")
-    println("   Current: $current_id")
-    println("   Parent:  $parent_id")
-    println()
-    
-    # Create AmpThread objects
-    println("2. Creating AmpThread objects (with verification)...")
+function world_amp_threads(; current_id::Union{Nothing, String}=nothing,
+                            parent_id::Union{Nothing, String}=nothing,
+                            n_children::Int=5)
+    if isnothing(current_id)
+        current_id = "T-019b01e9-4119-759c-b70e-9be7e1e1b3d4"
+    end
+    if isnothing(parent_id)
+        parent_id = "T-019b01ae-24a5-73ea-8261-e85e67f61db7"
+    end
+
     current = AmpThread(current_id; parent_id=parent_id)
     parent = AmpThread(parent_id)
-    
-    println("   Current thread:")
-    println("     Seed: 0x$(string(current.seed, base=16, pad=16))")
-    println("     Attestation: 0x$(string(current.attestation, base=16, pad=8))")
-    
-    println("   Parent thread:")
-    println("     Seed: 0x$(string(parent.seed, base=16, pad=16))")
-    println("     Attestation: 0x$(string(parent.attestation, base=16, pad=8))")
-    println()
-    
-    # Thread colors
-    println("3. Thread colors:")
     current_color = thread_color(current)
     parent_color = thread_color(parent)
-    
-    # Display as ANSI
-    function show_color(c)
-        r = round(Int, clamp(c.r, 0, 1) * 255)
-        g = round(Int, clamp(c.g, 0, 1) * 255)
-        b = round(Int, clamp(c.b, 0, 1) * 255)
-        "\e[38;2;$(r);$(g);$(b)m████\e[0m"
-    end
-    
-    println("   Current: $(show_color(current_color))")
-    println("   Parent:  $(show_color(parent_color))")
-    println()
-    
-    # Genealogy
-    println("4. Thread genealogy:")
+
     gen = ThreadGenealogy(parent)
     add_thread!(gen, current)
-    
-    println("   Threads in chain: $(length(gen.threads))")
-    println("   Combined fingerprint: 0x$(string(genealogy_fingerprint(gen), base=16, pad=8))")
-    println("   Chain verified: $(verify_thread_chain(gen) ? "✓" : "✗")")
-    println()
-    
-    # Distance
-    println("5. Thread distance:")
+
     dist = thread_distance(current, parent)
     xor_val = thread_xor(current, parent)
-    println("   XOR: 0x$(string(xor_val, base=16, pad=8))")
-    println("   Hamming distance: $dist bits")
-    println()
-    
-    # Simulate more threads
-    println("6. Simulating thread evolution:")
-    for i in 1:5
-        # Generate a hypothetical child thread
+
+    children = AmpThread[]
+    for i in 1:n_children
         h1 = splitmix64(current.seed ⊻ UInt64(i))
         h2 = splitmix64(h1)
         child_id = "T-" * string(h1, base=16, pad=16) * "-" * string(h2, base=16, pad=4)[1:4]
         child = AmpThread(child_id; parent_id=current.id, verify=false)
-        
-        # Quick fingerprint without full verification
         child_fp = UInt32(splitmix64(child.seed) & 0xFFFFFFFF)
         child = AmpThread(child.id, child.seed, child.parent_id, child.timestamp, child_fp)
-        
         add_thread!(gen, child)
-        println("   Added: $(child.id[1:20])... fp=0x$(string(child_fp, base=16, pad=8))")
+        push!(children, child)
     end
-    
-    println()
-    println("   Final genealogy:")
-    println("     Threads: $(length(gen.threads))")
-    println("     Combined: 0x$(string(genealogy_fingerprint(gen), base=16, pad=8))")
-    println("     Verified: $(verify_thread_chain(gen) ? "✓" : "✗")")
-    println()
-    
-    println("═" ^ 70)
-    println("AMP THREAD DEMO COMPLETE")
-    println("═" ^ 70)
+
+    (
+        threads = (current = current, parent = parent, children = children),
+        colors = (current = current_color, parent = parent_color),
+        genealogy = gen,
+        genealogy_fingerprint = genealogy_fingerprint(gen),
+        chain_verified = verify_thread_chain(gen),
+        distance = (xor = xor_val, hamming = dist),
+    )
 end
 
 export thread_palette, thread_distance, thread_xor

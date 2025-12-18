@@ -33,7 +33,7 @@ using Statistics: mean, std, var
 
 export WallClockBridge, ColorBandwidth, ErgodicMeasure, CompositionObstruction
 export create_bridge, verify_bridge, measure_bandwidth, measure_ergodicity
-export detect_obstructions, horizon_analysis, demo_ergodic_bridge
+export detect_obstructions, horizon_analysis, world_ergodic_bridge
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Wall Clock ↔ Color Bridge
@@ -499,7 +499,7 @@ end
 # Demo
 # ══════════════════════════════════════════════════════════════════════════════
 
-function demo_ergodic_bridge()
+function world_ergodic_bridge()
     println("═" ^ 70)
     println("ERGODIC BRIDGE: Wall Clock ↔ Color Bandwidth ↔ Compositionality")
     println("═" ^ 70)

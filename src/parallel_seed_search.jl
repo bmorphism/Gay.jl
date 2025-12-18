@@ -161,11 +161,11 @@ function find_seeds_parallel(
 end
 
 """
-    demo_parallel_search()
+    world_parallel_search()
 
 Demonstrate the parallel search finding seeds for target colors.
 """
-function demo_parallel_search()
+function world_parallel_search()
     println("═" ^ 70)
     println("  Parallel Seed Search - Minimal Syncpoints")
     println("═" ^ 70)

@@ -551,11 +551,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_chaos_vibing()
+    world_chaos_vibing()
 
 Demonstrate maximal chaos injection.
 """
-function demo_chaos_vibing()
+function world_chaos_vibing()
     println("═" ^ 70)
     println("  CHAOS VIBING: Maximal Fault Injection into Parallel Causal Chains")
     println("═" ^ 70)

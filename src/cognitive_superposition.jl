@@ -43,7 +43,7 @@ export CognitiveState, CognitiveMorphism, CognitiveCategory
 export superpose, collapse, entails, induces, abduces
 export BraidedSuperposition, HypergraphSuperposition
 export cognitive_tensor, cognitive_trace, cognitive_spider
-export verify_cognitive_laws, demo_cognitive_superposition
+export verify_cognitive_laws, world_cognitive_superposition
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Cognitive State: Superposition of Meanings

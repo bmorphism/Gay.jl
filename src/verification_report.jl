@@ -19,7 +19,7 @@ using Statistics: mean
 
 export generate_report, ReportSection, FullReport
 export verify_coherence, attestation_fingerprint
-export export_report_markdown, demo_report
+export export_report_markdown, world_report
 
 # Import from parent
 using ..Gay: GAY_SEED, splitmix64
@@ -368,11 +368,11 @@ function export_report_markdown(report::FullReport)
 end
 
 """
-    demo_report(; tensor_size=23, n_threads=69)
+    world_report(; tensor_size=23, n_threads=69)
 
 Generate and display a verification report.
 """
-function demo_report(; tensor_size::Int=23, n_threads::Int=69)
+function world_report(; tensor_size::Int=23, n_threads::Int=69)
     println("═" ^ 70)
     println("SPI COLOR VERIFICATION REPORT")
     println("═" ^ 70)

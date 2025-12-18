@@ -18,7 +18,7 @@ using Colors
 export ColorConstraint, SynergyGraph, SchedulePartition, ScheduleResult
 export build_synergy_graph, partition_by_tree_decomposition
 export schedule_parallel!, parallel_color_schedule
-export demo_parallel_scheduler
+export world_parallel_scheduler
 export has_cliquetrees, set_cliquetrees_backend!
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -678,11 +678,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_parallel_scheduler(; n::Int=100, seed::UInt64=UInt64(42))
+    world_parallel_scheduler(; n::Int=100, seed::UInt64=UInt64(42))
 
 Demonstrate the parallel color scheduler with tree decomposition partitioning.
 """
-function demo_parallel_scheduler(; n::Int=100, seed::UInt64=UInt64(42))
+function world_parallel_scheduler(; n::Int=100, seed::UInt64=UInt64(42))
     println("═" ^ 70)
     println("  Parallel Color Scheduler - Tree Decomposition Partitioning")
     println("═" ^ 70)
@@ -746,5 +746,5 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_parallel_scheduler()
+    world_parallel_scheduler()
 end

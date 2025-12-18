@@ -348,11 +348,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_push_pull_sequence()
+    world_push_pull_sequence()
 
 Demonstrate push-pull sequence verification.
 """
-function demo_push_pull_sequence()
+function world_push_pull_sequence()
     println("═" ^ 70)
     println("PUSH-PULL SEQUENCE COLOR VERIFICATION")
     println("═" ^ 70)
@@ -432,6 +432,6 @@ function demo_push_pull_sequence()
     println("═" ^ 70)
 end
 
-export demo_push_pull_sequence
+export world_push_pull_sequence
 
 end # module PushPullSequence

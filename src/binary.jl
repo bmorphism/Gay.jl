@@ -474,22 +474,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_binary_analysis()
+    world_binary_analysis(; seed=0xDEADBEEF)
 
-Demonstrate binary analysis with SPI coloring.
+Build composable binary analysis state with SPI coloring.
 """
-function demo_binary_analysis()
-    println("\n╔══════════════════════════════════════════════════════════════╗")
-    println("║  Gay.jl: Growing the Gay Binary                              ║")
-    println("╠══════════════════════════════════════════════════════════════╣")
-    println("║  Tree-sitter AST × SPI Coloring × Abductive Inference        ║")
-    println("╚══════════════════════════════════════════════════════════════╝\n")
-    
-    seed = UInt64(0xDEADBEEF)
-    
-    # Demo AST prime hashing
-    println("1. AST Prime Hashing (à la r2diaphora):")
-    
+function world_binary_analysis(; seed::UInt64=UInt64(0xDEADBEEF))
     pseudocode1 = """
     int getPortz() {
         if (access("/usr/bin/python", 0) == -1) {
@@ -500,7 +489,7 @@ function demo_binary_analysis()
         return 1;
     }
     """
-    
+
     pseudocode2 = """
     undefined4 getPortz() {
         if (sym_access(ptr1) == -1) {
@@ -511,82 +500,59 @@ function demo_binary_analysis()
         return 1;
     }
     """
-    
+
     nodes1 = parse_pseudocode(pseudocode1)
     nodes2 = parse_pseudocode(pseudocode2)
-    
+
     hash1 = hash_ast_primes(nodes1; seed=seed)
     hash2 = hash_ast_primes(nodes2; seed=seed)
-    
-    println("   Pseudocode 1: $(length(nodes1)) nodes, hash=$(hash1.prime_product)")
-    println("   Pseudocode 2: $(length(nodes2)) nodes, hash=$(hash2.prime_product)")
-    println("   Match: $(hash1.prime_product == hash2.prime_product ? "✓ IDENTICAL" : "Different")")
-    println()
-    
-    # Demo function signatures
-    println("2. Function Signature Matching:")
-    
+
     sig1 = function_signature(UInt64(0x401000), "getPortz", 128;
                              seed=seed, ast_nodes=nodes1,
                              strings=["python", "perl"])
     sig2 = function_signature(UInt64(0x501000), "sym.getPortz", 132;
                              seed=seed, ast_nodes=nodes2,
                              strings=["python", "perl"])
-    
+
     similarity = abduce_function_match(sig1, sig2)
-    println("   Similarity: $(round(similarity * 100, digits=1))%")
-    
-    # Show colors
-    rgb1 = convert(RGB, sig1.color)
-    rgb2 = convert(RGB, sig2.color)
-    r1, g1, b1 = round.(Int, clamp.([rgb1.r, rgb1.g, rgb1.b], 0, 1) .* 255)
-    r2, g2, b2 = round.(Int, clamp.([rgb2.r, rgb2.g, rgb2.b], 0, 1) .* 255)
-    
-    println("   sig1: \e[38;2;$(r1);$(g1);$(b1)m████\e[0m $(sig1.name)")
-    println("   sig2: \e[38;2;$(r2);$(g2);$(b2)m████\e[0m $(sig2.name)")
-    println()
-    
-    # Demo seed abduction
-    println("3. Seed Abduction:")
+
     binary = GayBinary("/example/binary"; seed=seed)
-    
-    # Simulate known function colors
     reference = [
         (UInt64(0x401000), r2_color_at(UInt64(0x401000); seed=seed)),
         (UInt64(0x401100), r2_color_at(UInt64(0x401100); seed=seed)),
         (UInt64(0x401200), r2_color_at(UInt64(0x401200); seed=seed)),
     ]
-    
     inferred, confidence = abduce_binary_seed(binary, reference)
-    println("   Inferred seed: 0x$(string(inferred, base=16))")
-    println("   Confidence: $(round(confidence * 100, digits=1))%")
-    println("   Actual seed: 0x$(string(seed, base=16)) $(inferred == seed ? "✓" : "✗")")
-    println()
-    
-    # Demo CFG rendering
-    println("4. CFG with Checkerboard Coloring:")
+
     blocks = color_blocks([
         (0x401000, 16, 4, [0x401010, 0x401020], UInt64[]),
         (0x401010, 8, 2, [0x401020], [0x401000]),
         (0x401020, 12, 3, UInt64[], [0x401000, 0x401010]),
     ], UInt64(0x401000); seed=seed)
-    
-    for block in blocks
-        parity_char = block.parity == 0 ? "●" : "○"
-        rgb = convert(RGB, block.color)
-        r = round(Int, clamp(rgb.r, 0, 1) * 255)
-        g = round(Int, clamp(rgb.g, 0, 1) * 255)
-        b = round(Int, clamp(rgb.b, 0, 1) * 255)
-        println("   \e[38;2;$(r);$(g);$(b)m$(parity_char)\e[0m 0x$(string(block.address, base=16))")
-    end
-    println("   (● even parity, ○ odd parity - can analyze in parallel)")
-    println()
-    
-    println("Integration with radare2 MCP:")
-    println("  mcp__radare2__open_file → GayBinary(path)")
-    println("  mcp__radare2__decompile_function → parse_pseudocode → hash_ast_primes")
-    println("  mcp__tree_sitter__run_query → parse_pseudocode_with_treesitter")
-    println("  abduce_function_match → find similar functions across binaries")
+
+    (
+        ast_hashing = (
+            nodes1 = nodes1,
+            nodes2 = nodes2,
+            hash1 = hash1,
+            hash2 = hash2,
+            match = hash1.prime_product == hash2.prime_product,
+        ),
+        signatures = (
+            sig1 = sig1,
+            sig2 = sig2,
+            similarity = similarity,
+        ),
+        seed_abduction = (
+            binary = binary,
+            inferred = inferred,
+            actual = seed,
+            confidence = confidence,
+            correct = inferred == seed,
+        ),
+        cfg_blocks = blocks,
+        seed = seed,
+    )
 end
 
-export demo_binary_analysis
+export world_binary_analysis

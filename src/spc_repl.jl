@@ -4288,7 +4288,7 @@ SPC_CMDS["world"] = function(args...)
     
     if action == "init" || !isassigned(WHALE_WORLD)
         n = length(args) > 1 ? parse(Int, args[2]) : 6
-        WHALE_WORLD[] = demo_whale_world(n_whales=n, seed=SPC_WORLD[].seed)
+        WHALE_WORLD[] = world_whale_world(n_whales=n, seed=SPC_WORLD[].seed)
         println("  🌊 Whale World initialized")
         println("     $(length(WHALE_WORLD[].whales)) whales, base seed 0x$(string(WHALE_WORLD[].base_seed, base=16))")
         return

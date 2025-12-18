@@ -817,36 +817,17 @@ function verify_padic_uniqueness(colors::Vector{PadicColor})
 end
 
 """
-Demo function for p-adic colors.
+    world_padic(; n=10000, precision=20, verify_triples=10)
+
+Build composable p-adic color state.
 """
-function demo_padic()
-    println("═══ p-adic Color Generation ═══")
-    println()
-    
-    # Generate palette
-    colors = padic_palette(10000; precision=20)
-    
-    # Verify uniqueness
+function world_padic(; n::Int=10000, precision::Int=20, verify_triples::Int=10)
+    colors = padic_palette(n; precision=precision)
     unique = verify_padic_uniqueness(colors)
-    println("Identity collisions: $(unique ? "0 ✓" : "FOUND ✗")")
-    
-    # Check hex collisions (expected due to 8-bit quantization)
     hex_set = Set(to_hex(c) for c in colors)
-    println("Unique hex values: $(length(hex_set))/$(length(colors))")
-    
-    # Show sample
-    println()
-    println("Sample colors:")
-    for i in [1, 2, 3, 10, 100]
-        c = colors[i]
-        println("  [$i] $(to_hex(c)) → $(canonical_key(c.r)[1:10])...")
-    end
-    
-    # Verify ultrametric
-    println()
-    println("Ultrametric verification (10³ triples):")
+
     violations = 0
-    for i in 1:10, j in 1:10, k in 1:10
+    for i in 1:verify_triples, j in 1:verify_triples, k in 1:verify_triples
         d_ij = padic_distance_valuation(colors[i], colors[j])
         d_jk = padic_distance_valuation(colors[j], colors[k])
         d_ik = padic_distance_valuation(colors[i], colors[k])
@@ -854,5 +835,13 @@ function demo_padic()
             violations += 1
         end
     end
-    println("  Violations: $violations ✓")
+
+    (
+        colors = colors,
+        unique = unique,
+        n_unique_hex = length(hex_set),
+        ultrametric_violations = violations,
+        ultrametric_verified = violations == 0,
+        sample = [(i, colors[i]) for i in [1, 2, 3, 10, 100] if i <= length(colors)],
+    )
 end

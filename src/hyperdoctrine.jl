@@ -23,7 +23,7 @@ export ChromaticType, ChromaticPredicate, GayHyperdoctrine
 export substitution, existential, universal, verify_beck_chevalley
 export heyting_and, heyting_or, heyting_implies, heyting_not
 export predicate_color, predicate_fingerprint
-export demo_hyperdoctrine
+export world_hyperdoctrine
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Chromatic Types (Objects of C)
@@ -374,7 +374,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_hyperdoctrine()
+function world_hyperdoctrine()
     println("═" ^ 70)
     println("  GAY HYPERDOCTRINE: Chromatic Predicates in Categorical Logic")
     println("═" ^ 70)

@@ -466,38 +466,31 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_quic_paths(; n_paths=4, probes_per_path=3)
+    world_quic_paths(; n_paths=4, probes_per_path=3, seed=nothing)
 
-Demonstrate QUIC path probe coloring.
+Build composable QUIC path probe coloring state.
 """
-function demo_quic_paths(; n_paths::Int=4, probes_per_path::Int=3)
-    conn = QUICConnection(rand(UInt64))
-    
-    println("Creating QUIC connection with $n_paths paths...")
-    
+function world_quic_paths(; n_paths::Int=4, probes_per_path::Int=3, seed::Union{Nothing, UInt64}=nothing)
+    conn_seed = isnothing(seed) ? rand(UInt64) : seed
+    conn = QUICConnection(conn_seed)
+
     for path_id in UInt32(0):UInt32(n_paths-1)
         add_path!(conn, path_id)
-        
         for _ in 1:probes_per_path
             challenge = probe_challenge!(conn, path_id)
-            
-            # Simulate RTT delay
-            sleep(0.001 * rand())
-            
-            # Simulate response
             response_time = time_ns()
             probe_response!(conn, path_id, challenge.nonce, response_time)
         end
-        
         validate_path!(conn, path_id)
     end
-    
-    println(visualize_probes(conn))
-    
-    # Benchmark
+
     bench = benchmark_quic_probes()
-    @printf("Probe coloring: %.1f ns/probe (%.1f M probes/s parallel)\n",
-            bench.single_ns, bench.parallel_rate / 1e6)
-    
-    return conn
+
+    (
+        connection = conn,
+        n_paths = n_paths,
+        probes_per_path = probes_per_path,
+        benchmark = bench,
+        seed = conn_seed,
+    )
 end

@@ -48,12 +48,12 @@ export ConceptLattice, Concept, step_parallel!, verify_fingerprint!
 export interpolate_subtext!, extrapolate_superstructure!, interact!
 export lattice_magnetization, lattice_fingerprint, verify_monoid_laws
 export propagate_all!, concept_color, concept_neighbors
-export demo_concept_tensor
+export world_concept_tensor
 
 # X^X exponential object exports
 export ConceptMorphism, ExponentialObject, identity_morphism, compose
 export eval_morphism, curry_interaction, concept_to_morphism
-export morphism_fingerprint, verify_exponential_laws, demo_exponential
+export morphism_fingerprint, verify_exponential_laws, world_exponential
 
 # Higher structure exports
 export step_as_morphism, iterate_morphism, fixed_points, orbit
@@ -594,11 +594,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_concept_tensor(; size=23, n_steps=5)
+    world_concept_tensor(; size=23, n_steps=5)
 
 Demonstrate the 69³ concept tensor (use smaller size for demo).
 """
-function demo_concept_tensor(; size::Int=23, n_steps::Int=5)
+function world_concept_tensor(; size::Int=23, n_steps::Int=5)
     println("═" ^ 70)
     println("CONCEPT TENSOR: $(size)³ PARALLEL INTERACTION SPACE")
     println("═" ^ 70)
@@ -936,11 +936,11 @@ function verify_exponential_laws(; size::Int=11)
 end
 
 """
-    demo_exponential(; size=11)
+    world_exponential(; size=11)
 
 Demonstrate the X^X exponential object structure.
 """
-function demo_exponential(; size::Int=11)
+function world_exponential(; size::Int=11)
     println("═" ^ 70)
     println("EXPONENTIAL OBJECT X^X: MORPHISMS AS CONCEPTS")
     println("═" ^ 70)
@@ -1302,11 +1302,11 @@ function verify_trace_laws(; size::Int=11, n_tests::Int=20)
 end
 
 """
-    demo_higher_structure(; size=11)
+    world_higher_structure(; size=11)
 
 Demonstrate the (X^X)^(X^X) and trace structure.
 """
-function demo_higher_structure(; size::Int=11)
+function world_higher_structure(; size::Int=11)
     println("═" ^ 70)
     println("HIGHER STRUCTURE: (X^X)^(X^X) AND SELF-APPLICATION")
     println("═" ^ 70)
@@ -1394,6 +1394,6 @@ function demo_higher_structure(; size::Int=11)
     println("═" ^ 70)
 end
 
-export demo_higher_structure
+export world_higher_structure
 
 end # module ConceptTensor

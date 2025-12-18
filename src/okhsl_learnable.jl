@@ -543,11 +543,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_learnable_okhsl()
+    world_learnable_okhsl()
 
 Demonstrate learning optimal color assignments for semantic equivalence classes.
 """
-function demo_learnable_okhsl()
+function world_learnable_okhsl()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Learnable Okhsl: The General Class of All General Classes  ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -607,6 +607,6 @@ function demo_learnable_okhsl()
     return cs
 end
 
-export demo_learnable_okhsl
+export world_learnable_okhsl
 
 end # module OkhslLearnable

@@ -28,10 +28,10 @@ using ..VerificationReport: generate_report, attestation_fingerprint, verify_coh
 using ..VerificationReport: export_report_markdown
 using ..AmpThreads: AmpThread, ThreadGenealogy, add_thread!, genealogy_fingerprint
 using ..AmpThreads: thread_seed, verify_thread_chain
-using ..ConceptTensor: ConceptLattice, lattice_fingerprint, demo_concept_tensor
-using ..ConceptTensor: demo_exponential, demo_higher_structure
-using ..TracedTensor: demo_traced_tensor
-using ..ThreadFindings: demo_thread_findings
+using ..ConceptTensor: ConceptLattice, lattice_fingerprint, world_concept_tensor
+using ..ConceptTensor: world_exponential, world_higher_structure
+using ..TracedTensor: world_traced_tensor
+using ..ThreadFindings: world_thread_findings
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Argument Parsing
@@ -178,27 +178,27 @@ function cmd_demo(args::CLIArgs)
     
     println("1. Concept Tensor Demo")
     println("-" ^ 40)
-    demo_concept_tensor(; size=min(args.tensor_size, 23), n_steps=3)
+    world_concept_tensor(; size=min(args.tensor_size, 23), n_steps=3)
     println()
     
     println("2. Exponential X^X Demo")
     println("-" ^ 40)
-    demo_exponential(; size=min(args.tensor_size, 11))
+    world_exponential(; size=min(args.tensor_size, 11))
     println()
     
     println("3. Higher Structure Demo")
     println("-" ^ 40)
-    demo_higher_structure(; size=min(args.tensor_size, 11))
+    world_higher_structure(; size=min(args.tensor_size, 11))
     println()
     
     println("4. Traced Tensor Demo")
     println("-" ^ 40)
-    demo_traced_tensor(; size=min(args.tensor_size, 11))
+    world_traced_tensor(; size=min(args.tensor_size, 11))
     println()
     
     println("5. Thread Findings Demo")
     println("-" ^ 40)
-    demo_thread_findings(; n_threads=min(args.n_threads, 20))
+    world_thread_findings(; n_threads=min(args.n_threads, 20))
     println()
     
     println("═" ^ 60)

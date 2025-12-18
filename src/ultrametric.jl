@@ -10,7 +10,7 @@
 # every point is a center!
 
 export PadicColor, padic_distance, padic_hue, ultrametric_palette
-export padic_ball, padic_valuation, demo_ultrametric
+export padic_ball, padic_valuation, world_ultrametric
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
@@ -157,64 +157,33 @@ function ultrametric_palette(seed::UInt64; p::Int=3, n::Int=7)
 end
 
 """
-    demo_ultrametric()
+    world_ultrametric(; seed=GAY_SEED, p=3, n=7)
 
-Demo of p-adic ultrametric color generation.
+Build composable p-adic ultrametric color state.
 """
-function demo_ultrametric()
-    println("═══════════════════════════════════════════════════════════")
-    println("  P-ADIC ULTRAMETRIC COLORS")
-    println("═══════════════════════════════════════════════════════════")
-    println()
-    
-    println("ULTRAMETRIC PROPERTY: d(x,z) ≤ max(d(x,y), d(y,z))")
-    println("Every point in a ball is its center!")
-    println()
-    
-    # Generate 3-adic palette
-    palette = ultrametric_palette(GAY_SEED; p=3, n=7)
-    
-    println("3-ADIC PALETTE (seed 0x$(string(GAY_SEED, base=16))):")
-    println("─────────────────────────────────────────────────────────")
-    
-    for (i, c) in enumerate(palette)
-        digits_str = join(c.digits[1:6], "")
-        println("  [$i] H=$(round(c.hue, digits=1))° S=$(round(c.saturation, digits=2)) L=$(round(c.lightness, digits=2))")
-        println("      3-adic: ...$digits_str (seed 0x$(string(c.seed, base=16, pad=16)))")
+function world_ultrametric(; seed::UInt64=GAY_SEED, p::Int=3, n::Int=7)
+    palette = ultrametric_palette(seed; p=p, n=n)
+
+    dist_size = min(5, length(palette))
+    distances = Matrix{Float64}(undef, dist_size, dist_size)
+    for i in 1:dist_size, j in 1:dist_size
+        distances[i, j] = padic_distance(Int(palette[i].seed % 1000000), Int(palette[j].seed % 1000000), p)
     end
-    
-    println()
-    println("DISTANCE MATRIX (3-adic):")
-    println("─────────────────────────────────────────────────────────")
-    
-    # Show distance matrix
-    print("     ")
-    for i in 1:min(5, length(palette))
-        print("  [$i]  ")
-    end
-    println()
-    
-    for i in 1:min(5, length(palette))
-        print(" [$i] ")
-        for j in 1:min(5, length(palette))
-            d = padic_distance(Int(palette[i].seed % 1000000), Int(palette[j].seed % 1000000), 3)
-            print(" $(round(d, digits=3)) ")
-        end
-        println()
-    end
-    
-    println()
-    println("ULTRAMETRIC BALLS:")
-    println("─────────────────────────────────────────────────────────")
-    
+
     center = palette[1]
     ball = padic_ball(center, 0.1; n=5)
-    
-    println("Ball of radius 0.1 around color 1:")
-    for (i, c) in enumerate(ball)
-        d = padic_distance(Int(center.seed % 1000000), Int(c.seed % 1000000), 3)
-        println("  [$i] distance = $d, H=$(round(c.hue, digits=1))°")
-    end
-    
-    palette
+    ball_distances = [padic_distance(Int(center.seed % 1000000), Int(c.seed % 1000000), p) for c in ball]
+
+    (
+        palette = palette,
+        p = p,
+        seed = seed,
+        distance_matrix = distances,
+        ball = (
+            center = center,
+            radius = 0.1,
+            members = ball,
+            distances = ball_distances,
+        ),
+    )
 end

@@ -38,7 +38,7 @@ using Dates
 export Finding, FindingsSet, ThreadContext, VerificationMonad
 export bind_finding, return_finding, run_verification
 export count_threads, fingerprint_threads, lazy_place!
-export demo_thread_findings, run_all_verifications
+export world_thread_findings, run_all_verifications
 
 # Import from parent
 using ..Gay: GAY_SEED, splitmix64, xor_fingerprint
@@ -376,11 +376,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_thread_findings(; n_threads=20)
+    world_thread_findings(; n_threads=20)
 
 Demonstrate the two monad structure for thread findings.
 """
-function demo_thread_findings(; n_threads::Int=20)
+function world_thread_findings(; n_threads::Int=20)
     println("═" ^ 70)
     println("THREAD FINDINGS: TWO MONAD STRUCTURE")
     println("═" ^ 70)

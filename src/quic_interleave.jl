@@ -13,7 +13,7 @@ using Colors: RGB
 export QUICInterleaver, InterleavedStream
 export interleave!, next_stream_color!, combined_fingerprint
 export verify_interleave_spi, hop_state, from_hop_state
-export demo_quic_interleave
+export world_quic_interleave
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Interleaved Stream Types
@@ -316,11 +316,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_quic_interleave(; n_streams=4, n_colors=32)
+    world_quic_interleave(; n_streams=4, n_colors=32)
 
 Demonstrate QUIC interleaved streams with SPI verification.
 """
-function demo_quic_interleave(; n_streams::Int=4, n_colors::Int=32)
+function world_quic_interleave(; n_streams::Int=4, n_colors::Int=32)
     println("🏳️‍🌈 QUIC Interleaved Streams Demo")
     println("=" ^ 60)
     println()

@@ -17,7 +17,7 @@
 export ColorLogicSystem, LogicPullbackSquare, ColoredTheory
 export fibered_product, pullback_color, beck_chevalley_proper
 export theory_level, metatheory_level, logic_system_color
-export demo_color_logic_pullback
+export world_color_logic_pullback
 
 using ..Gay: GAY_SEED, hash_color, splitmix64_mix
 
@@ -387,7 +387,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_color_logic_pullback()
+function world_color_logic_pullback()
     println("═" ^ 70)
     println("  COLOR-LOGIC PULLBACK SQUARES")
     println("  Theory/Metatheory from Hatchery Diagrams")
