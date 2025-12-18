@@ -6,7 +6,7 @@
 #
 # ## The Problem with Parallel Randomness
 #
-# When generating colors in parallel, you face two competing approaches:
+# When generating colors in parallel, we face two competing approaches:
 #
 # ### Approach 1: Thread-Safe but Non-Deterministic
 #
@@ -40,7 +40,7 @@
 # the **same color regardless of**:
 # - Which thread calls it
 # - What order threads execute
-# - Whether you run sequentially or in parallel
+# - Whether we run sequentially or in parallel
 #
 # This is **Strong Parallelism Invariance (SPI)** from Pigeons.jl.
 

@@ -190,7 +190,7 @@ function show_differentiation(seed::UInt64, name::Symbol; depth::Int=3)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Interactive: Create your own irreducible
+# Interactive: Create our own irreducible
 # ═══════════════════════════════════════════════════════════════════════════
 
 function create_irreducible(text::String)

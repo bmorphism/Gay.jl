@@ -276,7 +276,7 @@ end
 #
 # - **Deterministic**: Same seed = same colors = same science
 # - **Parallel-safe**: SPI ensures reproducibility across workers
-# - **Visual**: See your simulation's fingerprint
+# - **Visual**: See our simulation's fingerprint
 # - **Checkpointable**: HDF5-ready with color metadata
 #
 # Every sweep has a color. Every measurement has a color.

@@ -33,14 +33,17 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [weakdeps]
 AMDGPU = "21141c5a-9bdb-4563-92ae-f87d6854732e"
+CliqueTrees = "bfc693e0-158d-496a-9037-c9aaabfb0d4a"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 
 [extensions]
+GayCliqueTreesExt = "CliqueTrees"
 GayEnzymeExt = "Enzyme"
 GayMetalExt = "Metal"
 
 [compat]
 AMDGPU = "1"
+CliqueTrees = "0.2"
 CUDA = "5"
 Chairmarks = "1"
 ColorTypes = "0.11"

@@ -1,0 +1,125 @@
+<SYSTEM>This is the abridged developer documentation for Gay.jl — Wide-gamut color sampling with splittable determinism</SYSTEM>
+
+# Gay.jl: Splittable Deterministic Color Generation
+
+## Installation
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/bmorphism/Gay.jl")
+```
+
+## Core API
+
+### RNG Control
+- `gay_seed!(seed)` — Reset global RNG with seed
+- `gay_split()` — Get independent RNG stream
+- `GayRNG(seed)` — Create new RNG instance
+
+### Color Generation
+- `next_color(cs)` — Next deterministic color
+- `next_colors(n, cs)` — n deterministic colors
+- `next_palette(n, cs)` — n visually distinct colors
+- `random_color(cs)` — Random color (non-deterministic)
+
+### Random Access
+- `color_at(index, cs; seed)` — Color at specific index (O(1))
+- `colors_at(indices, cs; seed)` — Colors at multiple indices
+- `palette_at(index, n, cs)` — Palette at index
+
+### Color Spaces
+- `SRGB()` — Standard RGB
+- `DisplayP3()` — Apple Display P3
+- `Rec2020()` — ITU-R BT.2020 HDR
+- `CustomColorSpace(primaries, name)` — Custom primaries
+
+### Pride Flags
+- `rainbow()`, `transgender()`, `bisexual()`
+- `nonbinary()`, `pansexual()`, `asexual()`
+- `pride_flag(:progress)`, `pride_flag(:lesbian)`
+
+### GPU Acceleration
+- `ka_colors(n, seed)` — Generate n colors via SPMD kernel
+- `ka_colors!(matrix, seed)` — Fill pre-allocated n×3 Float32 matrix
+- `ka_color_sums(n, seed)` — Streaming reduction (O(1) memory)
+- `set_backend!(backend)` — Switch to Metal/CUDA/AMD GPU
+
+### SPI Verification
+- `xor_fingerprint(colors)` — XOR-reduce to 32-bit hash
+- `verify_spi(n, seed; gpu_backend)` — Full verification suite
+- `gpu_fingerprint(n, seed)` — Generate + fingerprint on GPU
+
+## Strong Parallelism Invariance (SPI)
+
+Same seed → same colors, always — regardless of:
+- Number of threads/processes
+- Execution order
+- Parallel vs sequential execution
+
+```julia
+using Gay, OhMyThreads
+
+seed = 42
+sequential = [color_at(i; seed=seed) for i in 1:100]
+parallel = tmap(i -> color_at(i; seed=seed), 1:100)
+
+sequential == parallel  # true — always!
+```
+
+## Interleaved Streams (Checkerboard/QMC)
+
+```julia
+interleaver = GayInterleaver(seed, 2)  # 2 sublattices
+color, phase, step = gay_interleave(interleaver)
+
+# 2D lattice coloring
+colors = gay_checkerboard_2d(interleaver, Lx, Ly)
+bonds = gay_heisenberg_bonds(interleaver, Lx, Ly)
+```
+
+## Comrade.jl Sky Models
+
+```julia
+gay_seed!(2017)
+ring = comrade_ring(1.0, 0.3)       # (ring 1.0 0.3)
+gauss = comrade_gaussian(0.5)       # (gaussian 0.5 0.5)
+model = sky_add(ring, gauss)        # (ring) + (gaussian)
+comrade_show(model)                 # Colored S-expression + ASCII
+```
+
+## Security Properties
+
+| Property | sm64 | Implication |
+|----------|------|-------------|
+| Collision resistance | ❌ | Don't use for commitments |
+| Preimage resistance | ❌ | Seed can be recovered |
+| Speed | 20 cycles | 100x faster than SHA-256 |
+| Determinism | ✅ | Reproducible colors |
+
+### Pigeonhole Defense
+- COLOR_BANDWIDTH = 226 (Galois field GF(227))
+- Saturation detection + forced recoloring
+- Attack cost grows linearly, defense cost O(1)
+
+### Upgrade Path
+```julia
+# For secrets, chain sm64 with ChaCha20
+secure_color(seed, secret) = chacha20_encrypt(sm64(seed), secret)
+```
+
+## Dependencies
+
+Required:
+- Colors.jl, SplittableRandoms.jl, KernelAbstractions.jl
+- OhMyThreads.jl, LispSyntax.jl
+
+Optional GPU:
+- Metal.jl (Apple), CUDA.jl (Nvidia), AMDGPU.jl (AMD)
+
+## Performance
+
+| Function | n | Time | Rate |
+|----------|---|------|------|
+| ka_colors | 1M | 1.0 ms | 1,000 M/s |
+| ka_color_sums | 1B | 0.13s | 7,097 M/s |
+| gpu_fingerprint | 100M | 265ms | 378 M/s |

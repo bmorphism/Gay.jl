@@ -1,0 +1,43 @@
+flowchart TB
+    subgraph D4_MMM["depth=4: --- (LIMIT)"]
+        MMM1["---- pullback()<br/>Catlab limit"]
+        MMM2["---_ d_csp cospan<br/>diagram data"]
+        MMM3["---+ Span structure<br/>apex + legs"]
+    end
+    
+    subgraph D4_MME["depth=4: --_ (LEGS)"]
+        MME1["--_- legs()[1]<br/>left projection"]
+        MME2["--__ legs()[2]<br/>right projection"]
+        MME3["--_+ p_cone object<br/>apex vertex"]
+    end
+    
+    subgraph D4_MMP["depth=4: --+ (FETCH)"]
+        MMP1["--+- adhesionSpans()<br/>all spans"]
+        MMP2["--+_ [i] index<br/>specific span"]
+        MMP3["--++ (csp,d_csp)<br/>tuple unpack"]
+    end
+    
+    subgraph D4_MEM["depth=4: -_- (DOMAIN)"]
+        MEM1["-_-- dom()<br/>domain functor"]
+        MEM2["-_-_ new_d_csp[1]<br/>left cospan leg"]
+        MEM3["-_-+ FinSet object<br/>concrete set"]
+    end
+    
+    subgraph D4_MEE["depth=4: -__ (COMPOSE)"]
+        MEE1["-__- compose()<br/>morphism ∘"]
+        MEE2["-___ imgs[1]<br/>image inclusion"]
+        MEE3["-__+ hom_map(d,f)<br/>functor on hom"]
+    end
+    
+    subgraph D4_MEP["depth=4: -_+ (FORCE)"]
+        MEP1["-_+- force.<br/>broadcast"]
+        MEP2["-_+_ lazy thunk<br/>deferred"]
+        MEP3["-_++ eager value<br/>computed"]
+    end
+    
+    style D4_MMM fill:#800,stroke:#faa,color:#fee
+    style D4_MME fill:#840,stroke:#fca,color:#fea
+    style D4_MMP fill:#880,stroke:#ffa,color:#ffc
+    style D4_MEM fill:#480,stroke:#afa,color:#efe
+    style D4_MEE fill:#440,stroke:#cca,color:#eec
+    style D4_MEP fill:#084,stroke:#afc,color:#efe

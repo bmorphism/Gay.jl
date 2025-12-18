@@ -19,6 +19,9 @@ include("jepsen_fuzz.jl")
 # Include SDF-style propagator tests
 include("propagator_test.jl")
 
+# Include regression tests for ternary/gamut systems
+include("regression_ternary.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         Aqua.test_all(Gay; deps_compat=(check_extras=false,))

@@ -113,7 +113,7 @@ for h in hypotheses
     println("ID=$(h.id) confidence=$(h.confidence)")
 end
 
-# If you have the source color, exact recovery is possible
+# If we have the source color, exact recovery is possible
 source = RGB(0.2, 0.4, 0.6)
 id = abduce_from_source(source)  # Returns exact ID or nothing
 ```

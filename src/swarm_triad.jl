@@ -1,7 +1,16 @@
 # Swarm Triad - Distributed triadic coordination for Gay mining
 # Generated to fix missing include
 
+module SwarmTriad
+
 export demo_swarm_triad, SwarmTriadState, coordinate_swarm
+export SwarmAgent, AgentState, SentinelMonitor
+export Alive, Compliant, NonCompliant, Dead
+export create_agent, triad_split!, verify_compliance, execute_file_op!
+export create_sentinel, register_agent!, monitor_swarm!, compliance_report
+export record_split!, record_file_op!
+export agent_color, agent_identity, seed_lineage
+export FileOperation, ReadFile, WriteFile, DeleteFile
 
 const GAY_SEED_SWARM = UInt64(0x6761795f636f6c6f)
 
@@ -77,3 +86,44 @@ function demo_swarm_triad()
     
     final_fp
 end
+
+# Stub types for exports - minimal definitions to satisfy module interface
+@enum AgentState Alive Compliant NonCompliant Dead
+
+struct SwarmAgent
+    id::UInt64
+    state::AgentState
+    seed::UInt64
+end
+
+struct SentinelMonitor
+    agents::Vector{SwarmAgent}
+end
+
+abstract type FileOperation end
+struct ReadFile <: FileOperation
+    path::String
+end
+struct WriteFile <: FileOperation
+    path::String
+    data::Vector{UInt8}
+end
+struct DeleteFile <: FileOperation
+    path::String
+end
+
+create_agent(seed::UInt64) = SwarmAgent(seed, Alive, seed)
+triad_split!(agent::SwarmAgent) = (agent, agent, agent)
+verify_compliance(agent::SwarmAgent) = agent.state == Compliant
+execute_file_op!(agent::SwarmAgent, op::FileOperation) = true
+create_sentinel() = SentinelMonitor(SwarmAgent[])
+register_agent!(sentinel::SentinelMonitor, agent::SwarmAgent) = push!(sentinel.agents, agent)
+monitor_swarm!(sentinel::SentinelMonitor) = nothing
+compliance_report(sentinel::SentinelMonitor) = Dict(:compliant => 0, :total => length(sentinel.agents))
+record_split!(agent::SwarmAgent) = nothing
+record_file_op!(agent::SwarmAgent, op::FileOperation) = nothing
+agent_color(agent::SwarmAgent) = (1.0, 0.0, 0.0)
+agent_identity(agent::SwarmAgent) = agent.id
+seed_lineage(agent::SwarmAgent) = [agent.seed]
+
+end # module SwarmTriad

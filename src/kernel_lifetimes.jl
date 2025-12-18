@@ -248,7 +248,7 @@ Compute color from global index and iteration counter.
 This is the main function for tracking colors across kernel lifetime.
 
 # Eventual Last Next Property
-Given (seed, global_idx, N), you know the color at iteration N
+Given (seed, global_idx, N), we know the color at iteration N
 before running the kernel.
 """
 @inline function iter_index_color(seed::UInt64, global_idx::Integer, iteration::Integer)

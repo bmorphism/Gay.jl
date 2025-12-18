@@ -165,7 +165,7 @@ function demo_babashka_ssh()
     println("═══════════════════════════════════════════════════════════")
     println()
     
-    # Define hosts (example - modify for your setup)
+    # Define hosts (example - modify for the target setup)
     hosts = [
         BabashkaHost("hatchery"; tailscale_ip="100.72.249.116", user="bob"),
         BabashkaHost("causality"; tailscale_ip="100.69.33.107", user="bob"),

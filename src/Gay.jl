@@ -189,6 +189,7 @@ export demo_spectral_bridge
 
 # Include Gay Hyperdoctrine (Categorical Logic with Chromatic Predicates)
 include("hyperdoctrine.jl")
+using .Hyperdoctrine
 export ChromaticType, ChromaticPredicate, GayHyperdoctrine
 export substitution, existential, universal, verify_beck_chevalley
 export heyting_and, heyting_or, heyting_implies, heyting_not
@@ -260,6 +261,17 @@ include("xypic.jl")
 include("propagator.jl")
 include("propagator_lisp.jl")
 export Propagator, PropagatorLisp
+
+# Include Scoped Propagators - Three mutually exclusive ancestry materialization strategies
+include("scoped_propagators.jl")
+using .ScopedPropagators
+export PropagatorScope, ConeScope, DescentScope, AdhesionScope
+export ScopedPropagator, BottomUpPropagator, TopDownPropagator, HorizontalPropagator
+export PropagatorState, PropagatorResult
+export propagate!, materialize_ancestry!, verify_convergence
+export AncestryACSet, AncestryNode, AncestryEdge
+export UniversalMaterialization, materialize_universal!
+export world_scoped_propagators, ScopedPropagatorWorld
 
 # Include Traced Monoidal Category Structure (after Propagator)
 include("traced_tensor.jl")
@@ -388,9 +400,8 @@ export learn_gamut_map!, gamut_loss, chroma_preservation_loss
 export GayChain, chain_to_gamut, verify_chain_in_gamut, process_gay_chain
 export enzyme_gamut_gradient, enzyme_learn_gamut!  # Stubs, overridden by GayEnzymeExt
 
-# Include Gay Hyperdoctrines - chromatic categorical logic
-include("hyperdoctrine.jl")
-using .Hyperdoctrine
+# Note: Hyperdoctrine already included above (line ~191)
+# Re-export for API consistency
 export GayContext, GayType, GayTerm, GayPredicate, GaySubstitution
 export GayHyperdoctrine, predicate_lattice, substitution_functor
 export existential, universal, beck_chevalley_check

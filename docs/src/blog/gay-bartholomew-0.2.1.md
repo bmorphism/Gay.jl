@@ -216,7 +216,7 @@ Now 33 observed vs 36.41 expected. That's statistical noise, not a bug.
 
 The deepest question remained: **Are Left and Right splits truly independent?**
 
-When you call `split(rng)` twice to get two child RNGs, they MUST be statistically independent. If they're correlated, parallel execution becomes nondeterministic—the cardinal sin against SPI.
+When we call `split(rng)` twice to get two child RNGs, they MUST be statistically independent. If they're correlated, parallel execution becomes nondeterministic—the cardinal sin against SPI.
 
 ### The Correlation Test
 

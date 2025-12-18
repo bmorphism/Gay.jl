@@ -255,7 +255,7 @@ end
     fast_spi_demo(n=1_000_000)
 
 Demonstrate that XOR fingerprinting is a CONCRETE SYNTAX for correctness proofs.
-Instead of comparing 3M floats, you compare 1 hash → faster mental model.
+Instead of comparing 3M floats, we compare 1 hash → faster mental model.
 """
 function fast_spi_demo(n::Int=1_000_000)
     println()

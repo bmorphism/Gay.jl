@@ -1,0 +1,53 @@
+# Gay.jl
+
+> Wide-gamut color sampling with splittable determinism — reproducible colors via SplittableRandoms.jl, inspired by Pigeons.jl's Strong Parallelism Invariance (SPI) pattern.
+
+## Documentation Sets
+
+- [Abridged documentation](llms-small.txt): compact version with core API and security properties
+- [Complete documentation](llms-full.txt): full documentation including theory, GPU acceleration, and ZKVM integration
+
+## Core Properties
+
+- **Deterministic**: Same seed always produces same colors
+- **Parallelizable**: Identical results regardless of execution order or thread count
+- **Random-access**: O(1) access to any position in color sequence via `color_at(n)`
+- **Quantum-aware**: 226-color bandwidth with Galois field arithmetic, upgrade path to post-quantum
+
+## Quick Start
+
+```julia
+using Gay
+
+gay_seed!(42)
+c1 = next_color()        # First color
+c2 = next_color()        # Second color
+
+gay_seed!(42)            # Reset
+c1 == next_color()       # true — deterministic!
+
+# Random access (no iteration needed)
+color_at(1000)           # Jump directly to index 1000
+```
+
+## Key Features
+
+- Wide-gamut color spaces (sRGB, Display P3, Rec.2020)
+- Pride flag palettes (`rainbow()`, `transgender()`, `bisexual()`)
+- Comrade.jl-style sky models for VLBI imaging
+- GPU acceleration via KernelAbstractions.jl (7B+ colors/sec)
+- XOR fingerprint verification for SPI correctness proofs
+- Propagator networks with chromatic debugging
+
+## Security Model
+
+- sm64 PRNG (fast, deterministic, NOT cryptographically secure)
+- 226-color Galois ring buffer with pigeonhole saturation defense
+- Reafferent identity via internal/external color discrepancy
+- Upgrade path: sm64 → ChaCha20 for secrets, → SPHINCS+ for post-quantum
+
+## Links
+
+- [GitHub](https://github.com/bmorphism/Gay.jl)
+- [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl)
+- [Pigeons.jl](https://pigeons.run)

@@ -60,7 +60,7 @@ export set_backend!
     splitmix64_mix(z::UInt64) -> UInt64
 
 Pure SplitMix64 mixing function (the finalizer part only).
-This is used for one-shot hashing where you combine seed and index.
+This is used for one-shot hashing where we combine seed and index.
 """
 @inline function splitmix64_mix(z::UInt64)
     z = ((z ⊻ (z >> 30)) * MIX1) % UInt64
