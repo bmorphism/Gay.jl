@@ -74,7 +74,8 @@ export propagate!, materialize_ancestry!, verify_convergence
 export AncestryACSet, AncestryNode, AncestryEdge
 export UniversalMaterialization, materialize_universal!
 export world_scoped_propagators, ScopedPropagatorWorld
-export thread_color, thread_fingerprint
+# Note: thread_color, thread_fingerprint also defined in AmpThreads
+# Using qualified names to avoid conflict: ScopedPropagators.thread_color
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Ancestry ACSet Schema

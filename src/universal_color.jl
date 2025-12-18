@@ -103,6 +103,15 @@ GayRGBA(r, g, b, a) = GayRGBA{Float64}(Float64(r), Float64(g), Float64(b), Float
 struct GaySpectral{N, T<:Real} <: AbstractGaySpectral
     wavelengths::NTuple{N, T}
     values::NTuple{N, T}
+    
+    function GaySpectral{N, T}(wavelengths::NTuple{N, T}, values::NTuple{N, T}) where {N, T<:Real}
+        new{N, T}(wavelengths, values)
+    end
+end
+
+# Outer constructor with fully bound type parameters
+function GaySpectral(wavelengths::NTuple{N, T}, values::NTuple{N, T}) where {N, T<:Real}
+    GaySpectral{N, T}(wavelengths, values)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════

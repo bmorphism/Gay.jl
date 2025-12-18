@@ -113,7 +113,8 @@ using .FaultTolerant
 export SimulatedCluster, DeviceState, FaultInjector
 export inject!, heal!, heal_all!, run_inference!
 export BidirectionalTracker, track_forward!, track_backward!, verify_consistency!
-export GaloisConnection, alpha, gamma, verify_closure, verify_all_closures
+export GaloisConnection, gamma, verify_closure, verify_all_closures
+# Note: alpha conflicts with ColorTypes.alpha, use FaultTolerant.alpha explicitly
 export FaultTolerantWorld, world_fault_tolerant
 
 # Include Chaos Vibing - Maximal fault injection into parallel causal chains
