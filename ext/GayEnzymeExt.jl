@@ -289,7 +289,11 @@ function enzyme_gamut_loss(params_vec::Vector{Float64}, colors_lab::Matrix{Float
     n_colors = size(colors_lab, 1)
     total_loss = 0.0
 
-    # Base chroma limits for target gamut
+    # NOTE: For Enzyme differentiability, we use a smooth approximation of gamut bounds
+    # The actual map_to_gamut uses binary search which is not easily differentiable.
+    # This approximation guides the gradient descent in the right direction.
+    
+    # Base chroma limits for target gamut (Approximation)
     base_chroma = if target_gamut == :srgb
         130.0
     elseif target_gamut == :p3
@@ -308,17 +312,13 @@ function enzyme_gamut_loss(params_vec::Vector{Float64}, colors_lab::Matrix{Float
         H_rad = atan(b, a)
         H_deg = H_rad * 180.0 / π
 
-        # Lightness factor for gamut bounds
+        # Approximate gamut boundary for differentiable loss
+        # Matches the shape of standard RGB gamuts roughly
         L_norm = L / 100.0
-        L_gamut_factor = if L < 20.0
-            L / 20.0
-        elseif L > 80.0
-            (100.0 - L) / 20.0
-        else
-            1.0
-        end
-
-        # Hue factor for gamut bounds
+        # Parabolic fit for lightness: peak at L=50, 0 at L=0,100
+        L_gamut_factor = 4.0 * L_norm * (1.0 - L_norm) 
+        
+        # Hue variation
         H_gamut_factor = 1.0 + 0.2 * cos(H_rad - π/3)
         max_chroma = base_chroma * L_gamut_factor * H_gamut_factor
 
@@ -332,14 +332,17 @@ function enzyme_gamut_loss(params_vec::Vector{Float64}, colors_lab::Matrix{Float
 
         # New chroma
         C_new = C_orig * scale
-        C_new = min(C_new, max_chroma)
+        
+        # Approximate clamping for loss calculation
+        # Softmax-style clamping would be better but simple min works for Enzyme
+        C_clamped = min(C_new, max_chroma)
 
         # Loss components
-        # 1. Gamut compliance (penalize if still outside)
+        # 1. Gamut compliance (penalize if proposed is outside approximate bounds)
         compliance_loss = max(0.0, C_new - max_chroma)^2
 
         # 2. Chroma preservation (penalize excessive reduction)
-        reduction = max(0.0, C_orig - C_new) / max(C_orig, 1e-6)
+        reduction = max(0.0, C_orig - C_clamped) / max(C_orig, 1e-6)
         preservation_loss = reduction^2
 
         # 3. Smoothness regularization

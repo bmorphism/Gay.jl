@@ -10,7 +10,37 @@ using ColorTypes
 mean(x) = sum(x) / length(x)
 
 export GamutParameters, GamutMapper, map_to_gamut, train_gamut_mapper!
-export gamut_loss, in_gamut, get_gamut_bounds, map_color_chain
+export gamut_loss, in_gamut, get_gamut_bounds, map_color_chain, detect_system_gamut
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Monitor Detection
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    detect_system_gamut() -> Symbol
+
+Attempt to detect the system's display gamut.
+Returns :p3 for Apple Silicon/Retina displays, :srgb as fallback.
+"""
+function detect_system_gamut()
+    if Sys.isapple()
+        try
+            # Check system profiler for display info
+            cmd = `system_profiler SPDisplaysDataType`
+            output = read(cmd, String)
+            
+            # Check for P3/Retina indicators
+            if contains(output, "Retina") || contains(output, "P3") || contains(output, "XDR")
+                return :p3
+            end
+        catch
+            # Fallback on error
+        end
+    end
+    
+    # Default safe fallback
+    return :srgb
+end
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Gamut Parameters Structure
@@ -45,7 +75,7 @@ mutable struct GamutParameters
 end
 
 # Default constructor with sensible initial values
-function GamutParameters(; target_gamut::Symbol=:srgb)
+function GamutParameters(; target_gamut::Symbol=detect_system_gamut())
     GamutParameters(
         0.8,      # chroma_compress - moderate compression
         -0.01,    # chroma_L_a - slight quadratic compression at extremes
@@ -65,55 +95,60 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    get_gamut_bounds(gamut::Symbol, L::Float64, H::Float64) -> Float64
+    in_gamut(c::Lab, gamut::Symbol) -> Bool
 
-Get the maximum chroma for a given lightness and hue in the target gamut.
-This is a simplified approximation - real gamut boundaries are more complex.
+Check if a Lab color is strictly within the specified gamut using ColorTypes conversion.
 """
-function get_gamut_bounds(gamut::Symbol, L::Real, H::Real)
-    # Base maximum chroma for each gamut
-    base_chroma = if gamut == :srgb
-        130.0
-    elseif gamut == :p3
-        150.0
-    elseif gamut == :rec2020
-        180.0
-    else
-        error("Unknown gamut: $gamut")
+function in_gamut(c::Lab, gamut::Symbol)
+    try
+        if gamut == :srgb
+            rgb = convert(RGB{Float64}, c)
+            return 0.0 <= rgb.r <= 1.0 && 0.0 <= rgb.g <= 1.0 && 0.0 <= rgb.b <= 1.0
+        elseif gamut == :p3
+            p3 = convert(DisplayP3{Float64}, c)
+            return 0.0 <= p3.r <= 1.0 && 0.0 <= p3.g <= 1.0 && 0.0 <= p3.b <= 1.0
+        else
+            # Fallback for Rec2020 etc
+            rgb = convert(RGB{Float64}, c) 
+            return 0.0 <= rgb.r <= 1.0 && 0.0 <= rgb.g <= 1.0 && 0.0 <= rgb.b <= 1.0
+        end
+    catch
+        return false
     end
-
-    # Reduce available chroma at extreme lightness values
-    # At L=0 (black) or L=100 (white), chroma must be 0
-    # Peak chroma availability is around L=50-60
-    L_factor = if L < 20.0
-        L / 20.0
-    elseif L > 80.0
-        (100.0 - L) / 20.0
-    else
-        1.0
-    end
-
-    # Hue-dependent variation (simplified)
-    # Yellow/green have higher chroma capacity than blue/purple
-    H_rad = H * π / 180.0
-    H_factor = 1.0 + 0.2 * cos(H_rad - π/3)  # Peak around yellow-green
-
-    return base_chroma * L_factor * H_factor
 end
 
 """
-    in_gamut(c::Lab, gamut::Symbol) -> Bool
+    get_gamut_bounds(gamut::Symbol, L::Real, H::Real) -> Float64
 
-Check if a Lab color is within the specified gamut.
+Find maximum valid chroma for given Lightness and Hue via binary search.
 """
-function in_gamut(c::Lab, gamut::Symbol)
-    L, a, b = c.l, c.a, c.b
-    C = sqrt(a^2 + b^2)
-    H = atan(b, a) * 180.0 / π
-    H = H < 0 ? H + 360.0 : H
-
-    max_chroma = get_gamut_bounds(gamut, L, H)
-    return C <= max_chroma
+function get_gamut_bounds(gamut::Symbol, L::Real, H::Real)
+    # Binary search for max chroma
+    # Range [0, 200] covers all practical visible colors
+    low = 0.0
+    high = 200.0
+    
+    # Pre-calculate trig
+    H_rad = H * π / 180.0
+    cos_H = cos(H_rad)
+    sin_H = sin(H_rad)
+    
+    for _ in 1:10 # 10 iterations gives precision ~0.2, sufficient for display
+        mid = (low + high) / 2
+        
+        # Construct test color
+        a = mid * cos_H
+        b = mid * sin_H
+        c_test = Lab(L, a, b)
+        
+        if in_gamut(c_test, gamut)
+            low = mid
+        else
+            high = mid
+        end
+    end
+    
+    return low
 end
 
 """
@@ -148,43 +183,36 @@ end
 """
     map_to_gamut(c::Lab, params::GamutParameters) -> Lab
 
-Map a Lab color to fit within the target gamut using learnable parameters.
-Preserves hue exactly while scaling chroma.
+Map a Lab color to fit within the target gamut.
+Correctly handles lightness boost by checking bounds after adjustment.
 """
 function map_to_gamut(c::Lab, params::GamutParameters)
     L, a, b = c.l, c.a, c.b
-
-    # Convert to LCH (cylindrical)
     C = sqrt(a^2 + b^2)
     H = atan(b, a) * 180.0 / π
     H = H < 0 ? H + 360.0 : H
 
-    # Get maximum chroma for this L,H in target gamut
-    max_chroma = get_gamut_bounds(params.target_gamut, L, H)
+    # 1. Calculate max chroma for ORIGINAL lightness
+    max_chroma_orig = get_gamut_bounds(params.target_gamut, L, H)
 
-    # Compute adaptive scaling factor
+    # 2. Compute adaptive scaling factor
     scale = compute_chroma_scale(params, L, H)
+    C_proposed = C * scale
+    
+    # 3. Calculate tentative new lightness (with boost)
+    chroma_reduction = 1.0 - (min(C_proposed, max_chroma_orig) / max(C, 1e-6))
+    L_boost = params.lightness_boost * chroma_reduction * (50.0 - abs(L - 50.0))
+    L_new = clamp(L + L_boost, 0.0, 100.0)
 
-    # Apply scaling
-    C_new = C * scale
-
-    # Ensure we're within bounds
-    if C_new > max_chroma
-        C_new = max_chroma
-    end
-
-    # Apply lightness boost for desaturation compensation
-    # When chroma is reduced, slightly increase lightness to maintain perceptual brightness
-    chroma_reduction = 1.0 - (C_new / max(C, 1e-6))
-    L_new = L + params.lightness_boost * chroma_reduction * (50.0 - abs(L - 50.0))
-    L_new = clamp(L_new, 0.0, 100.0)
+    # 4. Re-calculate max chroma for NEW lightness
+    max_chroma_new = get_gamut_bounds(params.target_gamut, L_new, H)
+    
+    # 5. Final clamp
+    C_final = min(C_proposed, max_chroma_new)
 
     # Convert back to Lab
     H_rad = H * π / 180.0
-    a_new = C_new * cos(H_rad)
-    b_new = C_new * sin(H_rad)
-
-    return Lab(L_new, a_new, b_new)
+    return Lab(L_new, C_final * cos(H_rad), C_final * sin(H_rad))
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
