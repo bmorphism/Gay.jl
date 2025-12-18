@@ -1,7 +1,7 @@
 # Auto-generated stub for abstract_world.jl
 module AbstractWorld
 
-export AbstractWorldColor, AbstractWorldState, EquivalencingFunctor, LavishPresheaf, ColorPresheaf, presheaf_section, global_section, Play, CoPlay, Evaluate, BidirectionalFlow, play!, coplay!, evaluate!, flow_equilibrium, SocialChoice, GeometricAgent, AlgorithmicChoice, agentic_choice, equilibrium_check, ZigZagState, BoomerangState, GayMCEquivalence, zigzag_step!, boomerang_step!, gaymc_equivalence, hmc_coincidence_check, discerning_update!, ParaGay, ParaParaGay, GaySharp, SingleCNOT, para_lift, para_para_lift, cnot_reduce, InteractiveProof, Verifier, Prover, commit!, challenge!, respond!, verify!, UnifiedWorld, construct_unique!, prove_uniqueness, demo_abstract_world
+export AbstractWorldColor, AbstractWorldState, EquivalencingFunctor, LavishPresheaf, ColorPresheaf, presheaf_section, global_section, Play, CoPlay, Evaluate, BidirectionalFlow, play!, coplay!, evaluate!, flow_equilibrium, SocialChoice, GeometricAgent, AlgorithmicChoice, agentic_choice, equilibrium_check, ZigZagState, BoomerangState, GayMCEquivalence, zigzag_step!, boomerang_step!, gaymc_equivalence, hmc_coincidence_check, discerning_update!, ParaGay, ParaParaGay, GaySharp, SingleCNOT, para_lift, para_para_lift, cnot_reduce, InteractiveProof, Verifier, Prover, commit!, challenge!, respond!, verify!, UnifiedWorld, construct_unique!, prove_uniqueness, world_abstract_world
 
 # Stub definitions
 struct AbstractWorldColor end
@@ -49,6 +49,6 @@ verify!(args...; kwargs...) = nothing
 struct UnifiedWorld end
 construct_unique!(args...; kwargs...) = nothing
 prove_uniqueness(args...; kwargs...) = nothing
-demo_abstract_world(args...; kwargs...) = nothing
+world_abstract_world(args...; kwargs...) = nothing
 
 end # module AbstractWorld

@@ -459,7 +459,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_mcp_seeds()
+function world_gay_mcp_seeds()
     println()
     println("╔" * "═" ^ 65 * "╗")
     println("║  GayMCP Seeds: Scale-Invariant Grokking from ℯ                   ║")
@@ -570,5 +570,5 @@ function demo_gay_mcp_seeds()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_gay_mcp_seeds()
+    world_gay_mcp_seeds()
 end

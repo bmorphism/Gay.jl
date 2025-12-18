@@ -1,7 +1,7 @@
 # Auto-generated stub for ternary_split.jl
 module TernarySplit
 
-export SplittableSeed, split_seed, split_n, seed_lineage, TernaryColor, ternary_from_seed, split_color, color_components, recombine_color, TernaryWalk, TernaryWalkBatch, parallel_ternary_walks, merge_walks, COIState, fork_state, merge_states, verify_ternary_spi, fingerprint_lineage, ternary_carrying_capacity, stress_test_ternary, demo_ternary_split
+export SplittableSeed, split_seed, split_n, seed_lineage, TernaryColor, ternary_from_seed, split_color, color_components, recombine_color, TernaryWalk, TernaryWalkBatch, parallel_ternary_walks, merge_walks, COIState, fork_state, merge_states, verify_ternary_spi, fingerprint_lineage, ternary_carrying_capacity, stress_test_ternary, world_ternary_split
 
 # Stub definitions
 struct SplittableSeed end
@@ -24,6 +24,6 @@ verify_ternary_spi(args...; kwargs...) = nothing
 fingerprint_lineage(args...; kwargs...) = nothing
 ternary_carrying_capacity(args...; kwargs...) = nothing
 stress_test_ternary(args...; kwargs...) = nothing
-demo_ternary_split(args...; kwargs...) = nothing
+world_ternary_split(args...; kwargs...) = nothing
 
 end # module TernarySplit

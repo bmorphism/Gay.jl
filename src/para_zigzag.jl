@@ -575,7 +575,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_para_zigzag()
+function world_para_zigzag()
     println()
     println("╔" * "═" ^ 60 * "╗")
     println("║  PARA(ZIGZAG): Chromatic PDMP Sampler                      ║")
@@ -656,5 +656,5 @@ function demo_para_zigzag()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_para_zigzag()
+    world_para_zigzag()
 end

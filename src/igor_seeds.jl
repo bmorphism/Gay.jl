@@ -524,7 +524,7 @@ end
 # Demo and Verification
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_igor_seeds()
+function world_igor_seeds()
     println()
     println("╔" * "═" ^ 60 * "╗")
     println("║  IGOR SEEDS: Premined Chromatic Motifs                     ║")
@@ -601,5 +601,5 @@ function demo_igor_seeds()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_igor_seeds()
+    world_igor_seeds()
 end

@@ -863,7 +863,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_metatheory_brushes()
+function world_metatheory_brushes()
     println()
     println("╔" * "═" ^ 62 * "╗")
     println("║  METATHEORY MOMENT BRUSHES                                    ║")
@@ -961,5 +961,5 @@ function demo_metatheory_brushes()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_metatheory_brushes()
+    world_metatheory_brushes()
 end

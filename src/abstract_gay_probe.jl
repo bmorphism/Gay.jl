@@ -1,7 +1,7 @@
 # Auto-generated stub for abstract_gay_probe.jl
 module AbstractGayProbe
 
-export AbstractProbe, ProbeResult, ProbeComposite, SyntheticProbe, ReafferentProbe, PathInvarianceProbe, SPIProbe, probe, compose_probes, decompose_probe, reafferent_saturation, path_invariant_fingerprint, run_probes_parallel, ProbeReport, demo_abstract_probe
+export AbstractProbe, ProbeResult, ProbeComposite, SyntheticProbe, ReafferentProbe, PathInvarianceProbe, SPIProbe, probe, compose_probes, decompose_probe, reafferent_saturation, path_invariant_fingerprint, run_probes_parallel, ProbeReport, world_abstract_probe
 
 # Stub definitions
 struct AbstractProbe end
@@ -18,6 +18,6 @@ reafferent_saturation(args...; kwargs...) = nothing
 path_invariant_fingerprint(args...; kwargs...) = nothing
 run_probes_parallel(args...; kwargs...) = nothing
 struct ProbeReport end
-demo_abstract_probe(args...; kwargs...) = nothing
+world_abstract_probe(args...; kwargs...) = nothing
 
 end # module AbstractGayProbe

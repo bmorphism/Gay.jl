@@ -1,7 +1,7 @@
 # Auto-generated stub for three_match.jl
 module ThreeMatch
 
-export ThreeMatchWorld, MatchLeg, ThreeMatchTriangle, seed_to_color, color_to_fingerprint, seed_to_fingerprint, verify_three_match, three_match_distance, LazyParameter, EagernessThreshold, DelayFactor, ObstructionDensity, ParametrizedLazy, evaluate_lazy!, force_eager!, laziness_score, polarity_from_laziness, Obstruction, SeedBlock, ColorMismatch, FingerprintCollision, InsertableObstruction, ObstructionSite, insert_obstruction!, remove_obstruction!, list_obstructions, obstruction_density, is_obstructed, WorldReliability, ReliableWorld, UnreliableWorld, PartiallyReliable, assess_reliability, reliability_proof, GayMCVerifier, MonteCarloConfig, VerificationResult, verify_all_worlds, verify_sample_worlds, fail_fast_verify, exhaustive_verify, CoqSpec, MetaCoqSpec, NaryaSpec, generate_coq_spec, generate_metacoq_spec, generate_narya_spec, export_to_coq, export_to_narya, ThreeMatchACSet, chromatic_three_match, ananas_three_match, world_three_match, demo_three_match, demo_parametrized_lazy, demo_coq_generation, HierarchyType, LinearChain, Diamond, Fan, Tree, DAGType, classify_hierarchy
+export ThreeMatchWorld, MatchLeg, ThreeMatchTriangle, seed_to_color, color_to_fingerprint, seed_to_fingerprint, verify_three_match, three_match_distance, LazyParameter, EagernessThreshold, DelayFactor, ObstructionDensity, ParametrizedLazy, evaluate_lazy!, force_eager!, laziness_score, polarity_from_laziness, Obstruction, SeedBlock, ColorMismatch, FingerprintCollision, InsertableObstruction, ObstructionSite, insert_obstruction!, remove_obstruction!, list_obstructions, obstruction_density, is_obstructed, WorldReliability, ReliableWorld, UnreliableWorld, PartiallyReliable, assess_reliability, reliability_proof, GayMCVerifier, MonteCarloConfig, VerificationResult, verify_all_worlds, verify_sample_worlds, fail_fast_verify, exhaustive_verify, CoqSpec, MetaCoqSpec, NaryaSpec, generate_coq_spec, generate_metacoq_spec, generate_narya_spec, export_to_coq, export_to_narya, ThreeMatchACSet, chromatic_three_match, ananas_three_match, world_three_match, world_three_match, world_parametrized_lazy, world_coq_generation, HierarchyType, LinearChain, Diamond, Fan, Tree, DAGType, classify_hierarchy
 
 # Stub definitions
 struct ThreeMatchWorld end
@@ -57,9 +57,9 @@ struct ThreeMatchACSet end
 chromatic_three_match(args...; kwargs...) = nothing
 ananas_three_match(args...; kwargs...) = nothing
 world_three_match(args...; kwargs...) = nothing
-demo_three_match(args...; kwargs...) = nothing
-demo_parametrized_lazy(args...; kwargs...) = nothing
-demo_coq_generation(args...; kwargs...) = nothing
+world_three_match(args...; kwargs...) = nothing
+world_parametrized_lazy(args...; kwargs...) = nothing
+world_coq_generation(args...; kwargs...) = nothing
 struct HierarchyType end
 struct LinearChain end
 struct Diamond end

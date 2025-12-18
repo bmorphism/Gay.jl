@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_4d_tiling_coherence.jl
 module Gay4DTilingCoherence
 
-export Colorable, Flavorable, OriginaryHue, ReconciliationTriad, reconcile!, self_same_coherence, coherence_fingerprint, DerangeableRegion, RegionClosure, close_region!, derangement_orbit, flexibility_score, HyperbolicTile, Hyperbolic3Match, ThreeColoring, hyperbolic_3color!, verify_3coloring, match_score, Tile4D, Tiling4D, CausalTile, TemporalCoherence, extend_to_4d!, causal_order, self_similar_fixed_point, PVerifier, random_access_verify, parallel_verify!, complexity_class, maximalism_score, maximize_parallelism!, unified_coherence, demo_4d_coherence
+export Colorable, Flavorable, OriginaryHue, ReconciliationTriad, reconcile!, self_same_coherence, coherence_fingerprint, DerangeableRegion, RegionClosure, close_region!, derangement_orbit, flexibility_score, HyperbolicTile, Hyperbolic3Match, ThreeColoring, hyperbolic_3color!, verify_3coloring, match_score, Tile4D, Tiling4D, CausalTile, TemporalCoherence, extend_to_4d!, causal_order, self_similar_fixed_point, PVerifier, random_access_verify, parallel_verify!, complexity_class, maximalism_score, maximize_parallelism!, unified_coherence, world_4d_coherence
 
 # Stub definitions
 struct Colorable end
@@ -36,6 +36,6 @@ complexity_class(args...; kwargs...) = nothing
 maximalism_score(args...; kwargs...) = nothing
 maximize_parallelism!(args...; kwargs...) = nothing
 unified_coherence(args...; kwargs...) = nothing
-demo_4d_coherence(args...; kwargs...) = nothing
+world_4d_coherence(args...; kwargs...) = nothing
 
 end # module Gay4DTilingCoherence

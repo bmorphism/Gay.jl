@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_metalearning.jl
 module GayMetaLearning
 
-export MetaLearner, MetaTask, MetaRollout, LearningLevel, L1_Seeds, L2_Learning, L3_MetaLearning, L4_ZKVM, BlessedSeedCurriculum, curriculum_rollout!, advance_curriculum!, InContextLearning, AdapterLearning, FinetuneLearning, EndToEndLearning, paradigm_color, paradigm_rollout!, MAMLStep, ReptileStep, MetaGradient, inner_loop!, outer_loop!, meta_update!, ZKVMProof, Risc0Proof, JoltProof, JuvixProof, prove_learning_step!, verify_proof, proof_fingerprint, SeedCommitment, commit_seed, reveal_seed, verify_commitment, ZeroKnowledgeColor, zk_prove_color, zk_verify_color, GayMetaLearnerConfig, create_metalearner, metalearner_rollout!, ParallelMetaRollout, parallel_meta_rollout!, rollout_fingerprint, demo_gay_metalearning
+export MetaLearner, MetaTask, MetaRollout, LearningLevel, L1_Seeds, L2_Learning, L3_MetaLearning, L4_ZKVM, BlessedSeedCurriculum, curriculum_rollout!, advance_curriculum!, InContextLearning, AdapterLearning, FinetuneLearning, EndToEndLearning, paradigm_color, paradigm_rollout!, MAMLStep, ReptileStep, MetaGradient, inner_loop!, outer_loop!, meta_update!, ZKVMProof, Risc0Proof, JoltProof, JuvixProof, prove_learning_step!, verify_proof, proof_fingerprint, SeedCommitment, commit_seed, reveal_seed, verify_commitment, ZeroKnowledgeColor, zk_prove_color, zk_verify_color, GayMetaLearnerConfig, create_metalearner, metalearner_rollout!, ParallelMetaRollout, parallel_meta_rollout!, rollout_fingerprint, world_gay_metalearning
 
 # Stub definitions
 struct MetaLearner end
@@ -47,6 +47,6 @@ metalearner_rollout!(args...; kwargs...) = nothing
 struct ParallelMetaRollout end
 parallel_meta_rollout!(args...; kwargs...) = nothing
 rollout_fingerprint(args...; kwargs...) = nothing
-demo_gay_metalearning(args...; kwargs...) = nothing
+world_gay_metalearning(args...; kwargs...) = nothing
 
 end # module GayMetaLearning

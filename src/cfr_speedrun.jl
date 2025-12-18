@@ -1,7 +1,7 @@
 # Auto-generated stub for cfr_speedrun.jl
 module CFRSpeedrun
 
-export CounterfactualWorld, RegretTable, StrategyProfile, RevolutionGame, Participant, Action, Outcome, cfr_step!, regret_match, average_strategy, SpeedrunPath, discover_equilibrium, parallel_cfr, ReversibleMove, HysteresisCheck, is_reversible, hysteresis_potential, verify_no_bloody_hysteresis, CoordinationEquilibrium, cfr_to_ananas, revolution_cocone, demo_cfr_speedrun, demo_gay_revolution
+export CounterfactualWorld, RegretTable, StrategyProfile, RevolutionGame, Participant, Action, Outcome, cfr_step!, regret_match, average_strategy, SpeedrunPath, discover_equilibrium, parallel_cfr, ReversibleMove, HysteresisCheck, is_reversible, hysteresis_potential, verify_no_bloody_hysteresis, CoordinationEquilibrium, cfr_to_ananas, revolution_cocone, world_cfr_speedrun, world_gay_revolution
 
 # Stub definitions
 struct CounterfactualWorld end
@@ -25,7 +25,7 @@ verify_no_bloody_hysteresis(args...; kwargs...) = nothing
 struct CoordinationEquilibrium end
 cfr_to_ananas(args...; kwargs...) = nothing
 revolution_cocone(args...; kwargs...) = nothing
-demo_cfr_speedrun(args...; kwargs...) = nothing
-demo_gay_revolution(args...; kwargs...) = nothing
+world_cfr_speedrun(args...; kwargs...) = nothing
+world_gay_revolution(args...; kwargs...) = nothing
 
 end # module CFRSpeedrun

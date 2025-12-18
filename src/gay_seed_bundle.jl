@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_seed_bundle.jl
 module GaySeedBundle
 
-export SeedBundle, EntropySource, LocaleView, gay_seed, refresh_bundle!, seed_at, seeds_range, hardware_entropy, temporal_entropy, splittable_entropy, drand_entropy, contextual_entropy, combined_entropy, create_locale_view, locale_lookup, locale_range, locale_predecessor, locale_successor, select_by_fingerprint, select_by_color, select_by_entropy, select_chromatic_complement, select_orthogonal, verify_bundle_spi, entropy_floor, entropy_ceiling, BUNDLE_SIZE, ENTROPY_SOURCES, demo_gay_seed_bundle
+export SeedBundle, EntropySource, LocaleView, gay_seed, refresh_bundle!, seed_at, seeds_range, hardware_entropy, temporal_entropy, splittable_entropy, drand_entropy, contextual_entropy, combined_entropy, create_locale_view, locale_lookup, locale_range, locale_predecessor, locale_successor, select_by_fingerprint, select_by_color, select_by_entropy, select_chromatic_complement, select_orthogonal, verify_bundle_spi, entropy_floor, entropy_ceiling, BUNDLE_SIZE, ENTROPY_SOURCES, world_gay_seed_bundle
 
 # Stub definitions
 struct SeedBundle end
@@ -32,6 +32,6 @@ entropy_floor(args...; kwargs...) = nothing
 entropy_ceiling(args...; kwargs...) = nothing
 struct BUNDLE_SIZE end
 struct ENTROPY_SOURCES end
-demo_gay_seed_bundle(args...; kwargs...) = nothing
+world_gay_seed_bundle(args...; kwargs...) = nothing
 
 end # module GaySeedBundle

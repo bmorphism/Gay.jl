@@ -1,7 +1,7 @@
 # Auto-generated stub for parallel_gh.jl
 module ParallelGH
 
-export GHAgent, GHOperation, GHResult, GHAgency, gh_api, gh_issue, gh_pr, gh_repo, gh_search, parallel_gh!, run_agency!, agent_color, GHProbe, probe_repos, probe_issues, probe_rate_limit, demo_parallel_gh
+export GHAgent, GHOperation, GHResult, GHAgency, gh_api, gh_issue, gh_pr, gh_repo, gh_search, parallel_gh!, run_agency!, agent_color, GHProbe, probe_repos, probe_issues, probe_rate_limit, world_parallel_gh
 
 # Stub definitions
 struct GHAgent end
@@ -20,6 +20,6 @@ struct GHProbe end
 probe_repos(args...; kwargs...) = nothing
 probe_issues(args...; kwargs...) = nothing
 probe_rate_limit(args...; kwargs...) = nothing
-demo_parallel_gh(args...; kwargs...) = nothing
+world_parallel_gh(args...; kwargs...) = nothing
 
 end # module ParallelGH

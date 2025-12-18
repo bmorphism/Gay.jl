@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_blanket.jl
 module GayBlanket
 
-export GayComposable, GayBlanketConfig, DynamicMarkovBlanket, BlanketComponent, InternalState, SensoryState, ActiveState, fingerprint, blanket_fingerprint, add_component!, remove_component!, transact!, verify_blanket_integrity, SelfDualBlanket, observe, generate, mitsein_converge, LavishPresheaf, BumpusAdhesion, NestedAssociativity, check_lavish_condition, NashPropCell, PropagatorBlanket, NashEquilibrium, propagate!, nash_fixed_point, ReachableCoherence, random_access_path, verify_gay_reachability, MitseinState, being_with, converge_mitsein, self_world_duality, demo_gay_blanket
+export GayComposable, GayBlanketConfig, DynamicMarkovBlanket, BlanketComponent, InternalState, SensoryState, ActiveState, fingerprint, blanket_fingerprint, add_component!, remove_component!, transact!, verify_blanket_integrity, SelfDualBlanket, observe, generate, mitsein_converge, LavishPresheaf, BumpusAdhesion, NestedAssociativity, check_lavish_condition, NashPropCell, PropagatorBlanket, NashEquilibrium, propagate!, nash_fixed_point, ReachableCoherence, random_access_path, verify_gay_reachability, MitseinState, being_with, converge_mitsein, self_world_duality, world_gay_blanket
 
 # Stub definitions
 struct GayComposable end
@@ -37,6 +37,6 @@ struct MitseinState end
 being_with(args...; kwargs...) = nothing
 converge_mitsein(args...; kwargs...) = nothing
 self_world_duality(args...; kwargs...) = nothing
-demo_gay_blanket(args...; kwargs...) = nothing
+world_gay_blanket(args...; kwargs...) = nothing
 
 end # module GayBlanket

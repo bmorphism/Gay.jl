@@ -1,7 +1,7 @@
 # Auto-generated stub for roms_color_tiling.jl
 module ROMSColorTiling
 
-export ColorBounds, ColorTiling, ColorTile, create_color_tiling, create_tile, compute_tile_colors!, tile_neighbors, exchange_halos!, validate_halo_continuity, verify_spi, demo_roms_color_tiling
+export ColorBounds, ColorTiling, ColorTile, create_color_tiling, create_tile, compute_tile_colors!, tile_neighbors, exchange_halos!, validate_halo_continuity, verify_spi, world_roms_color_tiling
 
 # Stub definitions
 struct ColorBounds end
@@ -14,6 +14,6 @@ tile_neighbors(args...; kwargs...) = nothing
 exchange_halos!(args...; kwargs...) = nothing
 validate_halo_continuity(args...; kwargs...) = nothing
 verify_spi(args...; kwargs...) = nothing
-demo_roms_color_tiling(args...; kwargs...) = nothing
+world_roms_color_tiling(args...; kwargs...) = nothing
 
 end # module ROMSColorTiling

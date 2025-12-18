@@ -443,7 +443,7 @@ end
 # Demo and Verification
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_e_integration()
+function world_gay_e_integration()
     println()
     println("╔" * "═" ^ 70 * "╗")
     println("║  Gay E Integration: Euler-Seeded Multi-Language Coloring               ║")

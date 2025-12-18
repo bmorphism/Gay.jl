@@ -1,7 +1,7 @@
 # Auto-generated stub for abstract_free_gadget.jl
 module FreeGadgetBridge
 
-export AbstractMC, AbstractGayMC, AbstractFreeGadgetType, FreeGadget, ThreeMatchFreeGadget, EdgeFreeGadget, ThreadFreeGadget, GadgetGraph, GadgetVertex, GadgetEdge, add_gadget!, connect_gadgets!, gadget_degree, most_connected, sample_gadget!, walk_gadgets!, gadget_color, gadget_fingerprint, gadget_seed, gadget_arity, gadget_apply, TritDirection, TRIT_BACK, TRIT_STAY, TRIT_FORWARD, TritWalk, TritWalkState, TritParallelConfig, trit_parallel_walk!, trit_step!, merge_trit_walks, ThreadGadgetCandidate, extract_thread_gadgets, rank_by_connectivity, find_most_connected_thread, GayMCBridge, bridge_sample!, bridge_walk!, demo_abstract_free_gadget, demo_trit_walk
+export AbstractMC, AbstractGayMC, AbstractFreeGadgetType, FreeGadget, ThreeMatchFreeGadget, EdgeFreeGadget, ThreadFreeGadget, GadgetGraph, GadgetVertex, GadgetEdge, add_gadget!, connect_gadgets!, gadget_degree, most_connected, sample_gadget!, walk_gadgets!, gadget_color, gadget_fingerprint, gadget_seed, gadget_arity, gadget_apply, TritDirection, TRIT_BACK, TRIT_STAY, TRIT_FORWARD, TritWalk, TritWalkState, TritParallelConfig, trit_parallel_walk!, trit_step!, merge_trit_walks, ThreadGadgetCandidate, extract_thread_gadgets, rank_by_connectivity, find_most_connected_thread, GayMCBridge, bridge_sample!, bridge_walk!, world_abstract_free_gadget, world_trit_walk
 
 # Stub definitions
 struct AbstractMC end
@@ -42,7 +42,7 @@ find_most_connected_thread(args...; kwargs...) = nothing
 struct GayMCBridge end
 bridge_sample!(args...; kwargs...) = nothing
 bridge_walk!(args...; kwargs...) = nothing
-demo_abstract_free_gadget(args...; kwargs...) = nothing
-demo_trit_walk(args...; kwargs...) = nothing
+world_abstract_free_gadget(args...; kwargs...) = nothing
+world_trit_walk(args...; kwargs...) = nothing
 
 end # module FreeGadgetBridge

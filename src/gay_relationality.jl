@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_relationality.jl
 module GayRelationality
 
-export CoalgebraicOrbit, coalgebra_from_seed, ultrametric_xor_distance, demonstrate_ultrametric, bidirectional_from_seed, verify_temporal_symmetry, ParaLevel, ParaPara, extract, duplicate, para_para_from_seed, SupportFilter, create_support_filter, GAY_BUNDLE_SIZES, compute_relational_excess, demo_gay_relationality
+export CoalgebraicOrbit, coalgebra_from_seed, ultrametric_xor_distance, demonstrate_ultrametric, bidirectional_from_seed, verify_temporal_symmetry, ParaLevel, ParaPara, extract, duplicate, para_para_from_seed, SupportFilter, create_support_filter, GAY_BUNDLE_SIZES, compute_relational_excess, world_gay_relationality
 
 # Stub definitions
 struct CoalgebraicOrbit end
@@ -19,6 +19,6 @@ struct SupportFilter end
 create_support_filter(args...; kwargs...) = nothing
 struct GAY_BUNDLE_SIZES end
 compute_relational_excess(args...; kwargs...) = nothing
-demo_gay_relationality(args...; kwargs...) = nothing
+world_gay_relationality(args...; kwargs...) = nothing
 
 end # module GayRelationality

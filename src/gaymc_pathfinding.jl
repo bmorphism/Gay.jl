@@ -1,7 +1,7 @@
 # Auto-generated stub for gaymc_pathfinding.jl
 module GayMCPathfinding
 
-export OmnimodalTriad, TriadMode, PathState, GayLHoTTMode, SharpGay, FlatGay, ShapeGay, mode_distance, mode_synergy, arena_error_potential, GodelHeuristic, GodelState, GodelObservation, ChromaticPath, MultiversePath, NarrativePath, PathStep, gay_pathfind!, step_path!, complete_path, path_fingerprint, verify_path_spi, GayMCPathContext, sweep_path!, measure_path!, checkpoint_path, demo_gaymc_pathfinding
+export OmnimodalTriad, TriadMode, PathState, GayLHoTTMode, SharpGay, FlatGay, ShapeGay, mode_distance, mode_synergy, arena_error_potential, GodelHeuristic, GodelState, GodelObservation, ChromaticPath, MultiversePath, NarrativePath, PathStep, gay_pathfind!, step_path!, complete_path, path_fingerprint, verify_path_spi, GayMCPathContext, sweep_path!, measure_path!, checkpoint_path, world_gaymc_pathfinding
 
 # Stub definitions
 struct OmnimodalTriad end
@@ -30,6 +30,6 @@ struct GayMCPathContext end
 sweep_path!(args...; kwargs...) = nothing
 measure_path!(args...; kwargs...) = nothing
 checkpoint_path(args...; kwargs...) = nothing
-demo_gaymc_pathfinding(args...; kwargs...) = nothing
+world_gaymc_pathfinding(args...; kwargs...) = nothing
 
 end # module GayMCPathfinding

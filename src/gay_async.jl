@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_async.jl
 module GayAsync
 
-export GayChannel, GayBuffer, GayMult, GayPipeline, gay_go, gay_loop, gay_alt!, gay_timeout, gay_pipeline, gay_merge, gay_split, GayFlow, FlowDirection, Forward, Backward, Bidirectional, chromatic_backpressure, flow_fingerprint, gay_onto_chan, gay_into_chan, gay_map, gay_filter, gay_reduce, gay_interleave_channels, checkerboard_schedule, demo_gay_async
+export GayChannel, GayBuffer, GayMult, GayPipeline, gay_go, gay_loop, gay_alt!, gay_timeout, gay_pipeline, gay_merge, gay_split, GayFlow, FlowDirection, Forward, Backward, Bidirectional, chromatic_backpressure, flow_fingerprint, gay_onto_chan, gay_into_chan, gay_map, gay_filter, gay_reduce, gay_interleave_channels, checkerboard_schedule, world_gay_async
 
 # Stub definitions
 struct GayChannel end
@@ -29,6 +29,6 @@ gay_filter(args...; kwargs...) = nothing
 gay_reduce(args...; kwargs...) = nothing
 gay_interleave_channels(args...; kwargs...) = nothing
 checkerboard_schedule(args...; kwargs...) = nothing
-demo_gay_async(args...; kwargs...) = nothing
+world_gay_async(args...; kwargs...) = nothing
 
 end # module GayAsync

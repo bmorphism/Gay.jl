@@ -1,7 +1,7 @@
 # Auto-generated stub for ananas_gzip_scaling.jl
 module AnanasGzipScaling
 
-export gzipability, gzip_bytes, GzipabilityStats, GzipAdjustedScaling, predict_loss, optimal_allocation, GzipWorld, GzipEpisode, GzipCoCone, gzip_cocone_apex, gzip_episode_graph, predict_reconciliation, ChromaticGzip, seed_gzipability, color_gzipability, complexity_class, analyze_scaling, demo_gzip_scaling, demo_ananas_integration
+export gzipability, gzip_bytes, GzipabilityStats, GzipAdjustedScaling, predict_loss, optimal_allocation, GzipWorld, GzipEpisode, GzipCoCone, gzip_cocone_apex, gzip_episode_graph, predict_reconciliation, ChromaticGzip, seed_gzipability, color_gzipability, complexity_class, analyze_scaling, world_gzip_scaling, world_ananas_integration
 
 # Stub definitions
 gzipability(args...; kwargs...) = nothing
@@ -21,7 +21,7 @@ seed_gzipability(args...; kwargs...) = nothing
 color_gzipability(args...; kwargs...) = nothing
 complexity_class(args...; kwargs...) = nothing
 analyze_scaling(args...; kwargs...) = nothing
-demo_gzip_scaling(args...; kwargs...) = nothing
-demo_ananas_integration(args...; kwargs...) = nothing
+world_gzip_scaling(args...; kwargs...) = nothing
+world_ananas_integration(args...; kwargs...) = nothing
 
 end # module AnanasGzipScaling

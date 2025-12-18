@@ -1885,17 +1885,12 @@ export world_reafferent_dao_topos
 # Include GaySplittableRNG - Best-in-class splittable PRNG (Issue #205)
 # Access via: Gay.GaySplittableRNG.gay_seed() or import Gay.GaySplittableRNG as GRNG
 include("gayrng.jl")
-# SUSPECT: using .GaySplittableRNG: GaySplittableRNG,
-    ZobristTable, zobrist_init, zobrist_hash, zobrist_update,
-    FingerprintCRDT, crdt_update!, crdt_merge, crdt_query,
-    spectral_quality, chi_squared_uniformity, serial_correlation,
-    world_gayrng, world_incremental_hashing, world_distributed_fingerprint,
-    world_monoidal_coherence, world_statistical_quality
-export ZobristTable, zobrist_init, zobrist_hash, zobrist_update
-export FingerprintCRDT, crdt_update!, crdt_merge, crdt_query
-export spectral_quality, chi_squared_uniformity, serial_correlation
-export world_gayrng, world_incremental_hashing, world_distributed_fingerprint
-export world_monoidal_coherence, world_statistical_quality
+# DISABLED: using .GaySplittableRNG: (exports disabled - module not loading correctly)
+# export ZobristTable, zobrist_init, zobrist_hash, zobrist_update
+# export FingerprintCRDT, crdt_update!, crdt_merge, crdt_query
+# export spectral_quality, chi_squared_uniformity, serial_correlation
+# export world_gayrng, world_incremental_hashing, world_distributed_fingerprint
+# export world_monoidal_coherence, world_statistical_quality
 
 # Include Seed Sonification - HSL/Polarity/XOR → Audio (Issue #190)
 include("seed_sonification.jl")

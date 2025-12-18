@@ -1,7 +1,7 @@
 # Auto-generated stub for spivak_wiring.jl
 module SpivakWiring
 
-export GayWire, GayPolynomial, global_sections, poly_coproduct, GayTask, GayOutcome, GayPortfolio, portfolio_to_poly, GayBox, GayAgent, create_gay_agent, RecumbentWD, execute_recumbent!, NeuralWD, FeedbackState, execute_neural!, mp_functor_box, mp_functor_morphism, demo_spivak_wiring
+export GayWire, GayPolynomial, global_sections, poly_coproduct, GayTask, GayOutcome, GayPortfolio, portfolio_to_poly, GayBox, GayAgent, create_gay_agent, RecumbentWD, execute_recumbent!, NeuralWD, FeedbackState, execute_neural!, mp_functor_box, mp_functor_morphism, world_spivak_wiring
 
 # Stub definitions
 struct GayWire end
@@ -22,6 +22,6 @@ struct FeedbackState end
 execute_neural!(args...; kwargs...) = nothing
 mp_functor_box(args...; kwargs...) = nothing
 mp_functor_morphism(args...; kwargs...) = nothing
-demo_spivak_wiring(args...; kwargs...) = nothing
+world_spivak_wiring(args...; kwargs...) = nothing
 
 end # module SpivakWiring

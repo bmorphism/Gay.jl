@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_immune_geodesic.jl
 module GayImmuneGeodesic
 
-export GayMarkovBlanket, BlanketGenome, ImmunePopulation, StabilityCriterion, BoundaryStability, measure_stability, GeodesicPath, find_geodesic!, geodesic_step!, blanket_mutate, blanket_crossover, immune_fitness, ImmuneMemory, store_memory!, recall_memory, verify_immune_spi, evolve_immune!, demo_gay_immune_geodesic
+export GayMarkovBlanket, BlanketGenome, ImmunePopulation, StabilityCriterion, BoundaryStability, measure_stability, GeodesicPath, find_geodesic!, geodesic_step!, blanket_mutate, blanket_crossover, immune_fitness, ImmuneMemory, store_memory!, recall_memory, verify_immune_spi, evolve_immune!, world_gay_immune_geodesic
 
 # Stub definitions
 struct GayMarkovBlanket end
@@ -21,6 +21,6 @@ store_memory!(args...; kwargs...) = nothing
 recall_memory(args...; kwargs...) = nothing
 verify_immune_spi(args...; kwargs...) = nothing
 evolve_immune!(args...; kwargs...) = nothing
-demo_gay_immune_geodesic(args...; kwargs...) = nothing
+world_gay_immune_geodesic(args...; kwargs...) = nothing
 
 end # module GayImmuneGeodesic

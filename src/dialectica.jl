@@ -1,7 +1,7 @@
 # Auto-generated stub for dialectica.jl
 module Dialectica
 
-export DialecticaGame, DialecticaMove, WitnessStrategy, ChallengeStrategy, dialectica_next_color, dialectica_color_at, interaction_entropy, dialectica_soundness, LinearDialecticaCategory, tensor, par, bang, whimsy, dialectica_composition, verify_cut_elimination, demo_dialectica
+export DialecticaGame, DialecticaMove, WitnessStrategy, ChallengeStrategy, dialectica_next_color, dialectica_color_at, interaction_entropy, dialectica_soundness, LinearDialecticaCategory, tensor, par, bang, whimsy, dialectica_composition, verify_cut_elimination, world_dialectica
 
 # Stub definitions
 struct DialecticaGame end
@@ -19,6 +19,6 @@ bang(args...; kwargs...) = nothing
 whimsy(args...; kwargs...) = nothing
 dialectica_composition(args...; kwargs...) = nothing
 verify_cut_elimination(args...; kwargs...) = nothing
-demo_dialectica(args...; kwargs...) = nothing
+world_dialectica(args...; kwargs...) = nothing
 
 end # module Dialectica

@@ -532,7 +532,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_chromatic_propagator()
+function world_chromatic_propagator()
     reset_chromatic_env!()
     
     # Initialize curriculum

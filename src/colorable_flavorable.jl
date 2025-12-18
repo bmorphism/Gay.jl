@@ -1,7 +1,7 @@
 # Auto-generated stub for colorable_flavorable.jl
 module ColorableFlavorable
 
-export Colorable, Flavorable, ColorFlavor, ThreadType, ColorableThread, FlavorableThread, BothThread, OpaqueThread, classify_thread, thread_quadrant, MaybeColorFlavor, JustAction, CertainGay, maybe_color, maybe_flavor, maybe_both, certain_gay, JustfileActionSpace, define_action!, verify_action, action_color, action_flavor, ThreadFingerprint, color_fingerprint, flavor_fingerprint, combined_fingerprint, verify_colorable, verify_flavorable, verify_both, certainty_level, gay_certainty, PronounCrossing, Aligned, SheHim, HeHer, Bicurious, BicuriousQuadrant, tesseract_label, all_bicurious_cells, bicurious_distance, adjacent_cells, demo_colorable_flavorable
+export Colorable, Flavorable, ColorFlavor, ThreadType, ColorableThread, FlavorableThread, BothThread, OpaqueThread, classify_thread, thread_quadrant, MaybeColorFlavor, JustAction, CertainGay, maybe_color, maybe_flavor, maybe_both, certain_gay, JustfileActionSpace, define_action!, verify_action, action_color, action_flavor, ThreadFingerprint, color_fingerprint, flavor_fingerprint, combined_fingerprint, verify_colorable, verify_flavorable, verify_both, certainty_level, gay_certainty, PronounCrossing, Aligned, SheHim, HeHer, Bicurious, BicuriousQuadrant, tesseract_label, all_bicurious_cells, bicurious_distance, adjacent_cells, world_colorable_flavorable
 
 # Stub definitions
 struct Colorable end
@@ -45,6 +45,6 @@ tesseract_label(args...; kwargs...) = nothing
 all_bicurious_cells(args...; kwargs...) = nothing
 bicurious_distance(args...; kwargs...) = nothing
 adjacent_cells(args...; kwargs...) = nothing
-demo_colorable_flavorable(args...; kwargs...) = nothing
+world_colorable_flavorable(args...; kwargs...) = nothing
 
 end # module ColorableFlavorable

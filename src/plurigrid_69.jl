@@ -687,7 +687,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_plurigrid_69()
+function world_plurigrid_69()
     println()
     println("╔" * "═" ^ 65 * "╗")
     println("║  PLURIGRID × IGOR: 69 Ways of Autopoietic Ergodicity             ║")
@@ -796,5 +796,5 @@ function demo_plurigrid_69()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_plurigrid_69()
+    world_plurigrid_69()
 end

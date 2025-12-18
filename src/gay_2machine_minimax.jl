@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_2machine_minimax.jl
 module Gay2MachineMinimax
 
-export GaySubstrate, GayCompute, Machine, TwoMachine, propose!, respond!, find_equilibrium!, GayProbe, PriorityMarket, ConfidentialCommitment, probe_priority!, reveal_priority!, ColorOp, PrioritySubstrate, rank_substrates, apply_colorop, minimax_step!, minimax_value, demo_2machine_minimax
+export GaySubstrate, GayCompute, Machine, TwoMachine, propose!, respond!, find_equilibrium!, GayProbe, PriorityMarket, ConfidentialCommitment, probe_priority!, reveal_priority!, ColorOp, PrioritySubstrate, rank_substrates, apply_colorop, minimax_step!, minimax_value, world_2machine_minimax
 
 # Stub definitions
 struct GaySubstrate end
@@ -22,6 +22,6 @@ rank_substrates(args...; kwargs...) = nothing
 apply_colorop(args...; kwargs...) = nothing
 minimax_step!(args...; kwargs...) = nothing
 minimax_value(args...; kwargs...) = nothing
-demo_2machine_minimax(args...; kwargs...) = nothing
+world_2machine_minimax(args...; kwargs...) = nothing
 
 end # module Gay2MachineMinimax
