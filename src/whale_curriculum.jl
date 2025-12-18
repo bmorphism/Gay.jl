@@ -24,7 +24,6 @@
 #   Galois fixpoint: shared semantic space emerges through iteration
 
 using Random
-using Statistics
 
 export WhaleStudent, CurriculumLevel, LearningSession
 export teach!, examine!, random_walk_explore, hierarchical_refine

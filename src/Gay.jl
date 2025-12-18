@@ -226,7 +226,7 @@ export xor_color, visualize_interleave, world_quic_interleave
 
 # Include Triadic Subagents (Synthetic 3-Agent Parallelism via GF(3))
 include("triadic_subagents.jl")
-using .TriadicSubagents
+using .TriadicSubagents: Polarity, MINUS, ERGODIC, PLUS, TriadicAgent, sample_agent!, parallel_sample!, verify_triadic_spi, phase_to_polarity, polarity_twist, world_triadic_subagents
 export Polarity, MINUS, ERGODIC, PLUS
 export TriadicAgent, TriadicSubagents
 export sample_agent!, parallel_sample!
@@ -1334,7 +1334,7 @@ export classify_thread, thread_quadrant
 export MaybeColorFlavor, JustAction, CertainGay
 export maybe_color, maybe_flavor, maybe_both, certain_gay
 export JustfileActionSpace, define_action!, verify_action, action_color, action_flavor
-export ThreadFingerprint, color_fingerprint, flavor_fingerprint, combined_fingerprint
+export ThreadFingerprint, color_fingerprint, flavor_fingerprint
 export verify_colorable, verify_flavorable, verify_both, certainty_level, gay_certainty
 export PronounCrossing, Aligned, SheHim, HeHer, Bicurious
 export BicuriousQuadrant, tesseract_label, all_bicurious_cells
