@@ -6,6 +6,8 @@
 
 module GamutLearnable
 
+__precompile__(false)  # Disable precompilation due to complex constructor patterns
+
 using Colors, ColorTypes
 
 export GamutConstraint, GaySRGBGamut, GayP3Gamut, GayRec2020Gamut
