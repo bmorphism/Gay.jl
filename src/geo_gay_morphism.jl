@@ -1,7 +1,7 @@
 # Auto-generated stub for geo_gay_morphism.jl
 module GeoGayMorphism
 
-export GeometricMorphism, make_geo_gay_morphism, inverse_image, direct_image, left_adjoint, SubobjectClassifier, SpatialPredicate, ChromaticPredicate, FreePredicate, classify_subobject, characteristic_morphism, FreeEdgeExpansion, TransportParallelizer, ExpansionContext, expand_edges!, parallelize_transport!, free_expand, DgleichPackage, GayExtCandidate, SynergyScore, DGLEICH_PACKAGES, evaluate_synergy, rank_packages, form_synergistic_tuples, best_gayext_bundles, GayExtBundle, EigenflowGayExt, GraphAlgorithmsGayExt, TechnicalBundleGayExt, DecompositionGayExt, MotifGayExt, demo_geo_gay_morphism, demo_gayext_ranking
+export GeometricMorphism, make_geo_gay_morphism, inverse_image, direct_image, left_adjoint, SubobjectClassifier, SpatialPredicate, ChromaticPredicate, FreePredicate, classify_subobject, characteristic_morphism, FreeEdgeExpansion, TransportParallelizer, ExpansionContext, expand_edges!, parallelize_transport!, free_expand, DgleichPackage, GayExtCandidate, SynergyScore, DGLEICH_PACKAGES, evaluate_synergy, rank_packages, form_synergistic_tuples, best_gayext_bundles, GayExtBundle, EigenflowGayExt, GraphAlgorithmsGayExt, TechnicalBundleGayExt, DecompositionGayExt, MotifGayExt, world_geo_gay_morphism, world_gayext_ranking
 
 # Stub definitions
 struct GeometricMorphism end
@@ -35,7 +35,7 @@ struct GraphAlgorithmsGayExt end
 struct TechnicalBundleGayExt end
 struct DecompositionGayExt end
 struct MotifGayExt end
-demo_geo_gay_morphism(args...; kwargs...) = nothing
-demo_gayext_ranking(args...; kwargs...) = nothing
+world_geo_gay_morphism(args...; kwargs...) = nothing
+world_gayext_ranking(args...; kwargs...) = nothing
 
 end # module GeoGayMorphism

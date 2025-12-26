@@ -1,7 +1,7 @@
 # Auto-generated stub for observer_bridge.jl
 module ObserverBridge
 
-export ObserverBridgeType, RetrocausalWorld, CounterfactualPath, SeedConvergenceProfile, ScalingLaw, retrocausal_regret, color_backwards, equilibrium_seed, propagate_from_future, cfr_invert, observe_counterfactual, bridge_capacity, observer_integral, collapse_to_seed, uncollapse_from_seed, discover_convergent_seeds, seed_regret_variance, seed_bridge_capacity, rank_seeds_by_convergence, convergence_exponent, regret_scaling_law, seed_scaling_law, predict_iterations, optimal_parallelism_factor, random_access_equilibrium, equilibrium_fingerprint_table, O1_cfr_lookup, verify_convergence_spi, cfr_to_observer, observer_to_cfr, bridge_transport, demo_observer_bridge, demo_retrocausal_cfr
+export ObserverBridgeType, RetrocausalWorld, CounterfactualPath, SeedConvergenceProfile, ScalingLaw, retrocausal_regret, color_backwards, equilibrium_seed, propagate_from_future, cfr_invert, observe_counterfactual, bridge_capacity, observer_integral, collapse_to_seed, uncollapse_from_seed, discover_convergent_seeds, seed_regret_variance, seed_bridge_capacity, rank_seeds_by_convergence, convergence_exponent, regret_scaling_law, seed_scaling_law, predict_iterations, optimal_parallelism_factor, random_access_equilibrium, equilibrium_fingerprint_table, O1_cfr_lookup, verify_convergence_spi, cfr_to_observer, observer_to_cfr, bridge_transport, world_observer_bridge, world_retrocausal_cfr
 
 # Stub definitions
 struct ObserverBridgeType end
@@ -35,7 +35,7 @@ verify_convergence_spi(args...; kwargs...) = nothing
 cfr_to_observer(args...; kwargs...) = nothing
 observer_to_cfr(args...; kwargs...) = nothing
 bridge_transport(args...; kwargs...) = nothing
-demo_observer_bridge(args...; kwargs...) = nothing
-demo_retrocausal_cfr(args...; kwargs...) = nothing
+world_observer_bridge(args...; kwargs...) = nothing
+world_retrocausal_cfr(args...; kwargs...) = nothing
 
 end # module ObserverBridge

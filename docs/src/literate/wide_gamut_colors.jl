@@ -89,4 +89,4 @@ println("  RGB: R=$(round(rgb.r, digits=3)), G=$(round(rgb.g, digits=3)), B=$(ro
 println("\nTerminal color support check:")
 println("  COLORTERM: ", get(ENV, "COLORTERM", "not set"))
 
-println("\n✓ Wide-gamut color spaces example complete")
+println("\n◆ Wide-gamut color spaces example complete")

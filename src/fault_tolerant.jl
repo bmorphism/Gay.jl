@@ -619,99 +619,94 @@ function verify_with_fault_injection(cluster::SimulatedCluster;
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Demonstration
+# World Builder
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_fault_tolerant()
+    world_fault_tolerant(; devices=nothing, n_layers=32, n_tokens=64, hidden_dim=256)
 
-Demonstrate fault-tolerant SPI verification.
+Build a fault-tolerant SPI verification world. Returns composable state.
+
+# Returns
+NamedTuple with:
+- `cluster`: The SimulatedCluster
+- `galois_verified`: Whether Galois closure holds for all colors
+- `clean_inference_pass`: Result of clean inference verification
+- `fault_detection`: Results of fault injection tests
+- `bidirectional_tracking`: Tracker state and consistency results
+- `statistics`: Fault detection statistics
 """
-function demo_fault_tolerant()
-    println("═" ^ 70)
-    println("FAULT-TOLERANT SPI VERIFICATION DEMO")
-    println("═" ^ 70)
-    println()
-    
-    # 1. Setup cluster
-    println("1. Setting up simulated cluster...")
-    devices = [("MacBook Pro", 18.0), ("MacBook Air", 8.0)]
-    cluster = SimulatedCluster(devices, 32; n_tokens=64, hidden_dim=256)
-    
-    for p in cluster.partitions
-        state = cluster.device_states[p.device_id]
-        println("   $(p.device_name): layers $(p.layer_range), " *
-               "expected fp=0x$(string(state.expected_fingerprint, base=16, pad=8))")
-    end
-    println()
-    
-    # 2. Test Galois connection
-    println("2. Verifying Galois connection...")
-    gc = cluster.galois
-    if verify_all_closures(gc)
-        println("   ✓ All $(gc.palette_size) colors satisfy α(γ(c)) = c")
-    else
-        println("   ✗ Galois closure property violated!")
-    end
-    println()
-    
-    # 3. Run clean inference
-    println("3. Running clean inference...")
+function world_fault_tolerant(;
+    devices::Union{Nothing, Vector{Tuple{String,Float64}}}=nothing,
+    n_layers::Int=32,
+    n_tokens::Int=64,
+    hidden_dim::Int=256,
+    n_stat_iterations::Int=20
+)
+    # Setup cluster
+    devs = devices === nothing ? [("MacBook Pro", 18.0), ("MacBook Air", 8.0)] : devices
+    cluster = SimulatedCluster(devs, n_layers; n_tokens=n_tokens, hidden_dim=hidden_dim)
+
+    partition_info = [(p.device_name, p.layer_range, cluster.device_states[p.device_id].expected_fingerprint)
+                      for p in cluster.partitions]
+
+    # Galois connection verification
+    galois_verified = verify_all_closures(cluster.galois)
+
+    # Clean inference
     run_inference!(cluster; with_faults=false)
-    pass, errors = verify!(cluster)
-    println("   Result: $(pass ? "✓ PASS" : "✗ FAIL")")
-    println()
-    
-    # 4. Inject faults
-    println("4. Testing fault injection...")
-    
-    # Test bit flips
+    clean_pass, clean_errors = verify!(cluster)
+
+    # Fault injection tests
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=10)
     run_inference!(cluster; with_faults=true)
-    pass, errors = verify!(cluster)
-    println("   Bit flip (10 bits): $(pass ? "✓ PASS (not detected)" : "✗ DETECTED")")
-    
-    # Test more bits
+    pass_10, _ = verify!(cluster)
+
     heal_all!(cluster)
     inject!(cluster, :bit_flip; device=0, n_bits=100)
     run_inference!(cluster; with_faults=true)
-    pass, errors = verify!(cluster)
-    println("   Bit flip (100 bits): $(pass ? "✓ PASS (not detected)" : "✗ DETECTED")")
-    println()
-    
-    # 5. Bidirectional tracking
-    println("5. Testing bidirectional color tracking...")
+    pass_100, _ = verify!(cluster)
+
+    fault_detection = (
+        bit_flip_10_detected = !pass_10,
+        bit_flip_100_detected = !pass_100,
+    )
+
+    # Bidirectional tracking
     tracker = BidirectionalTracker(GAY_SEED)
-    
     for layer in 1:4
         for token in 1:10
             track_forward!(tracker, layer, token, 1)
             track_backward!(tracker, layer, token, 1)
         end
     end
-    
-    consistent, errors = verify_consistency!(tracker)
-    println("   Forward/backward consistency: $(consistent ? "✓ PASS" : "✗ FAIL")")
-    
-    # Check Galois closure in proof log
+    consistent, tracker_errors = verify_consistency!(tracker)
     all_closure_ok = all(step[:galois_closure] for step in tracker.proof_log)
-    println("   Galois closure at all steps: $(all_closure_ok ? "✓ PASS" : "✗ FAIL")")
-    println()
-    
-    # 6. Statistical fault detection
-    println("6. Running fault detection statistics...")
-    stats = verify_with_fault_injection(cluster; n_iterations=20)
-    println("   Detection rate: $(round(stats[:detection_rate] * 100, digits=1))%")
-    println("   False positive rate: $(round(stats[:false_positive_rate] * 100, digits=1))%")
-    println("   Galois violations: $(stats[:galois_violations])")
-    println()
-    
-    println("═" ^ 70)
-    println("DEMO COMPLETE")
-    println("═" ^ 70)
+
+    bidirectional = (
+        tracker = tracker,
+        consistent = consistent,
+        galois_closure_all_steps = all_closure_ok,
+        errors = tracker_errors,
+    )
+
+    # Statistics
+    heal_all!(cluster)
+    stats = verify_with_fault_injection(cluster; n_iterations=n_stat_iterations)
+
+    (
+        cluster = cluster,
+        partition_info = partition_info,
+        galois_verified = galois_verified,
+        galois_palette_size = cluster.galois.palette_size,
+        clean_inference_pass = clean_pass,
+        fault_detection = fault_detection,
+        bidirectional_tracking = bidirectional,
+        statistics = stats,
+    )
 end
 
-export demo_fault_tolerant
+export world_fault_tolerant
 
 end # module FaultTolerant

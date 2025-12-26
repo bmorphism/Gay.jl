@@ -255,7 +255,7 @@ end
     fast_spi_demo(n=1_000_000)
 
 Demonstrate that XOR fingerprinting is a CONCRETE SYNTAX for correctness proofs.
-Instead of comparing 3M floats, you compare 1 hash → faster mental model.
+Instead of comparing 3M floats, we compare 1 hash → faster mental model.
 """
 function fast_spi_demo(n::Int=1_000_000)
     println()
@@ -285,7 +285,7 @@ function fast_spi_demo(n::Int=1_000_000)
         colors2 = ka_colors(n, 42069)
         match1 = all(colors .== colors2)
     end
-    println("  [$(round(t1*1000, digits=1))ms] $(match1 ? "✓" : "✗")")
+    println("  [$(round(t1*1000, digits=1))ms] $(match1 ? "◆" : "◇")")
     
     # Notation 2: Matrix norm (mathematical, medium)
     print("    2. ‖colors₁ - colors₂‖ < ε")
@@ -293,7 +293,7 @@ function fast_spi_demo(n::Int=1_000_000)
         colors2 = ka_colors(n, 42069)
         match2 = sum(abs.(colors .- colors2)) < 1e-6
     end
-    println("              [$(round(t2*1000, digits=1))ms] $(match2 ? "✓" : "✗")")
+    println("              [$(round(t2*1000, digits=1))ms] $(match2 ? "◆" : "◇")")
     
     # Notation 3: XOR fingerprint (terse, fast)
     print("    3. xor(colors₁) == xor(colors₂)")
@@ -302,7 +302,7 @@ function fast_spi_demo(n::Int=1_000_000)
         fp2 = xor_fingerprint(colors2)
         match3 = fp == fp2
     end
-    println("            [$(round(t3*1000, digits=1))ms] $(match3 ? "✓" : "✗")")
+    println("            [$(round(t3*1000, digits=1))ms] $(match3 ? "◆" : "◇")")
     
     println()
     println("  Same semantics (correctness), different syntax → different UX")

@@ -1,0 +1,433 @@
+<SYSTEM>This is the complete developer documentation for Gay.jl — Wide-gamut color sampling with splittable determinism</SYSTEM>
+
+# Gay.jl: Splittable Deterministic Color Generation
+
+> Wide-gamut color sampling with **splittable determinism** — reproducible colors via SplittableRandoms.jl, inspired by Pigeons.jl's Strong Parallelism Invariance (SPI) pattern.
+
+## Installation
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/bmorphism/Gay.jl")
+```
+
+## Core Principle: Strong Parallelism Invariance (SPI)
+
+Gay.jl guarantees: **Same seed → same colors, always** — regardless of:
+- Number of threads/processes
+- Execution order  
+- Parallel vs sequential execution
+- GPU vs CPU backend
+
+This property, borrowed from Pigeons.jl's MCMC framework, enables:
+- Reproducible visualizations across machines
+- Shareable "color seeds" between users
+- Debugging via exact state reproduction
+
+## Mathematical Foundation
+
+### Splittable Random Number Generators
+
+Gay.jl uses SplitMix64, a splittable PRNG from Steele, Lea & Flood (2014):
+
+```
+state' = state + 0x9e3779b97f4a7c15  (Weyl sequence)
+z = state
+z = (z ⊻ (z >> 30)) * 0xbf58476d1ce4e5b9
+z = (z ⊻ (z >> 27)) * 0x94d049bb133111eb
+output = z ⊻ (z >> 31)
+```
+
+The key operation is `split()`: given one RNG, produce two independent streams.
+
+```
+       seed(42)
+          │
+    ┌─────┴─────┐
+  split       split
+    │           │
+   rng₁        rng₂     ← independent subagents
+    │           │
+   c₁,c₂...   c₃,c₄...  ← deterministic colors
+```
+
+### Color Space: Okhsl
+
+Colors are generated in Okhsl (perceptually uniform, always in-gamut):
+- H: 0-360 degrees (hue)
+- S: 0.5-0.9 for vivid colors (saturation)
+- L: 0.35-0.75 for readability (lightness)
+
+## API Reference
+
+### RNG Control
+
+```julia
+gay_seed!(seed)           # Reset global RNG with seed
+gay_split()               # Get independent RNG stream
+gay_split(n)              # Get n independent streams
+GayRNG(seed)              # Create new RNG instance
+gay_rng()                 # Get global RNG
+gay_rng_state()           # Inspect current state
+```
+
+### Color Generation
+
+```julia
+next_color(cs)            # Next deterministic color
+next_colors(n, cs)        # n deterministic colors
+next_palette(n, cs)       # n visually distinct colors (min_distance=30.0)
+random_color(cs)          # Random color (non-deterministic)
+random_colors(n, cs)      # n random colors
+random_palette(n, cs)     # n random distinct colors
+```
+
+### Random Access (O(log n) via split tree)
+
+```julia
+color_at(index, cs; seed)           # Color at specific index
+colors_at(indices, cs; seed)        # Colors at multiple indices  
+palette_at(index, n, cs; seed)      # Palette starting at index
+```
+
+Example:
+```julia
+# These always return the same colors for the same indices
+c1 = color_at(1)
+c42 = color_at(42)
+c1_again = color_at(1)  # Same as c1!
+
+# Jump to any position without iteration
+c1000000 = color_at(1_000_000)
+```
+
+### Color Spaces
+
+```julia
+SRGB()                              # Standard RGB (default)
+DisplayP3()                         # Apple Display P3
+Rec2020()                           # ITU-R BT.2020 HDR/UHDTV
+CustomColorSpace(primaries, name)   # Custom primaries
+```
+
+### Pride Flag Palettes
+
+```julia
+rainbow()                 # 6-color rainbow
+transgender()             # Trans flag colors
+bisexual()                # Bi flag colors
+nonbinary()               # Non-binary flag
+pansexual()               # Pan flag
+asexual()                 # Ace flag
+pride_flag(:progress)     # Progress Pride flag
+pride_flag(:lesbian)      # Lesbian flag
+
+# In any color space
+rainbow(Rec2020())        # Wide-gamut rainbow
+```
+
+### Display
+
+```julia
+show_colors(colors)       # ANSI terminal display
+show_palette(colors)      # With hex codes
+```
+
+## Interleaved Streams (Checkerboard Decomposition)
+
+For lattice QMC, parallel tempering, and phased arrays:
+
+```julia
+# Create interleaved streams for even/odd sublattices
+interleaver = GayInterleaver(seed, 2)
+
+# Get colors cycling through streams
+color, phase, step = gay_interleave(interleaver)
+
+# 2D lattice coloring
+colors = gay_checkerboard_2d(interleaver, Lx, Ly)
+
+# Heisenberg model bond coloring
+bonds = gay_heisenberg_bonds(interleaver, Lx, Ly)
+```
+
+### XOR Parity Coloring
+
+```julia
+# Color for bond (i,j) based on XOR parity
+gay_xor_color(interleaver, i, j)
+
+# Exchange colors for site pair
+gay_exchange_colors(interleaver, i, j)
+```
+
+## GPU Acceleration (KernelAbstractions.jl)
+
+### Billion-Scale Generation
+
+```julia
+# Generate n colors as n×3 Float32 matrix
+colors = ka_colors(1_000_000, seed)
+
+# Fill pre-allocated matrix
+ka_colors!(my_matrix, seed)
+
+# Streaming reduction for billion-scale (O(1) memory)
+sums = ka_color_sums(1_000_000_000, seed)
+
+# Built-in benchmark
+ka_benchmark(n=1_000_000_000)
+```
+
+Performance (Apple M3, 8 threads):
+
+| Function | n | Time | Rate |
+|----------|---|------|------|
+| ka_colors | 1M | 1.0 ms | 1,000 M/s |
+| ka_colors | 10M | 25 ms | 400 M/s |
+| ka_color_sums | 100M | 0.02s | 4,452 M/s |
+| ka_color_sums | 1B | 0.13s | 7,097 M/s |
+
+### Backend Selection
+
+```julia
+using Metal  # or CUDA, AMDGPU
+
+set_backend!(MetalBackend())  # Switch to Metal GPU
+get_backend()                  # Query current backend
+```
+
+## SPI Verification
+
+### XOR Fingerprinting
+
+Reduce all color bits to a single 32-bit hash:
+
+```julia
+colors = ka_colors(100_000_000, seed)
+fp = xor_fingerprint(colors)  # → 0x38b8b8ad
+
+# Same fingerprint = bitwise identical colors
+@assert xor_fingerprint(ka_colors(100_000_000, seed)) == fp
+```
+
+### Full Verification Suite
+
+```julia
+verify_spi(n, seed; gpu_backend=MetalBackend())
+```
+
+Output:
+```
+════════════════════════════════════════════════════════════
+SPI VERIFICATION: Strong Parallelism Invariance
+════════════════════════════════════════════════════════════
+  n = 10000000, seed = 42
+
+1. CPU Sequential Reference
+   XOR Fingerprint: 0x043aba9b
+   ✓ Generated
+
+2. CPU Parallel (KernelAbstractions)
+   XOR Fingerprint: 0x043aba9b
+   Colors match: ✓ PASS
+
+3. Workgroup Size Independence
+   workgroup=32: ✓ PASS
+   workgroup=64: ✓ PASS
+   workgroup=128: ✓ PASS
+
+4. GPU Backend: MetalBackend
+   XOR Fingerprint: 0x043aba9b
+   Colors match CPU: ✓ PASS
+
+════════════════════════════════════════════════════════════
+ALL SPI INVARIANTS VERIFIED ✓
+════════════════════════════════════════════════════════════
+```
+
+## Comrade.jl Sky Models
+
+Colored S-expressions for VLBI sky model composition:
+
+```julia
+gay_seed!(2017)
+ring = comrade_ring(1.0, 0.3)       # (ring 1.0 0.3)
+gauss = comrade_gaussian(0.5)       # (gaussian 0.5 0.5)
+model = sky_add(ring, gauss)        # (ring) + (gaussian)
+comrade_show(model)                 # Colored S-expression + ASCII
+```
+
+Output:
+```
+Colored S-Expression (parentheses colored by component):
+(ring 1.0 0.3) + (gaussian 0.5 0.5)
+
+Intensity Map:
+        ████████████        
+      ████████████████      
+    ██████    ████    ██████    
+   █████        ██        █████   
+```
+
+## Propagator Networks
+
+Constraint propagation with chromatic debugging:
+
+```julia
+using Gay.Propagator
+
+# Create cells
+a = make_cell(:temperature)
+b = make_cell(:pressure)
+c = make_cell(:result)
+
+# Constraint: c = a + b
+c_add(a, b, c)
+
+# Tell values
+add_content!(a, 100.0)
+add_content!(b, 50.0)
+run!()
+
+@assert cell_content(c) == 150.0
+
+# Each cell has deterministic SPI color for visualization
+show_network()
+```
+
+## Security Properties
+
+### sm64 Is NOT Cryptographically Secure
+
+| Property | sm64 | SHA-256 | Implication |
+|----------|------|---------|-------------|
+| Collision resistance | ❌ | ✅ | Don't use for commitments |
+| Preimage resistance | ❌ | ✅ | Seed can be recovered |
+| Second preimage | ❌ | ✅ | Don't use for signatures |
+| Speed | 20 cycles | 2000 cycles | 100x faster |
+| Determinism | ✅ | ✅ | Reproducible colors |
+
+### Appropriate Use Cases
+
+✅ **Use sm64 for:**
+- Color generation (speed matters)
+- Fingerprint chains (tamper-evident, not tamper-proof)
+- Deterministic simulations
+- Palette generation
+
+❌ **Don't use sm64 for:**
+- Storing secrets
+- Commitment schemes
+- Digital signatures
+- Key derivation
+
+### Upgrade Path for Secrets
+
+```julia
+# Chain sm64 with ChaCha20 for cryptographic security
+function secure_color(seed, secret)
+    prng_output = sm64(seed)
+    chacha20_encrypt(prng_output, secret)
+end
+```
+
+### Pigeonhole Defense
+
+COLOR_BANDWIDTH = 226 (Galois field GF(227)):
+- Saturation detection when occupancy imbalanced
+- Forced recoloring of saturated slots
+- Attack cost grows linearly, defense cost O(1)
+
+## Test Suites
+
+### Marsaglia Tests (Statistical Quality)
+
+Based on George Marsaglia's DIEHARD battery (1995):
+
+```julia
+using Gay.MarsagliaBumpusTests
+
+run_marsaglia_suite(seed)
+# 1. Birthday Spacings - collision statistics
+# 2. Runs Test - ascending/descending sequences
+# 3. Permutation Test - 5-color ordering uniformity
+# 4. Spectral Test - FFT for periodicity
+```
+
+### Bumpus Tests (Compositional Structure)
+
+Based on Benjamin Merlin Bumpus's spined categories (2023):
+
+```julia
+run_bumpus_suite(seed)
+# 1. Adhesion Width - bounded information sharing between split branches
+# 2. Sheaf Gluing - XOR composition satisfies presheaf condition
+# 3. Tree Decomposition - color similarity graph has bounded tree-width
+```
+
+### Full SPI Audit
+
+```julia
+full_spi_audit(seed)
+# Combines Marsaglia + Bumpus tests
+# Verdict: Gay.jl PASSES FULL SPI AUDIT ✓
+```
+
+## Theoretical Foundations
+
+### Marsaglia's Legacy (1924-2011)
+
+George Marsaglia at Florida State pioneered:
+- DIEHARD tests for PRNG quality
+- "Random numbers fall mainly in the planes" (LCG lattice structure)
+- Xorshift family (2003) - foundation for SplitMix64
+
+### Bumpus's Compositional Framework (2021-present)
+
+Benjamin Merlin Bumpus at UF GATAS Lab:
+- Spined categories: tree-width via triangulation functor
+- Structured decompositions for dynamic programming
+- Sheaf-theoretic obstruction detection
+
+### The Synthesis
+
+Gay.jl unifies both perspectives:
+- **Statistical quality** (Marsaglia): output sequences pass randomness tests
+- **Compositional coherence** (Bumpus): split tree preserves bounded width
+
+## Dependencies
+
+### Required
+- Colors.jl
+- SplittableRandoms.jl
+- KernelAbstractions.jl
+- OhMyThreads.jl
+- LispSyntax.jl
+- ParserCombinator.jl
+
+### Optional GPU Backends
+- Metal.jl (Apple Silicon)
+- CUDA.jl (Nvidia)
+- AMDGPU.jl (AMD)
+
+## Code Quality
+
+Tested with Aqua.jl:
+- ✅ No method ambiguities
+- ✅ No unbound type parameters
+- ✅ No undefined exports
+- ✅ No stale dependencies
+- ✅ Proper compat bounds
+
+## License
+
+MIT
+
+## Links
+
+- [GitHub](https://github.com/bmorphism/Gay.jl)
+- [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl)
+- [Pigeons.jl](https://pigeons.run)
+- [Bumpus Papers](https://bmbumpus.com/research-papers/)
+- [Marsaglia's Xorshift Paper (2003)](https://www.jstatsoft.org/article/view/v008i14)

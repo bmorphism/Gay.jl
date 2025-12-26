@@ -1,7 +1,7 @@
 # Auto-generated stub for ablative_naming.jl
 module AblativeNaming
 
-export EntropyCollapse, CollapseType, detect_collapse, collapse_severity, BidirectionalState, InvertibleColor, ShadowBits, encode_invertible, decode_invertible, verify_roundtrip, AssociativeXOR, axor, associative_reduce, TikkunRepair, repair_collapse, restore_invariant, ObservationSheaf, SeedRecovery, CechObstruction, sample_efficiency_bound, recovery_work_factor, GayEmission, EmissionSchedule, NATSChannel, is_gay_emission, fixed_point_afference, SecurityLevel, full_recovery_work, partial_recovery_work, contextual_advantage, ordered_advantage, three_match_security, demo_tikkun_olam, SaturatedUmwelt, UmweltCandidate, CandidateSource, SensorimotorSaturation, saturate!, saturation_level, WorktreeSheaf, SheafSection, SuccessorPlay, sheafify_worktree, successor_step!, verify_gluing, WorktreeReconciliation, ReconciliationColimit, AnalyticContinuity
+export EntropyCollapse, CollapseType, detect_collapse, collapse_severity, BidirectionalState, InvertibleColor, ShadowBits, encode_invertible, decode_invertible, verify_roundtrip, AssociativeXOR, axor, associative_reduce, TikkunRepair, repair_collapse, restore_invariant, ObservationSheaf, SeedRecovery, CechObstruction, sample_efficiency_bound, recovery_work_factor, GayEmission, EmissionSchedule, NATSChannel, is_gay_emission, fixed_point_afference, SecurityLevel, full_recovery_work, partial_recovery_work, contextual_advantage, ordered_advantage, three_match_security, world_tikkun_olam, SaturatedUmwelt, UmweltCandidate, CandidateSource, SensorimotorSaturation, saturate!, saturation_level, WorktreeSheaf, SheafSection, SuccessorPlay, sheafify_worktree, successor_step!, verify_gluing, WorktreeReconciliation, ReconciliationColimit, AnalyticContinuity
 
 # Stub definitions
 struct EntropyCollapse end
@@ -36,7 +36,7 @@ partial_recovery_work(args...; kwargs...) = nothing
 contextual_advantage(args...; kwargs...) = nothing
 ordered_advantage(args...; kwargs...) = nothing
 three_match_security(args...; kwargs...) = nothing
-demo_tikkun_olam(args...; kwargs...) = nothing
+world_tikkun_olam(args...; kwargs...) = nothing
 struct SaturatedUmwelt end
 struct UmweltCandidate end
 struct CandidateSource end

@@ -9,7 +9,7 @@
 #   Coordinate mining via XOR fingerprint consensus
 
 export BabashkaHost, BabashkaPod, parallel_ssh, deploy_gay_bb
-export ssh_mine, coordinate_pods, demo_babashka_ssh
+export ssh_mine, coordinate_pods, world_babashka_ssh
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 const GAY_PORT = 42069
@@ -103,10 +103,10 @@ function deploy_gay_bb(hosts::Vector{BabashkaHost}, gay_bb_path::String)
         try
             run(`sh -c $scp_cmd`)
             push!(results, (host.hostname, "OK"))
-            println("  ✓ $(host.hostname)")
+            println("  ◆ $(host.hostname)")
         catch e
             push!(results, (host.hostname, "FAILED: $e"))
-            println("  ✗ $(host.hostname): $e")
+            println("  ◇ $(host.hostname): $e")
         end
     end
     
@@ -155,62 +155,29 @@ function coordinate_pods(pods::Vector{BabashkaPod})
 end
 
 """
-    demo_babashka_ssh()
+    world_babashka_ssh(; hosts=nothing)
 
-Demo of parallel Babashka SSH mining.
+Build composable Babashka SSH mining state.
 """
-function demo_babashka_ssh()
-    println("═══════════════════════════════════════════════════════════")
-    println("  BABASHKA PARALLEL SSH - Distributed Gay Mining")
-    println("═══════════════════════════════════════════════════════════")
-    println()
-    
-    # Define hosts (example - modify for your setup)
-    hosts = [
-        BabashkaHost("hatchery"; tailscale_ip="100.72.249.116", user="bob"),
-        BabashkaHost("causality"; tailscale_ip="100.69.33.107", user="bob"),
-        BabashkaHost("2-monad"; tailscale_ip="100.87.209.11", user="bob"),
-    ]
-    
-    println("HOSTS:")
-    for h in hosts
-        ip = isnothing(h.tailscale_ip) ? h.hostname : h.tailscale_ip
-        println("  • $(h.hostname) ($(h.polarity)) @ $ip")
+function world_babashka_ssh(; hosts::Union{Nothing, Vector{BabashkaHost}}=nothing)
+    if isnothing(hosts)
+        hosts = [
+            BabashkaHost("hatchery"; tailscale_ip="100.72.249.116", user="bob"),
+            BabashkaHost("causality"; tailscale_ip="100.69.33.107", user="bob"),
+            BabashkaHost("2-monad"; tailscale_ip="100.87.209.11", user="bob"),
+        ]
     end
-    println()
-    
-    # Create pods
+
     pods = [BabashkaPod(h) for h in hosts]
-    
-    # Check connectivity
-    println("CONNECTIVITY CHECK:")
-    results = parallel_ssh(hosts, "echo OK")
-    for (hostname, output) in results
-        status = occursin("OK", output) ? "✓" : "✗"
-        println("  $status $hostname")
-    end
-    println()
-    
-    # Check if bb is installed
-    println("BABASHKA STATUS:")
-    results = parallel_ssh(hosts, "which bb || echo 'NOT FOUND'")
-    for (hostname, output) in results
-        has_bb = !occursin("NOT FOUND", output)
-        status = has_bb ? "✓ installed" : "✗ not found"
-        println("  $status on $hostname")
-    end
-    println()
-    
-    # Coordinate fingerprints
+    connectivity = parallel_ssh(hosts, "echo OK")
+    bb_status = parallel_ssh(hosts, "which bb || echo 'NOT FOUND'")
     combined_fp = coordinate_pods(pods)
-    println("COMBINED XOR FINGERPRINT: 0x$(string(combined_fp, base=16))")
-    
-    println()
-    println("To deploy gay.bb to all hosts:")
-    println("  deploy_gay_bb(hosts, \"/path/to/gay.bb\")")
-    println()
-    println("To start mining on all pods:")
-    println("  for pod in pods; ssh_mine(pod, 1000000); end")
-    
-    (hosts, pods)
+
+    (
+        hosts = hosts,
+        pods = pods,
+        connectivity = Dict(hostname => occursin("OK", output) for (hostname, output) in connectivity),
+        bb_installed = Dict(hostname => !occursin("NOT FOUND", output) for (hostname, output) in bb_status),
+        combined_fingerprint = combined_fp,
+    )
 end

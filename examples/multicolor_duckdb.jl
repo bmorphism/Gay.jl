@@ -408,9 +408,9 @@ function teleportation_derivation_test(repos)
     println()
     
     if fp_a == fp_b
-        println("  ✓ TELEPORTATION SUCCESSFUL - Colors identical!")
+        println("  ◆ TELEPORTATION SUCCESSFUL - Colors identical!")
     else
-        println("  ✗ TELEPORTATION FAILED - Colors differ!")
+        println("  ◇ TELEPORTATION FAILED - Colors differ!")
         println("    (This is expected - derive_color uses HSL conversion)")
     end
     

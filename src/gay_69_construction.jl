@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_69_construction.jl
 module Gay69Construction
 
-export ChromaticGroup, Gay69Bundle, ChromaticElement, create_r_group, create_g_group, create_b_group, create_rgb_bundle, create_bgr_bundle, group_fingerprint, bundle_fingerprint, rgb_fingerprint, bgr_fingerprint, verify_rgb_bgr_equivalence, SPIProof69, verify_parallel_equivalence, verify_all_permutations, element_to_trit, group_trit_word, bundle_trit_word, construct_69!, parallel_construct_69!, concurrent_construct_69!, demo_gay_69_construction
+export ChromaticGroup, Gay69Bundle, ChromaticElement, create_r_group, create_g_group, create_b_group, create_rgb_bundle, create_bgr_bundle, group_fingerprint, bundle_fingerprint, rgb_fingerprint, bgr_fingerprint, verify_rgb_bgr_equivalence, SPIProof69, verify_parallel_equivalence, verify_all_permutations, element_to_trit, group_trit_word, bundle_trit_word, construct_69!, parallel_construct_69!, concurrent_construct_69!, world_gay_69_construction
 
 # Stub definitions
 struct ChromaticGroup end
@@ -26,6 +26,6 @@ bundle_trit_word(args...; kwargs...) = nothing
 construct_69!(args...; kwargs...) = nothing
 parallel_construct_69!(args...; kwargs...) = nothing
 concurrent_construct_69!(args...; kwargs...) = nothing
-demo_gay_69_construction(args...; kwargs...) = nothing
+world_gay_69_construction(args...; kwargs...) = nothing
 
 end # module Gay69Construction

@@ -128,7 +128,7 @@ function test_determinism()
         colored2 = color_functions(R2_FUNCTIONS[1:5]; seed=seed)
         
         match = all(c1.color == c2.color for (c1, c2) in zip(colored1, colored2))
-        println("    Pass 1 == Pass 2: $(match ? "✓" : "✗")")
+        println("    Pass 1 == Pass 2: $(match ? "◆" : "◇")")
         
         for (i, f) in enumerate(colored1[1:3])
             println("    ", render_colored_function(f))

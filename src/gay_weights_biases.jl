@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_weights_biases.jl
 module GayWeightsBiases
 
-export GayManifold, ManifoldPoint, ManifoldSample, ObservationalBridge, BridgeAttestation, StructureDiff, LearningRun, LearningStep, ProgressMetrics, start_run!, log_step!, finish_run!, TripartiteAttestation, ObserverRole, AttestationConsensus, OBSERVER, THOUGHT, WITNESS, create_attestation!, verify_attestation, consensus_level, structure_diff, manifold_approximation_error, coverage_analysis, gamut_alignment, CoalitionMetrics, coalition_formation_step!, nash_prop_metrics, coalition_stability, WandBLogger, log_scalar!, log_histogram!, log_table!, export_to_json, export_to_csv, true_random_sample, sample_manifold_region, compare_spaces, approximation_quality, demo_gay_weights_biases
+export GayManifold, ManifoldPoint, ManifoldSample, ObservationalBridge, BridgeAttestation, StructureDiff, LearningRun, LearningStep, ProgressMetrics, start_run!, log_step!, finish_run!, TripartiteAttestation, ObserverRole, AttestationConsensus, OBSERVER, THOUGHT, WITNESS, create_attestation!, verify_attestation, consensus_level, structure_diff, manifold_approximation_error, coverage_analysis, gamut_alignment, CoalitionMetrics, coalition_formation_step!, nash_prop_metrics, coalition_stability, WandBLogger, log_scalar!, log_histogram!, log_table!, export_to_json, export_to_csv, true_random_sample, sample_manifold_region, compare_spaces, approximation_quality, world_gay_weights_biases
 
 # Stub definitions
 struct GayManifold end
@@ -43,6 +43,6 @@ true_random_sample(args...; kwargs...) = nothing
 sample_manifold_region(args...; kwargs...) = nothing
 compare_spaces(args...; kwargs...) = nothing
 approximation_quality(args...; kwargs...) = nothing
-demo_gay_weights_biases(args...; kwargs...) = nothing
+world_gay_weights_biases(args...; kwargs...) = nothing
 
 end # module GayWeightsBiases

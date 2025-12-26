@@ -62,7 +62,7 @@ export set_backend!
     splitmix64_mix(z::UInt64) -> UInt64
 
 Pure SplitMix64 mixing function (the finalizer part only).
-This is used for one-shot hashing where you combine seed and index.
+This is used for one-shot hashing where we combine seed and index.
 """
 @inline function splitmix64_mix(z::UInt64)
     z = ((z ⊻ (z >> 30)) * MIX1) % UInt64
@@ -459,7 +459,7 @@ function verify_spi(n::Int=1000, seed::Integer=GAY_SEED;
     
     println("1. CPU Sequential Reference")
     println("   XOR Fingerprint: 0x$(string(cpu_hash, base=16, pad=8))")
-    println("   ✓ Generated")
+    println("   ◆ Generated")
     println()
     
     # Test 2: CPU parallel (KernelAbstractions)
@@ -472,8 +472,8 @@ function verify_spi(n::Int=1000, seed::Integer=GAY_SEED;
     
     println("2. CPU Parallel (KernelAbstractions)")
     println("   XOR Fingerprint: 0x$(string(ka_hash, base=16, pad=8))")
-    println("   Colors match: ", match ? "✓ PASS" : "✗ FAIL")
-    println("   Fingerprint match: ", hash_match ? "✓ PASS" : "✗ FAIL")
+    println("   Colors match: ", match ? "◆ PASS" : "◇ FAIL")
+    println("   Fingerprint match: ", hash_match ? "◆ PASS" : "◇ FAIL")
     @assert match "CPU sequential != CPU parallel"
     @assert hash_match "Fingerprint mismatch: CPU sequential vs parallel"
     println()
@@ -485,7 +485,7 @@ function verify_spi(n::Int=1000, seed::Integer=GAY_SEED;
         ka_colors!(ws_colors, seed; backend=CPU(), workgroup=ws)
         ws_match = isapprox(cpu_colors, ws_colors; rtol=rtol)
         print("   workgroup=$ws: ")
-        println(ws_match ? "✓ PASS" : "✗ FAIL")
+        println(ws_match ? "◆ PASS" : "◇ FAIL")
         @assert ws_match "Workgroup $ws produced different results"
     end
     println()
@@ -510,8 +510,8 @@ function verify_spi(n::Int=1000, seed::Integer=GAY_SEED;
         gpu_hash_match = cpu_hash == gpu_hash
         
         println("   XOR Fingerprint: 0x$(string(gpu_hash, base=16, pad=8))")
-        println("   Colors match CPU: ", gpu_match ? "✓ PASS" : "✗ FAIL")
-        println("   Fingerprint match CPU: ", gpu_hash_match ? "✓ PASS" : "✗ FAIL")
+        println("   Colors match CPU: ", gpu_match ? "◆ PASS" : "◇ FAIL")
+        println("   Fingerprint match CPU: ", gpu_hash_match ? "◆ PASS" : "◇ FAIL")
         
         if !gpu_match
             # Find first mismatch for debugging
@@ -543,13 +543,13 @@ function verify_spi(n::Int=1000, seed::Integer=GAY_SEED;
         test_hash = xor_fingerprint(test_colors)
         match = test_hash == cpu_hash
         print("   Run $run: ")
-        println(match ? "✓ PASS (0x$(string(test_hash, base=16, pad=8)))" : "✗ FAIL")
+        println(match ? "◆ PASS (0x$(string(test_hash, base=16, pad=8)))" : "◇ FAIL")
         @assert match "Run $run produced different fingerprint"
     end
     println()
     
     println("═" ^ 60)
-    println("ALL SPI INVARIANTS VERIFIED ✓")
+    println("ALL SPI INVARIANTS VERIFIED ◆")
     println("═" ^ 60)
     
     return true

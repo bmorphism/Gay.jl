@@ -863,7 +863,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_metatheory_brushes()
+function world_metatheory_brushes()
     println()
     println("╔" * "═" ^ 62 * "╗")
     println("║  METATHEORY MOMENT BRUSHES                                    ║")
@@ -957,9 +957,9 @@ function demo_metatheory_brushes()
     println("  2-morphism (1→2) on 10: $(apply_two_morphism(tpg, 1, 2, :blend, 10))")
     println()
     
-    println("🏳️‍🌈 Metatheory Brushes Complete")
+    println("◈ Metatheory Brushes Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_metatheory_brushes()
+    world_metatheory_brushes()
 end

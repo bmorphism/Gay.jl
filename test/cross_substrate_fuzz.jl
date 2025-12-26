@@ -125,7 +125,7 @@ function cross_substrate_verify(; n::Int=10000, seed::UInt64=GAY_SEED, verbose::
         println()
         println("  Available backends:")
         for b in backends
-            status = b.available ? "✓" : "✗"
+            status = b.available ? "◆" : "◇"
             println("    $status $(b.name): $(b.device_name)")
         end
         println()
@@ -165,12 +165,12 @@ function cross_substrate_verify(; n::Int=10000, seed::UInt64=GAY_SEED, verbose::
             )
             
             if verbose
-                status = match ? "✓" : "✗"
+                status = match ? "◆" : "◇"
                 println("  $(b.name):")
                 println("    Fingerprint: 0x$(string(fp, base=16, pad=8)) $status")
                 println("    Time: $(round(t * 1000, digits=2))ms ($(round(n/t/1e6, digits=1)) M colors/s)")
                 if !match
-                    println("    ⚠️  FINGERPRINT MISMATCH!")
+                    println("    △  FINGERPRINT MISMATCH!")
                     # Find first differing color
                     for i in 1:min(n, 10)
                         if !isapprox(ref_colors[i,:], colors[i,:]; rtol=1e-6)
@@ -198,10 +198,10 @@ function cross_substrate_verify(; n::Int=10000, seed::UInt64=GAY_SEED, verbose::
     if verbose
         println("═" ^ 72)
         if all_match
-            println("  ✓ ALL BACKENDS PRODUCE IDENTICAL COLORS")
+            println("  ◆ ALL BACKENDS PRODUCE IDENTICAL COLORS")
             println("  Strong Parallelism Invariance verified across substrates!")
         else
-            println("  ✗ SPI VIOLATION DETECTED ACROSS SUBSTRATES")
+            println("  ◇ SPI VIOLATION DETECTED ACROSS SUBSTRATES")
         end
         println("═" ^ 72)
     end
@@ -258,7 +258,7 @@ function cross_substrate_fuzz(; duration::Float64=30.0, seed::Int=42)
             if cpu_fp != gpu_fp
                 violations += 1
                 if violations <= 5
-                    println("  ⚠️  Violation #$violations: seed=$test_seed, n=$n")
+                    println("  △  Violation #$violations: seed=$test_seed, n=$n")
                     println("      CPU: 0x$(string(cpu_fp, base=16))")
                     println("      $gpu_name: 0x$(string(gpu_fp, base=16))")
                 end
@@ -287,9 +287,9 @@ function cross_substrate_fuzz(; duration::Float64=30.0, seed::Int=42)
     println("  Duration: $(round(elapsed, digits=1))s")
     
     if violations == 0
-        println("  ✓ ALL CROSS-SUBSTRATE TESTS PASSED")
+        println("  ◆ ALL CROSS-SUBSTRATE TESTS PASSED")
     else
-        println("  ✗ $violations VIOLATIONS DETECTED")
+        println("  ◇ $violations VIOLATIONS DETECTED")
     end
     println("═" ^ 72)
     

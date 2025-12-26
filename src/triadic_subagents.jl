@@ -41,7 +41,7 @@ export Polarity, MINUS, ERGODIC, PLUS
 export TriadicAgent, Triad
 export sample_agent!, parallel_sample!, combined_fingerprint
 export verify_triadic_spi, phase_to_polarity, polarity_twist
-export demo_triadic_subagents
+export world_triadic_subagents
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GF(3) Polarities - The Trialectic
@@ -453,103 +453,66 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_triadic_subagents(; seed=GAY_SEED, n_samples=30)
+    world_triadic_subagents(; seed=GAY_SEED, n_samples=30)
 
-Demonstrate synthetic 3 subagents with parallel sampling and SPI verification.
+Build composable triadic subagents state with schedule invariance verification.
 """
-function demo_triadic_subagents(; seed::UInt64=GAY_SEED, n_samples::Int=30)
-    println()
-    println("🎭 Triadic Subagents: Synthetic Parallel Color Streams")
-    println("=" ^ 65)
-    println()
-    println("The trialectic: (−) MINUS → (_) ERGODIC → (+) PLUS → (−) MINUS")
-    println()
-    println("Each agent has an INDEPENDENT RNG stream derived from the same seed.")
-    println("XOR fingerprints verify all agents contributed (schedule invariance).")
-    println()
-    
+function world_triadic_subagents(; seed::UInt64=GAY_SEED, n_samples::Int=30)
     # Create two identical agent triads
     agents1 = Triad(seed)
     agents2 = Triad(seed)
-    
-    println("1. INITIAL STATE")
-    visualize_agents(agents1)
-    
-    # Sample in different orders
-    println("2. SAMPLING $(n_samples) COLORS FROM EACH AGENT")
-    println()
-    
+
     # Agents1: sample in order (MINUS, ERGODIC, PLUS)
-    println("   $(BOLD)Agents1$(RESET): Sequential order (−, _, +)")
     for _ in 1:n_samples
         sample_agent!(agents1.minus)
         sample_agent!(agents1.ergodic)
         sample_agent!(agents1.plus)
     end
-    
+
     # Agents2: sample in reverse order (PLUS, ERGODIC, MINUS)
-    println("   $(BOLD)Agents2$(RESET): Reverse order (+, _, −)")
     for _ in 1:n_samples
         sample_agent!(agents2.plus)
         sample_agent!(agents2.ergodic)
         sample_agent!(agents2.minus)
     end
-    
-    println()
-    println("3. FINGERPRINT COMPARISON (Schedule Invariance)")
-    println()
-    
+
     fp1 = combined_fingerprint(agents1)
     fp2 = combined_fingerprint(agents2)
-    
-    println("   Agents1 (forward):  0x$(string(fp1, base=16, pad=16))")
-    println("   Agents2 (reverse):  0x$(string(fp2, base=16, pad=16))")
-    println()
-    println("   Match: $(fp1 == fp2 ? "✓ YES - Schedule Invariance Verified!" : "✗ NO")")
-    println()
-    
-    # Interleaved sampling demo
-    println("4. INTERLEAVED SAMPLING (Round-Robin)")
+
+    # Interleaved sampling
     agents3 = Triad(seed)
     interleaved = interleaved_sample!(agents3, 45)  # 15 per agent
-    visualize_interleaved(interleaved)
-    
-    # Per-agent fingerprints
-    println("5. PER-AGENT FINGERPRINTS")
-    println()
+    fp3 = combined_fingerprint(agents3)
+
     fps1 = per_agent_fingerprints(agents1)
     fps3 = per_agent_fingerprints(agents3)
-    
-    for p in instances(Polarity)
-        c = polarity_color(p)
-        println("   $(c)$(polarity_symbol(p))$(RESET) $(polarity_name(p)):")
-        println("       Sequential: 0x$(string(fps1[p], base=16, pad=16)[1:12])...")
-        println("       Interleaved: 0x$(string(fps3[p], base=16, pad=16)[1:12])...")
-    end
-    println()
-    
-    fp3 = combined_fingerprint(agents3)
-    println("   Combined (interleaved): 0x$(string(fp3, base=16, pad=16))")
-    println("   Combined (sequential):  0x$(string(fp1, base=16, pad=16))")
-    println("   Match: $(fp1 == fp3 ? "✓" : "✗")")
-    println()
-    
-    # Trialectic cycle demo
-    println("6. TRIALECTIC CYCLE (2-cell transformations)")
-    println()
+
     start_color = RGB(0.8, 0.2, 0.3)
     cycled = trialectic_cycle(start_color, seed)
-    println("   Start:  $(ansi_rgb(start_color))  $(RESET)")
-    println("   Cycled: $(ansi_rgb(cycled))  $(RESET)")
-    println("   (−) → (_) → (+) → (−)")
-    println()
-    
-    println("═" ^ 65)
-    println("KEY INSIGHT: 3 synthetic subagents from 1 seed, running in parallel,")
-    println("with schedule-invariant XOR fingerprint verification.")
-    println("═" ^ 65)
-    
-    return agents1
+
+    (
+        agents = (
+            sequential = agents1,
+            reverse = agents2,
+            interleaved = agents3,
+        ),
+        fingerprints = (
+            sequential = fp1,
+            reverse = fp2,
+            interleaved = fp3,
+            schedule_invariant = fp1 == fp2 && fp1 == fp3,
+        ),
+        per_agent = (
+            sequential = fps1,
+            interleaved = fps3,
+        ),
+        trialectic = (
+            start = start_color,
+            cycled = cycled,
+        ),
+        seed = seed,
+        n_samples = n_samples,
+    )
 end
 
 end # module

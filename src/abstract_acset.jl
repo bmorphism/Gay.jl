@@ -1,7 +1,7 @@
 # Auto-generated stub for abstract_acset.jl
 module AbstractACSetModule
 
-export AbstractACSet, ChromaticACSet, AchromaticACSet, HybridACSet, GlueModality, ChromaticClass, CognitiveGlueType, Chromatic, Achromatic, Hybrid, FreeMonad, RegretMonad, StateMonad, ContinuationMonad, WriterMonad, CofreeComonad, CoregretComonad, StoreComonad, EnvComonad, TracedComonad, FreeForgetful, CurriedUncurried, DirectInverse, GaloisConnection, SchrodingerBridge, TwoMorphism, LaxMonoidal, PseudoFunctor, InfinityGroupoid, ThesisAntithesis, WitnessChallenge, GameEquilibrium, FixedPoint, all_modalities, modality_index, modality_from_index, describe_modality, ConcreteACSet, PetriNetACSet, ChromaticPetriNet, QuiverACSet, wrap_gay_acset, wrap_tile_acset, wrap_petri_net, self_reinterpret, agentive_bind, SelfReinterpretation, AgentiveBinding, demo_abstract_acset
+export AbstractACSet, ChromaticACSet, AchromaticACSet, HybridACSet, GlueModality, ChromaticClass, CognitiveGlueType, Chromatic, Achromatic, Hybrid, FreeMonad, RegretMonad, StateMonad, ContinuationMonad, WriterMonad, CofreeComonad, CoregretComonad, StoreComonad, EnvComonad, TracedComonad, FreeForgetful, CurriedUncurried, DirectInverse, GaloisConnection, SchrodingerBridge, TwoMorphism, LaxMonoidal, PseudoFunctor, InfinityGroupoid, ThesisAntithesis, WitnessChallenge, GameEquilibrium, FixedPoint, all_modalities, modality_index, modality_from_index, describe_modality, ConcreteACSet, PetriNetACSet, ChromaticPetriNet, QuiverACSet, wrap_gay_acset, wrap_tile_acset, wrap_petri_net, self_reinterpret, agentive_bind, SelfReinterpretation, AgentiveBinding, world_abstract_acset
 
 # Stub definitions
 struct AbstractACSet end
@@ -52,6 +52,6 @@ self_reinterpret(args...; kwargs...) = nothing
 agentive_bind(args...; kwargs...) = nothing
 struct SelfReinterpretation end
 struct AgentiveBinding end
-demo_abstract_acset(args...; kwargs...) = nothing
+world_abstract_acset(args...; kwargs...) = nothing
 
 end # module AbstractACSetModule

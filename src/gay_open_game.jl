@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_open_game.jl
 module GayOpenGame
 
-export GayGame, GayPlayer, GayAction, GayOutcome, Marginal, MarginalHistory, EquilibriumState, GayPlay, GayCoPlay, PlayCoPlayPair, play, coplay, play_coplay!, compute_marginal, marginal_color, marginal_norm, is_equilibrium, marginals_vanishing, sequential, parallel, compose_marginals, GameBlanket, blanket_equilibrium, blanket_marginal, iterate_until_equilibrium!, cfr_marginals!, equilibrium_fingerprint, verify_nash, SelfDualGame, dual_marginal, mitsein_equilibrium, demo_gay_open_game, demo_marginal_convergence
+export GayGame, GayPlayer, GayAction, GayOutcome, Marginal, MarginalHistory, EquilibriumState, GayPlay, GayCoPlay, PlayCoPlayPair, play, coplay, play_coplay!, compute_marginal, marginal_color, marginal_norm, is_equilibrium, marginals_vanishing, sequential, parallel, compose_marginals, GameBlanket, blanket_equilibrium, blanket_marginal, iterate_until_equilibrium!, cfr_marginals!, equilibrium_fingerprint, verify_nash, SelfDualGame, dual_marginal, mitsein_equilibrium, world_gay_open_game, world_marginal_convergence
 
 # Stub definitions
 struct GayGame end
@@ -35,7 +35,7 @@ verify_nash(args...; kwargs...) = nothing
 struct SelfDualGame end
 dual_marginal(args...; kwargs...) = nothing
 mitsein_equilibrium(args...; kwargs...) = nothing
-demo_gay_open_game(args...; kwargs...) = nothing
-demo_marginal_convergence(args...; kwargs...) = nothing
+world_gay_open_game(args...; kwargs...) = nothing
+world_marginal_convergence(args...; kwargs...) = nothing
 
 end # module GayOpenGame

@@ -44,7 +44,7 @@ println("Confidence: $(abducer.confidence * 100)%")
 
 ### When You Know Candidate Seeds
 
-If you have a list of likely seeds, provide them for faster inference:
+If we have a list of likely seeds, provide them for faster inference:
 
 ```julia
 abducer = GayAbducer()
@@ -77,9 +77,9 @@ end
 
 inferred = infer_seed(abducer; seed_candidates=[seed_a])
 if inferred == seed_a && abducer.confidence == 1.0
-    println("✓ SPI verified: machines agree!")
+    println("◆ SPI verified: machines agree!")
 else
-    println("✗ SPI violation: colors differ")
+    println("◇ SPI violation: colors differ")
 end
 ```
 
@@ -144,7 +144,7 @@ original = [1, 2, 3, 4, 5, 6]
 deranged = [3, 5, 1, 6, 2, 4]
 
 perm = abduce_derangement(deranged, original)
-# perm[i] tells you: deranged[i] = original[perm[i]]
+# perm[i] tells us: deranged[i] = original[perm[i]]
 ```
 
 ### Cycle Decomposition

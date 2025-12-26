@@ -1,0 +1,20 @@
+:root {
+  --gay-seed: 0x285508656870f24a;
+  --color-minus-h: 252.6;
+  --color-minus-s: 68.2%;
+  --color-minus-l: 50.9%;
+  --color-minus: hsl(var(--color-minus-h), var(--color-minus-s), var(--color-minus-l));
+  --color-ergodic-h: 146.5;
+  --color-ergodic-s: 53.2%;
+  --color-ergodic-l: 41.2%;
+  --color-ergodic: hsl(var(--color-ergodic-h), var(--color-ergodic-s), var(--color-ergodic-l));
+  --color-plus-h: 280.3;
+  --color-plus-s: 73.6%;
+  --color-plus-l: 68.1%;
+  --color-plus: hsl(var(--color-plus-h), var(--color-plus-s), var(--color-plus-l));
+}
+
+/* GF(3) polarity classes */
+.polarity-minus { color: var(--color-minus); }
+.polarity-ergodic { color: var(--color-ergodic); }
+.polarity-plus { color: var(--color-plus); }

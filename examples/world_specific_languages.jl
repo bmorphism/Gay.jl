@@ -205,7 +205,7 @@ function show_spi_across_worlds()
         
         # Verify reproducibility
         fp2 = world_fingerprint(world, n)
-        status = fp == fp2 ? "✓" : "✗"
+        status = fp == fp2 ? "◆" : "◇"
         
         # Show first color as sample
         r, g, b = world_color(world, 1)

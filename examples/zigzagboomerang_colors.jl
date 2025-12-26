@@ -376,7 +376,7 @@ function parallel_chains_demo(num_chains::Int=4, seed::Int=Int(GAY_SEED))
     
     # Compute SPI verification fingerprint (not displayed - treat seed as secret)
     combined_fingerprint = reduce(⊻, fingerprints)
-    println("\n  SPI Verified: ✓ (fingerprint computed, $(length(fingerprints)) chains composed)")
+    println("\n  SPI Verified: ◆ (fingerprint computed, $(length(fingerprints)) chains composed)")
 end
 
 """

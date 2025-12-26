@@ -173,7 +173,7 @@ export render_sse_lattice
 # Demo: SSE meets Enzyme
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_sse_enzyme()
+function world_sse_enzyme()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Gay.jl: SSE QMC ↔ Enzyme.jl Operator Duality                ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -234,7 +234,7 @@ end
 # Demo: Basic colors
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_colors()
+function world_colors()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Gay.jl: Deterministic Splittable Color Generation           ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -274,7 +274,7 @@ end
 # Demo: Interleaver / Checkerboard
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_interleaver()
+function world_interleaver()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Gay.jl: XOR Checkerboard Coloring for Parallel Updates      ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -344,36 +344,36 @@ function semiosis(which::Symbol=:all)
     println()
     
     if which == :all || which == :colors
-        demo_colors()
+        world_colors()
     end
     
     if which == :all || which == :parallel
-        demo_interleaver()
+        world_interleaver()
     end
     
     if which == :all || which == :enzyme
-        demo_enzyme_colors()
+        world_enzyme_colors()
     end
     
     if which == :all || which == :dsl
-        demo_enzyme_dsl()
+        world_enzyme_dsl()
     end
     
     if which == :all || which == :sse
-        demo_sse_enzyme()
+        world_sse_enzyme()
     end
     
     if which == :binary
-        demo_radare2_colors()
-        demo_binary_analysis()
+        world_radare2_colors()
+        world_binary_analysis()
     end
     
     if which == :all || which == :derange
-        demo_derangeable()
+        world_derangeable()
     end
     
     if which == :all || which == :abduce
-        demo_abduce()
+        world_abduce()
     end
     
     println()
@@ -387,7 +387,7 @@ end
 # Demo: Derangeable permutations
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_derangeable()
+function world_derangeable()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Gay.jl: Derangeable Permutations (No Fixed Points)          ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -448,7 +448,7 @@ end
 # Demo: Abductive inference
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_abduce()
+function world_abduce()
     println("\n╔══════════════════════════════════════════════════════════════╗")
     println("║  Gay.jl: Abductive Inference (Effect → Cause)                ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
@@ -470,7 +470,7 @@ function demo_abduce()
         b = round(Int, clamp(rgb.b, 0, 1) * 255)
         color_block = "\e[38;2;$(r);$(g);$(b)m████\e[0m"
         
-        status = exact ? "✓" : "≈"
+        status = exact ? "◆" : "≈"
         println("   $color_block → index $found_idx $status (actual: $test_idx)")
     end
     
@@ -488,7 +488,7 @@ function demo_abduce()
         b = round(Int, clamp(rgb.b, 0, 1) * 255)
         color_block = "\e[38;2;$(r);$(g);$(b)m████\e[0m"
         
-        status = exact ? "✓" : "≈"
+        status = exact ? "◆" : "≈"
         println("   $color_block → seed 0x$(string(found_seed, base=16)) $status")
     end
     
@@ -519,7 +519,7 @@ function demo_abduce()
     println("   Observed 5 colors with known indices")
     println("   Inferred seed: 0x$(string(inferred, base=16))")
     println("   Confidence: $(round(abducer.confidence * 100, digits=1))%")
-    println("   Actual seed: 0x$(string(seed, base=16)) $(inferred == seed ? "✓" : "✗")")
+    println("   Actual seed: 0x$(string(seed, base=16)) $(inferred == seed ? "◆" : "◇")")
     
     println()
     

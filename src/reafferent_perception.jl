@@ -1,7 +1,7 @@
 # Auto-generated stub for reafferent_perception.jl
 module ReafferentPerception
 
-export ReafferentState, spectrum_t, find_continuation, GaloisClosure, COLOR_CLOSURE, apply_closure, apply_kernel, functionality_at, ReafferentLoop, run_reafferent_loop, AperiodicReafference, can_match, GENESIS_COLOR, TIP_COLOR, GALOIS_FIXED_POINTS, FUNCTIONALITY_CATEGORIES, EXPANSION_ANCHORS, CONTRACTION_ANCHORS, OSCILLATION_ANCHORS, demo_reafferent_perception
+export ReafferentState, spectrum_t, find_continuation, GaloisClosure, COLOR_CLOSURE, apply_closure, apply_kernel, functionality_at, ReafferentLoop, run_reafferent_loop, AperiodicReafference, can_match, GENESIS_COLOR, TIP_COLOR, GALOIS_FIXED_POINTS, FUNCTIONALITY_CATEGORIES, EXPANSION_ANCHORS, CONTRACTION_ANCHORS, OSCILLATION_ANCHORS, world_reafferent_perception
 
 # Stub definitions
 struct ReafferentState end
@@ -23,6 +23,6 @@ struct FUNCTIONALITY_CATEGORIES end
 struct EXPANSION_ANCHORS end
 struct CONTRACTION_ANCHORS end
 struct OSCILLATION_ANCHORS end
-demo_reafferent_perception(args...; kwargs...) = nothing
+world_reafferent_perception(args...; kwargs...) = nothing
 
 end # module ReafferentPerception

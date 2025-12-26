@@ -143,18 +143,18 @@ FAULT-TOLERANT SPI VERIFICATION DEMO
    MacBook Air: layers 23:32, expected fp=0xabcdef01
 
 2. Verifying Galois connection...
-   ✓ All 226 colors satisfy α(γ(c)) = c
+   ◆ All 226 colors satisfy α(γ(c)) = c
 
 3. Running clean inference...
-   Result: ✓ PASS
+   Result: ◆ PASS
 
 4. Testing fault injection...
-   Bit flip (10 bits): ✗ DETECTED
-   Bit flip (100 bits): ✗ DETECTED
+   Bit flip (10 bits): ◇ DETECTED
+   Bit flip (100 bits): ◇ DETECTED
 
 5. Testing bidirectional color tracking...
-   Forward/backward consistency: ✓ PASS
-   Galois closure at all steps: ✓ PASS
+   Forward/backward consistency: ◆ PASS
+   Galois closure at all steps: ◆ PASS
 
 6. Running fault detection statistics...
    Detection rate: 95.0%

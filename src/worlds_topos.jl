@@ -1,7 +1,7 @@
 # Auto-generated stub for worlds_topos.jl
 module WorldsTopos
 
-export FunctionalPatch, EntailmentNode, GaloisConnection, Continuation, ContinuationHierarchy, WorldsData, load_worlds, functionality_distribution, galois_floor, galois_ceiling, trace_entailment, find_continuation_path, demo_worlds_topos
+export FunctionalPatch, EntailmentNode, GaloisConnection, Continuation, ContinuationHierarchy, WorldsData, load_worlds, functionality_distribution, galois_floor, galois_ceiling, trace_entailment, find_continuation_path, world_worlds_topos
 
 # Stub definitions
 struct FunctionalPatch end
@@ -16,6 +16,6 @@ galois_floor(args...; kwargs...) = nothing
 galois_ceiling(args...; kwargs...) = nothing
 trace_entailment(args...; kwargs...) = nothing
 find_continuation_path(args...; kwargs...) = nothing
-demo_worlds_topos(args...; kwargs...) = nothing
+world_worlds_topos(args...; kwargs...) = nothing
 
 end # module WorldsTopos

@@ -302,5 +302,5 @@ end
 end
 
 println("\n" * "═" ^ 60)
-println("All Para(ZigZag) SPI tests passed! 🏳️‍🌈")
+println("All Para(ZigZag) SPI tests passed! ◈")
 println("═" ^ 60)

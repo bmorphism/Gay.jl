@@ -1,7 +1,7 @@
 # Auto-generated stub for profinite_duck.jl
 module ProfiniteDuck
 
-export ParaMenschDoctrine, TwoParaTwoMonadic, doctrine_closure, ReflectiveEquilibrium, steer_toward_equilibrium!, is_reflective, Consapevolezza, information_individuation, bandwidth_of_awareness, GaySchrodingerBridge, optimal_transport, bridge_color, kripke_transport, KripkeFrame, KripkeModel, modal_necessity, modal_possibility, kripke_duck, ProfiniteSystem, ProfiniteLimit, profinite_integers, profinite_color_cycle, ProfiniteErgodic, profinite_mixing_time, eternal_loom, GayDuck, duck_looms, duck_quacks, duck_reflects, demo_profinite_duck, demo_kripke_bridge, demo_reflective_equilibria
+export ParaMenschDoctrine, TwoParaTwoMonadic, doctrine_closure, ReflectiveEquilibrium, steer_toward_equilibrium!, is_reflective, Consapevolezza, information_individuation, bandwidth_of_awareness, GaySchrodingerBridge, optimal_transport, bridge_color, kripke_transport, KripkeFrame, KripkeModel, modal_necessity, modal_possibility, kripke_duck, ProfiniteSystem, ProfiniteLimit, profinite_integers, profinite_color_cycle, ProfiniteErgodic, profinite_mixing_time, eternal_loom, GayDuck, duck_looms, duck_quacks, duck_reflects, world_profinite_duck, world_kripke_bridge, world_reflective_equilibria
 
 # Stub definitions
 struct ParaMenschDoctrine end
@@ -33,8 +33,8 @@ struct GayDuck end
 duck_looms(args...; kwargs...) = nothing
 duck_quacks(args...; kwargs...) = nothing
 duck_reflects(args...; kwargs...) = nothing
-demo_profinite_duck(args...; kwargs...) = nothing
-demo_kripke_bridge(args...; kwargs...) = nothing
-demo_reflective_equilibria(args...; kwargs...) = nothing
+world_profinite_duck(args...; kwargs...) = nothing
+world_kripke_bridge(args...; kwargs...) = nothing
+world_reflective_equilibria(args...; kwargs...) = nothing
 
 end # module ProfiniteDuck

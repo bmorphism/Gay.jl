@@ -2,7 +2,7 @@
 #=
 🔥 Gay.jl Stress Test - Turn On Those Fans! 🔥
 
-This benchmark is designed to actually stress your system:
+This benchmark is designed to actually stress our system:
 - Billion-scale GPU color generation
 - Sustained multi-threaded CPU workloads  
 - Memory bandwidth saturation
@@ -356,7 +356,7 @@ function main()
     @printf("🔥 STRESS TEST COMPLETE: %.1f minutes total\n", total_time / 60)
     println("=" ^ 70)
     println()
-    println("If your fans didn't spin up, try:")
+    println("If our fans didn't spin up, try:")
     println("  1. Run with more threads: julia -t $(Sys.CPU_THREADS) examples/stress_test.jl")
     println("  2. Increase STRESS_DURATION at top of file")
     println("  3. Install Metal.jl for GPU acceleration")

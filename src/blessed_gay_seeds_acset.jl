@@ -1,7 +1,7 @@
 # Auto-generated stub for blessed_gay_seeds_acset.jl
 module BlessedGaySeedsACSet
 
-export BlessedGaySeedsGayACSet, SeedNode, SeedCluster, ClusterBoundary, SeedMorphism, MiningConfig, MiningStats, mine_seeds_simd, mine_seeds_parallel!, mine_batch!, auto_cluster!, compute_boundary!, glue_acsets!, sheaf_condition, create_morphism!, is_valid_morphism, lookup_blessed, pareto_frontier, insert_blessed!, seed_distance, verify_gluing, total_quality, average_convergence, demo_blessed_mining, demo_geo_acset_guarantees
+export BlessedGaySeedsGayACSet, SeedNode, SeedCluster, ClusterBoundary, SeedMorphism, MiningConfig, MiningStats, mine_seeds_simd, mine_seeds_parallel!, mine_batch!, auto_cluster!, compute_boundary!, glue_acsets!, sheaf_condition, create_morphism!, is_valid_morphism, lookup_blessed, pareto_frontier, insert_blessed!, seed_distance, verify_gluing, total_quality, average_convergence, world_blessed_mining, world_geo_acset_guarantees
 
 # Stub definitions
 struct BlessedGaySeedsGayACSet end
@@ -27,7 +27,7 @@ seed_distance(args...; kwargs...) = nothing
 verify_gluing(args...; kwargs...) = nothing
 total_quality(args...; kwargs...) = nothing
 average_convergence(args...; kwargs...) = nothing
-demo_blessed_mining(args...; kwargs...) = nothing
-demo_geo_acset_guarantees(args...; kwargs...) = nothing
+world_blessed_mining(args...; kwargs...) = nothing
+world_geo_acset_guarantees(args...; kwargs...) = nothing
 
 end # module BlessedGaySeedsACSet

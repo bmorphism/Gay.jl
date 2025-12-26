@@ -1,7 +1,7 @@
 # Auto-generated stub for derangeable_evolution.jl
 module DerangeableEvolution
 
-export Derangeable, PathInvariant, LoopyStrangeReafferent, ParaParaGay, SteganographicInterval, OpenGameEvolutionFunctor, BisimulationVerifier, RxEnvironment, verify_parallel!, find_evolution_seeds, adversarial_resistance, resists_forging, verify_cocone, verify_path_invariance, adversarial_distinguishability, compute_fitness, is_derangement, is_properly_colored, chromatic_entropy, count_near_fixed_points, demo_derangeable_evolution
+export Derangeable, PathInvariant, LoopyStrangeReafferent, ParaParaGay, SteganographicInterval, OpenGameEvolutionFunctor, BisimulationVerifier, RxEnvironment, verify_parallel!, find_evolution_seeds, adversarial_resistance, resists_forging, verify_cocone, verify_path_invariance, adversarial_distinguishability, compute_fitness, is_derangement, is_properly_colored, chromatic_entropy, count_near_fixed_points, world_derangeable_evolution
 
 # Stub definitions
 struct Derangeable end
@@ -24,6 +24,6 @@ is_derangement(args...; kwargs...) = nothing
 is_properly_colored(args...; kwargs...) = nothing
 chromatic_entropy(args...; kwargs...) = nothing
 count_near_fixed_points(args...; kwargs...) = nothing
-demo_derangeable_evolution(args...; kwargs...) = nothing
+world_derangeable_evolution(args...; kwargs...) = nothing
 
 end # module DerangeableEvolution

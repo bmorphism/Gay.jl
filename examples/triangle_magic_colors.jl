@@ -225,7 +225,7 @@ function demo_triangle_spi()
         print("\e[48;2;$(ri);$(gi);$(bi)m    \e[0m\n")
     end
     
-    println("\n  Each branch produces different colors ✓")
+    println("\n  Each branch produces different colors ◆")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -247,9 +247,9 @@ function main()
     demo_triangle_spi()
     
     println("\n  Properties:")
-    println("  ✓ (r,θ) → deterministic color")
-    println("  ✓ Magic configs (rational angles) highlighted")
-    println("  ✓ :triangle_magic branch independent of others")
+    println("  ◆ (r,θ) → deterministic color")
+    println("  ◆ Magic configs (rational angles) highlighted")
+    println("  ◆ :triangle_magic branch independent of others")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

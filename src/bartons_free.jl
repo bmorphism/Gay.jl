@@ -1,7 +1,7 @@
 # Auto-generated stub for bartons_free.jl
 module BartonsFree
 
-export FreeMonadMonad, CofreeComonadComonad, free_pure, free_bind, free_lift, cofree_extract, cofree_extend, pair_free_cofree, triple_rotation, MonadCandidate, SIXTY_NINE_MONADS, CommunistDuck, CapitalistDuck, PostDuck, DuckPerspective, narrate_neonatal_qualia, polkadot_roundrobin, full_rotation, BestResponseDynamics, NonlinearBRD, resilience_measure, eventual_sheafification, condense_to_anima, ZKColorProof, prove_reproducible_diffusion, metal_accelerated_proof, ParaMensch, TotalMenschOrder, PartialMenschOrder, agency_configuration, ThreeMatchGadget, EdgeDecision, tripartite_decision, demo_bartons_free, demo_69_monads, demo_three_ducks
+export FreeMonadMonad, CofreeComonadComonad, free_pure, free_bind, free_lift, cofree_extract, cofree_extend, pair_free_cofree, triple_rotation, MonadCandidate, SIXTY_NINE_MONADS, CommunistDuck, CapitalistDuck, PostDuck, DuckPerspective, narrate_neonatal_qualia, polkadot_roundrobin, full_rotation, BestResponseDynamics, NonlinearBRD, resilience_measure, eventual_sheafification, condense_to_anima, ZKColorProof, prove_reproducible_diffusion, metal_accelerated_proof, ParaMensch, TotalMenschOrder, PartialMenschOrder, agency_configuration, ThreeMatchGadget, EdgeDecision, tripartite_decision, world_bartons_free, world_69_monads, world_three_ducks
 
 # Stub definitions
 struct FreeMonadMonad end
@@ -37,8 +37,8 @@ agency_configuration(args...; kwargs...) = nothing
 struct ThreeMatchGadget end
 struct EdgeDecision end
 tripartite_decision(args...; kwargs...) = nothing
-demo_bartons_free(args...; kwargs...) = nothing
-demo_69_monads(args...; kwargs...) = nothing
-demo_three_ducks(args...; kwargs...) = nothing
+world_bartons_free(args...; kwargs...) = nothing
+world_69_monads(args...; kwargs...) = nothing
+world_three_ducks(args...; kwargs...) = nothing
 
 end # module BartonsFree

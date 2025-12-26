@@ -163,7 +163,7 @@ println("\n▸ Creating $(nthreads()) forked RNG streams from master seed...")
 master_rng = SplittableRandom(UInt64(MASTER_SEED))
 model_rngs = [split(master_rng) for _ in 1:N_MODELS]
 
-println("  ✓ Fork-safe: each model gets independent deterministic stream")
+println("  ◆ Fork-safe: each model gets independent deterministic stream")
 
 # Storage for results (thread-safe via pre-allocation)
 results = Vector{Any}(undef, N_MODELS)
@@ -181,7 +181,7 @@ start_time = time()
 end
 
 elapsed = time() - start_time
-println("\r  ✓ Generated $N_MODELS models in $(round(elapsed, digits=2))s")
+println("\r  ◆ Generated $N_MODELS models in $(round(elapsed, digits=2))s")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Rank by Aesthetic Score

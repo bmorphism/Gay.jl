@@ -18,7 +18,7 @@ Abstract type for objects that support SPI-compliant coloring.
 The SPI guarantee: `spi_color(x, s) == spi_color(x, s)` always, regardless of
 execution order, thread count, or hardware.
 
-Implement `spi_color(x::YourType, seed::UInt64)::RGB{Float32}` for your type.
+Implement `spi_color(x::OurType, seed::UInt64)::RGB{Float32}` for custom types.
 """
 abstract type SPIColorable end
 
@@ -59,7 +59,7 @@ end
     Colorable
 
 Trait for types that can receive deterministic colors.
-Implement `colorize(x::T, seed::UInt64)::RGB{Float32}` for your type.
+Implement `colorize(x::T, seed::UInt64)::RGB{Float32}` for custom types.
 """
 abstract type Colorable end
 

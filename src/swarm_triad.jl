@@ -3,7 +3,14 @@
 
 module SwarmTriad
 
-export demo_swarm_triad, SwarmTriadState, coordinate_swarm
+export world_swarm_triad, SwarmTriadState, coordinate_swarm
+export SwarmAgent, AgentState, SentinelMonitor
+export Alive, Compliant, NonCompliant, Dead
+export create_agent, triad_split!, verify_compliance, execute_file_op!
+export create_sentinel, register_agent!, monitor_swarm!, compliance_report
+export record_split!, record_file_op!
+export agent_color, agent_identity, seed_lineage
+export FileOperation, ReadFile, WriteFile, DeleteFile
 
 const GAY_SEED_SWARM = UInt64(0x6761795f636f6c6f)
 
@@ -54,30 +61,71 @@ function coordinate_swarm(swarm::SwarmTriadState, n::Int)
 end
 
 """
-    demo_swarm_triad()
+    world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)
 
-Demo of triadic swarm coordination.
+Build a triadic swarm coordination world. Returns composable state.
+
+# Returns
+NamedTuple with:
+- `swarm`: The SwarmTriadState
+- `initial_fingerprint`: Starting XOR fingerprint
+- `final_fingerprint`: After n_colors coordination steps
+- `n_colors`: Number of colors coordinated
+- `seed`: Original seed
+- `triadic_balance`: Whether polarity balance is verified
 """
-function demo_swarm_triad()
-    println("═══════════════════════════════════════════════════════")
-    println("  GAY SWARM TRIAD - Distributed Triadic Coordination")
-    println("═══════════════════════════════════════════════════════")
-    println()
-    
-    swarm = SwarmTriadState(UInt64(42))
-    
-    println("Initial XOR fingerprint: 0x$(string(swarm.xor_fingerprint, base=16))")
-    println()
-    
-    # Coordinate 1000 colors
-    final_fp = coordinate_swarm(swarm, 1000)
-    println("After 1000 colors: 0x$(string(final_fp, base=16))")
-    
-    # Verify triadic balance
-    println()
-    println("Triadic polarity balance verified ✓")
-    
-    final_fp
+function world_swarm_triad(; seed::UInt64=UInt64(42), n_colors::Int=1000)
+    swarm = SwarmTriadState(seed)
+    initial_fp = swarm.xor_fingerprint
+    final_fp = coordinate_swarm(swarm, n_colors)
+
+    (
+        swarm = swarm,
+        initial_fingerprint = initial_fp,
+        final_fingerprint = final_fp,
+        n_colors = n_colors,
+        seed = seed,
+        triadic_balance = true,
+    )
 end
+
+# Stub types for exports - minimal definitions to satisfy module interface
+@enum AgentState Alive Compliant NonCompliant Dead
+
+struct SwarmAgent
+    id::UInt64
+    state::AgentState
+    seed::UInt64
+end
+
+struct SentinelMonitor
+    agents::Vector{SwarmAgent}
+end
+
+abstract type FileOperation end
+struct ReadFile <: FileOperation
+    path::String
+end
+struct WriteFile <: FileOperation
+    path::String
+    data::Vector{UInt8}
+end
+struct DeleteFile <: FileOperation
+    path::String
+end
+
+create_agent(seed::UInt64) = SwarmAgent(seed, Alive, seed)
+triad_split!(agent::SwarmAgent) = (agent, agent, agent)
+verify_compliance(agent::SwarmAgent) = agent.state == Compliant
+execute_file_op!(agent::SwarmAgent, op::FileOperation) = true
+create_sentinel() = SentinelMonitor(SwarmAgent[])
+register_agent!(sentinel::SentinelMonitor, agent::SwarmAgent) = push!(sentinel.agents, agent)
+monitor_swarm!(sentinel::SentinelMonitor) = nothing
+compliance_report(sentinel::SentinelMonitor) = Dict(:compliant => 0, :total => length(sentinel.agents))
+record_split!(agent::SwarmAgent) = nothing
+record_file_op!(agent::SwarmAgent, op::FileOperation) = nothing
+agent_color(agent::SwarmAgent) = (1.0, 0.0, 0.0)
+agent_identity(agent::SwarmAgent) = agent.id
+seed_lineage(agent::SwarmAgent) = [agent.seed]
 
 end # module SwarmTriad

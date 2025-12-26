@@ -404,7 +404,7 @@ end
 # Demo: The Tragedy of the Quantum Wallet
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_quantum_hamlet(; seed::UInt64=GAY_SEED, n_wallets::Int=100)
+function world_quantum_hamlet(; seed::UInt64=GAY_SEED, n_wallets::Int=100)
     println("╔════════════════════════════════════════════════════════════════╗")
     println("║  THE QUANTUM HAMLET OF THE QUANTUM WALLET                      ║")
     println("║  'Even if the keys are yours, all the apes are gone'           ║")

@@ -470,12 +470,12 @@ function world_gayrng()
     left, right = gay_split(seed)
     spi_ok = verify_spi(seed, left, right)
     println("║ Split → left.fp ⊻ right.fp = 0x$(string(left.fp ⊻ right.fp, base=16, pad=16))")
-    println("║ SPI verified: $spi_ok ✓")
+    println("║ SPI verified: $spi_ok ◆")
     
     # Monoidal coherence
     seeds = [gay_seed(UInt64(i)) for i in 1:5]
     coh = coherence_check(seeds)
-    println("║ Monoidal coherence (5 seeds): $coh ✓")
+    println("║ Monoidal coherence (5 seeds): $coh ◆")
     
     # Statistical quality
     spec = spectral_quality(seed; n=512)
@@ -484,9 +484,9 @@ function world_gayrng()
     
     println("╠══════════════════════════════════════════════════════════════════════╣")
     println("║ Statistical Quality:")
-    println("║   Spectral ratio: $(round(spec, digits=3)) $(spec < 8 ? "✓ STRONG" : "⚠")")
-    println("║   χ² uniformity:  $(round(χ², digits=1)) $(χ² < 300 ? "✓" : "⚠") (critical: 293)")
-    println("║   Serial corr:    $(round(corr, digits=6)) $(abs(corr) < 0.02 ? "✓" : "⚠")")
+    println("║   Spectral ratio: $(round(spec, digits=3)) $(spec < 8 ? "◆ STRONG" : "⚠")")
+    println("║   χ² uniformity:  $(round(χ², digits=1)) $(χ² < 300 ? "◆" : "⚠") (critical: 293)")
+    println("║   Serial corr:    $(round(corr, digits=6)) $(abs(corr) < 0.02 ? "◆" : "⚠")")
     
     println("╚══════════════════════════════════════════════════════════════════════╝")
     
@@ -519,7 +519,7 @@ function world_incremental_hashing()
         inc_fp = zobrist_update(inc_fp, pos, hue; table=table)
     end
     println("║ Incremental hash:      0x$(string(inc_fp, base=16, pad=16))")
-    println("║ Match: $(full_fp == inc_fp) ✓")
+    println("║ Match: $(full_fp == inc_fp) ◆")
     
     # Update single position
     old_fp = inc_fp
@@ -568,7 +568,7 @@ function world_distributed_fingerprint()
     println("╠══════════════════════════════════════════════════════════════════════╣")
     println("║ Merge (A⊕B)⊕C: 0x$(string(merged_abc_1.local_fp, base=16, pad=16))")
     println("║ Merge A⊕(B⊕C): 0x$(string(merged_abc_2.local_fp, base=16, pad=16))")
-    println("║ Convergent: $(merged_abc_1.local_fp == merged_abc_2.local_fp) ✓")
+    println("║ Convergent: $(merged_abc_1.local_fp == merged_abc_2.local_fp) ◆")
     
     println("╚══════════════════════════════════════════════════════════════════════╝")
     
@@ -600,11 +600,11 @@ function world_monoidal_coherence()
     println("║ Seeds: a=1, b=2, c=3, d=4")
     println("║ Expected XOR: 0x$(string(expected, base=16, pad=16))")
     println("╠──────────────────────────────────────────────────────────────────────╣")
-    println("║ ((a⊗b)⊗c)⊗d: 0x$(string(left_assoc.fp, base=16, pad=16)) $(left_assoc.fp == expected ? "✓" : "✗")")
-    println("║ a⊗(b⊗(c⊗d)): 0x$(string(right_assoc.fp, base=16, pad=16)) $(right_assoc.fp == expected ? "✓" : "✗")")
-    println("║ (a⊗b)⊗(c⊗d): 0x$(string(mixed.fp, base=16, pad=16)) $(mixed.fp == expected ? "✓" : "✗")")
+    println("║ ((a⊗b)⊗c)⊗d: 0x$(string(left_assoc.fp, base=16, pad=16)) $(left_assoc.fp == expected ? "◆" : "◇")")
+    println("║ a⊗(b⊗(c⊗d)): 0x$(string(right_assoc.fp, base=16, pad=16)) $(right_assoc.fp == expected ? "◆" : "◇")")
+    println("║ (a⊗b)⊗(c⊗d): 0x$(string(mixed.fp, base=16, pad=16)) $(mixed.fp == expected ? "◆" : "◇")")
     println("╠──────────────────────────────────────────────────────────────────────╣")
-    println("║ Coherence: All bracketings equal ✓")
+    println("║ Coherence: All bracketings equal ◆")
     println("║ (Seed, ⊗, 1069) forms symmetric monoidal category")
     
     println("╚══════════════════════════════════════════════════════════════════════╝")
@@ -642,7 +642,7 @@ function world_statistical_quality()
         spec_ok = spec < 8.0
         chi_ok = χ² < 300
         corr_ok = abs(corr) < 0.02
-        status = (spec_ok && chi_ok && corr_ok) ? "✓ PASS" : "⚠ WARN"
+        status = (spec_ok && chi_ok && corr_ok) ? "◆ PASS" : "⚠ WARN"
         
         @printf("║ %-12s │ %8.3f │ %8.1f │ %8.5f │ %s\n", 
                 name, spec, χ², corr, status)

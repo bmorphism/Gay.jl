@@ -1,7 +1,7 @@
 # Auto-generated stub for nashprop_zero_message.jl
 module NashPropZeroMessage
 
-export TOTAL_SUBAGENTS, FORWARD_COUNT, BACKWARD_COUNT, COMMITTEE_SIZE, SubagentRole, Forward, Backward, Committee, ZeroMessageSubagent, create_subagent, subagent_range, RangeAssignment, compute_range, range_contains, range_overlap, ZeroMessageMiner, create_miner, mine_epoch!, verify_work, Swarm51, create_swarm_51, swarm_mine!, swarm_verify, NashPropEquilibrium, compute_equilibrium, equilibrium_color, ColorBandwidth, measure_bandwidth, BandwidthResource, create_bandwidth_resource, BandwidthConsumer, create_consumer, consume_bandwidth!, verify_bandwidth, BandwidthStake, stake_bandwidth!, bandwidth_weighted_range, bridge_to_gaymove, bridge_from_gaymove, demo_zero_message_mining
+export TOTAL_SUBAGENTS, FORWARD_COUNT, BACKWARD_COUNT, COMMITTEE_SIZE, SubagentRole, Forward, Backward, Committee, ZeroMessageSubagent, create_subagent, subagent_range, RangeAssignment, compute_range, range_contains, range_overlap, ZeroMessageMiner, create_miner, mine_epoch!, verify_work, Swarm51, create_swarm_51, swarm_mine!, swarm_verify, NashPropEquilibrium, compute_equilibrium, equilibrium_color, ColorBandwidth, measure_bandwidth, BandwidthResource, create_bandwidth_resource, BandwidthConsumer, create_consumer, consume_bandwidth!, verify_bandwidth, BandwidthStake, stake_bandwidth!, bandwidth_weighted_range, bridge_to_gaymove, bridge_from_gaymove, world_zero_message_mining
 
 # Stub definitions
 struct TOTAL_SUBAGENTS end
@@ -43,6 +43,6 @@ stake_bandwidth!(args...; kwargs...) = nothing
 bandwidth_weighted_range(args...; kwargs...) = nothing
 bridge_to_gaymove(args...; kwargs...) = nothing
 bridge_from_gaymove(args...; kwargs...) = nothing
-demo_zero_message_mining(args...; kwargs...) = nothing
+world_zero_message_mining(args...; kwargs...) = nothing
 
 end # module NashPropZeroMessage

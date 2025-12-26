@@ -245,7 +245,7 @@ function demo_polylog_spi()
         print("\e[48;2;$(ri);$(gi);$(bi)m    \e[0m\n")
     end
     
-    println("\n  ✓ Each branch independent")
+    println("\n  ◆ Each branch independent")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -270,10 +270,10 @@ function main()
     demo_polylog_spi()
     
     println("\n  Properties:")
-    println("  ✓ (n, b) → deterministic color")
-    println("  ✓ Natural BBP structure: Li_n(1/b) = Σ 1/(b^k · k^n)")
-    println("  ✓ Ternary family enables base-3 digit extraction")
-    println("  ✓ :polylog branch independent of others")
+    println("  ◆ (n, b) → deterministic color")
+    println("  ◆ Natural BBP structure: Li_n(1/b) = Σ 1/(b^k · k^n)")
+    println("  ◆ Ternary family enables base-3 digit extraction")
+    println("  ◆ :polylog branch independent of others")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

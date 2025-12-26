@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_world_parallelism.jl
 module GayWorldParallelism
 
-export GayWorld, WorldAnnealer, AnnealingSchedule, integrated_information, partition_information, ChromaticPartition, minimum_information_partition, implicit_converge!, convergence_proof, ConvergenceWitness, create_annealer, anneal_step!, anneal_to_convergence!, temperature_schedule, boltzmann_accept, world_fingerprint, world_energy, world_entropy, spawn_worlds, merge_worlds, colimit_worlds, maximize_integration!, IntegrationMaximum, concurrent_anneal!, ConcurrentAnnealResult, AnanasApex, project_to_apex, apex_fingerprint, demo_gay_world_parallelism
+export GayWorld, WorldAnnealer, AnnealingSchedule, integrated_information, partition_information, ChromaticPartition, minimum_information_partition, implicit_converge!, convergence_proof, ConvergenceWitness, create_annealer, anneal_step!, anneal_to_convergence!, temperature_schedule, boltzmann_accept, world_fingerprint, world_energy, world_entropy, spawn_worlds, merge_worlds, colimit_worlds, maximize_integration!, IntegrationMaximum, concurrent_anneal!, ConcurrentAnnealResult, AnanasApex, project_to_apex, apex_fingerprint, world_gay_world_parallelism
 
 # Stub definitions
 struct GayWorld end
@@ -32,6 +32,6 @@ struct ConcurrentAnnealResult end
 struct AnanasApex end
 project_to_apex(args...; kwargs...) = nothing
 apex_fingerprint(args...; kwargs...) = nothing
-demo_gay_world_parallelism(args...; kwargs...) = nothing
+world_gay_world_parallelism(args...; kwargs...) = nothing
 
 end # module GayWorldParallelism

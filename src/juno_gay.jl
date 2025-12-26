@@ -1,7 +1,7 @@
 # Auto-generated stub for juno_gay.jl
 module JunoGay
 
-export GayProgress, step!, progress_fraction, BidirectionalDebugger, enter!, step_back!, step_forward!, WeaveVariant, CoalgebraicWeave, weave_coalgebra, InlineResult, inline_eval, compare_juno_gay, demo_juno_gay
+export GayProgress, step!, progress_fraction, BidirectionalDebugger, enter!, step_back!, step_forward!, WeaveVariant, CoalgebraicWeave, weave_coalgebra, InlineResult, inline_eval, compare_juno_gay, world_juno_gay
 
 # Stub definitions
 struct GayProgress end
@@ -17,6 +17,6 @@ weave_coalgebra(args...; kwargs...) = nothing
 struct InlineResult end
 inline_eval(args...; kwargs...) = nothing
 compare_juno_gay(args...; kwargs...) = nothing
-demo_juno_gay(args...; kwargs...) = nothing
+world_juno_gay(args...; kwargs...) = nothing
 
 end # module JunoGay

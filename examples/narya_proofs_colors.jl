@@ -237,7 +237,7 @@ function demo_narya_spi()
         print("\e[48;2;$(ri);$(gi);$(bi)m    \e[0m\n")
     end
     
-    println("\n  ✓ Each branch independent")
+    println("\n  ◆ Each branch independent")
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -262,10 +262,10 @@ function main()
     demo_narya_spi()
     
     println("\n  Properties:")
-    println("  ✓ Each proof element → deterministic color")
-    println("  ✓ Proof structure visualized by color sequence")
-    println("  ✓ Same element type → consistent color across proofs")
-    println("  ✓ :narya_proofs branch independent of others")
+    println("  ◆ Each proof element → deterministic color")
+    println("  ◆ Proof structure visualized by color sequence")
+    println("  ◆ Same element type → consistent color across proofs")
+    println("  ◆ :narya_proofs branch independent of others")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

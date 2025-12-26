@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_cherrypick.jl
 module GayCherrypick
 
-export GayMultiverse, GayUniverse, ForcingExtension, ChromaticCommit, cherrypick!, cherry_range, can_cherrypick, cherrypick_conflict, SaturationLevel, saturate!, is_saturated, realize_type, witness_type, CondensedGay, condensify, decondensify, superfluid_flow!, viscosity, laminar_transfer, turbulent_merge, vortex_fingerprint, universal_cherrypick!, force!, create_universe!, add_universe!, demo_gay_cherrypick
+export GayMultiverse, GayUniverse, ForcingExtension, ChromaticCommit, cherrypick!, cherry_range, can_cherrypick, cherrypick_conflict, SaturationLevel, saturate!, is_saturated, realize_type, witness_type, CondensedGay, condensify, decondensify, superfluid_flow!, viscosity, laminar_transfer, turbulent_merge, vortex_fingerprint, universal_cherrypick!, force!, create_universe!, add_universe!, world_gay_cherrypick
 
 # Stub definitions
 struct GayMultiverse end
@@ -29,6 +29,6 @@ universal_cherrypick!(args...; kwargs...) = nothing
 force!(args...; kwargs...) = nothing
 create_universe!(args...; kwargs...) = nothing
 add_universe!(args...; kwargs...) = nothing
-demo_gay_cherrypick(args...; kwargs...) = nothing
+world_gay_cherrypick(args...; kwargs...) = nothing
 
 end # module GayCherrypick

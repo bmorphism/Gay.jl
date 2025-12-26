@@ -1,7 +1,7 @@
 # Auto-generated stub for homotopy_hypothesis.jl
 module HomotopyHypothesis
 
-export InfinityGroupoid, NCell, CellColony, Thing, Process, MetaProcess, make_thing, make_process, make_metaprocess, make_ncell, fundamental_groupoid, path_color, homotopy_color, BadStudent, GoodTeacher, learn_from_confusion!, confusion_gradient, ChebyshevCoherence, chebyshev_level, coherence_error, approximate_homotopy, chebyshev_T, polynomial_metaprocess, HomotopyWalk, walk_groupoid!, cell_colony_color, associator_color, pentagonator_color, demo_homotopy_hypothesis, sky_as_groupoid, component_cells, transformation_paths
+export InfinityGroupoid, NCell, CellColony, Thing, Process, MetaProcess, make_thing, make_process, make_metaprocess, make_ncell, fundamental_groupoid, path_color, homotopy_color, BadStudent, GoodTeacher, learn_from_confusion!, confusion_gradient, ChebyshevCoherence, chebyshev_level, coherence_error, approximate_homotopy, chebyshev_T, polynomial_metaprocess, HomotopyWalk, walk_groupoid!, cell_colony_color, associator_color, pentagonator_color, world_homotopy_hypothesis, sky_as_groupoid, component_cells, transformation_paths
 
 # Stub definitions
 struct InfinityGroupoid end
@@ -32,7 +32,7 @@ walk_groupoid!(args...; kwargs...) = nothing
 cell_colony_color(args...; kwargs...) = nothing
 associator_color(args...; kwargs...) = nothing
 pentagonator_color(args...; kwargs...) = nothing
-demo_homotopy_hypothesis(args...; kwargs...) = nothing
+world_homotopy_hypothesis(args...; kwargs...) = nothing
 sky_as_groupoid(args...; kwargs...) = nothing
 component_cells(args...; kwargs...) = nothing
 transformation_paths(args...; kwargs...) = nothing

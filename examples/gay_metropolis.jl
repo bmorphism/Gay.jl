@@ -276,14 +276,14 @@ end
 #
 # - **Deterministic**: Same seed = same colors = same science
 # - **Parallel-safe**: SPI ensures reproducibility across workers
-# - **Visual**: See your simulation's fingerprint
+# - **Visual**: See our simulation's fingerprint
 # - **Checkpointable**: HDF5-ready with color metadata
 #
 # Every sweep has a color. Every measurement has a color.
 # Every checkpoint has a color. The entire simulation is a rainbow of reproducible science.
 #
-# 🏳️‍🌈
+# ◈
 
-println("\n🏳️‍🌈 Gay Metropolis Complete!")
+println("\n◈ Gay Metropolis Complete!")
 println("  Total sweeps colored: $(ctx.sweep_count)")
 println("  Seed: $(ctx.seed)")

@@ -186,7 +186,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
     push!(journey_log, (world="B (parallel)", fingerprint=fp_b, match=match_b))
     
     if verbose
-        status = match_b ? "✓ SAME" : "✗ DIFFERENT"
+        status = match_b ? "◆ SAME" : "◇ DIFFERENT"
         println("  Derived identity: 0x$(string(fp_b, base=16, pad=8)) [$status]")
         println()
     end
@@ -204,7 +204,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
     push!(journey_log, (world="A (return)", fingerprint=fp_a2, match=match_a2))
     
     if verbose
-        status = match_a2 ? "✓ SAME" : "✗ DIFFERENT"
+        status = match_a2 ? "◆ SAME" : "◇ DIFFERENT"
         println("  Home identity: 0x$(string(fp_a2, base=16, pad=8)) [$status]")
         println()
     end
@@ -224,7 +224,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
             push!(journey_log, (world="C (Metal)", fingerprint=fp_c, match=match_c))
             
             if verbose
-                status = match_c ? "✓ SAME" : "✗ DIFFERENT"
+                status = match_c ? "◆ SAME" : "◇ DIFFERENT"
                 println("  Silicon identity: 0x$(string(fp_c, base=16, pad=8)) [$status]")
                 println()
             end
@@ -239,7 +239,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
                 println("─" ^ 70)
                 println("  STEP 5: Return to World A (post-GPU)")
                 println("─" ^ 70)
-                status = match_a3 ? "✓ SAME" : "✗ DIFFERENT"
+                status = match_a3 ? "◆ SAME" : "◇ DIFFERENT"
                 println("  Home identity: 0x$(string(fp_a3, base=16, pad=8)) [$status]")
                 println()
             end
@@ -290,7 +290,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
         all_same &= path_same
         
         if verbose
-            status = path_same ? "✓" : "✗"
+            status = path_same ? "◆" : "◇"
             println("    $(join(order, " → ")): $status")
         end
     end
@@ -303,7 +303,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
     if verbose
         println("═" ^ 70)
         if all_same
-            println("  VERDICT: Identity PRESERVED across all worlds ✓")
+            println("  VERDICT: Identity PRESERVED across all worlds ◆")
             println()
             println("  The traveler visited $(length(journey_log)) worlds.")
             println("  Every world computed the same identity: 0x$(string(original_identity, base=16, pad=8))")
@@ -312,7 +312,7 @@ function teleportation_journey(; seed::Integer=42069, n::Int=100_000, verbose::B
             println("  Same seed → Same colors → Same identity")
             println("  Regardless of WHERE or HOW you compute.")
         else
-            println("  VERDICT: Identity CORRUPTED ✗")
+            println("  VERDICT: Identity CORRUPTED ◇")
             println()
             println("  The traveler lost themselves between worlds.")
             println("  This should never happen with correct SPI implementation.")
@@ -352,7 +352,7 @@ function multi_traveler_test(; n_travelers::Int=10, n_colors::Int=10_000, verbos
         all_pass &= pass
         
         if verbose
-            status = pass ? "✓" : "✗"
+            status = pass ? "◆" : "◇"
             fp = visit_world_a(seed, n_colors)
             println("  Traveler $i (0x$(string(seed, base=16, pad=16)[1:8])...): ",
                     "0x$(string(fp, base=16, pad=8)) $status")
@@ -362,9 +362,9 @@ function multi_traveler_test(; n_travelers::Int=10, n_colors::Int=10_000, verbos
     if verbose
         println()
         if all_pass
-            println("  ALL $n_travelers TRAVELERS PRESERVED ✓")
+            println("  ALL $n_travelers TRAVELERS PRESERVED ◆")
         else
-            println("  SOME TRAVELERS LOST ✗")
+            println("  SOME TRAVELERS LOST ◇")
         end
         println("═" ^ 70)
     end
@@ -446,10 +446,10 @@ function step_by_step_derivation(; seed::Integer=42, n::Int=10)
         
         print("  $(lpad(i, 5)) │ ")
         print("$block_a $hex_a ")
-        print(match_ab ? "✓" : "✗")
+        print(match_ab ? "◆" : "◇")
         print(" │ ")
         print("$block_b $hex_b ")
-        print(match_ab ? "✓" : "✗")
+        print(match_ab ? "◆" : "◇")
         
         if colors_c !== nothing
             rc, gc, bc = colors_c[i, 1], colors_c[i, 2], colors_c[i, 3]
@@ -460,7 +460,7 @@ function step_by_step_derivation(; seed::Integer=42, n::Int=10)
             match_ac = (ra, ga, ba) == (rc, gc, bc)
             print(" │ ")
             print("$block_c $hex_c ")
-            print(match_ac ? "✓" : "✗")
+            print(match_ac ? "◆" : "◇")
         end
         
         println()

@@ -37,7 +37,7 @@ export Verse, MultiverseFrame, GeometricMorphism
 export create_verse, partition, pushdown!, pullup!, resolve!
 export verse_fingerprint, verse_color, verify_multiverse_laws
 export HolographicColorGame, game_state, make_move!, check_win
-export world_multiverse, demo_holographic_game
+export world_multiverse, world_holographic_game
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Verse: A Parallel Universe (Dave White's Multiverse Finance)
@@ -681,7 +681,7 @@ function world_multiverse(; seed::UInt64=GAY_SEED)
     println("-" ^ 40)
     pass, results = verify_multiverse_laws(; seed=seed)
     for (law, ok) in results
-        status = ok ? "✓" : "✗"
+        status = ok ? "◆" : "◇"
         println("   $status $law")
     end
     println()
@@ -693,7 +693,7 @@ function world_multiverse(; seed::UInt64=GAY_SEED)
     mf
 end
 
-function demo_holographic_game(; n::Int=4, m::Int=4, seed::UInt64=GAY_SEED)
+function world_holographic_game(; n::Int=4, m::Int=4, seed::UInt64=GAY_SEED)
     println("═" ^ 70)
     println("  2+1D HOLOGRAPHIC COLOR MATCHING GAME")
     println("  (VisionPro Edition)")
@@ -767,7 +767,7 @@ function demo_holographic_game(; n::Int=4, m::Int=4, seed::UInt64=GAY_SEED)
     println("   Total moves: $(game.moves)")
     println("   Score: $(round(game.score, digits=1))")
     println("   Won: $(game.won)")
-    println("   Holographic principle: $(holographic_principle(game) ? "✓" : "✗")")
+    println("   Holographic principle: $(holographic_principle(game) ? "◆" : "◇")")
     println()
     
     println("═" ^ 70)

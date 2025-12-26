@@ -544,34 +544,34 @@ function run_marsaglia_suite(seed::Integer=GAY_SEED)
     
     print("1. Birthday Spacings Test... ")
     results[:birthday] = birthday_spacing_test(512, seed)
-    println(results[:birthday].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:birthday].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Collisions: %d (expected λ=%.2f), p=%.4f\n", 
             results[:birthday].collisions, results[:birthday].expected_λ, 
             results[:birthday].p_value)
     
     print("2. Runs Test... ")
     results[:runs] = runs_test(1000, seed)
-    println(results[:runs].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:runs].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Runs: %d (expected %.1f ± %.1f), p=%.4f\n",
             results[:runs].n_runs, results[:runs].expected, 
             results[:runs].std_dev, results[:runs].p_value)
     
     print("3. Permutation Test... ")
     results[:permutation] = permutation_test(1200, seed)
-    println(results[:permutation].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:permutation].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   χ²=%.2f (df=%d), p=%.4f, patterns=%d/120\n",
             results[:permutation].chi_sq, results[:permutation].df,
             results[:permutation].p_value, results[:permutation].observed_patterns)
     
     print("4. Spectral Test... ")
     results[:spectral] = spectral_test(1024, seed)
-    println(results[:spectral].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:spectral].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Peak/Mean ratio: %.2f (threshold: 12.0)\n",
             results[:spectral].ratio)
     
     all_passed = all(r.passed for r in values(results))
     println("───────────────────────────────────────────────────────────────")
-    println(all_passed ? "  ALL MARSAGLIA TESTS PASSED ✓" : "  SOME TESTS FAILED ✗")
+    println(all_passed ? "  ALL MARSAGLIA TESTS PASSED ◆" : "  SOME TESTS FAILED ◇")
     
     results
 end
@@ -590,26 +590,26 @@ function run_bumpus_suite(seed::Integer=GAY_SEED)
     
     print("1. Adhesion Width Test... ")
     results[:adhesion] = adhesion_width_test(UInt64(seed), 4)
-    println(results[:adhesion].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:adhesion].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Max width: %d (bound: %d)\n",
             results[:adhesion].max_width, results[:adhesion].bound)
     
     print("2. Sheaf Gluing Test... ")
     results[:sheaf] = sheaf_gluing_test(UInt64(seed), 4)
-    println(results[:sheaf].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:sheaf].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Gluing error: %d bits, sections: %d\n",
             results[:sheaf].gluing_error, results[:sheaf].n_sections)
     
     print("3. Tree Decomposition Test... ")
     results[:treewidth] = tree_decomposition_test(UInt64(seed), 100)
-    println(results[:treewidth].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:treewidth].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Width: %d (bound: %d), bags: %d\n",
             results[:treewidth].width, results[:treewidth].bound,
             results[:treewidth].n_bags)
     
     all_passed = all(r.passed for r in values(results))
     println("───────────────────────────────────────────────────────────────")
-    println(all_passed ? "  ALL BUMPUS TESTS PASSED ✓" : "  SOME TESTS FAILED ✗")
+    println(all_passed ? "  ALL BUMPUS TESTS PASSED ◆" : "  SOME TESTS FAILED ◇")
     
     results
 end
@@ -637,7 +637,7 @@ function full_spi_audit(seed::Integer=GAY_SEED)
     println()
     println("╔═══════════════════════════════════════════════════════════════╗")
     if m_pass && b_pass
-        println("║  VERDICT: Gay.jl PASSES FULL SPI AUDIT ✓                     ║")
+        println("║  VERDICT: Gay.jl PASSES FULL SPI AUDIT ◆                     ║")
         println("║                                                               ║")
         println("║  • Statistical quality: Marsaglia-approved                    ║")
         println("║  • Compositional structure: Bumpus-certified                  ║")
@@ -772,19 +772,19 @@ function run_genesis_suite(seed::Integer=GAY_SEED)
 
     print("1. Split Correlation Test... ")
     results[:correlation] = split_correlation_test(UInt64(seed), 10000)
-    println(results[:correlation].passed ? "✓ PASS" : "✗ FAIL")
+    println(results[:correlation].passed ? "◆ PASS" : "◇ FAIL")
     @printf("   Correlation: %.6f (threshold: ±0.05)\n", results[:correlation].correlation)
 
     print("2. Genesis Handoff Test... ")
     results[:genesis] = genesis_handoff_test(UInt64(seed), 5)
-    println(results[:genesis].passed ? "✓ PASS" : "✗ FAIL")
-    println("   Deterministic: $(results[:genesis].deterministic ? "✓" : "✗")")
-    println("   Siblings Independent: $(results[:genesis].siblings_independent ? "✓" : "✗")")
-    println("   Collision-Free: $(results[:genesis].collision_free ? "✓" : "✗") ($(results[:genesis].unique_fps)/$(results[:genesis].n_nodes))")
+    println(results[:genesis].passed ? "◆ PASS" : "◇ FAIL")
+    println("   Deterministic: $(results[:genesis].deterministic ? "◆" : "◇")")
+    println("   Siblings Independent: $(results[:genesis].siblings_independent ? "◆" : "◇")")
+    println("   Collision-Free: $(results[:genesis].collision_free ? "◆" : "◇") ($(results[:genesis].unique_fps)/$(results[:genesis].n_nodes))")
 
     all_passed = all(r.passed for r in values(results))
     println("───────────────────────────────────────────────────────────────")
-    println(all_passed ? "  ALL GENESIS TESTS PASSED ✓" : "  SOME TESTS FAILED ✗")
+    println(all_passed ? "  ALL GENESIS TESTS PASSED ◆" : "  SOME TESTS FAILED ◇")
 
     results
 end

@@ -430,10 +430,10 @@ function test_command(args...)
         id = rand(1:100000)
         if abductive_roundtrip_test(id, nav.seed)
             passed += 1
-            print("  ✓")
+            print("  ◆")
         else
             failed += 1
-            print("  ✗")
+            print("  ◇")
         end
         i % 20 == 0 && println()
     end
@@ -445,7 +445,7 @@ function test_command(args...)
     if failed > 0
         println("  ⚠ $(failed) tests failed!")
     else
-        println("  ✓ All tests passed!")
+        println("  ◆ All tests passed!")
     end
     
     return (passed=passed, failed=failed, total=n)
@@ -502,7 +502,7 @@ function init_gay_repl(; start_key::Char = ' ', sticky::Bool = true)
 
     println()
     println(rainbow_text_prompt("  ╔═══════════════════════════════════════╗"))
-    println(rainbow_text_prompt("  ║     Gay.jl REPL Initialized 🏳️‍🌈      ║"))
+    println(rainbow_text_prompt("  ║     Gay.jl REPL Initialized ◈      ║"))
     println(rainbow_text_prompt("  ╚═══════════════════════════════════════╝"))
     println("  Press SPC (space bar) to enter Gay mode. Type !help for commands.")
     println()

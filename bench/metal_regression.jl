@@ -116,11 +116,11 @@ function check_regression(result::BenchmarkResult)
     status, message = if ratio < 1.0 / SEVERE_REGRESSION
         (:severe, "🚨 SEVERE REGRESSION: $(round((1/ratio - 1) * 100, digits=1))% slower!")
     elseif ratio < 1.0 / REGRESSION_THRESHOLD
-        (:regression, "⚠️  REGRESSION: $(round((1/ratio - 1) * 100, digits=1))% slower")
+        (:regression, "△  REGRESSION: $(round((1/ratio - 1) * 100, digits=1))% slower")
     elseif ratio > REGRESSION_THRESHOLD
-        (:improvement, "✅ IMPROVEMENT: $(round((ratio - 1) * 100, digits=1))% faster")
+        (:improvement, "▣ IMPROVEMENT: $(round((ratio - 1) * 100, digits=1))% faster")
     else
-        (:ok, "✓ OK: within expected range")
+        (:ok, "◆ OK: within expected range")
     end
     
     return RegressionReport(result.name, result.mean_rate, baseline, ratio, status, message)
@@ -177,7 +177,7 @@ function run_metal_benchmarks(; simulate_regression::Bool=false, regression_fact
     
     # Check Metal availability
     if !Gay.HAS_METAL
-        println("⚠️  Metal.jl not available - running CPU-only benchmarks")
+        println("△  Metal.jl not available - running CPU-only benchmarks")
         backends = [(KernelAbstractions.CPU(), :cpu)]
     else
         @eval using Metal
@@ -185,7 +185,7 @@ function run_metal_benchmarks(; simulate_regression::Bool=false, regression_fact
             (KernelAbstractions.CPU(), :cpu),
             (Metal.MetalBackend(), :gpu)
         ]
-        println("✓ Metal.jl available - testing CPU and GPU")
+        println("◆ Metal.jl available - testing CPU and GPU")
     end
     println()
     
@@ -222,11 +222,11 @@ function run_metal_benchmarks(; simulate_regression::Bool=false, regression_fact
                 status_icon = if report.status == :severe
                     "🚨"
                 elseif report.status == :regression
-                    "⚠️"
+                    "△"
                 elseif report.status == :improvement
                     "🚀"
                 else
-                    "✓"
+                    "◆"
                 end
                 
                 println("$rate_str $status_icon $(report.message)")
@@ -271,7 +271,7 @@ function run_metal_benchmarks(; simulate_regression::Bool=false, regression_fact
     
     if isempty(regressions) && isempty(improvements)
         println()
-        println("✅ All benchmarks within expected range")
+        println("▣ All benchmarks within expected range")
     end
     
     # Exit code for CI

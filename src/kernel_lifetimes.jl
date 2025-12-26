@@ -248,7 +248,7 @@ Compute color from global index and iteration counter.
 This is the main function for tracking colors across kernel lifetime.
 
 # Eventual Last Next Property
-Given (seed, global_idx, N), you know the color at iteration N
+Given (seed, global_idx, N), we know the color at iteration N
 before running the kernel.
 """
 @inline function iter_index_color(seed::UInt64, global_idx::Integer, iteration::Integer)
@@ -315,7 +315,7 @@ function verify_kernel_spi(n_workitems::Int, iterations::Int;
     println("   Sequential fingerprint: 0x$(string(seq_fp, base=16, pad=8))")
     
     match1 = seq_fp == predicted_fp
-    println("   Matches prediction: ", match1 ? "✓ PASS" : "✗ FAIL")
+    println("   Matches prediction: ", match1 ? "◆ PASS" : "◇ FAIL")
     println()
     
     # 3. Simulate kernel execution (random order)
@@ -331,7 +331,7 @@ function verify_kernel_spi(n_workitems::Int, iterations::Int;
     println("   Random-order fingerprint: 0x$(string(rand_fp, base=16, pad=8))")
     
     match2 = rand_fp == predicted_fp
-    println("   Matches prediction: ", match2 ? "✓ PASS" : "✗ FAIL")
+    println("   Matches prediction: ", match2 ? "◆ PASS" : "◇ FAIL")
     println()
     
     # 4. Verify eventual_fingerprint matches
@@ -340,12 +340,12 @@ function verify_kernel_spi(n_workitems::Int, iterations::Int;
     println("   Direct calculation: 0x$(string(direct_fp, base=16, pad=8))")
     
     match3 = direct_fp == predicted_fp
-    println("   Matches prediction: ", match3 ? "✓ PASS" : "✗ FAIL")
+    println("   Matches prediction: ", match3 ? "◆ PASS" : "◇ FAIL")
     println()
     
     all_pass = match1 && match2 && match3
     println("═" ^ 60)
-    println(all_pass ? "ALL KERNEL SPI INVARIANTS VERIFIED ✓" : "VERIFICATION FAILED ✗")
+    println(all_pass ? "ALL KERNEL SPI INVARIANTS VERIFIED ◆" : "VERIFICATION FAILED ◇")
     println("═" ^ 60)
     
     return all_pass

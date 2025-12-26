@@ -1,7 +1,7 @@
 # Auto-generated stub for ablative_consapevolezza.jl
 module AblativeConsapevolezza
 
-export AblativeCase, FuturePerfect, AblativeColor, TemporalRotation, rotate_time, conserve_color, LinguisticRelativity, chromatic_vocabulary, whorfian_perception, ParaConsapevolezzaAblativa, integrate_ablative!, awareness_source, CPTColor, time_reverse_color, LATIN, ITALIAN, ENGLISH, RUSSIAN, demo_ablative_consapevolezza
+export AblativeCase, FuturePerfect, AblativeColor, TemporalRotation, rotate_time, conserve_color, LinguisticRelativity, chromatic_vocabulary, whorfian_perception, ParaConsapevolezzaAblativa, integrate_ablative!, awareness_source, CPTColor, time_reverse_color, LATIN, ITALIAN, ENGLISH, RUSSIAN, world_ablative_consapevolezza
 
 # Stub definitions
 struct AblativeCase end
@@ -22,6 +22,6 @@ struct LATIN end
 struct ITALIAN end
 struct ENGLISH end
 struct RUSSIAN end
-demo_ablative_consapevolezza(args...; kwargs...) = nothing
+world_ablative_consapevolezza(args...; kwargs...) = nothing
 
 end # module AblativeConsapevolezza

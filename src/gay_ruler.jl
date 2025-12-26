@@ -1,7 +1,7 @@
 # Auto-generated stub for gay_ruler.jl
 module GayRuler
 
-export GayRule, RuleSet, ColorBudget, add_rule!, apply_rule!, copy_on_interact, parallel_rewrite!, tritwise_match, color_budget_path, CopyOnInteract, fork_ruleset, merge_rulesets!, lineage_fingerprint, AmpCrushRule, grep_to_rule, agent_ruleset, sync_agents!, export_to_nbb, import_from_nbb, nbb_parallel_apply!, optimize_path!, shortest_color_path, demo_gay_ruler
+export GayRule, RuleSet, ColorBudget, add_rule!, apply_rule!, copy_on_interact, parallel_rewrite!, tritwise_match, color_budget_path, CopyOnInteract, fork_ruleset, merge_rulesets!, lineage_fingerprint, AmpCrushRule, grep_to_rule, agent_ruleset, sync_agents!, export_to_nbb, import_from_nbb, nbb_parallel_apply!, optimize_path!, shortest_color_path, world_gay_ruler
 
 # Stub definitions
 struct GayRule end
@@ -26,6 +26,6 @@ import_from_nbb(args...; kwargs...) = nothing
 nbb_parallel_apply!(args...; kwargs...) = nothing
 optimize_path!(args...; kwargs...) = nothing
 shortest_color_path(args...; kwargs...) = nothing
-demo_gay_ruler(args...; kwargs...) = nothing
+world_gay_ruler(args...; kwargs...) = nothing
 
 end # module GayRuler

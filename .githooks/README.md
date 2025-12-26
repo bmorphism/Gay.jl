@@ -1,4 +1,4 @@
-# Gay.jl Git Hooks 🏳️‍🌈
+# Gay.jl Git Hooks ◈
 
 Git hooks for Strong Parallelism Invariance (SPI) verification.
 
@@ -23,19 +23,19 @@ ln -sf ../../.githooks/pre-push .git/hooks/pre-push
 
 ### `pre-commit`
 Runs before each commit. Verifies:
-- ✓ Sequential and parallel generation produce identical colors
-- ✓ **69 interaction-by-interaction checks** (default)
-- ✓ Fingerprint matches expected value (if locked)
-- ✓ Distribution is sane (RGB channels uniform)
+- ◆ Sequential and parallel generation produce identical colors
+- ◆ **69 interaction-by-interaction checks** (default)
+- ◆ Fingerprint matches expected value (if locked)
+- ◆ Distribution is sane (RGB channels uniform)
 
 ### `verify-1069`
 Extended verification for releases (1069 seconds = ~18 minutes):
 ```bash
 ./.githooks/verify-1069
 ```
-- ✓ Continuous color matching for 1069 seconds
-- ✓ Reports every 69 seconds
-- ✓ Millions of colors verified interaction-by-interaction
+- ◆ Continuous color matching for 1069 seconds
+- ◆ Reports every 69 seconds
+- ◆ Millions of colors verified interaction-by-interaction
 
 ### `commit-msg`
 Runs after commit message is written. Appends:
@@ -47,11 +47,11 @@ This creates an immutable record of the color algorithm state at each commit.
 
 ### `pre-push`
 Runs before pushing. Comprehensive verification:
-- ✓ Scale independence (same colors regardless of batch size)
-- ✓ Seed sensitivity (different seeds → different colors)
-- ✓ Reproducibility (same seed → same colors, always)
-- ✓ Distribution sanity (uniform RGB)
-- ✓ Performance (>100M colors/sec)
+- ◆ Scale independence (same colors regardless of batch size)
+- ◆ Seed sensitivity (different seeds → different colors)
+- ◆ Reproducibility (same seed → same colors, always)
+- ◆ Distribution sanity (uniform RGB)
+- ◆ Performance (>100M colors/sec)
 
 ## Cherry-Picking
 

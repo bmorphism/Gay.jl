@@ -1,7 +1,7 @@
 # Auto-generated stub for maximal_parallelism.jl
 module MaximalParallelism
 
-export ComposedSplit, SplitResult, SeedSplitter, ColorSplitter, ThreadSplitter, compose_splits, ParallelExecutor, ExecutorConfig, execute_parallel!, work_stealing_execute!, WorkUnit, WorkBatch, WorkResult, create_work_batch, distribute_work, AdaptiveCapacity, adapt_capacity!, current_capacity, sustainable_parallelism, SPIVerifier, verify_spi!, ParallelismMetrics, collect_metrics, format_metrics, parallel_map, parallel_reduce, parallel_foreach, ternary_parallel_walk, demo_maximal_parallelism
+export ComposedSplit, SplitResult, SeedSplitter, ColorSplitter, ThreadSplitter, compose_splits, ParallelExecutor, ExecutorConfig, execute_parallel!, work_stealing_execute!, WorkUnit, WorkBatch, WorkResult, create_work_batch, distribute_work, AdaptiveCapacity, adapt_capacity!, current_capacity, sustainable_parallelism, SPIVerifier, verify_spi!, ParallelismMetrics, collect_metrics, format_metrics, parallel_map, parallel_reduce, parallel_foreach, ternary_parallel_walk, world_maximal_parallelism
 
 # Stub definitions
 struct ComposedSplit end
@@ -32,6 +32,6 @@ parallel_map(args...; kwargs...) = nothing
 parallel_reduce(args...; kwargs...) = nothing
 parallel_foreach(args...; kwargs...) = nothing
 ternary_parallel_walk(args...; kwargs...) = nothing
-demo_maximal_parallelism(args...; kwargs...) = nothing
+world_maximal_parallelism(args...; kwargs...) = nothing
 
 end # module MaximalParallelism

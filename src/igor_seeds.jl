@@ -524,7 +524,7 @@ end
 # Demo and Verification
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_igor_seeds()
+function world_igor_seeds()
     println()
     println("╔" * "═" ^ 60 * "╗")
     println("║  IGOR SEEDS: Premined Chromatic Motifs                     ║")
@@ -594,12 +594,12 @@ function demo_igor_seeds()
     fp2 = igor_fingerprint(beacon2)
     println("  Beacon 1: 0x$(string(fp1, base=16, pad=8))")
     println("  Beacon 2: 0x$(string(fp2, base=16, pad=8))")
-    println("  Match: $(fp1 == fp2 ? "✓ SPI VERIFIED" : "✗ SPI VIOLATION")")
+    println("  Match: $(fp1 == fp2 ? "◆ SPI VERIFIED" : "◇ SPI VIOLATION")")
     
     println()
-    println("🏳️‍🌈 Igor Seeds Complete")
+    println("◈ Igor Seeds Complete")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_igor_seeds()
+    world_igor_seeds()
 end

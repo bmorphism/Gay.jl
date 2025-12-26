@@ -1,7 +1,7 @@
 # Auto-generated stub for triple_split_sentinel.jl
 module TripleSplitSentinel
 
-export TripleSplit, SplitAgent, SentinelSwarm, Sentinel, split_read!, split_write!, enforce_next_color!, is_compliant, kill_agent!, agent_fingerprint, triple_fingerprint, global_fingerprint, COITripleState, fork_triple!, merge_triple!, demo_triple_split_sentinel
+export TripleSplit, SplitAgent, SentinelSwarm, Sentinel, split_read!, split_write!, enforce_next_color!, is_compliant, kill_agent!, agent_fingerprint, triple_fingerprint, global_fingerprint, COITripleState, fork_triple!, merge_triple!, world_triple_split_sentinel
 
 # Stub definitions
 struct TripleSplit end
@@ -19,6 +19,6 @@ global_fingerprint(args...; kwargs...) = nothing
 struct COITripleState end
 fork_triple!(args...; kwargs...) = nothing
 merge_triple!(args...; kwargs...) = nothing
-demo_triple_split_sentinel(args...; kwargs...) = nothing
+world_triple_split_sentinel(args...; kwargs...) = nothing
 
 end # module TripleSplitSentinel

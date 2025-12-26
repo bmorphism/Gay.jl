@@ -70,7 +70,7 @@ function report(results::Vector{FuzzResult})
     total_time = sum(r.duration for r in results)
     
     for r in results
-        status = r.passed ? "✓" : "✗"
+        status = r.passed ? "◆" : "◇"
         failures = isempty(r.failures) ? "" : " ($(length(r.failures)) failures)"
         println("  $status $(rpad(r.name, 45)) $(r.iterations) iters$failures")
     end

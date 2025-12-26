@@ -1,4 +1,4 @@
-# Gay.jl 🏳️‍🌈
+# Gay.jl ◈
 
 **Wide-gamut color sampling with splittable determinism**
 
@@ -37,7 +37,7 @@ color_at(1)      # First color
 color_at(1000)   # 1000th color (no iteration needed)
 ```
 
-### 🏳️‍🌈 Pride Palettes
+### ◈ Pride Palettes
 Accurate pride flag color schemes in any color space:
 
 ```julia
@@ -153,9 +153,9 @@ seed(42) → rng₀
 ```
 
 This means:
-- ✓ Same seed always produces same colors
-- ✓ Parallel execution is reproducible
-- ✓ Random access by index is efficient
+- ◆ Same seed always produces same colors
+- ◆ Parallel execution is reproducible
+- ◆ Random access by index is efficient
 
 The same pattern powers [Pigeons.jl](https://pigeons.run)'s reproducible MCMC and [Comrade.jl](https://github.com/ptiede/Comrade.jl)'s black hole imaging.
 

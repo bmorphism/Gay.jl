@@ -448,7 +448,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_e_varieties()
+function world_e_varieties()
     compare_implementations()
     
     println()

@@ -335,43 +335,28 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_radare2_colors()
-    println("\n╔══════════════════════════════════════════════════════════════╗")
-    println("║  Gay.jl + Radare2: Colored Binary Analysis                   ║")
-    println("╚══════════════════════════════════════════════════════════════╝\n")
-    
-    seed = UInt64(0xDEADBEEF)
-    
-    # Demo functions
-    println("Colored Functions:")
+"""
+    world_radare2_colors(; seed=0xDEADBEEF)
+
+Build composable radare2 coloring state.
+"""
+function world_radare2_colors(; seed::UInt64=UInt64(0xDEADBEEF))
     funcs = [
         (0x00401000, "main", 256),
         (0x00401100, "parse_input", 128),
         (0x00401200, "process_data", 512),
         (0x00401400, "write_output", 64),
     ]
-    
-    colored = color_functions(funcs; seed=seed)
-    for f in colored
-        println("  ", render_colored_function(f))
-    end
-    
-    println()
-    println("Colored Xrefs (XOR parity):")
+    colored_funcs = color_functions(funcs; seed=seed)
+
     xrefs = [
         (0x00401050, 0x00401100, "call"),
         (0x00401060, 0x00401200, "call"),
         (0x00401150, 0x00401400, "call"),
         (0x00401250, 0x00401100, "call"),
     ]
-    
     colored_xrefs = color_xrefs(xrefs; seed=seed)
-    for x in colored_xrefs
-        println("  ", render_colored_xref(x))
-    end
-    
-    println()
-    println("Colored Disassembly:")
+
     disasm = [
         (0x00401000, "push", "rbp"),
         (0x00401001, "mov", "rbp, rsp"),
@@ -380,21 +365,17 @@ function demo_radare2_colors()
         (0x0040100d, "mov", "edi, eax"),
         (0x0040100f, "call", "0x401200"),
     ]
-    println(render_colored_disasm(disasm; seed=seed))
-    
-    println()
-    println("Colored Decompiled Code:")
+
     pseudocode = "int main(int argc, char **argv) { return process(argc); }"
     ast = color_decompiled(pseudocode; seed=seed)
-    println("  ", render_colored_ast(ast))
-    
-    println()
-    println("Usage with radare2 MCP:")
-    println("  1. mcp__radare2__open_file binary")
-    println("  2. mcp__radare2__analyze level=2")
-    println("  3. mcp__radare2__list_functions → color_functions()")
-    println("  4. mcp__radare2__decompile_function → color_decompiled()")
-    println("  5. mcp__radare2__xrefs_to → color_xrefs()")
+
+    (
+        functions = colored_funcs,
+        xrefs = colored_xrefs,
+        disassembly = disasm,
+        decompiled = ast,
+        seed = seed,
+    )
 end
 
-export demo_radare2_colors
+export world_radare2_colors

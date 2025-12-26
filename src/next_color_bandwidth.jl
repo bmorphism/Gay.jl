@@ -1,7 +1,7 @@
 # Auto-generated stub for next_color_bandwidth.jl
 module NextColorBandwidth
 
-export ColorBandwidth, BandwidthTest, BandwidthResult, measure_next_color_bandwidth, measure_at_scale, ParallelismLevel, OUTER_INNER, THREADED, TERNARY, COMPOSED, WORK_STEALING, MAXIMUM, ULTRA, next_color_batch, next_color_parallel, stress_bandwidth, find_bandwidth_limit, scaling_curve, benchmark_all_levels, bandwidth_comparison, bandwidth_spi_check, fingerprint_bandwidth, maximize_bandwidth!, optimal_parallelism_level, demo_next_color_bandwidth
+export ColorBandwidth, BandwidthTest, BandwidthResult, measure_next_color_bandwidth, measure_at_scale, ParallelismLevel, OUTER_INNER, THREADED, TERNARY, COMPOSED, WORK_STEALING, MAXIMUM, ULTRA, next_color_batch, next_color_parallel, stress_bandwidth, find_bandwidth_limit, scaling_curve, benchmark_all_levels, bandwidth_comparison, bandwidth_spi_check, fingerprint_bandwidth, maximize_bandwidth!, optimal_parallelism_level, world_next_color_bandwidth
 
 # Stub definitions
 struct ColorBandwidth end
@@ -28,6 +28,6 @@ bandwidth_spi_check(args...; kwargs...) = nothing
 fingerprint_bandwidth(args...; kwargs...) = nothing
 maximize_bandwidth!(args...; kwargs...) = nothing
 optimal_parallelism_level(args...; kwargs...) = nothing
-demo_next_color_bandwidth(args...; kwargs...) = nothing
+world_next_color_bandwidth(args...; kwargs...) = nothing
 
 end # module NextColorBandwidth

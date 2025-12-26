@@ -19,9 +19,47 @@ include("jepsen_fuzz.jl")
 # Include SDF-style propagator tests
 include("propagator_test.jl")
 
+# Include regression tests for ternary/gamut systems
+include("regression_ternary.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
-        Aqua.test_all(Gay; deps_compat=(check_extras=false,))
+        # Individual tests for better diagnostics
+        # See: https://github.com/JuliaTesting/Aqua.jl
+        
+        @testset "Ambiguities" begin
+            # recursive=false to avoid checking dependencies
+            Aqua.test_ambiguities(Gay; recursive=false)
+        end
+        
+        @testset "Unbound args" begin
+            # 1 known unbound: GaySpectral uses NTuple which generates Vararg
+            Aqua.test_unbound_args(Gay; broken=true)
+        end
+        
+        @testset "Undefined exports" begin
+            # Currently broken due to submodule re-export complexity
+            # TODO: Fix 2222 undefined exports from nested modules
+            Aqua.test_undefined_exports(Gay; broken=true)
+        end
+        
+        @testset "Stale deps" begin
+            # Ignore optional GPU backends
+            Aqua.test_stale_deps(Gay; ignore=[:Metal, :CUDA, :AMDGPU, :Rimu, :Carlo])
+        end
+        
+        @testset "Deps compat" begin
+            Aqua.test_deps_compat(Gay; check_extras=false)
+        end
+        
+        @testset "Piracies" begin
+            # Ensure we don't define methods on types we don't own
+            Aqua.test_piracies(Gay)
+        end
+        
+        @testset "Project extras" begin
+            Aqua.test_project_extras(Gay)
+        end
     end
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace

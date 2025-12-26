@@ -1,7 +1,7 @@
 # Auto-generated stub for two_narrative.jl
 module TwoNarrative
 
-export Narrative2, NarrativeCell, TwoMorphism, ChromaticPosition, ChromaticClique, TwoMonad, unit_2, multiply_2, verify_monad_laws, ChromaticEvent, ChromaticProcess, sample_chromatic!, superpose_chromatic, thin_chromatic, create_clique, clique_fingerprint, clique_merge, clique_intersect, maximal_clique, chromatic_order, chromatic_predecessor, chromatic_successor, verify_time_indifference, verify_2_monad, verify_2_poisson, demo_two_narrative
+export Narrative2, NarrativeCell, TwoMorphism, ChromaticPosition, ChromaticClique, TwoMonad, unit_2, multiply_2, verify_monad_laws, ChromaticEvent, ChromaticProcess, sample_chromatic!, superpose_chromatic, thin_chromatic, create_clique, clique_fingerprint, clique_merge, clique_intersect, maximal_clique, chromatic_order, chromatic_predecessor, chromatic_successor, verify_time_indifference, verify_2_monad, verify_2_poisson, world_two_narrative
 
 # Stub definitions
 struct Narrative2 end
@@ -29,6 +29,6 @@ chromatic_successor(args...; kwargs...) = nothing
 verify_time_indifference(args...; kwargs...) = nothing
 verify_2_monad(args...; kwargs...) = nothing
 verify_2_poisson(args...; kwargs...) = nothing
-demo_two_narrative(args...; kwargs...) = nothing
+world_two_narrative(args...; kwargs...) = nothing
 
 end # module TwoNarrative

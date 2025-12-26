@@ -1,7 +1,7 @@
 # Auto-generated stub for metatheory_fuzz.jl
 module MetatheoryFuzz
 
-export MetatheoryFuzzer, FuzzResult, FuzzEdge, fuzz_metatheory!, exhaustive_probe!, force_exhaustion!, ColorConsistencyTest, consistency_frontier, edge_probe, exhaust_consistency!, CognitiveContinuity, continuity_frontier, probe_continuity!, AnalyticStack, StackLevel, StackMorphism, stack_coherence, TwoMonadTwoPoisson, poisson_bracket, monad_multiplication, coherence_obstruction, StackMonadCandidate, evaluate_candidate, rank_candidates, Interaction, run_69_interactions!, interaction_summary, ParallelInterleavingTest, test_commutativity, test_path_independence, demo_metatheory_fuzz, demo_69_interactions
+export MetatheoryFuzzer, FuzzResult, FuzzEdge, fuzz_metatheory!, exhaustive_probe!, force_exhaustion!, ColorConsistencyTest, consistency_frontier, edge_probe, exhaust_consistency!, CognitiveContinuity, continuity_frontier, probe_continuity!, AnalyticStack, StackLevel, StackMorphism, stack_coherence, TwoMonadTwoPoisson, poisson_bracket, monad_multiplication, coherence_obstruction, StackMonadCandidate, evaluate_candidate, rank_candidates, Interaction, run_69_interactions!, interaction_summary, ParallelInterleavingTest, test_commutativity, test_path_independence, world_metatheory_fuzz, world_69_interactions
 
 # Stub definitions
 struct MetatheoryFuzzer end
@@ -34,7 +34,7 @@ interaction_summary(args...; kwargs...) = nothing
 struct ParallelInterleavingTest end
 test_commutativity(args...; kwargs...) = nothing
 test_path_independence(args...; kwargs...) = nothing
-demo_metatheory_fuzz(args...; kwargs...) = nothing
-demo_69_interactions(args...; kwargs...) = nothing
+world_metatheory_fuzz(args...; kwargs...) = nothing
+world_69_interactions(args...; kwargs...) = nothing
 
 end # module MetatheoryFuzz

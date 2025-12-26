@@ -269,7 +269,7 @@ function demo_quantum_spi()
         print("\e[48;2;$(ri);$(gi);$(bi)m    \e[0m\n")
     end
     
-    println("\n  ✓ Each branch independent")
+    println("\n  ◆ Each branch independent")
 end
 
 function compare_classical_quantum(; seed::Integer=QUANTUM_SEED)
@@ -333,10 +333,10 @@ function main()
     demo_quantum_spi()
     
     println("\n  Properties:")
-    println("  ✓ Quantum phase θ → deterministic color")
-    println("  ✓ Amplitude |ψ| modulates brightness")
-    println("  ✓ Spacetime (t,x) → interference pattern")
-    println("  ✓ :quantum branch independent of :galperin")
+    println("  ◆ Quantum phase θ → deterministic color")
+    println("  ◆ Amplitude |ψ| modulates brightness")
+    println("  ◆ Spacetime (t,x) → interference pattern")
+    println("  ◆ :quantum branch independent of :galperin")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

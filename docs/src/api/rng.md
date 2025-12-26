@@ -4,10 +4,10 @@ Gay.jl uses **splittable random streams** from [SplittableRandoms.jl](https://gi
 
 ## What is SPI?
 
-Strong Parallelism Invariance guarantees that your results are **identical** regardless of:
+Strong Parallelism Invariance guarantees that our results are **identical** regardless of:
 - Number of threads or processes
 - Order of execution
-- Whether you run in parallel or sequentially
+- Whether we run in parallel or sequentially
 
 This is critical for reproducible scientific computing.
 

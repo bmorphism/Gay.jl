@@ -316,57 +316,49 @@ export lisp_defenzyme, register_enzyme, get_enzyme, ENZYME_REGISTRY
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_enzyme_dsl()
+    world_enzyme_dsl()
 
-Demonstrate the enzyme DSL with classic optimization functions.
+Build composable enzyme DSL state with classic optimization functions.
 """
-function demo_enzyme_dsl()
-    println("\n╔══════════════════════════════════════════════════════════════╗")
-    println("║  Gay.jl Enzyme DSL: S-expression → Autodiff Visualization    ║")
-    println("╚══════════════════════════════════════════════════════════════╝\n")
-    
-    # Define some classic functions
-    
+function world_enzyme_dsl()
     # Quadratic: f(x,y) = x² + 2xy + y² = (x+y)²
-    quadratic = GayFunction(:quadratic, [:x, :y], 
+    quadratic = GayFunction(:quadratic, [:x, :y],
                            [:+, [:^, :x, 2], [:*, 2, [:*, :x, :y]], [:^, :y, 2]])
-    
-    println("1. Quadratic: (+ (^ x 2) (* 2 (* x y)) (^ y 2))")
-    println("   f(3,4) = ", quadratic(3.0, 4.0))
-    show_gradient(quadratic, [3.0, 4.0])
-    println()
-    
+    quad_val = quadratic(3.0, 4.0)
+    quad_grad = show_gradient(quadratic, [3.0, 4.0])
+
     # Rosenbrock: f(x,y) = (1-x)² + 100(y-x²)²
     rosenbrock = GayFunction(:rosenbrock, [:x, :y],
-                            [:+, [:^, [:-, 1, :x], 2], 
+                            [:+, [:^, [:-, 1, :x], 2],
                                  [:*, 100, [:^, [:-, :y, [:^, :x, 2]], 2]]])
-    
-    println("2. Rosenbrock: (+ (^ (- 1 x) 2) (* 100 (^ (- y (^ x 2)) 2)))")
-    println("   f(1,1) = ", rosenbrock(1.0, 1.0), " (global minimum)")
-    println("   f(0,0) = ", rosenbrock(0.0, 0.0))
-    show_gradient(rosenbrock, [0.0, 0.0])
-    println()
-    
+    rosen_min = rosenbrock(1.0, 1.0)
+    rosen_origin = rosenbrock(0.0, 0.0)
+    rosen_grad = show_gradient(rosenbrock, [0.0, 0.0])
+
     # Neural network layer: σ(Wx + b) simplified as σ(ax + b)
     nn_layer = GayFunction(:nn_layer, [:x, :a, :b],
                           [:tanh, [:+, [:*, :a, :x], :b]])
-    
-    println("3. NN Layer: (tanh (+ (* a x) b))")
-    println("   f(1, 2, 0.5) = ", nn_layer(1.0, 2.0, 0.5))
-    show_gradient(nn_layer, [1.0, 2.0, 0.5])
-    println()
-    
-    # Show the SICP connection
-    println("────────────────────────────────────────────────────────────────")
-    println()
-    println("SICP 4A: 'The pattern-matcher is itself data'")
-    println()
-    println("In Gay.jl:")
-    println("  • S-expression = function definition = visualizable structure")
-    println("  • Enzyme bindings attach to colored parentheses")
-    println("  • Gradient flow follows the expression tree")
-    println("  • Colors encode sensitivity magnitude and direction")
-    println()
+    nn_val = nn_layer(1.0, 2.0, 0.5)
+    nn_grad = show_gradient(nn_layer, [1.0, 2.0, 0.5])
+
+    (
+        quadratic = (
+            func = quadratic,
+            value = quad_val,
+            gradient = quad_grad,
+        ),
+        rosenbrock = (
+            func = rosenbrock,
+            minimum = rosen_min,
+            at_origin = rosen_origin,
+            gradient = rosen_grad,
+        ),
+        nn_layer = (
+            func = nn_layer,
+            value = nn_val,
+            gradient = nn_grad,
+        ),
+    )
 end
 
-export demo_enzyme_dsl
+export world_enzyme_dsl

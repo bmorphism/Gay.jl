@@ -229,4 +229,4 @@ using Gay
 
 end
 
-println("\n✓ All ternary regression tests passed")
+println("\n◆ All ternary regression tests passed")
