@@ -1,503 +1,386 @@
-# Gamut-Constrained Learnable Color Spaces with Subobject Classification
-#
-# Implements categorical gamut theory: sRGB ⊂ P3 ⊂ Rec2020 as a lattice
-# of subobject classifiers, enabling characteristic morphisms for
-# gamut membership and pullback operations for color recovery.
+# GamutLearnable.jl - Enzyme-optimized gamut mapping for Gay.jl color chains
+# Implements Issue #184: ML-based color gamut mapping with automatic differentiation
 
 module GamutLearnable
 
-__precompile__(false)  # Disable precompilation due to complex constructor patterns
+using Colors
+using ColorTypes
 
-using Colors, ColorTypes
+# Simple mean function to avoid Statistics dependency
+mean(x) = sum(x) / length(x)
 
-export GamutConstraint, GaySRGBGamut, GayP3Gamut, GayRec2020Gamut
-export LearnableGamutMap, GamutParameters
-export map_to_gamut, is_in_gamut, gamut_distance
-export learn_gamut_map!, gamut_loss, chroma_preservation_loss
-export GayChain, chain_to_gamut, verify_chain_in_gamut, process_gay_chain
-export enzyme_gamut_gradient, enzyme_learn_gamut!
-
-# Gamut Subobject Classifier exports
-export GamutTruth, GamutSubobjectClassifier
-export characteristic_morphism, gamut_pullback, probe_gamut_subobject
-export WorldGamutClassifier, world_gamut_classifier, gamut_meet, gamut_join
+export GamutParameters, GamutMapper, map_to_gamut, train_gamut_mapper!
+export gamut_loss, in_gamut, get_gamut_bounds, map_color_chain, detect_system_gamut
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Gamut Constraint Hierarchy: sRGB ⊂ P3 ⊂ Rec2020
+# Monitor Detection
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    GamutConstraint
+    detect_system_gamut() -> Symbol
 
-Abstract type for gamut constraints. Each gamut defines a subobject
-in the category of color spaces, with inclusion morphisms forming
-a lattice structure.
+Attempt to detect the system's display gamut.
+Returns :p3 for Apple Silicon/Retina displays, :srgb as fallback.
 """
-abstract type GamutConstraint end
-
-"""
-    GaySRGBGamut <: GamutConstraint
-
-sRGB gamut - the smallest standard gamut.
-The bottom of our gamut lattice.
-"""
-struct GaySRGBGamut <: GamutConstraint end
-
-"""
-    GayP3Gamut <: GamutConstraint
-
-Display P3 gamut - intermediate gamut used by Apple devices.
-"""
-struct GayP3Gamut <: GamutConstraint end
-
-"""
-    GayRec2020Gamut <: GamutConstraint
-
-Rec.2020 gamut - the widest standard gamut.
-The top of our gamut lattice.
-"""
-struct GayRec2020Gamut <: GamutConstraint end
-
-# Gamut hierarchy: sRGB ⊂ P3 ⊂ Rec2020
-Base.issubset(::GaySRGBGamut, ::GaySRGBGamut) = true
-Base.issubset(::GaySRGBGamut, ::GayP3Gamut) = true
-Base.issubset(::GaySRGBGamut, ::GayRec2020Gamut) = true
-Base.issubset(::GayP3Gamut, ::GayP3Gamut) = true
-Base.issubset(::GayP3Gamut, ::GayRec2020Gamut) = true
-Base.issubset(::GayRec2020Gamut, ::GayRec2020Gamut) = true
-Base.issubset(::GayP3Gamut, ::GaySRGBGamut) = false
-Base.issubset(::GayRec2020Gamut, ::GaySRGBGamut) = false
-Base.issubset(::GayRec2020Gamut, ::GayP3Gamut) = false
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Gamut Truth Values (Subobject Classifier)
-# ═══════════════════════════════════════════════════════════════════════════
-
-"""
-    GamutTruth
-
-The truth value for gamut membership, forming the subobject classifier Ω.
-Contains both a boolean membership and a distance metric for gradual falloff.
-
-# Fields
-- `in_gamut::Bool`: Whether the color is strictly within gamut
-- `distance::Float64`: Distance from gamut boundary (negative if inside, positive if outside)
-"""
-struct GamutTruth
-    in_gamut::Bool
-    distance::Float64
-end
-
-GamutTruth(in_gamut::Bool) = GamutTruth(in_gamut, in_gamut ? -1.0 : 1.0)
-
-# Truth value lattice operations
-Base.:(&)(a::GamutTruth, b::GamutTruth) = GamutTruth(a.in_gamut && b.in_gamut, max(a.distance, b.distance))
-Base.:(|)(a::GamutTruth, b::GamutTruth) = GamutTruth(a.in_gamut || b.in_gamut, min(a.distance, b.distance))
-Base.:(!)(a::GamutTruth) = GamutTruth(!a.in_gamut, -a.distance)
-
-# Ordering on truth values
-Base.isless(a::GamutTruth, b::GamutTruth) = a.distance < b.distance
-
-"""
-    GamutSubobjectClassifier{G<:GamutConstraint}
-
-The subobject classifier for a specific gamut G.
-Maps colors to their truth value in Ω = GamutTruth.
-
-This is χ: Color → Ω such that for subobject i: G → ColorSpace,
-χ classifies membership in G.
-"""
-struct GamutSubobjectClassifier{G<:GamutConstraint}
-    gamut::G
-end
-
-"""
-    characteristic_morphism(classifier::GamutSubobjectClassifier, color::RGB)
-
-The characteristic morphism χ_G: Color → Ω.
-Returns the GamutTruth for whether color is in gamut G.
-"""
-function characteristic_morphism(classifier::GamutSubobjectClassifier{GaySRGBGamut}, color::RGB)
-    # sRGB: all components in [0,1]
-    r, g, b = Float64(color.r), Float64(color.g), Float64(color.b)
-    
-    # Distance from gamut boundary (negative = inside)
-    dist_r = max(0.0 - r, r - 1.0, 0.0)
-    dist_g = max(0.0 - g, g - 1.0, 0.0)
-    dist_b = max(0.0 - b, b - 1.0, 0.0)
-    distance = sqrt(dist_r^2 + dist_g^2 + dist_b^2)
-    
-    in_gamut = (0.0 <= r <= 1.0) && (0.0 <= g <= 1.0) && (0.0 <= b <= 1.0)
-    
-    # If inside, compute distance to boundary as negative
-    if in_gamut
-        min_to_edge = min(r, 1-r, g, 1-g, b, 1-b)
-        distance = -min_to_edge
-    end
-    
-    return GamutTruth(in_gamut, distance)
-end
-
-function characteristic_morphism(classifier::GamutSubobjectClassifier{GayP3Gamut}, color::RGB)
-    # P3 has slightly wider gamut than sRGB
-    # For simplicity, we use a scaling factor (actual implementation would use proper matrices)
-    r, g, b = Float64(color.r), Float64(color.g), Float64(color.b)
-    
-    # P3 allows values slightly outside [0,1] in sRGB encoding
-    # Approximate P3 boundary
-    margin = 0.1  # P3 extends ~10% beyond sRGB
-    
-    dist_r = max(-margin - r, r - (1.0 + margin), 0.0)
-    dist_g = max(-margin - g, g - (1.0 + margin), 0.0)
-    dist_b = max(-margin - b, b - (1.0 + margin), 0.0)
-    distance = sqrt(dist_r^2 + dist_g^2 + dist_b^2)
-    
-    in_gamut = (-margin <= r <= 1.0 + margin) && 
-               (-margin <= g <= 1.0 + margin) && 
-               (-margin <= b <= 1.0 + margin)
-    
-    if in_gamut
-        min_to_edge = min(r + margin, 1 + margin - r, g + margin, 1 + margin - g, b + margin, 1 + margin - b)
-        distance = -min_to_edge
-    end
-    
-    return GamutTruth(in_gamut, distance)
-end
-
-function characteristic_morphism(classifier::GamutSubobjectClassifier{GayRec2020Gamut}, color::RGB)
-    # Rec2020 has the widest gamut
-    r, g, b = Float64(color.r), Float64(color.g), Float64(color.b)
-    
-    # Rec2020 extends ~20% beyond sRGB
-    margin = 0.2
-    
-    dist_r = max(-margin - r, r - (1.0 + margin), 0.0)
-    dist_g = max(-margin - g, g - (1.0 + margin), 0.0)
-    dist_b = max(-margin - b, b - (1.0 + margin), 0.0)
-    distance = sqrt(dist_r^2 + dist_g^2 + dist_b^2)
-    
-    in_gamut = (-margin <= r <= 1.0 + margin) && 
-               (-margin <= g <= 1.0 + margin) && 
-               (-margin <= b <= 1.0 + margin)
-    
-    if in_gamut
-        min_to_edge = min(r + margin, 1 + margin - r, g + margin, 1 + margin - g, b + margin, 1 + margin - b)
-        distance = -min_to_edge
-    end
-    
-    return GamutTruth(in_gamut, distance)
-end
-
-"""
-    gamut_pullback(classifier::GamutSubobjectClassifier, color::RGB)
-
-Pull back a color to be within gamut via chroma reduction.
-This is the left adjoint to the subobject inclusion.
-"""
-function gamut_pullback(classifier::GamutSubobjectClassifier{GaySRGBGamut}, color::RGB)
-    r, g, b = clamp(Float64(color.r), 0.0, 1.0), 
-              clamp(Float64(color.g), 0.0, 1.0), 
-              clamp(Float64(color.b), 0.0, 1.0)
-    return RGB(r, g, b)
-end
-
-function gamut_pullback(classifier::GamutSubobjectClassifier{GayP3Gamut}, color::RGB)
-    margin = 0.1
-    r = clamp(Float64(color.r), -margin, 1.0 + margin)
-    g = clamp(Float64(color.g), -margin, 1.0 + margin)
-    b = clamp(Float64(color.b), -margin, 1.0 + margin)
-    return RGB(r, g, b)
-end
-
-function gamut_pullback(classifier::GamutSubobjectClassifier{GayRec2020Gamut}, color::RGB)
-    margin = 0.2
-    r = clamp(Float64(color.r), -margin, 1.0 + margin)
-    g = clamp(Float64(color.g), -margin, 1.0 + margin)
-    b = clamp(Float64(color.b), -margin, 1.0 + margin)
-    return RGB(r, g, b)
-end
-
-"""
-    probe_gamut_subobject(gamuts::Vector{<:GamutConstraint}, color::RGB)
-
-Probe which gamut a color belongs to in the lattice.
-Returns the smallest gamut containing the color.
-"""
-function probe_gamut_subobject(gamuts::Vector{<:GamutConstraint}, color::RGB)
-    results = Pair{GamutConstraint, GamutTruth}[]
-    
-    for gamut in gamuts
-        classifier = GamutSubobjectClassifier(gamut)
-        truth = characteristic_morphism(classifier, color)
-        push!(results, gamut => truth)
-    end
-    
-    # Sort by gamut size (smallest first that contains the color)
-    for (gamut, truth) in results
-        if truth.in_gamut
-            return gamut
+function detect_system_gamut()
+    if Sys.isapple()
+        try
+            # Check system profiler for display info
+            cmd = `system_profiler SPDisplaysDataType`
+            output = read(cmd, String)
+            
+            # Check for P3/Retina indicators
+            if contains(output, "Retina") || contains(output, "P3") || contains(output, "XDR")
+                return :p3
+            end
+        catch
+            # Fallback on error
         end
     end
     
-    # Return largest if none contain it
-    return last(gamuts)
+    # Default safe fallback
+    return :srgb
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# World Gamut Classifier (Lattice Structure)
-# ═══════════════════════════════════════════════════════════════════════════
-
-"""
-    WorldGamutClassifier
-
-The complete lattice of gamut classifiers.
-Represents the fiber of subobject classifiers over the world of color spaces.
-"""
-struct WorldGamutClassifier
-    classifiers::Dict{Symbol, GamutSubobjectClassifier}
-    order::Vector{Symbol}  # From smallest to largest gamut
-end
-
-"""
-    world_gamut_classifier()
-
-Construct the standard world gamut classifier for sRGB ⊂ P3 ⊂ Rec2020.
-"""
-function world_gamut_classifier()
-    classifiers = Dict{Symbol, GamutSubobjectClassifier}(
-        :srgb => GamutSubobjectClassifier(GaySRGBGamut()),
-        :p3 => GamutSubobjectClassifier(GayP3Gamut()),
-        :rec2020 => GamutSubobjectClassifier(GayRec2020Gamut())
-    )
-    order = [:srgb, :p3, :rec2020]
-    return WorldGamutClassifier(classifiers, order)
-end
-
-# Lattice operations on WorldGamutClassifier
-function Base.getindex(wgc::WorldGamutClassifier, sym::Symbol)
-    return wgc.classifiers[sym]
-end
-
-function gamut_meet(wgc::WorldGamutClassifier, a::Symbol, b::Symbol)
-    # Meet = intersection = smallest gamut containing both
-    idx_a = findfirst(==(a), wgc.order)
-    idx_b = findfirst(==(b), wgc.order)
-    return wgc.order[min(idx_a, idx_b)]
-end
-
-function gamut_join(wgc::WorldGamutClassifier, a::Symbol, b::Symbol)
-    # Join = union = largest gamut
-    idx_a = findfirst(==(a), wgc.order)
-    idx_b = findfirst(==(b), wgc.order)
-    return wgc.order[max(idx_a, idx_b)]
-end
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Learnable Gamut Mapping
+# Gamut Parameters Structure
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
     GamutParameters
 
-Learnable parameters for gamut mapping.
+Learnable parameters for adaptive gamut mapping.
+Controls how colors are compressed to fit within target gamut boundaries.
 """
 mutable struct GamutParameters
-    chroma_scale::Float64     # Scale factor for chroma
-    lightness_scale::Float64  # Scale factor for lightness
-    hue_shift::Float64        # Hue rotation in degrees
-    compression_gamma::Float64  # Gamut compression curve
+    # Base chroma compression factor [0.1, 1.0]
+    chroma_compress::Float64
+
+    # Lightness-dependent quadratic modulation coefficients
+    chroma_L_a::Float64  # Quadratic term
+    chroma_L_b::Float64  # Linear term
+    chroma_L_c::Float64  # Constant term
+
+    # Hue-dependent Fourier modulation coefficients
+    chroma_H_cos1::Float64  # cos(H) coefficient
+    chroma_H_sin1::Float64  # sin(H) coefficient
+    chroma_H_cos2::Float64  # cos(2H) coefficient
+    chroma_H_sin2::Float64  # sin(2H) coefficient
+
+    # Lightness boost for desaturation compensation
+    lightness_boost::Float64
+
+    # Target gamut (:srgb, :p3, :rec2020)
+    target_gamut::Symbol
 end
 
-GamutParameters() = GamutParameters(1.0, 1.0, 0.0, 1.0)
-
-"""
-    LearnableGamutMap
-
-A learnable mapping for gamut compression/expansion.
-"""
-mutable struct LearnableGamutMap
-    source::GamutConstraint
-    target::GamutConstraint
-    params::GamutParameters
-end
-
-function LearnableGamutMap(source::GamutConstraint, target::GamutConstraint)
-    LearnableGamutMap(source, target, GamutParameters())
-end
-
-"""
-    map_to_gamut(m::LearnableGamutMap, color::RGB)
-
-Apply learnable gamut mapping to transform color.
-"""
-function map_to_gamut(m::LearnableGamutMap, color::RGB)
-    r, g, b = Float64(color.r), Float64(color.g), Float64(color.b)
-    
-    # Apply compression
-    γ = m.params.compression_gamma
-    r_out = sign(r) * abs(r)^γ * m.params.chroma_scale
-    g_out = sign(g) * abs(g)^γ * m.params.chroma_scale
-    b_out = sign(b) * abs(b)^γ * m.params.chroma_scale
-    
-    # Clamp to target gamut
-    classifier = GamutSubobjectClassifier(m.target)
-    result = gamut_pullback(classifier, RGB(r_out, g_out, b_out))
-    
-    return result
-end
-
-"""
-    is_in_gamut(color::RGB, gamut::GamutConstraint)
-
-Check if color is within specified gamut.
-"""
-function is_in_gamut(color::RGB, gamut::GamutConstraint)
-    classifier = GamutSubobjectClassifier(gamut)
-    truth = characteristic_morphism(classifier, color)
-    return truth.in_gamut
-end
-
-"""
-    gamut_distance(color::RGB, gamut::GamutConstraint)
-
-Compute signed distance to gamut boundary.
-"""
-function gamut_distance(color::RGB, gamut::GamutConstraint)
-    classifier = GamutSubobjectClassifier(gamut)
-    truth = characteristic_morphism(classifier, color)
-    return truth.distance
+# Default constructor with sensible initial values
+function GamutParameters(; target_gamut::Symbol=detect_system_gamut())
+    GamutParameters(
+        0.8,      # chroma_compress - moderate compression
+        -0.01,    # chroma_L_a - slight quadratic compression at extremes
+        0.0,      # chroma_L_b - no linear term initially
+        1.0,      # chroma_L_c - baseline multiplier
+        0.0,      # chroma_H_cos1
+        0.0,      # chroma_H_sin1
+        0.0,      # chroma_H_cos2
+        0.0,      # chroma_H_sin2
+        0.05,     # lightness_boost - slight compensation
+        target_gamut
+    )
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Loss Functions for Learning
+# Gamut Mapping Functions
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    gamut_loss(m::LearnableGamutMap, colors::Vector{<:RGB})
+    in_gamut(c::Lab, gamut::Symbol) -> Bool
 
-Compute loss for gamut mapping (colors should be in target gamut).
+Check if a Lab color is strictly within the specified gamut using ColorTypes conversion.
 """
-function gamut_loss(m::LearnableGamutMap, colors::Vector{<:RGB})
-    total_loss = 0.0
+function in_gamut(c::Lab, gamut::Symbol)
+    try
+        if gamut == :srgb
+            rgb = convert(RGB{Float64}, c)
+            return 0.0 <= rgb.r <= 1.0 && 0.0 <= rgb.g <= 1.0 && 0.0 <= rgb.b <= 1.0
+        elseif gamut == :p3
+            p3 = convert(DisplayP3{Float64}, c)
+            return 0.0 <= p3.r <= 1.0 && 0.0 <= p3.g <= 1.0 && 0.0 <= p3.b <= 1.0
+        else
+            # Fallback for Rec2020 etc
+            rgb = convert(RGB{Float64}, c) 
+            return 0.0 <= rgb.r <= 1.0 && 0.0 <= rgb.g <= 1.0 && 0.0 <= rgb.b <= 1.0
+        end
+    catch
+        return false
+    end
+end
+
+"""
+    get_gamut_bounds(gamut::Symbol, L::Real, H::Real) -> Float64
+
+Find maximum valid chroma for given Lightness and Hue via binary search.
+"""
+function get_gamut_bounds(gamut::Symbol, L::Real, H::Real)
+    # Binary search for max chroma
+    # Range [0, 200] covers all practical visible colors
+    low = 0.0
+    high = 200.0
+    
+    # Pre-calculate trig
+    H_rad = H * π / 180.0
+    cos_H = cos(H_rad)
+    sin_H = sin(H_rad)
+    
+    for _ in 1:10 # 10 iterations gives precision ~0.2, sufficient for display
+        mid = (low + high) / 2
+        
+        # Construct test color
+        a = mid * cos_H
+        b = mid * sin_H
+        c_test = Lab(L, a, b)
+        
+        if in_gamut(c_test, gamut)
+            low = mid
+        else
+            high = mid
+        end
+    end
+    
+    return low
+end
+
+"""
+    compute_chroma_scale(params::GamutParameters, L::Float64, H::Float64) -> Float64
+
+Compute the chroma scaling factor based on lightness and hue.
+"""
+function compute_chroma_scale(params::GamutParameters, L::Real, H::Real)
+    # Normalize L to [0,1]
+    L_norm = L / 100.0
+
+    # Lightness-dependent quadratic modulation
+    L_factor = params.chroma_L_a * L_norm^2 +
+               params.chroma_L_b * L_norm +
+               params.chroma_L_c
+
+    # Hue-dependent Fourier modulation
+    H_rad = H * π / 180.0
+    H_factor = 1.0 +
+               params.chroma_H_cos1 * cos(H_rad) +
+               params.chroma_H_sin1 * sin(H_rad) +
+               params.chroma_H_cos2 * cos(2*H_rad) +
+               params.chroma_H_sin2 * sin(2*H_rad)
+
+    # Combine factors with base compression
+    scale = params.chroma_compress * L_factor * H_factor
+
+    # Clamp to valid range
+    return clamp(scale, 0.1, 1.0)
+end
+
+"""
+    map_to_gamut(c::Lab, params::GamutParameters) -> Lab
+
+Map a Lab color to fit within the target gamut.
+Correctly handles lightness boost by checking bounds after adjustment.
+"""
+function map_to_gamut(c::Lab, params::GamutParameters)
+    L, a, b = c.l, c.a, c.b
+    C = sqrt(a^2 + b^2)
+    H = atan(b, a) * 180.0 / π
+    H = H < 0 ? H + 360.0 : H
+
+    # 1. Calculate max chroma for ORIGINAL lightness
+    max_chroma_orig = get_gamut_bounds(params.target_gamut, L, H)
+
+    # 2. Compute adaptive scaling factor
+    scale = compute_chroma_scale(params, L, H)
+    C_proposed = C * scale
+    
+    # 3. Calculate tentative new lightness (with boost)
+    chroma_reduction = 1.0 - (min(C_proposed, max_chroma_orig) / max(C, 1e-6))
+    L_boost = params.lightness_boost * chroma_reduction * (50.0 - abs(L - 50.0))
+    L_new = clamp(L + L_boost, 0.0, 100.0)
+
+    # 4. Re-calculate max chroma for NEW lightness
+    max_chroma_new = get_gamut_bounds(params.target_gamut, L_new, H)
+    
+    # 5. Final clamp
+    C_final = min(C_proposed, max_chroma_new)
+
+    # Convert back to Lab
+    H_rad = H * π / 180.0
+    return Lab(L_new, C_final * cos(H_rad), C_final * sin(H_rad))
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Loss Functions for Training
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    gamut_compliance_loss(colors::Vector{Lab}, params::GamutParameters) -> Float64
+
+Compute loss for colors that exceed gamut boundaries.
+"""
+function gamut_compliance_loss(colors::Vector{<:Lab}, params::GamutParameters)
+    loss = 0.0
     for c in colors
-        mapped = map_to_gamut(m, c)
-        dist = gamut_distance(mapped, m.target)
-        total_loss += max(0.0, dist)^2  # Penalty for out-of-gamut
+        mapped = map_to_gamut(c, params)
+        if !in_gamut(mapped, params.target_gamut)
+            # Penalize out-of-gamut colors
+            L, a, b = mapped.l, mapped.a, mapped.b
+            C = sqrt(a^2 + b^2)
+            H = atan(b, a) * 180.0 / π
+            H = H < 0 ? H + 360.0 : H
+            max_chroma = get_gamut_bounds(params.target_gamut, L, H)
+            excess = max(0, C - max_chroma)
+            loss += excess^2
+        end
     end
-    return total_loss / length(colors)
+    return loss / length(colors)
 end
 
 """
-    chroma_preservation_loss(m::LearnableGamutMap, original::Vector{<:RGB}, mapped::Vector{<:RGB})
+    chroma_preservation_loss(original::Vector{Lab}, mapped::Vector{Lab}) -> Float64
 
-Loss encouraging chroma preservation during mapping.
+Compute loss for excessive chroma reduction.
 """
-function chroma_preservation_loss(m::LearnableGamutMap, original::Vector{<:RGB}, mapped::Vector{<:RGB})
-    total = 0.0
-    for (o, m_color) in zip(original, mapped)
-        # Simplified chroma as distance from gray axis
-        chroma_o = sqrt(Float64(o.r - o.g)^2 + Float64(o.g - o.b)^2 + Float64(o.b - o.r)^2)
-        chroma_m = sqrt(Float64(m_color.r - m_color.g)^2 + Float64(m_color.g - m_color.b)^2 + Float64(m_color.b - m_color.r)^2)
-        total += (chroma_o - chroma_m)^2
+function chroma_preservation_loss(original::Vector{<:Lab}, mapped::Vector{<:Lab})
+    loss = 0.0
+    for (c_orig, c_mapped) in zip(original, mapped)
+        C_orig = sqrt(c_orig.a^2 + c_orig.b^2)
+        C_mapped = sqrt(c_mapped.a^2 + c_mapped.b^2)
+        # Penalize excessive compression
+        reduction = max(0, C_orig - C_mapped) / max(C_orig, 1e-6)
+        loss += reduction^2
     end
-    return total / length(original)
+    return loss / length(original)
 end
 
 """
-    learn_gamut_map!(m::LearnableGamutMap, colors::Vector{<:RGB}; lr=0.01, epochs=100)
+    hue_preservation_loss(original::Vector{Lab}, mapped::Vector{Lab}) -> Float64
 
-Train the gamut map using gradient descent.
+Compute loss for hue shifts (should be zero for our mapping).
 """
-function learn_gamut_map!(m::LearnableGamutMap, colors::Vector{<:RGB}; lr::Float64=0.01, epochs::Int=100)
+function hue_preservation_loss(original::Vector{<:Lab}, mapped::Vector{<:Lab})
+    loss = 0.0
+    for (c_orig, c_mapped) in zip(original, mapped)
+        H_orig = atan(c_orig.b, c_orig.a)
+        H_mapped = atan(c_mapped.b, c_mapped.a)
+        # Angular difference
+        diff = abs(H_mapped - H_orig)
+        diff = min(diff, 2π - diff)  # Handle wraparound
+        loss += diff^2
+    end
+    return loss / length(original)
+end
+
+"""
+    gamut_loss(colors::Vector{Lab}, params::GamutParameters;
+               λ_compliance=1.0, λ_preservation=0.5, λ_hue=10.0) -> Float64
+
+Combined loss function for gamut mapping optimization.
+"""
+function gamut_loss(colors::Vector{<:Lab}, params::GamutParameters;
+                    λ_compliance=1.0, λ_preservation=0.5, λ_hue=10.0)
+    # Map colors
+    mapped = [map_to_gamut(c, params) for c in colors]
+
+    # Compute individual losses
+    L_compliance = gamut_compliance_loss(mapped, params)
+    L_preservation = chroma_preservation_loss(colors, mapped)
+    L_hue = hue_preservation_loss(colors, mapped)
+
+    # Weighted combination
+    return λ_compliance * L_compliance +
+           λ_preservation * L_preservation +
+           λ_hue * L_hue
+end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Training Functions (will use Enzyme in extension)
+# ═══════════════════════════════════════════════════════════════════════════
+
+"""
+    train_gamut_mapper!(params::GamutParameters, colors::Vector{Lab};
+                        epochs=100, lr=0.01, verbose=true)
+
+Train the gamut mapping parameters using gradient descent.
+This is the non-Enzyme version - the Enzyme extension will override this.
+"""
+function train_gamut_mapper!(params::GamutParameters, colors::Vector{<:Lab};
+                             epochs::Int=100, lr::Float64=0.01, verbose::Bool=true)
+
     for epoch in 1:epochs
-        loss = gamut_loss(m, colors)
-        
-        # Finite difference gradient
-        ε = 1e-5
-        
-        m.params.compression_gamma += ε
-        loss_plus = gamut_loss(m, colors)
-        m.params.compression_gamma -= 2ε
-        loss_minus = gamut_loss(m, colors)
-        m.params.compression_gamma += ε
-        
-        grad = (loss_plus - loss_minus) / (2ε)
-        m.params.compression_gamma -= lr * grad
-        m.params.compression_gamma = clamp(m.params.compression_gamma, 0.1, 3.0)
+        # Current loss
+        current_loss = gamut_loss(colors, params)
+
+        if verbose && epoch % 10 == 0
+            println("Epoch $epoch: Loss = $(round(current_loss, digits=4))")
+        end
+
+        # Simple finite difference gradients (will be replaced by Enzyme)
+        ε = 1e-6
+        grad = zeros(9)  # 9 parameters to optimize
+
+        # Gradient for chroma_compress
+        params_plus = deepcopy(params)
+        params_plus.chroma_compress += ε
+        grad[1] = (gamut_loss(colors, params_plus) - current_loss) / ε
+
+        # Similar for other parameters...
+        # (In practice, Enzyme will compute these automatically)
+
+        # Update parameters
+        params.chroma_compress -= lr * grad[1]
+        params.chroma_compress = clamp(params.chroma_compress, 0.1, 1.0)
+
+        # Early stopping if converged
+        if current_loss < 1e-4
+            if verbose
+                println("Converged at epoch $epoch")
+            end
+            break
+        end
     end
-    return m
+
+    return params
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# GayChain Integration
+# Integration with Gay.jl color chains
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    GayChain
+    GamutMapper
 
-A chain of colors representing a trajectory through color space.
+Main struct that combines parameters with mapping functionality.
 """
-struct GayChain{T<:RGB}
-    colors::Vector{T}
-    gamut::GamutConstraint
+struct GamutMapper
+    params::GamutParameters
+    trained::Bool
 end
 
-GayChain(colors::Vector{<:RGB}) = GayChain(colors, GaySRGBGamut())
-GayChain(colors::Vector{<:RGB}, gamut::GamutConstraint) = GayChain{eltype(colors)}(colors, gamut)
+GamutMapper(; target_gamut::Symbol=:srgb) =
+    GamutMapper(GamutParameters(target_gamut=target_gamut), false)
 
 """
-    chain_to_gamut(chain::GayChain, target::GamutConstraint)
+    map_color_chain(chain::Vector{<:Color}, mapper::GamutMapper)
 
-Map entire chain to target gamut.
+Map an entire color chain to fit within the target gamut.
 """
-function chain_to_gamut(chain::GayChain, target::GamutConstraint)
-    mapper = LearnableGamutMap(chain.gamut, target)
-    mapped = [map_to_gamut(mapper, c) for c in chain.colors]
-    return GayChain(mapped, target)
-end
+function map_color_chain(chain::Vector{<:Color}, mapper::GamutMapper)
+    # Convert to Lab space for gamut mapping
+    lab_chain = [convert(Lab, c) for c in chain]
 
-"""
-    verify_chain_in_gamut(chain::GayChain)
+    # Apply gamut mapping
+    mapped_lab = [map_to_gamut(c, mapper.params) for c in lab_chain]
 
-Verify all colors in chain are within its declared gamut.
-"""
-function verify_chain_in_gamut(chain::GayChain)
-    return all(c -> is_in_gamut(c, chain.gamut), chain.colors)
-end
-
-"""
-    process_gay_chain(chain::GayChain)
-
-Process a GayChain, ensuring all colors are valid.
-"""
-function process_gay_chain(chain::GayChain)
-    classifier = GamutSubobjectClassifier(chain.gamut)
-    processed = [gamut_pullback(classifier, c) for c in chain.colors]
-    return GayChain(processed, chain.gamut)
-end
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Enzyme Stubs (overridden by extension)
-# ═══════════════════════════════════════════════════════════════════════════
-
-"""
-    enzyme_gamut_gradient(m::LearnableGamutMap, color::RGB)
-
-Compute gradient via Enzyme (stub, implemented in extension).
-"""
-function enzyme_gamut_gradient(m::LearnableGamutMap, color::RGB)
-    # Stub: returns zero gradient
-    return (0.0, 0.0, 0.0, 0.0)
-end
-
-"""
-    enzyme_learn_gamut!(m::LearnableGamutMap, colors::Vector{<:RGB}; kwargs...)
-
-Learn gamut map via Enzyme autodiff (stub, implemented in extension).
-"""
-function enzyme_learn_gamut!(m::LearnableGamutMap, colors::Vector{<:RGB}; kwargs...)
-    # Fallback to finite difference
-    return learn_gamut_map!(m, colors; kwargs...)
+    # Convert back to original color type
+    ColorType = eltype(chain)
+    return [convert(ColorType, c) for c in mapped_lab]
 end
 
 end # module GamutLearnable
