@@ -51,7 +51,7 @@ GayMetalExt = "Metal"
 GayRimuExt = "Rimu"
 
 [compat]
-AMDGPU = "1"
+AMDGPU = "1, 2"
 CUDA = "5"
 Carlo = "0.3"
 Chairmarks = "1"
