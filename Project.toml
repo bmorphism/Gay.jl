@@ -52,6 +52,7 @@ GayRimuExt = "Rimu"
 
 [compat]
 AMDGPU = "1"
+Aqua = "0.8"
 CUDA = "5"
 Carlo = "0.3"
 Chairmarks = "1"
