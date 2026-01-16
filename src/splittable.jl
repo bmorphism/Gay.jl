@@ -9,12 +9,15 @@ export gay_interleave, gay_interleave_streams, GayInterleaver
 export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
 export splitmix64, GOLDEN, MIX1, MIX2
 
+# Canonical seed and genesis colors
+export GAY_SEED, GAY_SEED_LEGACY, GAY_SEED_PARALLEL_BASE
+export GENESIS_COLORS, verify_genesis_chain
+
 # Parallel fork integration (Phase 2 migration)
 export parallel_fork_seed, color_from_parallel_fork
 export color_at_pf, colors_at_pf, next_color_pf, next_colors_pf
 export verify_spi_property, verify_bijection_property, verify_stream_independence
 export compute_hue_from_seed, compute_saturation_from_seed, compute_lightness_from_seed
-export GAY_SEED_LEGACY, GAY_SEED_PARALLEL_BASE
 
 """
     GayRNG
@@ -33,20 +36,67 @@ mutable struct GayRNG
     seed::UInt64
 end
 
-# Global RNG instance - default seed based on package name hash
-const GAY_SEED_LEGACY = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes (kept for compatibility)
-const GAY_SEED_PARALLEL_BASE = UInt64(0x6761795f636f6c6f)  # Parallel fork base (same value)
+# Global RNG instance
 const GLOBAL_GAY_RNG = Ref{GayRNG}()
 
-# SplitMix64 constants
-const GOLDEN = 0x9e3779b97f4a7c15
+# ═══════════════════════════════════════════════════════════════════════════════
+# CANONICAL SEED: 1069 (0x42D)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# The canonical Gay.jl seed is 1069, chosen for:
+#   1. Memorability: Small number, easy to communicate
+#   2. Hex significance: 0x42D contains "42" (the answer) + "D" (dimension)
+#   3. Genesis colors: #E67F86, #D06546, #1316BB - visually distinct, good GF(3) spread
+#   4. MCP alignment: Already canonical in Gay MCP server and all clients
+#
+# Legacy seeds preserved for backward compatibility but NOT recommended for new code.
+#
+const GAY_SEED = UInt64(1069)  # Canonical seed - use this!
+const GAY_SEED_LEGACY = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes (deprecated)
+const GAY_SEED_PARALLEL_BASE = UInt64(0x6761795f636f6c6f)  # Parallel fork base (deprecated)
+
+# Genesis color chain (seed=1069) - the canonical first 12 colors
+# Verified against Gay MCP server output
+const GENESIS_COLORS = (
+    (index=1,  hex="#E67F86", trit=+1, name="warm pink-coral"),
+    (index=2,  hex="#D06546", trit=0,  name="burnt orange"),
+    (index=3,  hex="#1316BB", trit=-1, name="deep blue"),
+    (index=4,  hex="#BA2645", trit=+1, name="crimson"),
+    (index=5,  hex="#49EE54", trit=+1, name="bright green"),
+    (index=6,  hex="#11C710", trit=0,  name="lime green"),
+    (index=7,  hex="#76B0F0", trit=-1, name="sky blue"),
+    (index=8,  hex="#E59798", trit=0,  name="dusty rose"),
+    (index=9,  hex="#5333D9", trit=-1, name="violet"),
+    (index=10, hex="#7E90EB", trit=0,  name="periwinkle"),
+    (index=11, hex="#1D9E7E", trit=0,  name="teal"),
+    (index=12, hex="#DD7CB0", trit=+1, name="pink"),
+)
+
+"""
+    verify_genesis_chain() -> Bool
+
+Verify that color_at(i, seed=1069) produces the canonical genesis colors.
+This is the reafference test: if we are the same implementation, we predict correctly.
+"""
+function verify_genesis_chain()
+    for g in GENESIS_COLORS
+        c = color_at(g.index; seed=GAY_SEED)
+        hex = @sprintf("#%02X%02X%02X", 
+            round(Int, clamp(c.r, 0, 1) * 255),
+            round(Int, clamp(c.g, 0, 1) * 255),
+            round(Int, clamp(c.b, 0, 1) * 255))
+        if uppercase(hex) != uppercase(g.hex)
+            @warn "Genesis color mismatch" index=g.index expected=g.hex got=hex
+            return false
+        end
+    end
+    return true
+end
+
+# SplitMix64 constants (same across all implementations)
+const GOLDEN = 0x9e3779b97f4a7c15  # φ⁻¹ × 2⁶⁴
 const MIX1 = 0xbf58476d1ce4e5b9
 const MIX2 = 0x94d049bb133111eb
-
-# Parallel fork seed derivation (will be computed below)
-# Default seed now derived from parallel fork system
-# This ensures SPI property is inherited from parallel fork guarantees
-const GAY_SEED = UInt64(0)  # Will be overwritten by parallel_fork_seed(0) computed below
 
 """
     splitmix64(x::UInt64) -> UInt64
@@ -153,10 +203,9 @@ function color_from_parallel_fork(index::Integer)::RGB{Float64}
     return RGB{Float64}(r + m, g + m, b + m)
 end
 
-# Update GAY_SEED constant with parallel fork value
-let
-    global GAY_SEED = parallel_fork_seed(0)
-end
+# NOTE: GAY_SEED is now a true constant (1069), not overwritten at runtime.
+# Legacy parallel_fork_seed(0) behavior preserved via GAY_SEED_PARALLEL_BASE for
+# backward compatibility, but new code should use GAY_SEED = 1069 directly.
 
 """
     GayRNG(seed::Integer=GAY_SEED)
