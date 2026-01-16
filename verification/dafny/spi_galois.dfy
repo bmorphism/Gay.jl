@@ -21,7 +21,10 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 module SPIConstants {
-    const GAY_SEED: bv64 := 0x6761795f636f6c6f  // "gay_colo"
+    // Canonical seed (v0.4.0+) - matches Gay MCP server
+    const GAY_SEED: bv64 := 1069  // 0x42D - "42" + "D"
+    const GAY_SEED_LEGACY: bv64 := 0x6761795f636f6c6f  // "gay_colo" (deprecated)
+    
     const GOLDEN: bv64 := 0x9e3779b97f4a7c15
     const MIX1: bv64 := 0xbf58476d1ce4e5b9
     const MIX2: bv64 := 0x94d049bb133111eb
@@ -51,13 +54,22 @@ module SplitMix64 {
         else Splitmix(HashAt(seed, index - 1))
     }
     
-    // Verify reference values from SPI_COLOR_SYSTEM.md
-    lemma VerifyReferenceValues()
-        ensures HashAt(GAY_SEED, 0) == 0xf061ebbc2ca74d78
-        ensures HashAt(GAY_SEED, 5) == 0xb5222cb8ae6e1886
-        ensures HashAt(GAY_SEED, 9) == 0xd726fcf3f1d357d5
+    // Verify reference values from SPI_COLOR_SYSTEM.md (legacy seed)
+    lemma VerifyLegacyReferenceValues()
+        ensures HashAt(GAY_SEED_LEGACY, 0) == 0xf061ebbc2ca74d78
+        ensures HashAt(GAY_SEED_LEGACY, 5) == 0xb5222cb8ae6e1886
+        ensures HashAt(GAY_SEED_LEGACY, 9) == 0xd726fcf3f1d357d5
     {
-        // These are verified by the Dafny solver
+        // These are verified by the Dafny solver (backward compatibility)
+    }
+    
+    // Verify canonical seed 1069 is distinct from legacy
+    lemma VerifyCanonicalSeed()
+        ensures GAY_SEED == 1069
+        ensures GAY_SEED != GAY_SEED_LEGACY
+        ensures HashAt(GAY_SEED, 0) != HashAt(GAY_SEED_LEGACY, 0)
+    {
+        // Canonical seed 1069 produces different hash sequence
     }
 }
 
