@@ -28,28 +28,19 @@ This release aligns Gay.jl with the [Gay MCP Server](https://github.com/bmorphis
 
 ## MCP Server Integration
 
-Gay.jl colors are available via the **Gay MCP Server** for Claude, Cursor, and other MCP-compatible clients.
+Gay.jl colors are available via the **Gay MCP Server** for Claude Code and Codex CLI.
 
-### Quick Setup (Claude Desktop)
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "gay": {
-      "command": "npx",
-      "args": ["-y", "gay-mcp"]
-    }
-  }
-}
-```
-
-### Quick Setup (Claude Code CLI)
+### Setup
 
 ```bash
+# Claude Code
 claude mcp add gay -- npx -y gay-mcp
+
+# Codex CLI
+codex mcp add gay -- npx -y gay-mcp
 ```
+
+That's it. One line.
 
 ### Available MCP Tools
 
