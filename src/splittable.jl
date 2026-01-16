@@ -33,20 +33,46 @@ mutable struct GayRNG
     seed::UInt64
 end
 
-# Global RNG instance - default seed based on package name hash
-const GAY_SEED_LEGACY = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes (kept for compatibility)
-const GAY_SEED_PARALLEL_BASE = UInt64(0x6761795f636f6c6f)  # Parallel fork base (same value)
+# Global RNG instance
 const GLOBAL_GAY_RNG = Ref{GayRNG}()
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CANONICAL SEED: 1069 (0x42D)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# The canonical Gay.jl seed is 1069, chosen for:
+#   1. Memorability: Small number, easy to communicate
+#   2. Hex significance: 0x42D contains "42" (the answer) + "D" (dimension)
+#   3. Genesis colors: #E67F86, #D06546, #1316BB - visually distinct, good GF(3) spread
+#   4. MCP alignment: Already canonical in Gay MCP server and all clients
+#
+# Legacy seeds preserved for backward compatibility but NOT recommended for new code.
+#
+const GAY_SEED = UInt64(1069)  # Canonical seed - use this!
+const GAY_SEED_LEGACY = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes (deprecated)
+const GAY_SEED_PARALLEL_BASE = UInt64(0x6761795f636f6c6f)  # Parallel fork base (deprecated)
 
 # SplitMix64 constants
 const GOLDEN = 0x9e3779b97f4a7c15
 const MIX1 = 0xbf58476d1ce4e5b9
 const MIX2 = 0x94d049bb133111eb
 
-# Parallel fork seed derivation (will be computed below)
-# Default seed now derived from parallel fork system
-# This ensures SPI property is inherited from parallel fork guarantees
-const GAY_SEED = UInt64(0)  # Will be overwritten by parallel_fork_seed(0) computed below
+# Genesis color chain (seed=1069) - the canonical first 12 colors
+# Verified against Gay MCP server output
+const GENESIS_COLORS = (
+    (index=1,  hex="#E67F86", trit=+1, name="warm pink-coral"),
+    (index=2,  hex="#D06546", trit=0,  name="burnt orange"),
+    (index=3,  hex="#1316BB", trit=-1, name="deep blue"),
+    (index=4,  hex="#BA2645", trit=+1, name="crimson"),
+    (index=5,  hex="#49EE54", trit=+1, name="bright green"),
+    (index=6,  hex="#11C710", trit=0,  name="lime green"),
+    (index=7,  hex="#76B0F0", trit=-1, name="sky blue"),
+    (index=8,  hex="#E59798", trit=0,  name="dusty rose"),
+    (index=9,  hex="#5333D9", trit=-1, name="violet"),
+    (index=10, hex="#7E90EB", trit=0,  name="periwinkle"),
+    (index=11, hex="#1D9E7E", trit=0,  name="teal"),
+    (index=12, hex="#DD7CB0", trit=+1, name="pink"),
+)
 
 """
     splitmix64(x::UInt64) -> UInt64
@@ -153,10 +179,7 @@ function color_from_parallel_fork(index::Integer)::RGB{Float64}
     return RGB{Float64}(r + m, g + m, b + m)
 end
 
-# Update GAY_SEED constant with parallel fork value
-let
-    global GAY_SEED = parallel_fork_seed(0)
-end
+# GAY_SEED is now computed inline at declaration (see above)
 
 """
     GayRNG(seed::Integer=GAY_SEED)

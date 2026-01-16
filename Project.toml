@@ -1,8 +1,9 @@
 name = "Gay"
 uuid = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
-version = "0.3.0"
+version = "0.4.0"
 
 [deps]
+ACSets = "227ef7b5-1206-438b-ac65-934d6da304b8"
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Chairmarks = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
 ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
@@ -51,6 +52,7 @@ GayMetalExt = "Metal"
 GayRimuExt = "Rimu"
 
 [compat]
+ACSets = "0.2.26"
 AMDGPU = "1"
 CUDA = "5"
 Carlo = "0.3"
