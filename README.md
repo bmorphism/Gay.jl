@@ -2,6 +2,88 @@
 
 Wide-gamut color sampling with **splittable determinism** — reproducible colors via [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl), inspired by [Pigeons.jl](https://pigeons.run)'s Strong Parallelism Invariance (SPI) pattern.
 
+## Release Notes
+
+### v0.4.0 (2025-01-16) — Canonical Seed Alignment
+
+**Breaking Change:** `GAY_SEED` is now a constant `1069` (was runtime-computed).
+
+This release aligns Gay.jl with the [Gay MCP Server](https://github.com/bmorphism/gay-mcp), ensuring identical colors across all implementations.
+
+| Change | Before | After |
+|--------|--------|-------|
+| `GAY_SEED` | `parallel_fork_seed(0)` (runtime) | `UInt64(1069)` (constant) |
+| Genesis colors | Variable | Fixed: `#E67F86`, `#D06546`, `#1316BB` |
+
+**New exports:**
+- `GENESIS_COLORS` — Tuple of first 12 canonical colors with trit values
+- `verify_genesis_chain()` — Reafference test for implementation verification
+
+**Why 1069?**
+- Memorable: 4 digits vs 19-digit legacy seed
+- Hex: `0x42D` = "42" (the answer) + "D" (dimension)  
+- GF(3) balanced: First triad `+1, 0, -1` sums to 0
+
+---
+
+## MCP Server Integration
+
+Gay.jl colors are available via the **Gay MCP Server** for Claude, Cursor, and other MCP-compatible clients.
+
+### Quick Setup (Claude Desktop)
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "gay": {
+      "command": "npx",
+      "args": ["-y", "gay-mcp"]
+    }
+  }
+}
+```
+
+### Quick Setup (Claude Code CLI)
+
+```bash
+claude mcp add gay -- npx -y gay-mcp
+```
+
+### Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `gay_seed` | Set the global RNG seed |
+| `color_at` | Get deterministic color at index |
+| `palette` | Generate N colors from index |
+| `next_color` | Advance stream, return color |
+| `pride_flag` | Get pride flag colors |
+| `share3_hash` | GF(3) trit for skill names |
+| `skill_quad` | Form balanced 4-skill quads |
+| `reafference` | Self-recognition test |
+| `golden_thread` | φ-spiral color generation |
+
+### Verify MCP ↔ Julia Alignment
+
+```julia
+using Gay
+
+# These should match MCP server output for seed=1069
+@assert GAY_SEED == 1069
+@assert verify_genesis_chain()  # Compares against GENESIS_COLORS
+```
+
+```bash
+# MCP verification (via Claude)
+color_at(index=1, seed=1069)  # → #E67F86
+color_at(index=2, seed=1069)  # → #D06546
+color_at(index=3, seed=1069)  # → #1316BB
+```
+
+---
+
 [![CI](https://github.com/bmorphism/Gay.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/bmorphism/Gay.jl/actions/workflows/CI.yml)
 [![Documentation](https://github.com/bmorphism/Gay.jl/actions/workflows/Documentation.yml/badge.svg)](https://bmorphism.github.io/Gay.jl/)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
