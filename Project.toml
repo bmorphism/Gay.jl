@@ -2,12 +2,6 @@ name = "Gay"
 uuid = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
 version = "0.4.0"
 
-# v0.4.0: Canonical seed alignment
-# - GAY_SEED changed from runtime parallel_fork_seed(0) to constant 1069
-# - Added GENESIS_COLORS tuple with verified MCP colors
-# - Added verify_genesis_chain() for reafference testing
-# - Breaking change: Default colors now match MCP server exactly
-
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Chairmarks = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
@@ -57,7 +51,7 @@ GayMetalExt = "Metal"
 GayRimuExt = "Rimu"
 
 [compat]
-AMDGPU = "1"
+AMDGPU = "1, 2"
 CUDA = "5"
 Carlo = "0.3"
 Chairmarks = "1"
