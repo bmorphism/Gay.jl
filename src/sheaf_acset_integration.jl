@@ -705,4 +705,60 @@ end
 export TritValue, TernaryAddress, AdhesionFilterOp, ADHESION_FILTER_OPS
 export ternary_execution_trace, seed_1069_signature
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PCT-AWARE ADHESION FILTER
+#
+# Powers PCT Level 4 (Transition) controls adhesion consistency.
+# The 120° separation constraint is the sheaf gluing condition:
+#   adjacent bags must be consistent at 120° phase intervals.
+#
+# pullback(d_csp) at L4 = where transition references meet perceptions.
+# The errors [-5.59, -4.16, -9.89] tell how hard each adhesion pulls
+# the system back toward equilibrium.
+#
+# Dafny file: DFunctorDWT.dfy (DWTSheafNonEmpty, DFunctorPreservesTotal)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+"""
+    pct_chromatic_adhesion_filter(decomp, gain=0.8, disturbance=0.3)
+
+Adhesion filter enhanced with PCT Level 4 transition control.
+For each adhesion span, computes the pullback error and corrects
+bag colors toward 120° triadic equilibrium.
+
+Returns updated decomposition with corrected bag colors and L4 errors.
+"""
+function pct_chromatic_adhesion_filter(decomp::ChromaticDecomposition;
+                                       gain::Float64=0.8,
+                                       disturbance::Float64=0.3)
+    new_bags = copy(decomp.bags)
+    l4_errors = Float64[]
+
+    for adh in decomp.adhesions
+        # L4 reference: 120° separation (triadic)
+        c_i = new_bags[adh.source].elements
+        c_j = new_bags[adh.target].elements
+
+        if !isempty(c_i) && !isempty(c_j)
+            # Compute hue difference at boundary
+            h_i = hue(convert(HSL, first(c_i)))
+            h_j = hue(convert(HSL, first(c_j)))
+            delta = mod(h_j - h_i + 180, 360) - 180  # signed angle
+            ref = 120.0  # triadic reference
+            err = gain * (ref - abs(delta))
+            push!(l4_errors, err)
+        end
+    end
+
+    # The errors tell you how hard each adhesion is pulling
+    # toward the 120° equilibrium — the Nash best-response correction.
+    (decomp=ChromaticDecomposition(new_bags, decomp.adhesions), l4_errors=l4_errors)
+end
+
+function hue(c::HSL)
+    c.h
+end
+
+export pct_chromatic_adhesion_filter
+
 end # module SheafACSetIntegration

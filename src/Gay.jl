@@ -89,6 +89,16 @@ export KernelColorContext, kernel_color!, kernel_finalize!
 export eventual_color, eventual_fingerprint, verify_kernel_spi
 export index_color, iter_index_color, cartesian_color
 
+# Include KernelDatalog - Maximally parallel Datalog via KernelAbstractions
+include("kernel_datalog.jl")
+using .KernelDatalog
+export Atom, Fact, Rule, FactDB, Subst, Proof
+export hash_term, atom, fact, rule, empty_db, assert_fact!, assert_facts!, query
+export unify_atom, eval_body, apply_rule, derive!, derive_parallel!
+export derive_with_proofs!, proof_addr, proof_to_sexpr, proof_depth, verify_proof
+export fnv1a, content_address, db_fingerprint, verify_datalog_spi
+export routing_rules, demo_skill_db, demo_kernel_datalog, world_kernel_datalog
+
 # Include TensorParallel - SPI verification for distributed inference
 include("tensor_parallel.jl")
 using .TensorParallel
@@ -1656,16 +1666,14 @@ export tile_neighbors, exchange_halos!
 export validate_halo_continuity, verify_spi
 export demo_roms_color_tiling
 
-# Include Spivak Wiring - Neural message passing via Org_m operad
+# Include Spivak Wiring - Patterns running on matter (Spivak/Libkind)
+# WiringDiagram = pattern, Matter = KA backend, oapply = compose them
 include("spivak_wiring.jl")
 using .SpivakWiring
-export GayWire, GayPolynomial, global_sections, poly_coproduct
-export GayTask, GayOutcome, GayPortfolio, portfolio_to_poly
-export GayBox, GayAgent, create_gay_agent
-export RecumbentWD, execute_recumbent!
-export NeuralWD, FeedbackState, execute_neural!
-export mp_functor_box, mp_functor_morphism
-export demo_spivak_wiring
+export Box, Wire, WiringDiagram, Matter, Placement
+export flat_diagram, chunked_diagram, triad_diagram, reduction_diagram
+export cpu_matter, oapply, execute, execute_sequential
+export ParallelismReport, measure_parallelism, audit_patterns
 
 # Include Unified Topos Gay - All layers integrated
 include("unified_topos_gay.jl")
@@ -1792,24 +1800,12 @@ export KOVESI_R, KOVESI_G, KOVESI_B
 export TernaryImage, map_bands_to_colors
 export demo_ternary_colorspace
 
-# Include Maximal Parallelism - Unified Ternary Splitting
-# Seed × Color × Thread = Maximum Effective Parallelism with SPI
+# Include Maximal Parallelism - Measure effective parallelism of Gay.jl
+# Workgroup scan + scaling curve + SPI overhead measurement
 include("maximal_parallelism.jl")
 using .MaximalParallelism
-export ComposedSplit, SplitResult
-export SeedSplitter, ColorSplitter, ThreadSplitter
-export compose_splits
-export ParallelExecutor, ExecutorConfig
-export execute_parallel!, work_stealing_execute!
-export WorkUnit, WorkBatch, WorkResult
-export create_work_batch, distribute_work
-export AdaptiveCapacity, adapt_capacity!
-export current_capacity, sustainable_parallelism
-export SPIVerifier, verify_spi!
-export ParallelismMetrics, collect_metrics, format_metrics
-export parallel_map, parallel_reduce, parallel_foreach
-export ternary_parallel_walk
-export demo_maximal_parallelism
+export WorkgroupResult, ScalingPoint, SPIOverhead, ParallelismAudit
+export scan_workgroups, scaling_curve, measure_spi_overhead, full_audit
 
 # Include Next Color Bandwidth - Maximum Color Ops Per Second
 # Measures and maximizes next_color throughput with SPI guarantees
@@ -1897,6 +1893,12 @@ using .SeedMining
 export SeedQuality, spectral_test, mine_seeds, generate_move_registration
 export world_seed_mining
 
+# Include PCT Cascade - Powers 5-level control mapped to Dafny verification pipeline
+include("pct_cascade.jl")
+using .PCTCascade
+export PCTLevel, PCTState, pct_cascade, pct_from_hierarchical_control
+export pct_convergence_chain, pct_decide_sheaf
+
 # Include Descent Tower - 7-level sheaf decomposition sonification (Issue #192)
 include("descent_tower.jl")
 using .DescentTower
@@ -1919,6 +1921,10 @@ export BandwidthConsumer, create_consumer, consume_bandwidth!, verify_bandwidth
 export BandwidthStake, stake_bandwidth!, bandwidth_weighted_range
 export bridge_to_gaymove, bridge_from_gaymove
 export demo_zero_message_mining
+
+# World benchmarks for every demo_
+include("world_all.jl")
+export world_all, world_run, WorldResult, WORLD_DEMOS
 
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════
