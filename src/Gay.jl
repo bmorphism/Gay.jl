@@ -1928,6 +1928,15 @@ export BandwidthStake, stake_bandwidth!, bandwidth_weighted_range
 export bridge_to_gaymove, bridge_from_gaymove
 export world_zero_message_mining
 
+# Include Gay Passport - did:gay:* decentralized identity with IRL witnessing
+include("passport.jl")
+using .GayPassport
+export GayDID, GayStamp, Witness, Passport, PassportRegistry
+export did_gay, resolve_did, verify_did
+export issue_passport, bless_passport, witness_passport
+export add_stamp, verify_passport, passport_fingerprint, passport_colors
+export premine_passports, world_passport, PassportWorld
+
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════
 
