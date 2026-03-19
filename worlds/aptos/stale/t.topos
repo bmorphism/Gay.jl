@@ -1,0 +1,33 @@
+# Aptos Stale Repos: Letter T
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "t"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "textmate-grammars-themes"
+url = "https://github.com/aptos-labs/textmate-grammars-themes"
+pushed_at = "2024-02-09"
+is_fork = true
+description = "Collection of TextMate grammars and themes in JSON"
+
+[[repos]]
+name = "todolist-dapp-tutorial"
+url = "https://github.com/aptos-labs/todolist-dapp-tutorial"
+pushed_at = "2023-02-23"
+
+[[repos]]
+name = "token-minter"
+url = "https://github.com/aptos-labs/token-minter"
+pushed_at = "2024-06-25"
+description = "Core repo for Token Minter"
+
+[[repos]]
+name = "tonic"
+url = "https://github.com/aptos-labs/tonic"
+pushed_at = "2024-06-18"
+is_fork = true
+description = "A native gRPC client & server implementation with async/await support"

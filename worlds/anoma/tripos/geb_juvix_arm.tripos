@@ -1,0 +1,82 @@
+# TRIPOS: Anoma Geb-Juvix-ARM (Triads 1-4)
+# ═══════════════════════════════════════════════════════════════════════════════
+# GEB: Categorical framework for compositional verification
+# Juvix: Dependently-typed functional language for ARM
+# ARM: Abstract Resource Machine
+
+[world]
+name = "anoma"
+category = "geb_juvix_arm"
+status = "active"
+updated_range = ["2025-11-05", "2025-12-12"]
+
+[[triads]]
+index = 1
+names = ["geb", "arm-risc0", "evm-protocol-adapter"]
+urls = [
+    "https://github.com/anoma/geb",
+    "https://github.com/anoma/arm-risc0",
+    "https://github.com/anoma/evm-protocol-adapter"
+]
+updated = ["2025-12-12", "2025-12-10", "2025-12-08"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 1)"
+descriptions = [
+    "GEB: Gödel-Escher-Bach categorical framework",
+    "ARM on RISC-0 zkVM",
+    "EVM protocol adapter for Anoma"
+]
+bumpus_gay_geb_core = true
+
+[[triads]]
+index = 2
+names = ["juvix-stdlib", "anoma-local-domain", "anoma"]
+urls = [
+    "https://github.com/anoma/juvix-stdlib",
+    "https://github.com/anoma/anoma-local-domain",
+    "https://github.com/anoma/anoma"
+]
+updated = ["2025-12-08", "2025-12-07", "2025-12-07"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 2)"
+descriptions = [
+    "Juvix standard library",
+    "Anoma local domain runtime",
+    "Anoma core implementation"
+]
+
+[[triads]]
+index = 3
+names = ["risc0-scheme", "specs.anoma.net", "nspec"]
+urls = [
+    "https://github.com/anoma/risc0-scheme",
+    "https://github.com/anoma/specs.anoma.net",
+    "https://github.com/anoma/nspec"
+]
+updated = ["2025-11-26", "2025-11-18", "2025-11-18"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 3)"
+descriptions = [
+    "Scheme on RISC-0",
+    "Anoma specifications",
+    "Nspec specification framework"
+]
+
+[[triads]]
+index = 4
+names = ["juvix", "Semitopology-Checker", "lisp-resource-machine"]
+urls = [
+    "https://github.com/anoma/juvix",
+    "https://github.com/anoma/Semitopology-Checker",
+    "https://github.com/anoma/lisp-resource-machine"
+]
+updated = ["2025-11-05", "2025-06-20", "2025-01-01"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 4)"
+descriptions = [
+    "Juvix dependently-typed language",
+    "Semitopology checker for compositional verification",
+    "Lisp resource machine implementation"
+]
+compositional_obstructions = ["semitopology", "resource_typing"]
+
+[morphisms]
+geb_to_juvix = { source = "geb", target = "juvix", arrow = "categorical_embedding" }
+juvix_to_arm = { source = "juvix", target = "arm-risc0", arrow = "compilation" }
+arm_to_evm = { source = "arm-risc0", target = "evm-protocol-adapter", arrow = "protocol_bridge" }

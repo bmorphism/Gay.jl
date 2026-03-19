@@ -1,0 +1,32 @@
+# Aptos Stale Repos: Letter D
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: PLAY (+1) - Generator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "d"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 1
+role = "play"
+
+[[repos]]
+name = "developer-docs"
+url = "https://github.com/aptos-labs/developer-docs"
+pushed_at = "2024-12-01"
+description = "Developer documentation and tutorials"
+
+[[repos]]
+name = "dapp-examples"
+url = "https://github.com/aptos-labs/dapp-examples"
+pushed_at = "2024-10-15"
+description = "Example decentralized applications"
+
+[[repos]]
+name = "deploy-scripts"
+url = "https://github.com/aptos-labs/deploy-scripts"
+pushed_at = "2024-08-20"
+description = "Deployment automation scripts"

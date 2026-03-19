@@ -1,0 +1,240 @@
+-- Gay.u - Deterministic Color Generation for Unison
+-- Port of Gay.jl's SplitMix64-based color generation with SPI
+-- Uses Unison's builtin splitmix handler for the Random ability
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- GF(3) Trit Type - Balanced Ternary for Conservation Laws
+-- ═══════════════════════════════════════════════════════════════════════════
+
+structural type Trit = Minus | Ergodic | Plus
+
+Trit.toInt : Trit -> Int
+Trit.toInt = cases
+  Minus   -> -1
+  Ergodic -> +0
+  Plus    -> +1
+
+Trit.fromInt : Int -> Trit
+Trit.fromInt n =
+  r = Int.mod n +3
+  if r == +0 then Ergodic
+  else if r == +1 then Plus
+  else Minus
+
+Trit.show : Trit -> Text
+Trit.show = cases
+  Minus   -> "[-]"
+  Ergodic -> "[○]"
+  Plus    -> "[+]"
+
+-- GF(3) addition (mod 3)
+Trit.add : Trit -> Trit -> Trit
+Trit.add a b = Trit.fromInt (Trit.toInt a + Trit.toInt b)
+
+-- Check if triad is balanced (sum ≡ 0 mod 3)
+Trit.isBalanced : [Trit] -> Boolean
+Trit.isBalanced trits =
+  sum = List.foldLeft (acc -> t -> acc + Trit.toInt t) +0 trits
+  Int.mod sum +3 == +0
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- RGB Color Type
+-- ═══════════════════════════════════════════════════════════════════════════
+
+structural type RGB = RGB Nat Nat Nat
+
+RGB.toHex : RGB -> Text
+RGB.toHex = cases
+  RGB r g b ->
+    rHex = Nat.toText r
+    gHex = Nat.toText g
+    bHex = Nat.toText b
+    "#" ++ rHex ++ gHex ++ bHex
+
+RGB.show : RGB -> Text
+RGB.show = cases
+  RGB r g b ->
+    "RGB(" ++ Nat.toText r ++ ", " ++ Nat.toText g ++ ", " ++ Nat.toText b ++ ")"
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- GayColor - Color with Trit assignment
+-- ═══════════════════════════════════════════════════════════════════════════
+
+structural type GayColor = GayColor RGB Trit Nat
+
+GayColor.rgb : GayColor -> RGB
+GayColor.rgb = cases GayColor rgb _ _ -> rgb
+
+GayColor.trit : GayColor -> Trit
+GayColor.trit = cases GayColor _ trit _ -> trit
+
+GayColor.index : GayColor -> Nat
+GayColor.index = cases GayColor _ _ idx -> idx
+
+GayColor.show : GayColor -> Text
+GayColor.show = cases
+  GayColor (RGB r g b) trit idx ->
+    "#" ++ Nat.toText r ++ Nat.toText g ++ Nat.toText b
+    ++ " " ++ Trit.show trit
+    ++ " @" ++ Nat.toText idx
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Core Color Generation using Random ability
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Generate a random RGB color using the Random ability
+randomRGB : '{Random} RGB
+randomRGB = do
+  r = Random.natIn 0 256
+  g = Random.natIn 0 256
+  b = Random.natIn 0 256
+  RGB r g b
+
+-- Assign GF(3) trit based on index
+indexToTrit : Nat -> Trit
+indexToTrit idx = Trit.fromInt (Int.fromRepresentation (Nat.mod idx 3))
+
+-- Generate a GayColor at a specific index
+gayColorAt : Nat -> '{Random} GayColor
+gayColorAt idx = do
+  rgb = !randomRGB
+  trit = indexToTrit idx
+  GayColor rgb trit idx
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Deterministic Color Access via splitmix
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- The canonical Gay.jl seed
+gay_seed : Nat
+gay_seed = 0x6761795f636f6c6f  -- "gay_colo" as bytes
+
+-- Get color at index with SPI guarantee
+-- Same seed + same index = same color always
+colorAt : Nat -> Nat -> GayColor
+colorAt seed idx =
+  -- Advance RNG to the right position by generating idx colors
+  -- then return the last one
+  splitmix seed do
+    go : Nat -> GayColor -> GayColor
+    go n lastColor =
+      if n == 0 then lastColor
+      else go (Nat.drop n 1) !(gayColorAt (idx Nat.- n Nat.+ 1))
+    go idx (GayColor (RGB 0 0 0) Ergodic 0)
+
+-- Get color at index using default Gay seed
+colorAtDefault : Nat -> GayColor
+colorAtDefault idx = colorAt gay_seed idx
+
+-- Generate n colors starting at index
+colorsAt : Nat -> Nat -> Nat -> [GayColor]
+colorsAt seed startIdx n =
+  splitmix seed do
+    -- Skip to startIdx
+    go : Nat -> [GayColor] -> [GayColor]
+    go remaining acc =
+      if remaining == 0 then acc
+      else
+        idx = startIdx Nat.+ (n Nat.- remaining)
+        color = !(gayColorAt idx)
+        go (Nat.drop remaining 1) (acc :+ color)
+    go n []
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Palette Generation
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Generate a palette of n colors
+palette : Nat -> Nat -> [GayColor]
+palette seed n = colorsAt seed 1 n
+
+-- Generate a balanced triad (3 colors whose trits sum to 0 mod 3)
+balancedTriad : Nat -> Nat -> [GayColor]
+balancedTriad seed startIdx =
+  colors = colorsAt seed startIdx 3
+  -- Verify balance
+  trits = List.map GayColor.trit colors
+  if Trit.isBalanced trits then colors
+  else colors  -- Return anyway, caller can verify
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Pride Flag Colors (deterministic from seed)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+rainbow : [RGB]
+rainbow = [
+  RGB 228 3 3,     -- Red
+  RGB 255 140 0,   -- Orange
+  RGB 255 237 0,   -- Yellow
+  RGB 0 128 38,    -- Green
+  RGB 0 76 175,    -- Blue
+  RGB 117 7 135    -- Violet
+]
+
+trans : [RGB]
+trans = [
+  RGB 91 206 250,  -- Light Blue
+  RGB 245 169 184, -- Pink
+  RGB 255 255 255, -- White
+  RGB 245 169 184, -- Pink
+  RGB 91 206 250   -- Light Blue
+]
+
+bi : [RGB]
+bi = [
+  RGB 214 2 112,   -- Magenta
+  RGB 155 89 182,  -- Lavender
+  RGB 0 56 167     -- Blue
+]
+
+nonbinary : [RGB]
+nonbinary = [
+  RGB 252 244 52,  -- Yellow
+  RGB 255 255 255, -- White
+  RGB 156 89 209,  -- Purple
+  RGB 45 45 45     -- Black
+]
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Demo / Test
+-- ═══════════════════════════════════════════════════════════════════════════
+
+demo : '{IO, Exception} ()
+demo = do
+  printLine "═══ Gay.u - Deterministic Color Generation ═══"
+  printLine ""
+
+  -- Generate colors at specific indices
+  printLine "Colors at indices 1-5 (seed = gay_seed):"
+  c1 = colorAtDefault 1
+  c2 = colorAtDefault 2
+  c3 = colorAtDefault 3
+  c4 = colorAtDefault 4
+  c5 = colorAtDefault 5
+  printLine ("  1: " ++ GayColor.show c1)
+  printLine ("  2: " ++ GayColor.show c2)
+  printLine ("  3: " ++ GayColor.show c3)
+  printLine ("  4: " ++ GayColor.show c4)
+  printLine ("  5: " ++ GayColor.show c5)
+  printLine ""
+
+  -- Verify SPI: same call = same result
+  printLine "SPI Verification (same seed+index = same color):"
+  c1_again = colorAtDefault 1
+  printLine ("  colorAt 1 (first):  " ++ GayColor.show c1)
+  printLine ("  colorAt 1 (second): " ++ GayColor.show c1_again)
+  printLine ""
+
+  -- GF(3) balance check
+  printLine "GF(3) Trit Balance:"
+  triad = balancedTriad gay_seed 1
+  trits = List.map GayColor.trit triad
+  printLine ("  Triad trits: " ++ Text.join " " (List.map Trit.show trits))
+  printLine ("  Is balanced: " ++ if Trit.isBalanced trits then "Yes ✓" else "No ✗")
+  printLine ""
+
+  printLine "═══ Done ═══"
+
+-- Entry point
+main : '{IO, Exception} ()
+main = demo

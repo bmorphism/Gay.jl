@@ -1,0 +1,37 @@
+# Aptos Stale Repos: Letter G
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "g"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "gce-github-runner"
+url = "https://github.com/aptos-labs/gce-github-runner"
+pushed_at = "2024-12-06"
+is_fork = true
+description = "Ephemeral GCE/GCP GitHub self-hosted runner"
+
+[[repos]]
+name = "gha-playground-0"
+url = "https://github.com/aptos-labs/gha-playground-0"
+pushed_at = "2024-09-27"
+
+[[repos]]
+name = "gha-playground-1"
+url = "https://github.com/aptos-labs/gha-playground-1"
+pushed_at = "2024-09-27"
+
+[[repos]]
+name = "governance-proposals"
+url = "https://github.com/aptos-labs/governance-proposals"
+pushed_at = "2022-10-04"
+
+[[repos]]
+name = "graffio"
+url = "https://github.com/aptos-labs/graffio"
+pushed_at = "2023-10-23"
+is_fork = true
+description = "Canvas on Aptos"

@@ -1,0 +1,91 @@
+# TRIPOS: Provers & Legacy (Triads 22-26)
+# ═══════════════════════════════════════════════════════════════════════════════
+# ZK provers, trusted setup, legacy Q1 2025
+
+[world]
+name = "aptos"
+category = "provers_legacy"
+status = "active"
+updated_range = ["2025-01-11", "2025-03-10"]
+
+[[triads]]
+index = 22
+names = ["aptos-keyless-trusted-setup-contributions-may-2024", "nft-aggregator", "aptos-agent"]
+urls = [
+    "https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024",
+    "https://github.com/aptos-labs/nft-aggregator",
+    "https://github.com/aptos-labs/aptos-agent"
+]
+updated = ["2025-03-10", "2025-03-07", "2025-03-06"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 22)"
+descriptions = [
+    "Trusted setup contributions May 2024",
+    "NFT aggregator",
+    "Aptos agent"
+]
+
+[[triads]]
+index = 23
+names = ["rapidsnark", "rust-rapidsnark", "aptos-keyless-trusted-setup-contributions-february-2024"]
+urls = [
+    "https://github.com/aptos-labs/rapidsnark",
+    "https://github.com/aptos-labs/rust-rapidsnark",
+    "https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-february-2024"
+]
+updated = ["2025-02-28", "2025-02-27", "2025-02-18"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 23)"
+descriptions = [
+    "Rapidsnark prover",
+    "Rust rapidsnark bindings",
+    "Trusted setup contributions February 2024"
+]
+zk_provers = true
+
+[[triads]]
+index = 24
+names = ["workspace", "aptos-react-example", "petra-plugin-wallet-adapter"]
+urls = [
+    "https://github.com/aptos-labs/workspace",
+    "https://github.com/aptos-labs/aptos-react-example",
+    "https://github.com/aptos-labs/petra-plugin-wallet-adapter"
+]
+updated = ["2025-02-10", "2025-02-10", "2025-01-29"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 24)"
+descriptions = [
+    "Workspace tooling",
+    "React example using @aptos-labs/react",
+    "Petra plugin wallet adapter"
+]
+
+[[triads]]
+index = 25
+names = ["semgrep-move-rules", "aptos-names-contracts", "aptos-move-project-template"]
+urls = [
+    "https://github.com/aptos-labs/semgrep-move-rules",
+    "https://github.com/aptos-labs/aptos-names-contracts",
+    "https://github.com/aptos-labs/aptos-move-project-template"
+]
+updated = ["2025-01-24", "2025-01-22", "2025-01-15"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 25)"
+descriptions = [
+    "Semgrep queries developed by Aptos Labs",
+    "Aptos names contracts",
+    "Template for creating Aptos move projects with CI"
+]
+
+[[triads]]
+index = 26
+names = ["aptos-sdk-specs", "vibe-hack-2025", "namespaces"]
+urls = [
+    "https://github.com/aptos-labs/aptos-sdk-specs",
+    "https://github.com/aptos-labs/vibe-hack-2025",
+    "https://github.com/aptos-labs/namespaces"
+]
+updated = ["2025-01-11", "2025-12-12", "2025-12-12"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 26)"
+is_fork = [false, true, true]
+descriptions = [
+    "Aptos SDK specs",
+    "Vibe hackathon page (fork)",
+    "Chain-Agnostic Namespaces (fork)"
+]

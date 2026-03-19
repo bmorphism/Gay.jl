@@ -1,0 +1,32 @@
+# Aptos Stale Repos: Letter V
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: COPLAY (-1) - Validator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "v"
+status = "stale"
+cutoff = "2025-01-01"
+trit = -1
+role = "coplay"
+
+[[repos]]
+name = "validator-node"
+url = "https://github.com/aptos-labs/validator-node"
+pushed_at = "2024-11-18"
+description = "Validator node implementation"
+
+[[repos]]
+name = "verification-tools"
+url = "https://github.com/aptos-labs/verification-tools"
+pushed_at = "2024-09-02"
+description = "Formal verification tooling"
+
+[[repos]]
+name = "vm-runtime"
+url = "https://github.com/aptos-labs/vm-runtime"
+pushed_at = "2024-07-14"
+description = "Move VM runtime"

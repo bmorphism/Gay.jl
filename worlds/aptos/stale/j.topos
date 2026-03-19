@@ -1,0 +1,26 @@
+# Aptos Stale Repos: Letter J
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: ARENA (0) - Coordinator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "j"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 0
+role = "arena"
+
+[[repos]]
+name = "json-rpc"
+url = "https://github.com/aptos-labs/json-rpc"
+pushed_at = "2024-06-18"
+description = "JSON-RPC server implementation"
+
+[[repos]]
+name = "jwt-auth"
+url = "https://github.com/aptos-labs/jwt-auth"
+pushed_at = "2024-04-22"
+description = "JWT authentication module"

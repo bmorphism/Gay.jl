@@ -1,0 +1,63 @@
+# TRIPOS: Penumbra ZK Privacy (Triads 1-3)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Privacy-preserving DEX on Cosmos with ZK proofs
+
+[world]
+name = "penumbra"
+category = "zk_privacy"
+status = "active"
+updated_range = ["2025-02-05", "2025-12-01"]
+
+[[triads]]
+index = 1
+names = ["web", "penumbra", "guide"]
+urls = [
+    "https://github.com/penumbra-zone/web",
+    "https://github.com/penumbra-zone/penumbra",
+    "https://github.com/penumbra-zone/guide"
+]
+updated = ["2025-12-01", "2025-10-28", "2025-08-29"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 1)"
+descriptions = [
+    "Penumbra web interface",
+    "Penumbra core: private DEX on Cosmos",
+    "Penumbra user guide"
+]
+
+[[triads]]
+index = 2
+names = ["ibc-monitor", "jmt", "cnidarium"]
+urls = [
+    "https://github.com/penumbra-zone/ibc-monitor",
+    "https://github.com/penumbra-zone/jmt",
+    "https://github.com/penumbra-zone/cnidarium"
+]
+updated = ["2025-08-27", "2025-05-05", "2025-04-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 2)"
+descriptions = [
+    "IBC monitoring tools",
+    "Jellyfish Merkle Tree",
+    "Cnidarium state management"
+]
+
+[[triads]]
+index = 3
+names = ["decaf377", "poseidon377", "tower-abci"]
+urls = [
+    "https://github.com/penumbra-zone/decaf377",
+    "https://github.com/penumbra-zone/poseidon377",
+    "https://github.com/penumbra-zone/tower-abci"
+]
+updated = ["2025-03-09", "2025-03-06", "2025-02-05"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 3)"
+descriptions = [
+    "Decaf377 elliptic curve (ZK-friendly)",
+    "Poseidon hash over BLS12-377",
+    "Tower ABCI for Tendermint integration"
+]
+zk_primitives = true
+
+[morphisms]
+decaf_to_poseidon = { source = "decaf377", target = "poseidon377", arrow = "hash_domain" }
+poseidon_to_jmt = { source = "poseidon377", target = "jmt", arrow = "merkle_commitment" }
+jmt_to_cnidarium = { source = "jmt", target = "cnidarium", arrow = "state_store" }

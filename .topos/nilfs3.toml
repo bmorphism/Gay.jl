@@ -1,0 +1,299 @@
+# NILFS3: Log-Structured Filesystem with Chromatic Transaction Coloring
+# Successor to nilfs2 with Gay guarantees for universal cross-substrate storage
+
+[metadata]
+name = "nilfs3"
+version = "0.1.0"
+predecessor = "nilfs2"
+spec_version = "2024.1"
+authors = ["Gay.jl Contributors"]
+
+[magic]
+# Superblock magic for nilfs3
+# nilfs2: 0x3434 ("44" in little-endian)
+# nilfs3: 0x6934 ("i4" - involutive 4th generation)
+superblock_magic = 0x6934
+volume_label_prefix = "GAY-NILFS3"
+
+[log_structure]
+# Preserve nilfs2's log-structured design
+append_only = true
+copy_on_write = true
+continuous_snapshotting = true
+
+# Enhanced with chromatic segment coloring
+segment_coloring = true
+checkpoint_coloring = true
+transaction_coloring = true
+
+[spi]
+# Strong Parallelism Invariance for filesystem operations
+enabled = true
+
+# Every transaction gets deterministic color from splittable RNG
+transaction_seed_source = "content_hash"
+rng_type = "SplittableRandom"
+
+# Parallel operations produce same result
+write_order_independent = true
+read_order_independent = true
+
+# Crash consistency with chromatic verification
+crash_recovery_spi = true
+
+[chromatic]
+# Chromatic identity for all filesystem structures
+
+[chromatic.segments]
+# Each segment gets a color
+coloring = true
+color_source = "segment_number ⊻ creation_time"
+color_bits = 64
+
+[chromatic.checkpoints]
+# Each checkpoint (snapshot) gets a color
+coloring = true
+color_source = "previous_checkpoint ⊻ delta_hash"
+color_bits = 64
+# Checkpoint colors form a hash chain
+chain_verification = true
+
+[chromatic.transactions]
+# Each transaction gets a color
+coloring = true
+color_source = "splittable_rng"
+color_bits = 64
+# Transaction color visible in inode metadata
+inode_color_xattr = true
+
+[chromatic.files]
+# Per-file chromatic fingerprint
+fingerprint = true
+fingerprint_algorithm = "gay_merkle"  # Merkle tree with gay coloring
+update_on_write = true
+# Enables content-addressable dedup
+content_addressable = true
+
+[trit_flip]
+# Balanced ternary for integrity
+trit_superblock = true
+trit_checkpoint = true
+trit_segment = true
+
+# 2-Trit per structure
+trit_width = 40
+
+# Attack resistance
+[[trit_flip.defenses]]
+target = "superblock"
+attack = "corruption"
+defense = "trit_ecc"
+recovery = "redundant_superblocks"
+
+[[trit_flip.defenses]]
+target = "checkpoint"
+attack = "rollback"
+defense = "causal_trit_chain"
+recovery = "forward_recovery"
+
+[[trit_flip.defenses]]
+target = "segment"
+attack = "bit_rot"
+defense = "trit_checksum"
+recovery = "segment_scrubbing"
+
+[verification]
+# Multi-level verification
+
+[[verification.levels]]
+name = "block"
+trit1 = "content_hash"
+trit2 = "physical_location"
+mode = "causal"
+
+[[verification.levels]]
+name = "segment"
+trit1 = "all_blocks_xor"
+trit2 = "segment_header"
+mode = "causal"
+
+[[verification.levels]]
+name = "checkpoint"
+trit1 = "previous_checkpoint"
+trit2 = "segment_summary"
+mode = "acausal"
+
+[[verification.levels]]
+name = "filesystem"
+trit1 = "root_checkpoint"
+trit2 = "superblock"
+mode = "bounded"
+
+[generative]
+# Pre-2020 vs Post-2026 storage paradigm
+
+[generative.pre2020]
+name = "eager_persist"
+description = "Immediately persist all data to log"
+write_amplification = "1x"
+read_latency = "low"
+storage_efficiency = "data_size"
+
+[generative.post2026]
+name = "lazy_generative"
+description = "Store seed + procedure for regenerable data"
+write_amplification = "0.1x"
+read_latency = "variable"
+storage_efficiency = "semantic"
+
+# File types suitable for generative storage
+generative_patterns = [
+    "generated_assets",
+    "cached_renders",
+    "derived_data",
+    "temporary_files",
+    "procedural_textures"
+]
+
+# Hybrid: per-file decision
+[[generative.decision_rules]]
+pattern = "*.gay.gz"
+mode = "eager_persist"
+
+[[generative.decision_rules]]
+pattern = "*.j3k"
+mode = "lazy_generative"
+
+[[generative.decision_rules]]
+pattern = ".gay_seed/*"
+mode = "seed_only"
+
+[involutive]
+# Involutive operations for self-verifying storage
+enabled = true
+
+# Involutive encoding for metadata
+metadata_involution = true
+involution_type = "xor_with_seed"
+
+# Self-repairing through involution
+self_repair = true
+repair_on_read = true
+
+# Fixed-point files (content = hash of content)
+fixed_point_detection = true
+
+[snapshots]
+# Enhanced snapshotting from nilfs2
+continuous = true
+instant = true
+writable = true  # nilfs3 enhancement
+
+# Chromatic snapshot identity
+snapshot_color = true
+snapshot_color_inherits_from = "checkpoint"
+
+# Snapshot relationships
+parent_tracking = true
+branching = true
+merging = true  # Gay-verified merge
+
+[garbage_collection]
+# Enhanced GC with chromatic tracking
+segment_cleaning = true
+background_gc = true
+
+# GC uses chromatic liveness analysis
+chromatic_liveness = true
+# Color of live data vs dead data
+live_color_tracking = true
+
+# GC preserves SPI
+gc_spi_verified = true
+
+[parallel]
+# Parallel filesystem operations
+enabled = true
+
+# Parallel segment writing
+parallel_segments = true
+max_parallel_segments = 8
+
+# Parallel GC
+parallel_gc = true
+
+# SPI across parallel operations
+spi_verified = true
+
+[streaming]
+# Streaming filesystem interface
+
+# core.async style channels for file I/O
+async_channels = true
+backpressure = true
+
+# Chromatic flow for I/O tracing
+chromatic_flow = true
+
+# Per-operation coloring
+operation_coloring = true
+
+[gay_open_game]
+# Storage strategy selection
+enabled = true
+
+[[gay_open_game.players]]
+name = "writer"
+actions = ["sync_write", "async_write", "batch_write", "defer"]
+utility = "durability + latency"
+
+[[gay_open_game.players]]
+name = "gc"
+actions = ["clean_now", "defer_clean", "partial_clean"]
+utility = "space_recovery + throughput"
+
+[[gay_open_game.players]]
+name = "reader"
+actions = ["cached_read", "direct_read", "prefetch"]
+utility = "latency + bandwidth"
+
+equilibrium = "nash"
+marginal_convergence = true
+
+[cross_substrate]
+# Universal storage interface
+gay_guarantees = true
+
+# Backends nilfs3 can run on
+substrates = [
+    "block_device",
+    "file_backend",
+    "memory_backend",
+    "distributed_backend",
+    "object_storage"
+]
+
+# Cross-backend migration with verification
+migration_verified = true
+fingerprint_portable = true
+
+[compatibility]
+# Backward compatibility
+nilfs2_read = true
+nilfs2_upgrade = true
+
+# Export formats
+export_formats = ["tar", "gayzip", "squashfs"]
+
+# FUSE support
+fuse_enabled = true
+
+[posix]
+# POSIX compliance
+posix_compliant = true
+
+# Extended attributes for Gay metadata
+xattr_namespace = "user.gay"
+xattr_color = "user.gay.color"
+xattr_fingerprint = "user.gay.fingerprint"
+xattr_seed = "user.gay.seed"

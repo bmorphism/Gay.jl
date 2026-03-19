@@ -1,0 +1,21 @@
+# Aptos Stale Repos: Letter W
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "w"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "wasmer"
+url = "https://github.com/aptos-labs/wasmer"
+pushed_at = "2024-09-03"
+is_fork = true
+description = "The leading Wasm Runtime supporting WASIX, WASI and Emscripten"
+
+[[repos]]
+name = "whitepaper"
+url = "https://github.com/aptos-labs/whitepaper"
+pushed_at = "2022-09-25"
+description = "Aptos white paper LaTeX source files in several languages"

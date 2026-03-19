@@ -1,0 +1,32 @@
+# Aptos Stale Repos: Letter K
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: ARENA (0) - Coordinator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "k"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 0
+role = "arena"
+
+[[repos]]
+name = "keyless-accounts"
+url = "https://github.com/aptos-labs/keyless-accounts"
+pushed_at = "2024-11-03"
+description = "Keyless account implementation"
+
+[[repos]]
+name = "kms-integration"
+url = "https://github.com/aptos-labs/kms-integration"
+pushed_at = "2024-08-14"
+description = "Key management service integration"
+
+[[repos]]
+name = "kubernetes-operator"
+url = "https://github.com/aptos-labs/kubernetes-operator"
+pushed_at = "2024-03-29"
+description = "Kubernetes operator for Aptos nodes"

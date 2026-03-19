@@ -1,0 +1,32 @@
+# Aptos Stale Repos: Letter U
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: COPLAY (-1) - Validator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "u"
+status = "stale"
+cutoff = "2025-01-01"
+trit = -1
+role = "coplay"
+
+[[repos]]
+name = "upgrade-framework"
+url = "https://github.com/aptos-labs/upgrade-framework"
+pushed_at = "2024-10-21"
+description = "On-chain upgrade framework"
+
+[[repos]]
+name = "utils-rs"
+url = "https://github.com/aptos-labs/utils-rs"
+pushed_at = "2024-06-03"
+description = "Rust utility libraries"
+
+[[repos]]
+name = "user-management"
+url = "https://github.com/aptos-labs/user-management"
+pushed_at = "2024-04-15"
+description = "User management and permissions"

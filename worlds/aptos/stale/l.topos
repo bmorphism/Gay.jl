@@ -1,0 +1,21 @@
+# Aptos Stale Repos: Letter L
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "l"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "ledger-app-aptos"
+url = "https://github.com/aptos-labs/ledger-app-aptos"
+pushed_at = "2024-08-06"
+description = "Aptos app for Ledger Wallet"
+
+[[repos]]
+name = "LOKI-Aptos"
+url = "https://github.com/aptos-labs/LOKI-Aptos"
+pushed_at = "2024-10-10"
+is_fork = true
+description = "LOKI consensus protocol fuzzing framework on Aptos"

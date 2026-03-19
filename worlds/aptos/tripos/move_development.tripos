@@ -1,0 +1,90 @@
+# TRIPOS: Move Development (Triads 6-10)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Move language tooling, examples, and confidential computation
+
+[world]
+name = "aptos"
+category = "move_development"
+status = "active"
+updated_range = ["2025-11-16", "2025-12-04"]
+
+[[triads]]
+index = 6
+names = ["confidential-payments-example", "move-vscode-extension", "aptos-indexer-processors-v2"]
+urls = [
+    "https://github.com/aptos-labs/confidential-payments-example",
+    "https://github.com/aptos-labs/move-vscode-extension",
+    "https://github.com/aptos-labs/aptos-indexer-processors-v2"
+]
+updated = ["2025-12-04", "2025-12-04", "2025-12-04"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 6)"
+descriptions = [
+    "Example payment dapp for confidential assets",
+    "Official VS Code extension for Move on Aptos",
+    "Aptos indexer processors v2"
+]
+
+[[triads]]
+index = 7
+names = ["aptos-networks", "aptos-npm-mcp", "crypto-primitives"]
+urls = [
+    "https://github.com/aptos-labs/aptos-networks",
+    "https://github.com/aptos-labs/aptos-npm-mcp",
+    "https://github.com/aptos-labs/crypto-primitives"
+]
+updated = ["2025-12-03", "2025-12-02", "2025-12-02"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 7)"
+descriptions = [
+    "Aptos networks configuration",
+    "Aptos NPM MCP tools",
+    "Cryptographic primitives"
+]
+
+[[triads]]
+index = 8
+names = ["move-by-examples", "aptos-dotnet-sdk", "aptos-indexer-processors"]
+urls = [
+    "https://github.com/aptos-labs/move-by-examples",
+    "https://github.com/aptos-labs/aptos-dotnet-sdk",
+    "https://github.com/aptos-labs/aptos-indexer-processors"
+]
+updated = ["2025-12-02", "2025-11-24", "2025-11-24"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 8)"
+descriptions = [
+    "A collection of Move examples (ToDo List, NFT Marketplace, Billboard, FA Launchpad)",
+    "Aptos C#/.NET SDK for building Web3 applications",
+    "Set of core processors that index data on the Aptos blockchain"
+]
+primary_move_examples = true
+
+[[triads]]
+index = 9
+names = ["aptos-go-sdk", "japtos", "governance"]
+urls = [
+    "https://github.com/aptos-labs/aptos-go-sdk",
+    "https://github.com/aptos-labs/japtos",
+    "https://github.com/aptos-labs/governance"
+]
+updated = ["2025-11-21", "2025-11-21", "2025-11-19"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 9)"
+descriptions = [
+    "Aptos Go SDK",
+    "Aptos Java SDK",
+    "Governance tooling"
+]
+
+[[triads]]
+index = 10
+names = ["passkey-react-example", "orderless-example", "aptos-build-mint-page-template"]
+urls = [
+    "https://github.com/aptos-labs/passkey-react-example",
+    "https://github.com/aptos-labs/orderless-example",
+    "https://github.com/aptos-labs/aptos-build-mint-page-template"
+]
+updated = ["2025-11-16", "2025-11-16", "2025-11-16"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 10)"
+descriptions = [
+    "Passkey React example",
+    "An orderless full-stack example using TypeScript SDK",
+    "Template for minting NFTs from a collection"
+]

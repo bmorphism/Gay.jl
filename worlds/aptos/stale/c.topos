@@ -1,0 +1,37 @@
+# Aptos Stale Repos: Letter C
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "c"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "cad-boilerplate"
+url = "https://github.com/aptos-labs/cad-boilerplate"
+pushed_at = "2024-05-04"
+
+[[repos]]
+name = "cad-node-boilerplate"
+url = "https://github.com/aptos-labs/cad-node-boilerplate"
+pushed_at = "2024-05-04"
+
+[[repos]]
+name = "cad-todolist"
+url = "https://github.com/aptos-labs/cad-todolist"
+pushed_at = "2024-05-04"
+
+[[repos]]
+name = "chaos-mesh"
+url = "https://github.com/aptos-labs/chaos-mesh"
+pushed_at = "2023-04-13"
+is_fork = true
+description = "A Chaos Engineering Platform for Kubernetes"
+
+[[repos]]
+name = "circom-compat"
+url = "https://github.com/aptos-labs/circom-compat"
+pushed_at = "2024-05-23"
+is_fork = true
+description = "Arkworks bindings to Circom's R1CS, for Groth16"

@@ -1,0 +1,97 @@
+# TRIPOS: Core Infrastructure (Triads 1-5)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Triad + Topos = Tripos: Topological structure with chromatic seed triads
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  SPECTRAL MIXING GUARANTEES                                                 │
+# │                                                                             │
+# │    λ₂(triad) = min color distance / √3                                     │
+# │    Rapid mixing when λ₂ ≥ 0.69                                              │
+# │    Walk order: highest λ₂ first for fastest convergence                    │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+[world]
+name = "aptos"
+category = "core_infrastructure"
+status = "active"
+updated_range = ["2025-12-06", "2025-12-12"]
+
+[[triads]]
+index = 1
+names = ["keyless-zk-proofs", "aptos-core", "sign-in-with-aptos"]
+urls = [
+    "https://github.com/aptos-labs/keyless-zk-proofs",
+    "https://github.com/aptos-labs/aptos-core",
+    "https://github.com/aptos-labs/sign-in-with-aptos"
+]
+updated = ["2025-12-12", "2025-12-12", "2025-12-12"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 1)"
+descriptions = [
+    "Aptos Keyless ZK circuit implementation in circom",
+    "Aptos layer 1 blockchain core",
+    "Library of utilities for Sign in with Aptos"
+]
+
+[[triads]]
+index = 2
+names = ["aptos-ts-sdk", "explorer", "apt-id"]
+urls = [
+    "https://github.com/aptos-labs/aptos-ts-sdk",
+    "https://github.com/aptos-labs/explorer",
+    "https://github.com/aptos-labs/apt-id"
+]
+updated = ["2025-12-12", "2025-12-12", "2025-12-12"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 2)"
+descriptions = [
+    "SDK for accessing Aptos blockchain data",
+    "The explorer of the Aptos blockchain",
+    "A decentralized identity social profile platform"
+]
+
+[[triads]]
+index = 3
+names = ["script-composer-sdk", "aptos-wallet-adapter", "aptos-docs"]
+urls = [
+    "https://github.com/aptos-labs/script-composer-sdk",
+    "https://github.com/aptos-labs/aptos-wallet-adapter",
+    "https://github.com/aptos-labs/aptos-docs"
+]
+updated = ["2025-12-12", "2025-12-11", "2025-12-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 3)"
+descriptions = [
+    "Script composer SDK",
+    "A monorepo modular wallet adapter for Aptos applications",
+    "Documentation for the Aptos Blockchain"
+]
+
+[[triads]]
+index = 4
+names = ["petra-vault", "aptos-js-pro", "aptos-framework"]
+urls = [
+    "https://github.com/aptos-labs/petra-vault",
+    "https://github.com/aptos-labs/aptos-js-pro",
+    "https://github.com/aptos-labs/aptos-framework"
+]
+updated = ["2025-12-10", "2025-12-10", "2025-12-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 4)"
+descriptions = [
+    "Non-custodial multisig wallet solution on Aptos",
+    "Library of opinionated utilities for building Aptos applications",
+    "Mirror repo for the Aptos framework packages"
+]
+
+[[triads]]
+index = 5
+names = ["aptos-client", "aptos-indexer-processor-sdk", "aptos-python-sdk"]
+urls = [
+    "https://github.com/aptos-labs/aptos-client",
+    "https://github.com/aptos-labs/aptos-indexer-processor-sdk",
+    "https://github.com/aptos-labs/aptos-python-sdk"
+]
+updated = ["2025-12-09", "2025-12-09", "2025-12-06"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 5)"
+descriptions = [
+    "Source for NPM package @aptos-labs/aptos-client",
+    "Aptos indexer processor SDK",
+    "Aptos Python SDK"
+]

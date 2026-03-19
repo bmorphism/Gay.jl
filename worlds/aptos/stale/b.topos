@@ -1,0 +1,13 @@
+# Aptos Stale Repos: Letter B
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "b"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "blueprint"
+url = "https://github.com/aptos-labs/blueprint"
+pushed_at = "2024-03-16"

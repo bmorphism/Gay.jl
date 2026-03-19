@@ -1,0 +1,15 @@
+# Aptos Stale Repos: Letter N
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "n"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "nextra"
+url = "https://github.com/aptos-labs/nextra"
+pushed_at = "2024-08-12"
+is_fork = true
+description = "Simple, powerful and flexible site generation framework with Next.js"

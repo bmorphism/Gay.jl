@@ -1,0 +1,15 @@
+# Aptos Stale Repos: Letter X
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "x"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "x25519-dalek"
+url = "https://github.com/aptos-labs/x25519-dalek"
+pushed_at = "2024-05-29"
+is_fork = true
+description = "X25519 elliptic curve Diffie-Hellman key exchange in pure-Rust"

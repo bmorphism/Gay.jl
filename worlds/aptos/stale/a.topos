@@ -1,0 +1,98 @@
+# Aptos Stale Repos: Letter A
+# ═══════════════════════════════════════════════════════════════════════════════
+# These repos have not been updated since 2024. They remain as topological
+# reference points in the Aptos world but are not included in active random walks.
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "a"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "Aptos-Unity-SDK"
+url = "https://github.com/aptos-labs/Aptos-Unity-SDK"
+pushed_at = "2024-02-26"
+description = "Aptos Labs Unity SDK"
+
+[[repos]]
+name = "aptogotchi"
+url = "https://github.com/aptos-labs/aptogotchi"
+pushed_at = "2024-11-06"
+description = "Tamagotchi on chain! August 2023 hackathon project"
+
+[[repos]]
+name = "aptogotchi-extensible"
+url = "https://github.com/aptos-labs/aptogotchi-extensible"
+pushed_at = "2024-02-01"
+is_fork = true
+description = "Extensible Tamagotchi with food and accessories"
+
+[[repos]]
+name = "aptogotchi-intermediate"
+url = "https://github.com/aptos-labs/aptogotchi-intermediate"
+pushed_at = "2024-04-10"
+is_fork = true
+description = "Tamagotchi with food and accessories"
+
+[[repos]]
+name = "aptogotchi-keyless"
+url = "https://github.com/aptos-labs/aptogotchi-keyless"
+pushed_at = "2024-05-16"
+is_fork = true
+description = "Aptogotchi x Aptos Keyless Accounts"
+
+[[repos]]
+name = "aptogotchi-random-mint"
+url = "https://github.com/aptos-labs/aptogotchi-random-mint"
+pushed_at = "2024-06-20"
+
+[[repos]]
+name = "aptos-ansible"
+url = "https://github.com/aptos-labs/aptos-ansible"
+pushed_at = "2023-03-25"
+description = "Experimental Ansible-based installation of an Aptos node"
+
+[[repos]]
+name = "aptos-api-key-examples"
+url = "https://github.com/aptos-labs/aptos-api-key-examples"
+pushed_at = "2024-01-19"
+description = "Examples of using API keys"
+
+[[repos]]
+name = "aptos-cad-workshop"
+url = "https://github.com/aptos-labs/aptos-cad-workshop"
+pushed_at = "2024-09-09"
+description = "create-aptos-dapp workshop"
+
+[[repos]]
+name = "aptos-connect-feedback"
+url = "https://github.com/aptos-labs/aptos-connect-feedback"
+pushed_at = "2024-08-02"
+description = "A place to report issues and request features for Aptos Connect"
+
+[[repos]]
+name = "aptos-developer-discussions"
+url = "https://github.com/aptos-labs/aptos-developer-discussions"
+pushed_at = "2024-10-15"
+description = "Repo to host discussions for Aptos developer community"
+
+[[repos]]
+name = "aptos-multi-region-bench"
+url = "https://github.com/aptos-labs/aptos-multi-region-bench"
+pushed_at = "2023-04-27"
+description = "Multi-region Aptos testnet benchmarking setup"
+
+[[repos]]
+name = "aptos-previewnet"
+url = "https://github.com/aptos-labs/aptos-previewnet"
+pushed_at = "2023-03-28"
+description = "Aptos PreviewNet"
+
+[[repos]]
+name = "aptos-unity-starter"
+url = "https://github.com/aptos-labs/aptos-unity-starter"
+pushed_at = "2024-12-12"
+description = "An Aptos wallet built using the official Unity SDK"

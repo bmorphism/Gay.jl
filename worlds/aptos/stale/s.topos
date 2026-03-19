@@ -1,0 +1,57 @@
+# Aptos Stale Repos: Letter S
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "s"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "semgrep"
+url = "https://github.com/aptos-labs/semgrep"
+pushed_at = "2024-09-03"
+is_fork = true
+description = "Lightweight static analysis for many languages"
+
+[[repos]]
+name = "semgrep-interfaces"
+url = "https://github.com/aptos-labs/semgrep-interfaces"
+pushed_at = "2024-06-11"
+is_fork = true
+description = "Store the ATD/openapi/protobuf interfaces between semgrep components"
+
+[[repos]]
+name = "semgrep-move-on-aptos"
+url = "https://github.com/aptos-labs/semgrep-move-on-aptos"
+pushed_at = "2024-08-13"
+is_fork = true
+
+[[repos]]
+name = "serde-reflection"
+url = "https://github.com/aptos-labs/serde-reflection"
+pushed_at = "2024-05-14"
+is_fork = true
+description = "Rust libraries for interoperability and testing of serialization formats"
+
+[[repos]]
+name = "snark-setup-coordinator"
+url = "https://github.com/aptos-labs/snark-setup-coordinator"
+pushed_at = "2023-11-10"
+is_fork = true
+
+[[repos]]
+name = "snark-setup-operator"
+url = "https://github.com/aptos-labs/snark-setup-operator"
+pushed_at = "2023-11-28"
+is_fork = true
+
+[[repos]]
+name = "snarkjs-to-aptos"
+url = "https://github.com/aptos-labs/snarkjs-to-aptos"
+pushed_at = "2024-12-10"
+
+[[repos]]
+name = "synclinear"
+url = "https://github.com/aptos-labs/synclinear"
+pushed_at = "2022-12-04"

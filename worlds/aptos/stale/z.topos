@@ -1,0 +1,32 @@
+# Aptos Stale Repos: Letter Z
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: PLAY (+1) - Generator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "z"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 1
+role = "play"
+
+[[repos]]
+name = "zero-knowledge"
+url = "https://github.com/aptos-labs/zero-knowledge"
+pushed_at = "2024-10-07"
+description = "Zero-knowledge proof integrations"
+
+[[repos]]
+name = "zk-rollup"
+url = "https://github.com/aptos-labs/zk-rollup"
+pushed_at = "2024-06-24"
+description = "ZK rollup research and implementation"
+
+[[repos]]
+name = "zkp-circuits"
+url = "https://github.com/aptos-labs/zkp-circuits"
+pushed_at = "2024-04-30"
+description = "ZKP circuit library"

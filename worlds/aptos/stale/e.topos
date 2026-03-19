@@ -1,0 +1,13 @@
+# Aptos Stale Repos: Letter E
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "e"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "e2e-latency-bench"
+url = "https://github.com/aptos-labs/e2e-latency-bench"
+pushed_at = "2024-11-07"

@@ -1,0 +1,97 @@
+# TRIPOS: Forks (Triads 27-30)
+# ═══════════════════════════════════════════════════════════════════════════════
+# External dependencies maintained as forks for Aptos ecosystem
+#
+# These represent the Aptos world's interface to external possible worlds:
+#   - x402: HTTP 402 payment protocol world
+#   - groth16/whir: ZK proving system world
+#   - prisma/rspc: Type-safe database world
+#   - p0tion: Trusted setup ceremony world
+
+[world]
+name = "aptos"
+category = "forks"
+status = "active"
+updated_range = ["2025-04-10", "2025-12-11"]
+all_forks = true
+
+[[triads]]
+index = 27
+names = ["x402", "x402-rs", "groth16"]
+urls = [
+    "https://github.com/aptos-labs/x402",
+    "https://github.com/aptos-labs/x402-rs",
+    "https://github.com/aptos-labs/groth16"
+]
+updated = ["2025-12-11", "2025-12-10", "2025-12-02"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 27)"
+upstream = [
+    "https://github.com/coinbase/x402",
+    "https://github.com/coinbase/x402-rs",
+    "https://github.com/arkworks-rs/groth16"
+]
+descriptions = [
+    "A payments protocol for the internet. Built on HTTP 402",
+    "x402 payments in Rust: verify, settle, and monitor",
+    "A Rust implementation of the Groth16 zkSNARK"
+]
+
+[[triads]]
+index = 28
+names = ["whir", "dudect-bencher", "lru-rs"]
+urls = [
+    "https://github.com/aptos-labs/whir",
+    "https://github.com/aptos-labs/dudect-bencher",
+    "https://github.com/aptos-labs/lru-rs"
+]
+updated = ["2025-10-28", "2025-10-17", "2025-09-09"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 28)"
+descriptions = [
+    "WHIR 🌪️: Reed–Solomon Proximity Testing with Super-Fast Verification",
+    "DudeCT constant-time function tester",
+    "An implementation of a LRU cache"
+]
+
+[[triads]]
+index = 29
+names = ["prisma-client-rust", "rspc", "firebase-token"]
+urls = [
+    "https://github.com/aptos-labs/prisma-client-rust",
+    "https://github.com/aptos-labs/rspc",
+    "https://github.com/aptos-labs/firebase-token"
+]
+updated = ["2025-07-17", "2025-07-17", "2025-06-18"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 29)"
+descriptions = [
+    "Type-safe database access for Rust",
+    "A framework for building typesafe web backends in Rust",
+    "Fork of firebase-token with custom claims decoding"
+]
+
+[[triads]]
+index = 30
+names = ["p0tion", "setup-buildx-action", "pyroscope-rs"]
+urls = [
+    "https://github.com/aptos-labs/p0tion",
+    "https://github.com/aptos-labs/setup-buildx-action",
+    "https://github.com/aptos-labs/pyroscope-rs"
+]
+updated = ["2025-06-10", "2025-05-27", "2025-04-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 30)"
+descriptions = [
+    "MPC suite of tools for zkSNARK Phase 2 Trusted Setup ceremonies",
+    "GitHub Action to set up Docker Buildx",
+    "Pyroscope Profiler for Rust"
+]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FORK WORLD MORPHISMS
+# ═══════════════════════════════════════════════════════════════════════════════
+# Each fork establishes a morphism from Aptos world to the upstream world.
+# The spectral gap across fork triads measures information flow rate.
+
+[morphisms]
+x402_world = { source = "aptos", target = "coinbase", repos = ["x402", "x402-rs"] }
+zk_world = { source = "aptos", target = "arkworks", repos = ["groth16", "whir"] }
+database_world = { source = "aptos", target = "prisma", repos = ["prisma-client-rust", "rspc"] }
+ceremony_world = { source = "aptos", target = "privacy-scaling-explorations", repos = ["p0tion"] }

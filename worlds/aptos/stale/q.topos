@@ -1,0 +1,26 @@
+# Aptos Stale Repos: Letter Q
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: COPLAY (-1) - Validator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "q"
+status = "stale"
+cutoff = "2025-01-01"
+trit = -1
+role = "coplay"
+
+[[repos]]
+name = "query-engine"
+url = "https://github.com/aptos-labs/query-engine"
+pushed_at = "2024-07-09"
+description = "GraphQL query engine for blockchain data"
+
+[[repos]]
+name = "quorum-store"
+url = "https://github.com/aptos-labs/quorum-store"
+pushed_at = "2024-05-27"
+description = "Quorum certificate storage"

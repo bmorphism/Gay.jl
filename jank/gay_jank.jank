@@ -1,0 +1,293 @@
+; gay-jank-lang: Colored Parentheses Around Magnetism
+; 
+; Native Clojure dialect on LLVM with Gay.jl chromatic identity
+; Blume-Capel model with SPI-guaranteed eventual termination
+; 
+; Dynamic sufficiency: metalearned hyperparameters adapt for
+; guaranteed termination in both ergodic and non-ergodic systems
+;
+; Reference: https://bmorphism.github.io/Gay.jl/api/#Lisp-Interface
+
+(ns gay-jank.core
+  (:require [gay.chromatic :as gay]
+            [gay.blume-capel :as bc]
+            [gay.metalearning :as meta]))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Chromatic Parenthesis Protocol
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defprotocol IChromatic
+  "Every form carries chromatic identity from Gay.jl splittable RNG"
+  (color [this] "RGB color of this form")
+  (magnetization [this] "Spin magnetization σ ∈ {-1, 0, +1}")
+  (fingerprint [this] "XOR fingerprint for SPI verification"))
+
+; Colored S-expressions with Ising/Blume-Capel spin assignment
+(defrecord ChromaticForm [expr color magnetization depth]
+  IChromatic
+  (color [_] color)
+  (magnetization [_] magnetization)
+  (fingerprint [_] (bit-xor (hash color) (hash magnetization))))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Blume-Capel Model in Jank
+; ═══════════════════════════════════════════════════════════════════════════
+
+; Spin-1 states with colors
+(def spin-colors
+  {+1 [1.0 1.0 1.0]   ; White - ferromagnetic up
+    0 [0.5 0.5 0.5]   ; Gray  - neutral/vacancy
+   -1 [0.0 0.0 0.0]}) ; Black - ferromagnetic down
+
+; Hamiltonian: H = J Σ_{<i,j>} φ_i φ_j + D Σ_i φ_i²
+(defn blume-capel-energy
+  "Total energy of Blume-Capel lattice"
+  [spins J D]
+  (let [L (count spins)]
+    (+ ; Exchange term
+       (reduce + 
+         (for [i (range L) j (range L)]
+           (* J 
+              (get-in spins [i j])
+              (+ (get-in spins [(mod (inc i) L) j])
+                 (get-in spins [i (mod (inc j) L)])))))
+       ; Crystal field term
+       (reduce +
+         (for [i (range L) j (range L)]
+           (* D (Math/pow (get-in spins [i j]) 2)))))))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Dynamic Sufficiency for Eventual Termination
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defrecord MetalearnedParams
+  [beta          ; Inverse temperature (adapts)
+   D             ; Crystal field (adapts for tricritical point)
+   tau           ; Mixing time estimate
+   ergodic?      ; Whether system is ergodic
+   termination-bound])  ; Guaranteed iteration bound
+
+(defn estimate-mixing-time
+  "Estimate τ_mix from autocorrelation of magnetization"
+  [magnetization-history]
+  (let [n (count magnetization-history)
+        mean-m (/ (reduce + magnetization-history) n)]
+    ; Exponential decay fit for autocorrelation
+    (loop [tau 1 prev-corr 1.0]
+      (if (or (> tau (/ n 2)) (< prev-corr 0.1))
+        tau
+        (let [corr (/ (reduce +
+                        (map #(* (- %1 mean-m) (- %2 mean-m))
+                             magnetization-history
+                             (drop tau magnetization-history)))
+                      (* n (Math/pow (- (first magnetization-history) mean-m) 2)))]
+          (recur (inc tau) corr))))))
+
+(defn is-ergodic?
+  "Detect ergodicity via phase space exploration"
+  [state-history]
+  (let [unique-states (count (set state-history))
+        total-states (count state-history)]
+    ; Ergodic if visiting O(N) distinct states
+    (> (/ unique-states total-states) 0.1)))
+
+(defn adapt-hyperparameters
+  "Metalearning: adapt β, D for dynamic sufficiency"
+  [params magnetization-history state-history target-termination]
+  (let [tau (estimate-mixing-time magnetization-history)
+        ergodic (is-ergodic? state-history)
+        ; For ergodic: bound = O(τ log(1/ε))
+        ; For non-ergodic: bound = O(exp(ΔF/kT))
+        bound (if ergodic
+                (* tau (Math/log (/ 1.0 0.01)))  ; 99% confidence
+                (* 10 tau))]  ; Conservative for non-ergodic
+    (-> params
+        (assoc :tau tau)
+        (assoc :ergodic? ergodic)
+        (assoc :termination-bound (min bound target-termination))
+        ; Adapt β toward critical point for faster mixing
+        (update :beta #(if (< tau 100) % (* % 0.99)))
+        ; Adapt D toward tricritical point if stuck
+        (update :D #(if ergodic % (+ % 0.01))))))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Markov Chain Monte Carlo with Guaranteed Termination
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defn gay-metropolis-sweep!
+  "Single Metropolis sweep with chromatic identity"
+  [lattice params gay-ctx]
+  (let [L (count lattice)
+        [rng color] (gay/sweep! gay-ctx)]
+    (doseq [i (range L) j (range L)]
+      (let [current-spin (get-in lattice [i j])
+            ; Blume-Capel: can transition to any of {-1, 0, +1}
+            new-spin (rand-nth (remove #{current-spin} [-1 0 1]))
+            delta-E (blume-capel-delta-energy lattice i j current-spin new-spin 
+                                               (:J params) (:D params))]
+        (when (or (<= delta-E 0)
+                  (< (rand) (Math/exp (* (- (:beta params)) delta-E))))
+          (assoc-in lattice [i j] new-spin))))
+    {:lattice lattice
+     :color color
+     :magnetization (/ (reduce + (flatten lattice)) (* L L))}))
+
+(defn run-with-guaranteed-termination
+  "MCMC with dynamic sufficiency - guaranteed to terminate"
+  [lattice initial-params gay-seed]
+  (let [gay-ctx (gay/context gay-seed)]
+    (loop [lattice lattice
+           params initial-params
+           history {:magnetization [] :states [] :colors []}
+           iteration 0]
+      (if (>= iteration (:termination-bound params))
+        ; Guaranteed termination
+        {:lattice lattice
+         :final-magnetization (last (:magnetization history))
+         :iterations iteration
+         :termination :bound-reached
+         :fingerprint (gay/fingerprint gay-ctx)
+         :ergodic? (:ergodic? params)}
+        
+        ; Sweep and adapt
+        (let [{:keys [lattice color magnetization]} 
+              (gay-metropolis-sweep! lattice params gay-ctx)
+              
+              new-history (-> history
+                            (update :magnetization conj magnetization)
+                            (update :states conj (hash lattice))
+                            (update :colors conj color))
+              
+              ; Adapt every 100 sweeps
+              new-params (if (zero? (mod iteration 100))
+                          (adapt-hyperparameters params 
+                                                 (:magnetization new-history)
+                                                 (:states new-history)
+                                                 10000)
+                          params)]
+          
+          ; Check for convergence
+          (if (and (> iteration 1000)
+                   (< (Math/abs magnetization) 0.01)
+                   (:ergodic? new-params))
+            {:lattice lattice
+             :final-magnetization magnetization
+             :iterations iteration
+             :termination :converged
+             :fingerprint (gay/fingerprint gay-ctx)
+             :ergodic? true}
+            
+            (recur lattice new-params new-history (inc iteration))))))))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Colored Parentheses - Visual REPL
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defn colorize-parens
+  "Color parentheses based on depth and magnetization"
+  [form gay-ctx]
+  (letfn [(colorize [expr depth]
+            (cond
+              (list? expr)
+              (let [[rng color] (gay/sweep! gay-ctx)
+                    ; Magnetization from parity: σ = (-1)^(depth ⊻ position)
+                    magnetization (if (even? depth) 1 -1)]
+                (->ChromaticForm
+                  (map #(colorize % (inc depth)) expr)
+                  color
+                  magnetization
+                  depth))
+              
+              (vector? expr)
+              (mapv #(colorize % depth) expr)
+              
+              (map? expr)
+              (into {} (map (fn [[k v]] [(colorize k depth) (colorize v depth)]) expr))
+              
+              :else expr))]
+    (colorize form 0)))
+
+(defn render-colored-form
+  "Render form with ANSI-colored parentheses"
+  [chromatic-form]
+  (let [ansi (fn [[r g b]]
+               (str "\033[38;2;" 
+                    (int (* r 255)) ";"
+                    (int (* g 255)) ";"
+                    (int (* b 255)) "m"))
+        reset "\033[0m"]
+    (cond
+      (instance? ChromaticForm chromatic-form)
+      (let [{:keys [expr color magnetization]} chromatic-form
+            spin-char (case magnetization 1 "↑" 0 "○" -1 "↓")]
+        (str (ansi color) "(" spin-char " "
+             (apply str (interpose " " (map render-colored-form expr)))
+             " " spin-char ")" reset))
+      
+      (sequential? chromatic-form)
+      (str "[" (apply str (interpose " " (map render-colored-form chromatic-form))) "]")
+      
+      :else (str chromatic-form))))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Master Branch Mode - Dynamic Sufficiency CI
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defn master-mode-test
+  "Master branch: verify eventual termination guarantee"
+  [seed n-trials]
+  (let [results 
+        (pmap (fn [trial-seed]
+                (let [L 16
+                      lattice (vec (repeatedly L #(vec (repeatedly L (fn [] (rand-nth [-1 0 1]))))))
+                      params (map->MetalearnedParams
+                               {:beta 1.0
+                                :D 0.0
+                                :tau 100
+                                :ergodic? true
+                                :termination-bound 10000})]
+                  (run-with-guaranteed-termination lattice params trial-seed)))
+              (range seed (+ seed n-trials)))]
+    
+    {:total-trials n-trials
+     :all-terminated (every? :iterations results)
+     :ergodic-count (count (filter :ergodic? results))
+     :non-ergodic-count (count (remove :ergodic? results))
+     :fingerprints (map :fingerprint results)
+     :spi-verified (apply = (map :fingerprint 
+                                 (filter #(= (:iterations (first results)) 
+                                            (:iterations %)) 
+                                        results)))}))
+
+; ═══════════════════════════════════════════════════════════════════════════
+; Entry Point
+; ═══════════════════════════════════════════════════════════════════════════
+
+(defn -main [& args]
+  (let [seed (or (some-> (first args) Long/parseLong) 0x6761795f6f726967)
+        gay-ctx (gay/context seed)]
+    
+    (println "╔════════════════════════════════════════════════════════════════╗")
+    (println "║  gay-jank-lang: Colored Parentheses Around Magnetism           ║")
+    (println "║  Blume-Capel + Dynamic Sufficiency + SPI                       ║")
+    (println "╚════════════════════════════════════════════════════════════════╝")
+    (println)
+    
+    ; Demo colored parentheses
+    (let [test-form '(defn blume-capel [spins J D]
+                       (+ (exchange-energy spins J)
+                          (crystal-field-energy spins D)))
+          colored (colorize-parens test-form gay-ctx)]
+      (println "Colored S-expression with magnetization:")
+      (println (render-colored-form colored))
+      (println))
+    
+    ; Demo guaranteed termination
+    (println "Testing guaranteed termination (master mode)...")
+    (let [result (master-mode-test seed 10)]
+      (println (str "  Trials: " (:total-trials result)))
+      (println (str "  All terminated: " (:all-terminated result)))
+      (println (str "  Ergodic: " (:ergodic-count result)))
+      (println (str "  Non-ergodic: " (:non-ergodic-count result)))
+      (println (str "  SPI verified: " (:spi-verified result))))))

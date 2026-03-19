@@ -1,0 +1,15 @@
+# Aptos Stale Repos: Letter O
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "o"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "ocaml-tree-sitter-semgrep"
+url = "https://github.com/aptos-labs/ocaml-tree-sitter-semgrep"
+pushed_at = "2024-08-06"
+is_fork = true
+description = "Generate parsers from tree-sitter grammars extended for Semgrep"

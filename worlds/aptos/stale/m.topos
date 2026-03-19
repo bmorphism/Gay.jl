@@ -1,0 +1,21 @@
+# Aptos Stale Repos: Letter M
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "m"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "marketplace-example"
+url = "https://github.com/aptos-labs/marketplace-example"
+pushed_at = "2024-07-05"
+description = "NFT Marketplace example"
+
+[[repos]]
+name = "merlin"
+url = "https://github.com/aptos-labs/merlin"
+pushed_at = "2022-09-02"
+is_fork = true
+description = "Composable proof transcripts for public-coin arguments of knowledge"

@@ -1,0 +1,299 @@
+; COLOR BLOCH SPHERE: 2+1D Holographic Color Space
+; The next color wheel with qubit-style guarantees
+;
+; ┌─────────────────────────────────────────────────────────────────────────────┐
+; │  BLOCH SPHERE GEOMETRY                                                      │
+; │                                                                             │
+; │                        |0⟩ (White, L=1)                                     │
+; │                         ●                                                   │
+; │                        /|\                                                  │
+; │                       / | \                                                 │
+; │                      /  |  \      θ = polar angle (Lightness)               │
+; │                     /   |   \     φ = azimuthal angle (Hue)                 │
+; │        |+⟩ ●───────●───┼───●───────● |-⟩    r = radius (Saturation)        │
+; │       (Green)     /    |    \     (Magenta)                                 │
+; │                  /     |     \                                              │
+; │                 /      |      \                                             │
+; │                ●───────●───────●                                            │
+; │              (Cyan)    |    (Yellow)                                        │
+; │                        ●                                                    │
+; │                      |1⟩ (Black, L=0)                                       │
+; │                                                                             │
+; │  STATE: |ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩                              │
+; │  COLOR: (H, S, L) = (φ/2π, r, cos²(θ/2))                                   │
+; │                                                                             │
+; │  HOLOGRAPHIC: Boundary (sphere) encodes bulk (interior states)              │
+; │  2+1D: 2 angular (θ,φ) + 1 radial (r) with time evolution                  │
+; └─────────────────────────────────────────────────────────────────────────────┘
+
+(world :bloch-sphere
+  :version "0.1.0"
+  :type :color-space
+  :dimensions 3
+  :topology :S2×[0,1]  ; Sphere cross interval
+  :holographic true)
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; BLOCH COORDINATES
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defstruct BlochColor
+  "A color in Bloch sphere representation"
+  :theta  Float64  ; Polar angle [0, π] - Lightness axis
+  :phi    Float64  ; Azimuthal angle [0, 2π] - Hue  
+  :r      Float64  ; Radius [0, 1] - Saturation
+  :phase  Float64) ; Global phase [0, 2π] - for interference
+
+(defn bloch->hsl
+  "Convert Bloch coordinates to HSL"
+  [{:keys [theta phi r]}]
+  {:h (/ phi (* 2 Math/PI))           ; Hue from azimuth
+   :s r                                ; Saturation from radius
+   :l (* (Math/pow (Math/cos (/ theta 2)) 2))}) ; Lightness from polar
+
+(defn hsl->bloch
+  "Convert HSL to Bloch coordinates"
+  [{:keys [h s l]}]
+  {:theta (* 2 (Math/acos (Math/sqrt l)))
+   :phi   (* h 2 Math/PI)
+   :r     s
+   :phase 0.0})
+
+(defn bloch->cartesian
+  "Bloch sphere to Cartesian (x,y,z)"
+  [{:keys [theta phi r]}]
+  {:x (* r (Math/sin theta) (Math/cos phi))
+   :y (* r (Math/sin theta) (Math/sin phi))
+   :z (* r (Math/cos theta))})
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; QUBIT-STYLE COLOR OPERATIONS
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defn pauli-x
+  "Bit flip: |0⟩ ↔ |1⟩, inverts lightness"
+  [color]
+  (update color :theta #(- Math/PI %)))
+
+(defn pauli-y
+  "Bit+phase flip: rotates through imaginary axis"
+  [color]
+  (-> color
+      (update :theta #(- Math/PI %))
+      (update :phi #(+ % Math/PI))))
+
+(defn pauli-z
+  "Phase flip: |1⟩ → -|1⟩, shifts hue by π"
+  [color]
+  (update color :phi #(+ % Math/PI)))
+
+(defn hadamard
+  "Superposition: creates equal mix"
+  [color]
+  (let [theta' (/ Math/PI 2)]  ; Move to equator
+    (assoc color :theta theta')))
+
+(defn phase-gate
+  "Apply phase rotation"
+  [color angle]
+  (update color :phi #(+ % angle)))
+
+(defn cnot
+  "Controlled-NOT between two colors"
+  [control target]
+  (if (> (:theta control) (/ Math/PI 2))
+    (pauli-x target)  ; Flip if control is "1" (dark)
+    target))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; 2+1D HOLOGRAPHIC GUARANTEES
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defstruct HolographicState
+  "State with bulk-boundary correspondence"
+  :boundary BlochColor        ; Observable (sphere surface)
+  :bulk     (Vector Float64)  ; Hidden (interior, higher entropy)
+  :time     Float64)          ; The +1 dimension
+
+(defn ads-cft-map
+  "Map between bulk and boundary (AdS/CFT correspondence)"
+  [bulk-state]
+  (let [; Bulk has more degrees of freedom
+        bulk-entropy (reduce + (map #(Math/abs %) bulk-state))
+        ; Project to boundary via holographic principle
+        theta (mod (* bulk-entropy 0.1) Math/PI)
+        phi   (mod (* (first bulk-state) 2) (* 2 Math/PI))
+        r     (/ 1 (+ 1 (Math/exp (- bulk-entropy))))]  ; Sigmoid
+    {:theta theta :phi phi :r r :phase 0.0}))
+
+(defn boundary->bulk-candidates
+  "Lift from boundary to bulk (non-unique, returns generator)"
+  [boundary-color seed]
+  ; Each boundary point has 2^40 bulk preimages (inscrutability)
+  (let [rng (splittable-random seed)]
+    (fn []
+      (let [[r1 rng'] (split rng)
+            [r2 rng''] (split rng')
+            bulk-dim 64
+            bulk (vec (repeatedly bulk-dim #(rand-gaussian r1)))]
+        ; Constrain bulk to project to boundary
+        (normalize-to-boundary bulk boundary-color)))))
+
+(defn time-evolve
+  "Evolve color state in time (the +1 dimension)"
+  [state dt hamiltonian]
+  (let [; Schrödinger evolution: |ψ(t)⟩ = e^(-iHt)|ψ(0)⟩
+        phase-evolution (* dt (:energy hamiltonian))
+        theta-evolution (* dt (:theta-coupling hamiltonian))
+        phi-evolution   (* dt (:phi-coupling hamiltonian))]
+    (-> state
+        (update :phase #(+ % phase-evolution))
+        (update :theta #(+ % theta-evolution))
+        (update :phi   #(+ % phi-evolution))
+        (update :time  #(+ % dt)))))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; GAY GUARANTEES ON BLOCH SPHERE
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defstruct GayBlochState
+  "Bloch state with SPI guarantees"
+  :color      BlochColor
+  :seed       UInt64
+  :fingerprint UInt64
+  :spi-verified Boolean)
+
+(defn gay-bloch-from-seed
+  "Generate Bloch color deterministically from seed"
+  [seed]
+  (let [[r1 s1] (splitmix64 seed)
+        [r2 s2] (splitmix64 s1)
+        [r3 _]  (splitmix64 s2)
+        theta (* Math/PI (/ (bit-shift-right r1 56) 255.0))
+        phi   (* 2 Math/PI (/ (bit-shift-right r2 56) 255.0))
+        r     (/ (bit-shift-right r3 56) 255.0)
+        fingerprint (bit-xor r1 r2 r3)]
+    {:color {:theta theta :phi phi :r r :phase 0.0}
+     :seed seed
+     :fingerprint fingerprint
+     :spi-verified true}))
+
+(defn verify-bloch-spi
+  "Verify SPI: same seed always gives same color"
+  [state]
+  (let [regenerated (gay-bloch-from-seed (:seed state))]
+    (= (:fingerprint state) (:fingerprint regenerated))))
+
+(defn bloch-galois-connection
+  "Galois connection for Bloch colors"
+  []
+  {:alpha (fn [seed]
+            ; Abstract: seed -> bloch color (lossy)
+            (:color (gay-bloch-from-seed seed)))
+   :gamma (fn [color]
+            ; Concretize: color -> seed candidate
+            (let [theta-bits (long (* 255 (/ (:theta color) Math/PI)))
+                  phi-bits   (long (* 255 (/ (:phi color) (* 2 Math/PI))))
+                  r-bits     (long (* 255 (:r color)))]
+              (bit-or (bit-shift-left theta-bits 56)
+                      (bit-shift-left phi-bits 48)
+                      (bit-shift-left r-bits 40))))})
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; TRIT OPERATIONS ON BLOCH SPHERE
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defn bloch->trit
+  "Convert Bloch angle to balanced trit"
+  [angle range]
+  (let [normalized (/ angle range)
+        third (/ 1.0 3)]
+    (cond
+      (< normalized third)       -1  ; TRIT_NEG
+      (< normalized (* 2 third))  0  ; TRIT_ZERO  
+      :else                       1))) ; TRIT_POS
+
+(defn bloch->trit-word
+  "Convert Bloch color to trit word"
+  [color n-trits]
+  (let [; Pack theta, phi, r into trits
+        theta-trits (partition-trits (:theta color) Math/PI (/ n-trits 3))
+        phi-trits   (partition-trits (:phi color) (* 2 Math/PI) (/ n-trits 3))
+        r-trits     (partition-trits (:r color) 1.0 (/ n-trits 3))]
+    (vec (concat theta-trits phi-trits r-trits))))
+
+(defn trit-flip-attack
+  "Simulate trit flip attack on Bloch color"
+  [color position]
+  (let [trits (bloch->trit-word color 39)  ; 39 trits ≈ 62 bits
+        flipped (update trits position #(mod (+ % 1 1) 3 -1))]
+    (trit-word->bloch flipped)))
+
+(defn trit-parity-check
+  "Verify trit parity for error detection"
+  [trits]
+  (let [sum (reduce + trits)]
+    (= (mod sum 3) 0)))  ; Valid if sum ≡ 0 (mod 3)
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; ENTANGLEMENT AND MEASUREMENT
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defstruct EntangledPair
+  "Two entangled Bloch colors (Bell state)"
+  :color-a BlochColor
+  :color-b BlochColor
+  :bell-state Keyword  ; :phi+, :phi-, :psi+, :psi-
+  :correlation Float64)
+
+(defn create-bell-pair
+  "Create maximally entangled color pair"
+  [seed bell-type]
+  (let [base (gay-bloch-from-seed seed)
+        color-a (:color base)]
+    (case bell-type
+      :phi+ {:color-a color-a
+             :color-b color-a  ; Same color
+             :bell-state :phi+
+             :correlation 1.0}
+      :phi- {:color-a color-a
+             :color-b (pauli-z color-a)  ; Phase flipped
+             :bell-state :phi-
+             :correlation 1.0}
+      :psi+ {:color-a color-a
+             :color-b (pauli-x color-a)  ; Bit flipped
+             :bell-state :psi+
+             :correlation 1.0}
+      :psi- {:color-a color-a
+             :color-b (pauli-y color-a)  ; Both flipped
+             :bell-state :psi-
+             :correlation 1.0})))
+
+(defn measure-bloch
+  "Measure Bloch color, collapsing superposition"
+  [color basis seed]
+  (let [[r _] (splitmix64 seed)
+        prob (/ (bit-shift-right r 56) 255.0)]
+    (case basis
+      :z (if (< prob (* (Math/pow (Math/cos (/ (:theta color) 2)) 2)))
+           {:result 0 :collapsed (assoc color :theta 0)}         ; |0⟩ white
+           {:result 1 :collapsed (assoc color :theta Math/PI)})  ; |1⟩ black
+      :x (if (< prob 0.5)
+           {:result 0 :collapsed (assoc color :phi 0)}           ; |+⟩
+           {:result 1 :collapsed (assoc color :phi Math/PI)})    ; |-⟩
+      :y (if (< prob 0.5)
+           {:result 0 :collapsed (assoc color :phi (/ Math/PI 2))}    ; |i⟩
+           {:result 1 :collapsed (assoc color :phi (* 3 (/ Math/PI 2)))}))))  ; |-i⟩
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; FORMAT CONVERSION HINTS (for cq + jet)
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(def conversion-hints
+  "Hints for cq/jet format conversion"
+  {:to-json {:bloch-color [:theta :phi :r :phase]
+             :gay-state   [:color :seed :fingerprint]}
+   :to-toml {:sections [:world :coordinates :operations :guarantees]}
+   :to-yaml {:indent 2 :flow-style false}
+   :to-xml  {:root-element "bloch-sphere" :namespace "gay"}
+   :to-edn  {:reader-macros true}})

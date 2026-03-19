@@ -1,0 +1,73 @@
+# TRIPOS: SDK & CLI (Triads 18-21)
+# ═══════════════════════════════════════════════════════════════════════════════
+# SDKs, CLI tools, frontend scaffolding, mobile
+
+[world]
+name = "aptos"
+category = "sdk_cli"
+status = "active"
+updated_range = ["2025-04-08", "2025-07-22"]
+
+[[triads]]
+index = 18
+names = ["aptos-abi-generator", "aptos-cli-unstable", "dapp_frontend_scaffold"]
+urls = [
+    "https://github.com/aptos-labs/aptos-abi-generator",
+    "https://github.com/aptos-labs/aptos-cli-unstable",
+    "https://github.com/aptos-labs/dapp_frontend_scaffold"
+]
+updated = ["2025-07-22", "2025-07-16", "2025-07-15"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 18)"
+descriptions = [
+    "Generates ABI outputs like the Aptos REST API from source code",
+    "Aptos CLI unstable builds",
+    "dApp frontend scaffold"
+]
+
+[[triads]]
+index = 19
+names = ["mobile2mobile-example", "unity-sdk", "bcs"]
+urls = [
+    "https://github.com/aptos-labs/mobile2mobile-example",
+    "https://github.com/aptos-labs/unity-sdk",
+    "https://github.com/aptos-labs/bcs"
+]
+updated = ["2025-05-23", "2025-04-30", "2025-04-24"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 19)"
+descriptions = [
+    "Example dApp for deep-link transaction signing through Petra mobile",
+    "Aptos Unity SDK for building Web3 applications",
+    "Binary Canonical Serialization Library"
+]
+
+[[triads]]
+index = 20
+names = ["confidential-asset-wasm-bindings", "pollard-kangaroo", "prover-dependency"]
+urls = [
+    "https://github.com/aptos-labs/confidential-asset-wasm-bindings",
+    "https://github.com/aptos-labs/pollard-kangaroo",
+    "https://github.com/aptos-labs/prover-dependency"
+]
+updated = ["2025-04-22", "2025-04-21", "2025-04-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 20)"
+descriptions = [
+    "Confidential asset WASM bindings",
+    "Pollard kangaroo algorithm",
+    "Host for prover dependencies"
+]
+
+[[triads]]
+index = 21
+names = ["aptos-cli", "aptos-indexer-processor-example", "aptos-keyless-trusted-setup-contributions-jan-2025"]
+urls = [
+    "https://github.com/aptos-labs/aptos-cli",
+    "https://github.com/aptos-labs/aptos-indexer-processor-example",
+    "https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-jan-2025"
+]
+updated = ["2025-04-08", "2025-04-08", "2025-03-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 21)"
+descriptions = [
+    "Aptos CLI",
+    "Aptos indexer processor example",
+    "Trusted setup contributions Jan 2025"
+]

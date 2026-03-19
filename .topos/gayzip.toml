@@ -1,0 +1,217 @@
+# GAYZIP: SPI-Preserving Compression with Chromatic Checksums
+# Successor to gzip with splittable randomness and Gay guarantees
+
+[metadata]
+name = "gayzip"
+version = "0.1.0"
+predecessor = "gzip"
+spec_version = "2024.1"
+authors = ["Gay.jl Contributors"]
+
+[magic]
+# Magic bytes for gayzip files
+header = [0x1F, 0x8B, 0x69]  # 0x69 = Gay marker after gzip magic
+version = 1
+extension = ".gay.gz"
+mime_type = "application/x-gayzip"
+
+[compression]
+# Primary backend: zstd for speed/ratio balance
+primary_backend = "zstd"
+fallback_backends = ["lz4", "brotli", "gzip"]
+
+# Compression levels (0-22 for zstd compatibility)
+default_level = 3
+min_level = 0
+max_level = 22
+
+# Block sizes for parallel compression
+block_size_min = 65536        # 64KB
+block_size_default = 131072   # 128KB  
+block_size_max = 4194304      # 4MB
+
+[spi]
+# Strong Parallelism Invariance configuration
+enabled = true
+seed_embedding = true
+fingerprint_per_block = true
+
+# Splittable RNG for parallel block processing
+rng_type = "SplittableRandom"
+base_seed_source = "content_hash"  # or "user_provided" or "random"
+
+[chromatic]
+# Chromatic checksum configuration
+checksum_type = "gay_fingerprint"
+checksum_bits = 64
+color_encoding = "okhsl"
+
+# Each block gets a deterministic color from splittable RNG
+block_coloring = true
+# Final archive color = XOR of all block colors (order-independent)
+archive_fingerprint = "associative_xor"
+
+[trit_flip]
+# Balanced ternary attack resistance
+trit_checksum = true
+trit_width = 40  # 40 trits ≈ 63.4 bits
+
+# Attack vectors we defend against
+[[trit_flip.defenses]]
+attack = "bit_flip"
+defense = "trit_parity_check"
+strength = "2^40"
+
+[[trit_flip.defenses]]
+attack = "reorder"
+defense = "causal_trit_chain"
+strength = "factorial_bound"
+
+[[trit_flip.defenses]]
+attack = "timing"
+defense = "acausal_trit_commitment"
+strength = "indistinguishable"
+
+[verification]
+# 2-Trit self and mutual verification
+self_verify = true
+mutual_verify = true
+
+# Verification modes
+[[verification.modes]]
+name = "causal"
+description = "Time-ordered verification chain"
+trit1_meaning = "temporal_direction"
+trit2_meaning = "verification_source"
+
+[[verification.modes]]
+name = "acausal"  
+description = "Simultaneous multi-party verification"
+trit1_meaning = "party_identity"
+trit2_meaning = "commitment_phase"
+
+[[verification.modes]]
+name = "indefinite"
+description = "Superposition until observation"
+trit1_meaning = "observable"
+trit2_meaning = "hidden"
+
+[[verification.modes]]
+name = "bounded"
+description = "Within episode/world constraints"
+trit1_meaning = "episode_id"
+trit2_meaning = "world_id"
+
+[generative]
+# Pre-2020 vs Post-2026 paradigm choice
+paradigm_choice = true
+default_paradigm = "adaptive"
+
+[[generative.paradigms]]
+name = "eager"
+era = "pre-2020"
+description = "Fully compute on encode, store result"
+decode_complexity = "O(n)"
+encode_complexity = "O(n log n)"
+storage = "full"
+
+[[generative.paradigms]]
+name = "lazy"
+era = "post-2026"
+description = "Store seed + procedure, compute on decode"
+decode_complexity = "O(n) + O(procedure)"
+encode_complexity = "O(1)"
+storage = "minimal + procedure"
+
+[[generative.paradigms]]
+name = "hybrid"
+era = "adaptive"
+description = "Choose based on content analysis"
+decision_metric = "gzipability_score"
+threshold = 0.7
+
+[[generative.paradigms]]
+name = "diffusion"
+era = "post-2026"
+description = "Flow matching with deterministic seed"
+decode_complexity = "O(n * steps)"
+encode_complexity = "O(n * steps)"
+storage = "seed + conditioning"
+
+[ersatz_compatibility]
+# Drop-in gzip replacement modes
+gzip_compat = true
+zstd_compat = true
+lz4_compat = true
+
+# Auto-detect input format
+auto_detect = true
+# Preserve original format on passthrough
+preserve_format = false
+
+# Fallback for unknown formats
+unknown_fallback = "gzip"
+
+[streaming]
+# core.async style streaming support
+async_channels = true
+backpressure = true
+chromatic_flow = true
+
+# Channel buffer sizes
+input_buffer = 8  # blocks
+output_buffer = 8 # blocks
+
+# Flow coloring for debugging
+flow_color_per_chunk = true
+
+[parallel]
+# Parallel compression configuration
+enabled = true
+auto_threads = true
+min_threads = 1
+max_threads = 0  # 0 = unlimited (use all cores)
+
+# Work stealing with chromatic load balancing
+work_stealing = true
+chromatic_balancing = true
+
+# SPI guarantee: same result regardless of thread count
+spi_verified = true
+
+[gay_open_game]
+# Game-theoretic compression strategy selection
+enabled = true
+strategy_type = "GayStrategy"
+
+# Players in the compression game
+[[gay_open_game.players]]
+name = "encoder"
+actions = ["compress", "store_raw", "defer_to_decoder"]
+utility = "minimize_size + maximize_speed"
+
+[[gay_open_game.players]]
+name = "decoder"
+actions = ["decompress", "generate", "cache"]
+utility = "minimize_latency + maximize_bandwidth"
+
+# Equilibrium selection
+equilibrium = "nash"
+marginal_convergence = true
+
+[cross_substrate]
+# Universal interface guarantees
+gay_guarantees = true
+substrate_agnostic = true
+
+# Supported substrates
+substrates = [
+    "filesystem",
+    "network_stream", 
+    "memory_buffer",
+    "distributed_storage",
+    "blockchain_calldata"
+]
+
+# Cross-substrate fingerprint verification
+fingerprint_portable = true

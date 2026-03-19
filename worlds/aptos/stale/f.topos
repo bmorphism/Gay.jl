@@ -1,0 +1,15 @@
+# Aptos Stale Repos: Letter F
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "f"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "futures-rs"
+url = "https://github.com/aptos-labs/futures-rs"
+pushed_at = "2024-12-03"
+is_fork = true
+description = "Zero-cost asynchronous programming in Rust"

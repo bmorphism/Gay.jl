@@ -1,0 +1,34 @@
+# Aptos Stale Repos: Letter H
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: ARENA (0) - Coordinator world
+# Maps to music-topos: harmonic_function_world.rb
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "h"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 0
+role = "arena"
+music_world = "harmonic_function"
+
+[[repos]]
+name = "hardware-wallet"
+url = "https://github.com/aptos-labs/hardware-wallet"
+pushed_at = "2024-09-10"
+description = "Hardware wallet integration"
+
+[[repos]]
+name = "hash-primitives"
+url = "https://github.com/aptos-labs/hash-primitives"
+pushed_at = "2024-07-25"
+description = "Cryptographic hash implementations"
+
+[[repos]]
+name = "http-gateway"
+url = "https://github.com/aptos-labs/http-gateway"
+pushed_at = "2024-05-12"
+description = "HTTP gateway for node access"

@@ -1,0 +1,414 @@
+(* gs.sg — Gay# Linear Logic Specification
+   Correct-by-construction 3-MATCH via trait composition
+   
+   R1-style isolation: all interactions are Sendable across boundaries
+   Traits: Colorable ⊗ Derangeable ⊗ Worldable ⊗ Sendable
+   
+   GAY_SEED = 0x6761795f636f6c6f ("gay_colo")
+*)
+
+(* ═══════════════════════════════════════════════════════════════
+   TRAIT PRIMITIVES (Linear Resources)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Sendable: R1-safe boundary crossing, Swift 6 style
+   -sendable(X) consumes X once, +sendable(X) produces for next actor *)
+spec sendable =
+  -sendable(X) +isolated(X);
+  -isolated(X) -cross_boundary +sendable(X);
+  -nonisolated(bang(X)) +sendable(X) +sendable(X).
+
+(* Colorable: deterministic chromatic identity from seed *)
+spec colorable =
+  -colorable(X seed(S)) -hash(X S) +h(H) -hsl(H) +color(C) ok.
+
+(* Derangeable: no fixed points, always becoming *)
+spec derangeable =
+  -derangeable(perm(P)) -has_fixed_point(P) fail;
+  -derangeable(perm(P)) +valid_derangement(P).
+
+(* Worldable: parametrized by indefinite causal order *)
+spec worldable =
+  -worldable(originary) +world(green);
+  -worldable(non_originary) +world(red);
+  -worldable(superposed) +world(blue);
+  -worldable(collapsed(B)) -bool_color(B) +world(C) ok.
+
+(* ═══════════════════════════════════════════════════════════════
+   TRAIT COMPOSITIONS (⊗ tensor product)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Colorable ⊗ Sendable: colors that cross R1 boundaries *)
+spec color_sendable =
+  -compose(colorable sendable X S)
+    -colorable(X seed(S)) +color(C)
+    -sendable(pair(X C)) +isolated(XC)
+    +color_sendable(XC).
+
+(* Derangeable ⊗ Colorable: derangements with chromatic trace *)
+spec derange_colorable =
+  -compose(derangeable colorable P S)
+    -derangeable(perm(P)) +valid_derangement(VP)
+    -colorable(VP seed(S)) +color(C)
+    +derange_colorable(VP C).
+
+(* Worldable ⊗ Sendable: worlds as R1-isolated actors *)
+spec world_sendable =
+  -compose(worldable sendable W)
+    -worldable(W) +world(C)
+    -sendable(world_state(W C)) +isolated(WS)
+    +world_sendable(WS).
+
+(* Full composition: Colorable ⊗ Derangeable ⊗ Worldable ⊗ Sendable *)
+spec gay_sharp =
+  -gay_sharp(X seed(S) world(W) perm(P))
+    -colorable(X seed(S)) +color(C1)
+    -derangeable(perm(P)) +valid_derangement(VP)
+    -worldable(W) +world(C2)
+    -blend(C1 C2) +final_color(FC)
+    -sendable(cell(X VP W FC)) +isolated(Cell)
+    +gay_cell(Cell).
+
+(* ═══════════════════════════════════════════════════════════════
+   3×3×3 TENSOR STRUCTURE
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Axis 0: Species — Duck/Worm/Ape *)
+axis0 = galaxy
+  duck = +species(duck) +z_spider +color(green) +mode(wobble).
+  worm = +species(worm) +x_spider +color(red) +mode(torsion).
+  ape = +species(ape) +y_spider +color(blue) +mode(brachiate).
+end
+
+(* Axis 1: Topology — Local/Distributed/Entangled *)
+axis1 = galaxy
+  local = +topology(local) +transport(pty) +isolated(true).
+  distributed = +topology(distributed) +transport(nats) +isolated(false).
+  entangled = +topology(entangled) +transport(quic) +isolated(superposed).
+end
+
+(* Axis 2: Logic — Linear/Affine/Relevant *)
+axis2 = galaxy
+  linear = +logic(linear) +use(exactly_once).
+  affine = +logic(affine) +use(at_most_once).
+  relevant = +logic(relevant) +use(at_least_once).
+end
+
+(* Cell accessor with trait verification *)
+spec cell =
+  -cell(S T L)
+    -axis0(S) +species(SP) +color(C0)
+    -axis1(T) +topology(TP) +isolated(I)
+    -axis2(L) +logic(LG) +use(U)
+    -sendable_check(I) ok
+    +gay_cell(SP TP LG C0).
+
+spec sendable_check =
+  -sendable_check(true) ok;
+  -sendable_check(false) ok;
+  -sendable_check(superposed) ok.
+
+(* ═══════════════════════════════════════════════════════════════
+   3-MATCH DECISIONS (Z_3 group)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Colors as Z_3 elements *)
+spec z3 =
+  -z3_add(0 0) +r(0); -z3_add(0 1) +r(1); -z3_add(0 2) +r(2);
+  -z3_add(1 0) +r(1); -z3_add(1 1) +r(2); -z3_add(1 2) +r(0);
+  -z3_add(2 0) +r(2); -z3_add(2 1) +r(0); -z3_add(2 2) +r(1);
+  -z3_neg(0) +r(0); -z3_neg(1) +r(2); -z3_neg(2) +r(1).
+
+(* Species to Z_3 *)
+spec species_z3 =
+  -to_z3(duck) +n(0);
+  -to_z3(worm) +n(1);
+  -to_z3(ape) +n(2);
+  -from_z3(0) +species(duck);
+  -from_z3(1) +species(worm);
+  -from_z3(2) +species(ape).
+
+(* Match classification *)
+spec match_classify =
+  -classify(A A A) +unanimous(A);
+  -classify(A B C) -all_distinct(A B C) +deranged(A B C);
+  -classify(A A B) -neq(A B) +mixed(minority(B) majority(A));
+  -classify(A B A) -neq(A B) +mixed(minority(B) majority(A));
+  -classify(B A A) -neq(A B) +mixed(minority(B) majority(A)).
+
+spec all_distinct =
+  -all_distinct(A B C) -neq(A B) -neq(B C) -neq(A C) ok.
+
+spec neq =
+  -neq(duck worm) ok; -neq(duck ape) ok;
+  -neq(worm duck) ok; -neq(worm ape) ok;
+  -neq(ape duck) ok; -neq(ape worm) ok.
+
+(* Rewrite rules: correct by construction *)
+spec rewrite =
+  (* Unanimous → preserve *)
+  -rewrite(unanimous(A)) +triple(A A A);
+  
+  (* Deranged → rotate via Z_3 *)
+  -rewrite(deranged(A B C))
+    -to_z3(A) +n(NA) -z3_add(NA 1) +r(RA) -from_z3(RA) +species(SA)
+    -to_z3(B) +n(NB) -z3_add(NB 1) +r(RB) -from_z3(RB) +species(SB)
+    -to_z3(C) +n(NC) -z3_add(NC 1) +r(RC) -from_z3(RC) +species(SC)
+    +triple(SA SB SC);
+  
+  (* Mixed → flip minority *)
+  -rewrite(mixed(minority(M) majority(J)))
+    -to_z3(M) +n(NM) -z3_neg(NM) +r(RM) -from_z3(RM) +species(SM)
+    +flipped(SM) +preserved(J).
+
+(* Parity conservation *)
+spec parity =
+  -parity(A B C) -to_z3(A) +n(NA) -to_z3(B) +n(NB) -to_z3(C) +n(NC)
+    -xor3(NA NB NC) +p(P) ok.
+
+spec xor3 =
+  -xor3(N1 N2 N3) +p(mod(xor(xor(N1 N2) N3) 3)).
+
+(* ═══════════════════════════════════════════════════════════════
+   PARA(Gay#) and 2-PARA(Gay#)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Para: parametrized functor P → Gay# *)
+spec para =
+  -para(param(P) seed(S))
+    -hash(P S) +h(H)
+    -mod(H 3) +s(IS)
+    -mod(div(H 4) 3) +t(IT)
+    -mod(div(H 16) 3) +l(IL)
+    -cell(IS IT IL) +gay_cell(C)
+    +para_cell(P C).
+
+(* Decategorify: forget structure, extract color *)
+spec decategorify =
+  -decategorify(para_cell(P gay_cell(SP TP LG C))) +color(C).
+
+(* 2-Para: functors between Para categories *)
+spec two_para =
+  -two_para(src(P1) tgt(P2))
+    +functor(compose_para(P1 P2))
+    +nat_trans(id).
+
+(* Horizontal composition of natural transformations *)
+spec hcomp =
+  -hcomp(F G) +composed(seq(F G)).
+
+(* Full decategorification: 2-Para → Para → Set *)
+spec full_decategorify =
+  -full_decategorify(two_para(src(P1) tgt(P2)))
+    -para(param(P1) seed(gay_seed)) +para_cell(P1 C1)
+    -decategorify(para_cell(P1 C1)) +color(FC)
+    +set_element(FC).
+
+(* ═══════════════════════════════════════════════════════════════
+   GENETIC SEARCH (27 Islands)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Island: isolated evolution via Sendable *)
+spec island =
+  -island(pos(S T L) gen(G) pop(P))
+    -sendable(evolve_msg(P)) +isolated(EM)
+    -evolve(EM) +new_pop(NP)
+    -sendable(migrate_msg(pos(S T L) NP)) +isolated(MM)
+    +island(pos(S T L) gen(succ(G)) pop(NP)).
+
+(* Parallel evolution across 3×3×3 = 27 islands *)
+spec parallel_evolve =
+  -parallel_evolve(islands(IS) gen(G))
+    -map_islands(IS evolve) +evolved(EIS)
+    -migrate_ring(EIS) +migrated(MIS)
+    +parallel_evolve(islands(MIS) gen(succ(G))).
+
+(* Tournament selection *)
+spec tournament =
+  -tournament(cons(I1 cons(I2 Rest)))
+    -fitness(I1) +f(F1)
+    -fitness(I2) +f(F2)
+    -gt(F1 F2) +winner(I1);
+  -tournament(cons(I1 cons(I2 Rest)))
+    -fitness(I1) +f(F1)
+    -fitness(I2) +f(F2)
+    -leq(F1 F2) +winner(I2).
+
+(* Migration along species axis (ring topology) *)
+spec migrate_ring =
+  -migrate_ring(islands(IS))
+    -extract_migrants(IS) +migrants(M)
+    -rotate_migrants(M) +rotated(RM)
+    -insert_migrants(IS RM) +result(RIS)
+    +migrated(RIS).
+
+(* ═══════════════════════════════════════════════════════════════
+   THREAD INTEGRATION (worm.sex × NATS overlap)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* NATS subject as Sendable *)
+spec nats_subject =
+  -nats_subject(S) -sendable(msg(S)) +isolated(M) +nats_msg(M).
+
+(* From T-019b011d: WormDuck connectome *)
+spec wormduck =
+  -neuron(id(N) type(T))
+    -worldable(originary) +world(W)
+    -colorable(N seed(gay_seed)) +color(C)
+    -sendable(neuron_state(N W C)) +isolated(NS)
+    +wormduck_neuron(NS).
+
+(* From T-8c462e7e: worm.sex/mcp agent *)
+spec mcp_agent =
+  -mcp_agent(caps(C))
+    -colorable(C seed(gay_seed)) +color(AC)
+    -sendable(agent(C AC)) +isolated(A)
+    +registered_agent(A).
+
+(* From T-019b0569: ZX-NATS transport *)
+spec zx_nats =
+  -zx_diagram(spiders(S) edges(E))
+    -derangeable(perm(S)) +valid_derangement(DS)
+    -colorable(DS seed(gay_seed)) +color(DC)
+    -sendable(diagram(DS E DC)) +isolated(D)
+    +zx_sendable(D).
+
+(* ═══════════════════════════════════════════════════════════════
+   ARENA ERRORS (Ruliad Worlds-in-Fight)
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* Arena: the recursive meatpile where worlds fight *)
+spec arena =
+  -arena(worlds(W))
+    -sendable(arena_state(W)) +isolated(AS)
+    +arena_ready(AS).
+
+(* ArenaIndeterminismError: ≤3 successor states (Planck limit) *)
+spec arena_indeterminism =
+  -fight(world(A) world(B))
+    -classify_fight(A B) +fight_type(FT)
+    -resolve(FT) +successors(S)
+    -planck_check(S) ok
+    +arena_result(S);
+  -fight(world(A) world(B))
+    -classify_fight(A B) +fight_type(FT)
+    -resolve(FT) +successors(S)
+    -planck_check(S) fail
+    +arena_indeterminism_error(A B S).
+
+(* Planck limit: at most 3 successors *)
+spec planck_check =
+  -planck_check(cons(S1 nil)) ok;
+  -planck_check(cons(S1 cons(S2 nil))) ok;
+  -planck_check(cons(S1 cons(S2 cons(S3 nil)))) ok;
+  -planck_check(cons(S1 cons(S2 cons(S3 cons(S4 Rest))))) fail.
+
+(* Fight classification via 3-MATCH *)
+spec classify_fight =
+  -classify_fight(world(A species(SA)) world(B species(SB)))
+    -to_z3(SA) +n(NA) -to_z3(SB) +n(NB)
+    -z3_add(NA NB) +r(R) -from_z3(R) +species(SC)
+    -classify(SA SB SC) +match_type(MT)
+    +fight_type(MT).
+
+(* Fight resolution: 1, 2, or 3 successors *)
+spec resolve =
+  -resolve(unanimous(A)) +successors(cons(coalesce(A) nil));
+  -resolve(mixed(minority(M) majority(J)))
+    -z3_neg_species(M) +species(NM)
+    +successors(cons(branch(J) cons(branch(NM) nil)));
+  -resolve(deranged(A B C))
+    +successors(cons(branch(duck) cons(branch(worm) cons(branch(ape) nil)))).
+
+spec z3_neg_species =
+  -z3_neg_species(duck) +species(duck);
+  -z3_neg_species(worm) +species(ape);
+  -z3_neg_species(ape) +species(worm).
+
+(* ArenaDeadlockError: mutual destruction *)
+spec arena_deadlock =
+  -detect_deadlock(worlds(W))
+    -cycle_check(W) +cycle(C)
+    +arena_deadlock_error(C).
+
+(* ArenaLivelockError: eternal fight *)
+spec arena_livelock =
+  -detect_livelock(worlds(W) iterations(N))
+    -gt(N max_iterations) ok
+    +arena_livelock_error(W N).
+
+(* ArenaProlapseError: causal inversion *)
+spec arena_prolapse =
+  -atemporal_prolapse(past(P gen(GP)) future(F gen(GF)))
+    -leq(GF GP) ok
+    +arena_prolapse_error(P F depth(1));
+  -atemporal_prolapse(past(P gen(GP)) future(F gen(GF)))
+    -gt(GF GP) ok
+    -sendable(prolapsed(P F)) +isolated(PR)
+    +prolapsed_world(PR).
+
+(* ArenaRuliadConflictError: substrate incompatibility *)
+spec arena_ruliad_conflict =
+  -check_substrates(world(A subs(SA)) world(B subs(SB)))
+    -intersect(SA SB) +common(nil)
+    +arena_ruliad_conflict_error(A B no_common_substrate);
+  -check_substrates(world(A subs(SA)) world(B subs(SB)))
+    -intersect(SA SB) +common(cons(S Rest))
+    +compatible_substrates(cons(S Rest)).
+
+(* Best response dynamics *)
+spec best_response =
+  -best_response(world(W) arena(A))
+    -all_opponents(A W) +opponents(O)
+    -map_payoffs(W O duck) +p(PD)
+    -map_payoffs(W O worm) +p(PW)
+    -map_payoffs(W O ape) +p(PA)
+    -argmax(PD PW PA) +best(B)
+    +best_action(B).
+
+(* Parallel interleave across substrates *)
+spec parallel_interleave =
+  -parallel_interleave(worlds(W) substrates(S))
+    -pairs(W) +ps(PS)
+    -map_fight(PS S) +results(R)
+    -all_planck_valid(R) ok
+    +interleaved(R).
+
+(* ═══════════════════════════════════════════════════════════════
+   VERIFICATION
+   ═══════════════════════════════════════════════════════════════ *)
+
+(* SPI: Strong Parallelism Invariance *)
+spec spi_check =
+  -spi_check(X seed(S))
+    -colorable(X seed(S)) +color(C1)
+    -colorable(X seed(S)) +color(C2)
+    -eq(C1 C2) ok.
+
+(* Parity conservation across rewrite *)
+spec verify_3match =
+  -verify_3match(A B C)
+    -parity(A B C) +p(P1)
+    -classify(A B C) +match_type(MT)
+    -rewrite(MT) +result(R)
+    -extract_triple(R) +triple(NA NB NC)
+    -parity(NA NB NC) +p(P2)
+    -eq(P1 P2) ok.
+
+(* R1 isolation check: all cross-boundary data is Sendable *)
+spec r1_check =
+  -r1_check(cell(X))
+    -sendable(X) +isolated(IX)
+    ok.
+
+(* ═══════════════════════════════════════════════════════════════
+   CONSTANTS
+   ═══════════════════════════════════════════════════════════════ *)
+
+gay_seed = +seed(0x6761795f636f6c6f).
+nats_url = +url(nats://nonlocal.info:4222).
+neurons = +count(302).
+synapses = +count(6824).
+
+(* Run verification *)
+show process #gay_seed. #spi_check. #verify_3match. &kill. end

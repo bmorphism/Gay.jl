@@ -1,0 +1,206 @@
+# GAY JEPSEN: Fault-Injection Verification Spec
+# Tests SPI invariance under adversarial conditions for all .topos formats
+
+[metadata]
+name = "gay_jepsen"
+version = "0.1.0"
+spec_version = "2024.1"
+implementation = "src/gay_jepsen.jl"
+
+[module]
+julia_module = "GayJepsen"
+exports = [
+    "HyperbolicBulk", "ReafferentState", "BulkBoundary",
+    "GaloisGadget", "GaloisConnection", "RxEmissionGadget",
+    "FaultType", "FaultInjector", "GayJepsenTest", "TestResult",
+    "ParaParaGayState", "ParaParaGaySharp", "ParaAlignment",
+    "verify_spi_under_faults", "para_para_lift", "optimal_gay_seeds"
+]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FAULT TYPES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[faults]
+# All fault types available for testing
+
+[[faults.types]]
+name = "BitFlip"
+description = "Flip random bits in seed (classic Byzantine fault)"
+target = "seed_space"
+inscrutability = 1  # Low: visible in output
+
+[[faults.types]]
+name = "TritFlip"
+description = "Flip trits in balanced ternary representation (gayzip attack)"
+target = "ternary_encoding"
+inscrutability = 2  # Medium: harder to detect
+
+[[faults.types]]
+name = "ChannelReorder"
+description = "Reorder parallel channel operations"
+target = "parallel_execution"
+inscrutability = 3  # Medium-high: tests SPI directly
+
+[[faults.types]]
+name = "TimingPerturb"
+description = "Perturb emission timing"
+target = "rx_emission"
+inscrutability = 4  # High: acausal detection required
+
+[[faults.types]]
+name = "ShadowCorrupt"
+description = "Corrupt shadow bits (56-bit hidden state)"
+target = "hyperbolic_bulk"
+inscrutability = 5  # Very high: tests Tikkun restoration
+
+[[faults.types]]
+name = "PartitionSim"
+description = "Simulate network partition between parallel workers"
+target = "distributed_consensus"
+inscrutability = 3
+
+[[faults.types]]
+name = "GaloisDesync"
+description = "Desynchronize α/γ adjoint pair in Galois gadget"
+target = "galois_connection"
+inscrutability = 5  # Very high: tests emission opacity
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSCRUTABILITY HIERARCHY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[inscrutability]
+# Ranked from most to least inscrutable (hardest to externally predict)
+
+[[inscrutability.levels]]
+rank = 1
+name = "splitmix64_inverse_chain"
+bits_hidden = 40
+description = "2^64 bulk → 2^24 boundary projection"
+implementation = "HyperbolicBulk"
+
+[[inscrutability.levels]]
+rank = 2
+name = "shadow_bit_reafference"
+bits_hidden = 56
+description = "Per-channel shadow bits, invisible to observer"
+implementation = "ReafferentState"
+
+[[inscrutability.levels]]
+rank = 3
+name = "galois_connected_emission"
+bits_hidden = 40
+description = "Adjoint pair (α,γ) obscures emission timing decisions"
+implementation = "GaloisGadget, RxEmissionGadget"
+
+[[inscrutability.levels]]
+rank = 4
+name = "checkerboard_interleave"
+bits_hidden = 32
+description = "Parity hides causal order in parallel execution"
+implementation = "ParaParaGayState"
+
+[[inscrutability.levels]]
+rank = 5
+name = "xor_masked_backpressure"
+bits_hidden = 24
+description = "Flow direction encoded in color"
+implementation = "chromatic_flow in gayzip"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SEMANTIC RUNTIMES FOR FIXED POINT SEARCH
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[semantic_runtimes]
+
+[[semantic_runtimes.runtime]]
+name = "ChromaticSemiotics"
+description = "Sign-signifier relations: find seeds where sign encodes its signifier"
+function = "find_fixed_points_semiotic"
+optimal_seed = 1069  # Best candidate from testing
+metric = "bits_preserved"
+
+[[semantic_runtimes.runtime]]
+name = "UmweltSaturation"
+description = "Phenomenal closure: Para(Para(Gay)) saturates color space"
+function = "find_fixed_points_umwelt"
+optimal_seed = 1069
+metric = "closure"
+
+[[semantic_runtimes.runtime]]
+name = "TikkunOlam"
+description = "Entropy repair: shadow bits perfectly restore visible"
+function = "find_fixed_points_tikkun"
+optimal_seed = 1069
+metric = "bits_restored"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CANONICAL SEEDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[canonical_seeds]
+
+[[canonical_seeds.seed]]
+value = 1069
+name = "GAY_SEED"
+properties = ["tikkun_optimal", "umwelt_closure", "semiotic_convergence"]
+bits_restored = 64
+closure = 0.0
+
+[[canonical_seeds.seed]]
+value = 69
+name = "GAY_69"
+properties = ["para_alignment_optimal", "color_distance_zero"]
+color_distance = 0.0
+quality = 1.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FORMAT-SPECIFIC TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[format_tests]
+
+[[format_tests.test]]
+format = "gayzip"
+faults = ["TritFlip", "ChannelReorder", "TimingPerturb"]
+spi_required = true
+description = "Verify gayzip compression maintains SPI under ternary attacks"
+
+[[format_tests.test]]
+format = "jpeg3000"
+faults = ["BitFlip", "ShadowCorrupt", "GaloisDesync"]
+spi_required = true
+description = "Verify JPEG3000 encoding maintains generative seed integrity"
+
+[[format_tests.test]]
+format = "nilfs3"
+faults = ["PartitionSim", "ChannelReorder", "ShadowCorrupt"]
+spi_required = true
+description = "Verify nilfs3 transaction coloring survives partition"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFICATION COMMANDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[commands]
+
+[[commands.command]]
+name = "verify_all"
+julia = "GayJepsen.verify_spi_under_faults()"
+description = "Run all SPI verification tests"
+
+[[commands.command]]
+name = "demo"
+julia = "GayJepsen.demo_gay_jepsen()"
+description = "Run demo showing all components"
+
+[[commands.command]]
+name = "find_optimal"
+julia = "GayJepsen.demo_optimal_fixed_points()"
+description = "Search for optimal fixed points across all semantic runtimes"
+
+[[commands.command]]
+name = "para_align"
+julia = "GayJepsen.para_para_lift(UInt64(69))"
+description = "Check Para(Para(Gay)) ↔ Para(Para(Gay#)) alignment"

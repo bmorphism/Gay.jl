@@ -1,0 +1,122 @@
+# TRIPOS: Tooling & Examples (Triads 11-17)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tree-sitter, linting, dApps, daily Move snippets
+
+[world]
+name = "aptos"
+category = "tooling_examples"
+status = "active"
+updated_range = ["2025-08-01", "2025-11-16"]
+
+[[triads]]
+index = 11
+names = ["tree-sitter-move-on-aptos", "move-smith", "aptos-rust-sdk"]
+urls = [
+    "https://github.com/aptos-labs/tree-sitter-move-on-aptos",
+    "https://github.com/aptos-labs/move-smith",
+    "https://github.com/aptos-labs/aptos-rust-sdk"
+]
+updated = ["2025-11-16", "2025-11-13", "2025-11-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 11)"
+descriptions = [
+    "Move on Aptos tree-sitter grammar",
+    "Specialized fuzzer for Move compilers and VM",
+    "Aptos Rust SDK"
+]
+
+[[triads]]
+index = 12
+names = ["algebra", "aptos-keyless-example", "art-nyc"]
+urls = [
+    "https://github.com/aptos-labs/algebra",
+    "https://github.com/aptos-labs/aptos-keyless-example",
+    "https://github.com/aptos-labs/art-nyc"
+]
+updated = ["2025-11-05", "2025-10-28", "2025-10-19"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 12)"
+descriptions = [
+    "Algebra library",
+    "Example of how to build a webpage using Keyless accounts",
+    "Art NYC exhibition"
+]
+
+[[triads]]
+index = 13
+names = ["dice-example", "script-composer-pack", "aptos-move-lint-github-action"]
+urls = [
+    "https://github.com/aptos-labs/dice-example",
+    "https://github.com/aptos-labs/script-composer-pack",
+    "https://github.com/aptos-labs/aptos-move-lint-github-action"
+]
+updated = ["2025-10-16", "2025-10-12", "2025-09-26"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 13)"
+descriptions = [
+    "Dice example dApp",
+    "Script composer package",
+    "Github action for running aptos move lint"
+]
+
+[[triads]]
+index = 14
+names = ["create-aptos-dapp", "decibel-indexer-example", "aptos-move-lint-action"]
+urls = [
+    "https://github.com/aptos-labs/create-aptos-dapp",
+    "https://github.com/aptos-labs/decibel-indexer-example",
+    "https://github.com/aptos-labs/aptos-move-lint-action"
+]
+updated = ["2025-09-23", "2025-09-19", "2025-09-18"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 14)"
+descriptions = [
+    "CLI to quickly scaffold a full stack app on Aptos",
+    "Example indexing for decibel events",
+    "Github action for running aptos move lint"
+]
+
+[[triads]]
+index = 15
+names = ["petra-wallet", "wallet-standard", "hack-and-hang-june-2025"]
+urls = [
+    "https://github.com/aptos-labs/petra-wallet",
+    "https://github.com/aptos-labs/wallet-standard",
+    "https://github.com/aptos-labs/hack-and-hang-june-2025"
+]
+updated = ["2025-09-16", "2025-09-15", "2025-09-10"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 15)"
+descriptions = [
+    "Public issue tracker for Petra Wallet on Aptos",
+    "Wallet standard",
+    "Hack and Hang June 2025 event"
+]
+
+[[triads]]
+index = 16
+names = ["two-player-demo", "daily-move", "jemalloc-sys-shim"]
+urls = [
+    "https://github.com/aptos-labs/two-player-demo",
+    "https://github.com/aptos-labs/daily-move",
+    "https://github.com/aptos-labs/jemalloc-sys-shim"
+]
+updated = ["2025-09-10", "2025-09-04", "2025-08-30"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 16)"
+descriptions = [
+    "Two Player Game demo",
+    "Daily Move Snippets",
+    "jemalloc sys shim"
+]
+daily_move_snippets = true
+
+[[triads]]
+index = 17
+names = ["aptos-nft-aggregator", "actions", "hong-bao"]
+urls = [
+    "https://github.com/aptos-labs/aptos-nft-aggregator",
+    "https://github.com/aptos-labs/actions",
+    "https://github.com/aptos-labs/hong-bao"
+]
+updated = ["2025-08-19", "2025-08-12", "2025-08-01"]
+seed_formula = "splitmix64(GAY_SEED ⊕ hash(name) ⊕ 17)"
+descriptions = [
+    "Aptos NFT aggregator",
+    "Github Actions reusable actions",
+    "🧧🧧🧧 Hong Bao (red envelope)"
+]

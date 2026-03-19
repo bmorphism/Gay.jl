@@ -1,0 +1,26 @@
+# Aptos Stale Repos: Letter Y
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tesseract Role: PLAY (+1) - Generator world
+# Part of the 26-world causally closed arena
+#
+# To revive: update pushedAt > 2025-01-01 and move to seed_bundles_2025.jl
+
+[world]
+name = "aptos"
+letter = "y"
+status = "stale"
+cutoff = "2025-01-01"
+trit = 1
+role = "play"
+
+[[repos]]
+name = "yield-aggregator"
+url = "https://github.com/aptos-labs/yield-aggregator"
+pushed_at = "2024-08-28"
+description = "DeFi yield aggregation protocols"
+
+[[repos]]
+name = "yul-compiler"
+url = "https://github.com/aptos-labs/yul-compiler"
+pushed_at = "2024-05-19"
+description = "Yul to Move compiler experiment"

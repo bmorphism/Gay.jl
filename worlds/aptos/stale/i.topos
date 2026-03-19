@@ -1,0 +1,33 @@
+# Aptos Stale Repos: Letter I
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "i"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "ic-plugin-wallet-adapter"
+url = "https://github.com/aptos-labs/ic-plugin-wallet-adapter"
+pushed_at = "2024-10-23"
+description = "An Identity Connect wallet plugin"
+
+[[repos]]
+name = "identity-connect-docs"
+url = "https://github.com/aptos-labs/identity-connect-docs"
+pushed_at = "2023-12-06"
+description = "Documentation and examples for Identity Connect"
+
+[[repos]]
+name = "intent-framework"
+url = "https://github.com/aptos-labs/intent-framework"
+pushed_at = "2024-12-06"
+description = "A repo to hold our exploratory intent framework"
+
+[[repos]]
+name = "iris3"
+url = "https://github.com/aptos-labs/iris3"
+pushed_at = "2023-11-07"
+is_fork = true
+description = "Upgraded Iris automatic GCP-labeling project"

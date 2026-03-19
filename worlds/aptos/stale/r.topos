@@ -1,0 +1,22 @@
+# Aptos Stale Repos: Letter R
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[world]
+name = "aptos"
+letter = "r"
+status = "stale"
+cutoff = "2025-01-01"
+
+[[repos]]
+name = "runner-images"
+url = "https://github.com/aptos-labs/runner-images"
+pushed_at = "2023-08-06"
+is_fork = true
+description = "GitHub Actions runner images"
+
+[[repos]]
+name = "rust-rocksdb"
+url = "https://github.com/aptos-labs/rust-rocksdb"
+pushed_at = "2023-03-25"
+is_fork = true
+description = "rust wrapper for rocksdb"

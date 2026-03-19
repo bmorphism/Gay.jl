@@ -1,0 +1,89 @@
+#!/usr/bin/env bb
+;; gay - unified CLI for Gay.jl ecosystem
+;; Usage: gay [command] [args...]
+
+(require '[babashka.process :as p]
+         '[babashka.fs :as fs])
+
+(def TOPOS (fs/parent *file*))
+
+(def GOLDEN (unchecked-long 0x9e3779b97f4a7c15))
+(def MASK64 (unchecked-long 0xffffffffffffffff))
+
+(defn u64 [n] (bit-and (unchecked-long n) MASK64))
+(defn sm64 [s]
+  (let [s (u64 (unchecked-add s GOLDEN))
+        z (u64 (unchecked-multiply (bit-xor s (unsigned-bit-shift-right s 30)) (unchecked-long 0xbf58476d1ce4e5b9)))
+        z (u64 (unchecked-multiply (bit-xor z (unsigned-bit-shift-right z 27)) (unchecked-long 0x94d049bb133111eb)))]
+    (u64 (bit-xor z (unsigned-bit-shift-right z 31)))))
+
+(defn rgb [seed i]
+  (let [h (sm64 (u64 (unchecked-add seed (unchecked-multiply (unchecked-long i) GOLDEN))))]
+    [(bit-and (unsigned-bit-shift-right h 16) 0xFF)
+     (bit-and (unsigned-bit-shift-right h 8) 0xFF)
+     (bit-and h 0xFF)]))
+
+(defn show [[r g b]] (format "\u001b[48;2;%d;%d;%dm  \u001b[0m" r g b))
+
+(defn cmd-colors [args]
+  (let [seed (or (some-> (first args) parse-long) 69)
+        n (or (some-> (second args) parse-long) 6)
+        cs (mapv #(rgb seed %) (range n))
+        fp (reduce bit-xor 0 (map #(+ (* (% 0) 65536) (* (% 1) 256) (% 2)) cs))]
+    (println (str "  " (apply str (map show cs)) " gay"))
+    (println (format "seed=%d fp=0x%x" seed fp))))
+
+(defn cmd-hat [args]
+  (p/shell {:dir (str TOPOS)} "bb" "gay_hat.bb" (or (first args) "69") (or (second args) "8")))
+
+(defn cmd-tdx [args]
+  (p/shell {:dir (str TOPOS)} "bb" "gay_hat_tdx.bb" (or (first args) "69") (or (second args) "8")))
+
+(defn cmd-wheel [args]
+  (p/shell {:dir (str TOPOS)} "bb" "gay_hat_wheel.bb" (or (first args) "69")))
+
+(defn cmd-peer [args]
+  (p/shell {:dir (str TOPOS)} "uv" "run" "gay_exo_peer.py" (or (first args) "69") (or (second args) "8")))
+
+(defn cmd-2tdx [args]
+  (p/shell {:dir (str TOPOS)} "python3" "gay_2tdx.py" (or (first args) "69") (or (second args) "0") (nth args 2 nil)))
+
+(defn cmd-ts [args]
+  (p/shell {:dir (str TOPOS)} "python3" "gay_ts.py" (or (first args) "69")))
+
+(defn cmd-drop [args]
+  (p/shell {:dir (str TOPOS)} "python3" "gay.py" (or (first args) "69")))
+
+(defn cmd-help []
+  (println)
+  (println "gay - SPI color ecosystem")
+  (println)
+  (println "commands:")
+  (println "  gay [seed] [n]        - generate n colors from seed")
+  (println "  gay hat [seed] [n]    - aperiodic hat metatile coordinates")
+  (println "  gay tdx [seed] [n]    - hat FST transducer trace")
+  (println "  gay wheel [seed]      - find repeating cycles")
+  (println "  gay 2tdx [seed] [pol] [peer] - 2-transducer triadic interleave")
+  (println "  gay ts [seed]         - tailscale mesh discovery")
+  (println "  gay drop [seed]       - airdrop-ready peer discovery")
+  (println "  gay peer [seed] [n]   - MLX + exo distributed colors")
+  (println)
+  (cmd-colors ["69" "6"]))
+
+(let [[cmd & args] *command-line-args*]
+  (case cmd
+    "hat" (cmd-hat args)
+    "tdx" (cmd-tdx args)
+    "wheel" (cmd-wheel args)
+    "2tdx" (cmd-2tdx args)
+    "ts" (cmd-ts args)
+    "drop" (cmd-drop args)
+    "peer" (cmd-peer args)
+    "help" (cmd-help)
+    "--help" (cmd-help)
+    "-h" (cmd-help)
+    nil (cmd-help)
+    ;; Default: treat as seed
+    (if (re-matches #"\d+" cmd)
+      (cmd-colors (cons cmd args))
+      (cmd-help))))

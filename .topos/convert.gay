@@ -1,0 +1,289 @@
+; CONVERT.GAY - Universal Format Conversion via cq + jet
+;
+; Tools:
+;   cq  - https://github.com/markus-wa/cq (Clojure Query)
+;   jet - https://github.com/borkdude/jet (JSON/EDN/YAML/Transit)
+;   yq  - https://github.com/kislyuk/yq (YAML/XML/TOML via jq)
+;   fx  - https://fx.wtf (TOML/JSON/YAML interactive)
+;
+; ┌─────────────────────────────────────────────────────────────────────────────┐
+; │  FORMAT CONVERSION MATRIX                                                   │
+; │                                                                             │
+; │           │ .gay  │ .toml │ .edn  │ .json │ .yaml │ .xml  │                │
+; │  ─────────┼───────┼───────┼───────┼───────┼───────┼───────┤                │
+; │  .gay     │   -   │ parse │ ident │ parse │ parse │ parse │                │
+; │  .toml    │ emit  │   -   │ jet   │ fx    │ yq    │ yq    │                │
+; │  .edn     │ read  │ jet   │   -   │ jet   │ jet   │ cq    │                │
+; │  .json    │ parse │ fx    │ jet   │   -   │ yq    │ cq    │                │
+; │  .yaml    │ parse │ yq    │ jet   │ yq    │   -   │ yq    │                │
+; │  .xml     │ parse │ cq    │ cq    │ cq    │ cq    │   -   │                │
+; │                                                                             │
+; │  Legend: ident = identity, parse = s-expr parse, emit = s-expr print       │
+; └─────────────────────────────────────────────────────────────────────────────┘
+
+(world :convert
+  :version "0.1.0"
+  :type :tooling
+  :description "Format conversion utilities for .gay world specs")
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; TOOL DEFINITIONS
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(def-tool :cq
+  :name "cq"
+  :url "https://github.com/markus-wa/cq"
+  :description "Clojure Query - jq for Clojure data"
+  :install "(brew install cq) or (cargo install cq)"
+  :formats (:json :yaml :edn :xml :csv :msgpack :transit)
+  :features (:clojure-expressions :streaming :schema-validation))
+
+(def-tool :jet
+  :name "jet"
+  :url "https://github.com/borkdude/jet"
+  :description "CLI to transform between JSON, EDN, YAML, Transit"
+  :install "(brew install borkdude/brew/jet) or (download binary)"
+  :formats (:json :edn :yaml :transit)
+  :features (:keywordize :pretty-print :query))
+
+(def-tool :yq
+  :name "yq"
+  :url "https://github.com/kislyuk/yq"
+  :description "jq wrapper for YAML/XML/TOML"
+  :install "(pip install yq)"
+  :formats (:yaml :xml :toml :json)
+  :features (:jq-syntax :yaml-roundtrip :toml-support))
+
+(def-tool :fx
+  :name "fx"
+  :url "https://fx.wtf"
+  :description "Interactive JSON/YAML/TOML processor"
+  :install "(brew install fx) or (npm install -g fx)"
+  :formats (:json :yaml :toml)
+  :features (:interactive :js-expressions :streaming))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; CONVERSION COMMANDS
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(def-conversions
+  ; ─── FROM .gay (S-expression) ───
+  (:gay->edn
+    :command "cat {input} | sbcl --script gay-to-edn.lisp"
+    :description "Gay S-expr to EDN (mostly identity, adjust keywords)"
+    :tool :custom)
+  
+  (:gay->json
+    :command "cat {input} | cq -i edn -o json"
+    :description "Gay to JSON via EDN intermediate"
+    :tool :cq
+    :pipeline (:gay->edn :edn->json))
+  
+  (:gay->yaml
+    :command "cat {input} | cq -i edn -o yaml"
+    :description "Gay to YAML via EDN"
+    :tool :cq)
+  
+  (:gay->toml
+    :command "cat {input} | cq -i edn -o json | yq -P -o toml"
+    :description "Gay to TOML via JSON"
+    :tool (:cq :yq))
+  
+  (:gay->xml
+    :command "cat {input} | cq -i edn -o xml"
+    :description "Gay to XML"
+    :tool :cq)
+
+  ; ─── FROM .toml ───
+  (:toml->json
+    :command "fx {input}"
+    :description "TOML to JSON"
+    :tool :fx)
+  
+  (:toml->yaml
+    :command "yq -P {input}"
+    :description "TOML to YAML"
+    :tool :yq)
+  
+  (:toml->edn
+    :command "fx {input} | jet --from json --to edn"
+    :description "TOML to EDN via JSON"
+    :tool (:fx :jet))
+  
+  (:toml->gay
+    :command "fx {input} | jet --from json --to edn --keywordize | gay-format"
+    :description "TOML to Gay S-expr"
+    :tool (:fx :jet :custom))
+
+  ; ─── FROM .edn ───
+  (:edn->json
+    :command "jet --from edn --to json {input}"
+    :description "EDN to JSON"
+    :tool :jet)
+  
+  (:edn->yaml
+    :command "jet --from edn --to yaml {input}"
+    :description "EDN to YAML"
+    :tool :jet)
+  
+  (:edn->gay
+    :command "cat {input}"
+    :description "EDN to Gay (identity with formatting)"
+    :tool :identity)
+
+  ; ─── FROM .json ───
+  (:json->yaml
+    :command "yq -P {input}"
+    :description "JSON to YAML"
+    :tool :yq)
+  
+  (:json->toml
+    :command "yq -P -o toml {input}"
+    :description "JSON to TOML"
+    :tool :yq)
+  
+  (:json->edn
+    :command "jet --from json --to edn --keywordize {input}"
+    :description "JSON to EDN"
+    :tool :jet)
+  
+  (:json->xml
+    :command "cq -i json -o xml {input}"
+    :description "JSON to XML"
+    :tool :cq)
+  
+  (:json->gay
+    :command "jet --from json --to edn --keywordize {input} | gay-format"
+    :description "JSON to Gay S-expr"
+    :tool (:jet :custom))
+
+  ; ─── FROM .yaml ───
+  (:yaml->json
+    :command "yq -o json {input}"
+    :description "YAML to JSON"
+    :tool :yq)
+  
+  (:yaml->toml
+    :command "yq -o toml {input}"
+    :description "YAML to TOML"
+    :tool :yq)
+  
+  (:yaml->edn
+    :command "jet --from yaml --to edn --keywordize {input}"
+    :description "YAML to EDN"
+    :tool :jet)
+  
+  (:yaml->gay
+    :command "jet --from yaml --to edn --keywordize {input} | gay-format"
+    :description "YAML to Gay S-expr"
+    :tool (:jet :custom))
+
+  ; ─── FROM .xml ───
+  (:xml->json
+    :command "cq -i xml -o json {input}"
+    :description "XML to JSON"
+    :tool :cq)
+  
+  (:xml->yaml
+    :command "cq -i xml -o yaml {input}"
+    :description "XML to YAML"
+    :tool :cq)
+  
+  (:xml->edn
+    :command "cq -i xml -o edn {input}"
+    :description "XML to EDN"
+    :tool :cq))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; GAY FORMAT UTILITIES
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defun gay-format (input)
+  "Format EDN/Lisp as canonical Gay S-expression."
+  (let ((sexp (read-from-string input)))
+    (with-output-to-string (s)
+      (write sexp :stream s :pretty t :case :downcase))))
+
+; Conversion wrapper for shell
+(defun convert-file (input-path output-format)
+  "Convert any supported file to output-format."
+  (let* ((input-ext (pathname-type input-path))
+         (conversion (intern (format nil "~A->~A" input-ext output-format) :keyword)))
+    (case conversion
+      (:toml->json (run-program "fx" (list input-path)))
+      (:json->edn  (run-program "jet" (list "--from" "json" "--to" "edn" input-path)))
+      (:yaml->toml (run-program "yq" (list "-o" "toml" input-path)))
+      (t (error "Unsupported conversion: ~A" conversion)))))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; BATCH CONVERSION FOR .topos/
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(def-batch-convert
+  :source-dir ".topos"
+  :targets (:json :yaml :edn :xml)
+  
+  :rules
+  ((:pattern "*.toml"
+    :output-dir ".topos/generated/{format}"
+    :conversions (:toml->json :toml->yaml :toml->edn))
+   
+   (:pattern "*.gay"
+    :output-dir ".topos/generated/{format}"
+    :conversions (:gay->json :gay->yaml :gay->edn :gay->xml))))
+
+; Example: Convert all .topos/*.toml to all formats
+; $ for f in .topos/*.toml; do
+; $   fx "$f" > ".topos/generated/json/$(basename $f .toml).json"
+; $   yq -P "$f" > ".topos/generated/yaml/$(basename $f .toml).yaml"
+; $   fx "$f" | jet --from json --to edn > ".topos/generated/edn/$(basename $f .toml).edn"
+; $ done
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; CHROMATIC CONVERSION VERIFICATION
+; ═══════════════════════════════════════════════════════════════════════════════
+
+(defun verify-conversion (original converted-back)
+  "Verify round-trip conversion preserves chromatic identity.
+   
+   original.toml → converted.json → back.toml
+   Should satisfy: fingerprint(original) = fingerprint(back)"
+  (let ((fp1 (compute-fingerprint original))
+        (fp2 (compute-fingerprint converted-back)))
+    (assert (= fp1 fp2) 
+            "Chromatic identity not preserved: ~X ≠ ~X" fp1 fp2)))
+
+(defun compute-fingerprint (content)
+  "Compute chromatic fingerprint of content (format-independent)."
+  (let* ((normalized (normalize-whitespace content))
+         (hash (reduce (lambda (h c) (splitmix64 (logxor h (char-code c))))
+                       normalized :initial-value +gay-seed+)))
+    (logand hash #xFFFFFFFFFFFFFFFF)))
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; CLI WRAPPER SCRIPT
+; ═══════════════════════════════════════════════════════════════════════════════
+
+; gay-convert: Universal converter for Gay.jl specs
+;
+; Usage:
+;   gay-convert <input> <output-format>
+;   gay-convert gayzip.toml json        # → gayzip.json
+;   gay-convert bloch_sphere.gay yaml   # → bloch_sphere.yaml
+;   gay-convert --all .topos/           # Convert all specs to all formats
+;
+; Implementation: See .topos/bin/gay-convert
+
+(def-cli :gay-convert
+  :usage "gay-convert <input> <output-format> [--verify]"
+  :options
+  ((:all "Convert all files in directory to all formats")
+   (:verify "Verify round-trip conversion")
+   (:pretty "Pretty-print output")
+   (:chromatic "Add chromatic fingerprint to output"))
+  
+  :examples
+  (("gay-convert gayzip.toml json" "Convert TOML to JSON")
+   ("gay-convert bloch_sphere.gay yaml" "Convert Gay to YAML")
+   ("gay-convert --all .topos/" "Batch convert all specs")
+   ("gay-convert --verify input.toml edn" "Convert with verification")))
