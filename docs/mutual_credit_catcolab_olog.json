@@ -1,0 +1,165 @@
+{
+  "catcolab_model": {
+    "title": "Obligation-Clearing & Mutual Credit Olog (Sardex/Fleischman/Cycles)",
+    "theory": "olog",
+    "source": "Fleischman et al. (2020, 2021, 2025) + Sardex S.p.A. data",
+    "created": "2026-03-19",
+    "trit": -1,
+    "role": "verify"
+  },
+  "types": [
+    {"id": "MC1", "label": "an obligation network (directed weighted graph of invoices between firms)"},
+    {"id": "MC2", "label": "a clearing cycle (directed cycle in obligation network where debts cancel)"},
+    {"id": "MC3", "label": "a multilateral netting solution (set of clearing cycles that reduce aggregate debt)"},
+    {"id": "MC4", "label": "a liquidity source (external money injected to enable partial clearing)"},
+    {"id": "MC5", "label": "a zero-sum invariant (sum of all credits = sum of all debits at all times)"},
+    {"id": "MC6", "label": "a mutual credit unit (sardex, WIR, or similar complementary currency)"},
+    {"id": "MC7", "label": "a bilateral obligation (invoice from firm A to firm B)"},
+    {"id": "MC8", "label": "a minimum cost flow solution (MCF that maximizes aggregate debt reduction)"},
+    {"id": "MC9", "label": "a strongly connected component (maximal subgraph where every firm can reach every other)"},
+    {"id": "MC10", "label": "a counter-cyclical clearing system (demand rises in crisis, falls in growth)"},
+    {"id": "MC11", "label": "a trade credit chain (sequence of invoices A→B→C→...→A forming potential cycle)"},
+    {"id": "MC12", "label": "a set-off operation (bilateral or multilateral cancellation of reciprocal debts)"},
+    {"id": "MC13", "label": "a gridlock situation (circular dependency preventing settlement)"},
+    {"id": "MC14", "label": "a Landauer erasure cost (kT ln 2 per bit erased when clearing settles)"},
+    {"id": "MC15", "label": "a GF(3) conservation triple (generator=creditor, ergodic=clearer, absorber=debtor)"},
+    {"id": "MC16", "label": "a privacy-preserving clearing protocol (Cycles Protocol: no party sees full graph)"},
+    {"id": "MC17", "label": "an intent (obligation, acceptance, or tender in Cycles Protocol)"},
+    {"id": "MC18", "label": "a sheaf condition on the obligation network (local clearing solutions must glue globally)"},
+    {"id": "MC19", "label": "an adhesion between network partitions (shared counterparties between bags)"},
+    {"id": "MC20", "label": "a debt reduction percentage (25% obligation-only, 50% with mutual credit)"},
+    {"id": "MC21", "label": "a passport (did:gay proof that clearing conserved GF(3) invariant)"},
+    {"id": "MC22", "label": "the Sardex principle (medium of exchange separated from store of value)"},
+    {"id": "MC23", "label": "a TCT clearing run (Tetris Core Technologies batch execution since 1991)"},
+    {"id": "MC24", "label": "an XOR fingerprint of the clearing ledger (order-independent conservation check)"},
+    {"id": "MC25", "label": "a contagion risk (cascade of defaults propagating through obligation network)"}
+  ],
+  "aspects": [
+    {"from": "MC7", "to": "MC1", "label": "is an edge in"},
+    {"from": "MC1", "to": "MC9", "label": "decomposes into"},
+    {"from": "MC9", "to": "MC2", "label": "contains"},
+    {"from": "MC2", "to": "MC12", "label": "enables"},
+    {"from": "MC12", "to": "MC3", "label": "composes into"},
+    {"from": "MC3", "to": "MC8", "label": "is optimized by"},
+    {"from": "MC8", "to": "MC20", "label": "achieves"},
+    {"from": "MC4", "to": "MC8", "label": "augments"},
+    {"from": "MC6", "to": "MC4", "label": "is a type of"},
+    {"from": "MC5", "to": "MC1", "label": "is an invariant of"},
+    {"from": "MC5", "to": "MC15", "label": "is isomorphic to"},
+    {"from": "MC15", "to": "MC21", "label": "is certified by"},
+    {"from": "MC11", "to": "MC2", "label": "is a candidate for"},
+    {"from": "MC13", "to": "MC12", "label": "is resolved by"},
+    {"from": "MC14", "to": "MC12", "label": "is the thermodynamic cost of"},
+    {"from": "MC10", "to": "MC22", "label": "is enabled by"},
+    {"from": "MC22", "to": "MC6", "label": "is implemented by"},
+    {"from": "MC16", "to": "MC17", "label": "operates on"},
+    {"from": "MC17", "to": "MC3", "label": "composes into"},
+    {"from": "MC1", "to": "MC18", "label": "satisfies"},
+    {"from": "MC18", "to": "MC19", "label": "is checked at"},
+    {"from": "MC19", "to": "MC9", "label": "connects"},
+    {"from": "MC23", "to": "MC8", "label": "is a batch execution of"},
+    {"from": "MC24", "to": "MC5", "label": "verifies"},
+    {"from": "MC1", "to": "MC25", "label": "is vulnerable to"},
+    {"from": "MC3", "to": "MC25", "label": "mitigates"},
+    {"from": "MC20", "to": "MC10", "label": "demonstrates effectiveness of"},
+    {"from": "MC15", "to": "MC12", "label": "governs"}
+  ],
+  "convergence_to_existing_olog": {
+    "MC5_zero_sum": {
+      "maps_to": "K2 Conservation Law",
+      "catcolab_type": "The conservation law (sum of trits mod 3 = 0)",
+      "isomorphism": "zero-sum invariant (credits=debits) ≅ GF(3) conservation (trit_sum≡0 mod 3)"
+    },
+    "MC8_MCF": {
+      "maps_to": "K14 Structured Decomposition",
+      "catcolab_type": "a structured decomposition (bags, adhesions, sheaf gluing condition, tree-width)",
+      "isomorphism": "MCF on obligation graph ≅ decide_sheaf_tree_shape on network decomposition"
+    },
+    "MC15_GF3_triple": {
+      "maps_to": "K1 Color as Governance",
+      "catcolab_type": "A GF(3) fiber ({-1, 0, +1} from hash mod 3)",
+      "isomorphism": "creditor(+1)/clearer(0)/debtor(-1) ≅ generator/ergodic/absorber"
+    },
+    "MC14_landauer": {
+      "maps_to": "K10 Energy Exchange",
+      "catcolab_type": "Maxwell's Demon cofree coalgebra",
+      "isomorphism": "clearing erasure cost ≅ Landauer kT ln 2 per bit ≅ debt_resolution.jl landauer_cost()"
+    },
+    "MC18_sheaf_condition": {
+      "maps_to": "K4 Formal Proof and Verification",
+      "catcolab_type": "SheafACSetIntegration decide_chromatic_sheaf",
+      "isomorphism": "local clearing must glue globally ≅ sheaf gluing condition on chromatic decomposition"
+    },
+    "MC24_xor_fingerprint": {
+      "maps_to": "K12 GPU Parallel Execution",
+      "catcolab_type": "xor_fingerprint(colors) order-independent",
+      "isomorphism": "ledger fingerprint ≅ XOR reduction of clearing events, verifiable in parallel"
+    }
+  },
+  "new_convergence_edges": [
+    {
+      "id": "K15",
+      "topic": "Obligation Clearing as Cycle Decomposition",
+      "catcolab_types": ["MC1", "MC2", "MC3", "MC9", "MC11"],
+      "deepwiki_repos": ["AlgebraicJulia/StructuredDecompositions.jl", "plurigrid/asi"],
+      "code_entities": ["decide_sheaf_tree_shape()", "adhesion_filter()", "balance(trits)"],
+      "isomorphism": "clearing cycles in obligation graph ≅ cycle bases in directed graph ≅ sheaf sections"
+    },
+    {
+      "id": "K16",
+      "topic": "Mutual Credit as Complementary Liquidity",
+      "catcolab_types": ["MC4", "MC6", "MC10", "MC20", "MC22"],
+      "deepwiki_repos": ["plurigrid/asi", "bmorphism/Gay.jl"],
+      "code_entities": ["GF3 bounded credit", "trit_from_hue()", "triadic_amount()"],
+      "isomorphism": "sardex unit ≅ complementary trit ≅ liquidity injection that preserves conservation"
+    },
+    {
+      "id": "K17",
+      "topic": "Privacy-Preserving Distributed Clearing",
+      "catcolab_types": ["MC16", "MC17", "MC24"],
+      "deepwiki_repos": ["bmorphism/Gay.jl", "bmorphism/panoptiquack"],
+      "code_entities": ["xor_fingerprint()", "verify_spi()", "fingerprinting workflow"],
+      "isomorphism": "no party sees full graph ≅ each node verifies local SPI ≅ order-independent XOR"
+    },
+    {
+      "id": "K18",
+      "topic": "Clearing as Entropy Production",
+      "catcolab_types": ["MC12", "MC13", "MC14"],
+      "deepwiki_repos": ["plurigrid/asi"],
+      "code_entities": ["landauer_cost()", "DemonLedger", "entropy cycle"],
+      "isomorphism": "set-off erases obligation ≅ Landauer erasure ≅ Maxwell's demon extract()"
+    }
+  ],
+  "trit_accounting": {
+    "K15": {"catcolab": -1, "deepwiki": 0, "code": 1, "sum_mod_3": 0, "conserved": true},
+    "K16": {"catcolab": -1, "deepwiki": 0, "code": 1, "sum_mod_3": 0, "conserved": true},
+    "K17": {"catcolab": -1, "deepwiki": 0, "code": 1, "sum_mod_3": 0, "conserved": true},
+    "K18": {"catcolab": -1, "deepwiki": 0, "code": 1, "sum_mod_3": 0, "conserved": true}
+  },
+  "paper_grounding": {
+    "P1_fleischman_2020": {
+      "types_grounded": ["MC1", "MC2", "MC3", "MC5", "MC7", "MC9", "MC10", "MC20"],
+      "key_data": "3199 firms, 138K transactions, EUR 31M, 25%/50% debt reduction"
+    },
+    "P2_fleischman_2021": {
+      "types_grounded": ["MC4", "MC8", "MC13", "MC23"],
+      "key_result": "maximum aggregate debt reduction guaranteed via Minimum Cost Flow"
+    },
+    "P3_cycles_2025": {
+      "types_grounded": ["MC16", "MC17"],
+      "key_innovation": "open decentralized clearing + settlement + issuance, privacy-preserving"
+    },
+    "OC1_simic_1992": {
+      "types_grounded": ["MC8", "MC12"],
+      "key_result": "polynomial-time multilateral set-off via network flow"
+    },
+    "OC15_borner_2017": {
+      "types_grounded": ["MC12", "MC22"],
+      "key_history": "clearing markets from late 12th century"
+    },
+    "GT1_abraham_2007": {
+      "types_grounded": ["MC2", "MC11"],
+      "analogy": "kidney exchange cycle-finding ≅ obligation clearing cycle-finding"
+    }
+  }
+}
