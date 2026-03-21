@@ -1990,32 +1990,56 @@ export world_reafferent_dao_topos
 # Install with: using Pkg; Pkg.develop(path="/Users/bob/ies/rio/GayMove.jl")
 
 # Include GaySplittableRNG - Best-in-class splittable PRNG (Issue #205)
-# Access via: Gay.GaySplittableRNG.gay_seed() or import Gay.GaySplittableRNG as GRNG
 include("gayrng.jl")
-# DISABLED: using .GaySplittableRNG: (exports disabled - module not loading correctly)
-# export ZobristTable, zobrist_init, zobrist_hash, zobrist_update
-# export FingerprintCRDT, crdt_update!, crdt_merge, crdt_query
-# export spectral_quality, chi_squared_uniformity, serial_correlation
-# export world_gayrng, world_incremental_hashing, world_distributed_fingerprint
-# export world_monoidal_coherence, world_statistical_quality
+using .GaySplittableRNG: ZobristTable, zobrist_init, zobrist_hash, zobrist_update
+using .GaySplittableRNG: FingerprintCRDT, crdt_update!, crdt_merge, crdt_query
+using .GaySplittableRNG: spectral_quality, chi_squared_uniformity, serial_correlation
+using .GaySplittableRNG: world_gayrng, world_incremental_hashing, world_distributed_fingerprint
+using .GaySplittableRNG: world_monoidal_coherence, world_statistical_quality
+export ZobristTable, zobrist_init, zobrist_hash, zobrist_update
+export FingerprintCRDT, crdt_update!, crdt_merge, crdt_query
+export spectral_quality, chi_squared_uniformity, serial_correlation
+export world_gayrng, world_incremental_hashing, world_distributed_fingerprint
+export world_monoidal_coherence, world_statistical_quality
 
 # Include Seed Sonification - HSL/Polarity/XOR → Audio (Issue #190)
 include("seed_sonification.jl")
-# SUSPECT: using .SeedSonification
-export SeedSound, hue_to_frequency, polarity_to_waveform, xor_to_rhythm
+using .SeedSonification: SeedSonificationData, hue_to_frequency, polarity_to_waveform, xor_to_rhythm
+using .SeedSonification: sonify_seed, world_seed_sonification
+export SeedSonificationData, hue_to_frequency, polarity_to_waveform, xor_to_rhythm
 export sonify_seed, world_seed_sonification
 
 # Include Seed Mining - Descent-validated seed discovery (Issue #191)
 include("seed_mining.jl")
-# SUSPECT: using .SeedMining
-export SeedQuality, spectral_test, mine_seeds, generate_move_registration
+using .SeedMining: SeedQuality, spectral_test, gf3_balance, mine_seeds, generate_move_registration, world_seed_mining
+export SeedQuality, spectral_test, gf3_balance, mine_seeds, generate_move_registration
 export world_seed_mining
 
 # Include Descent Tower - 7-level sheaf decomposition sonification (Issue #192)
 include("descent_tower.jl")
-# SUSPECT: using .DescentTower
-export DescentLevel, DESCENT_TOWER, depth_to_frequency, branches_to_chord
+using .DescentTower: DescentLevel, DESCENT_TOWER, TOWER, depth_to_frequency, branches_to_chord
+using .DescentTower: sonify_descent_level, world_descent_tower
+export DescentLevel, DESCENT_TOWER, TOWER, depth_to_frequency, branches_to_chord
 export sonify_descent_level, world_descent_tower
+
+# Include Categorical Foundations - Symmetric Monoidal Category (Issue #215)
+include("categorical_foundations.jl")
+using .CategoricalFoundations: SeedObject, SeedMorphism, SplitMorphism, NextMorphism, JumpMorphism, IdentityMorphism
+using .CategoricalFoundations: compose, tensor_product, monoidal_unit
+using .CategoricalFoundations: Associator, LeftUnitor, RightUnitor, Braiding
+using .CategoricalFoundations: verify_pentagon, verify_hexagon, verify_triangle
+using .CategoricalFoundations: verify_coherence, probe_coherence, world_categorical_foundations
+using .CategoricalFoundations: detect_coherence_obstruction, inject_coherence_violation
+using .CategoricalFoundations: CoherenceObstruction, probe_obstruction, world_coherence_detection
+using .CategoricalFoundations: verify_crdt_cohomology, probe_crdt_consistency, world_crdt_cohomology
+export SeedObject, SeedMorphism, SplitMorphism, NextMorphism, JumpMorphism, IdentityMorphism
+export tensor_product, monoidal_unit
+export Associator, LeftUnitor, RightUnitor, Braiding
+export verify_pentagon, verify_hexagon, verify_triangle
+export verify_coherence, probe_coherence, world_categorical_foundations
+export detect_coherence_obstruction, inject_coherence_violation
+export CoherenceObstruction, probe_obstruction, world_coherence_detection
+export verify_crdt_cohomology, probe_crdt_consistency, world_crdt_cohomology
 
 # Include NashProp Zero-Message Mining - 51 subagents with provable bandwidth
 # MISSING: include("nashprop_zero_message.jl")

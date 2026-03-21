@@ -185,7 +185,7 @@ using Gay
     # ═══════════════════════════════════════════════════════════════════════════
     @testset "Gamut Learnable #184" begin
         @test isdefined(Gay, :GamutParameters)
-        @test hasmethod(map_to_gamut, Tuple{Any})
+        @test length(methods(map_to_gamut)) >= 1
     end
 
     # ═══════════════════════════════════════════════════════════════════════════

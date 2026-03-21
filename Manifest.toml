@@ -2,7 +2,7 @@
 
 julia_version = "1.12.3"
 manifest_format = "2.0"
-project_hash = "8fc34e228f896c61bd24eeb83672c9bca1862a61"
+project_hash = "04b521071a07b62f380ef46846bcb087cb910b55"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f7304359109c768cf32dc5fa2d371565bb63b68a"
@@ -341,7 +341,7 @@ uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 version = "1.11.0"
 
 [[deps.Gay]]
-deps = ["Chairmarks", "ColorTypes", "Colors", "Dates", "HTTP", "JSON3", "KernelAbstractions", "LinearAlgebra", "LispSyntax", "OhMyThreads", "ParserCombinator", "Pigeons", "Printf", "REPL", "Random", "ReplMaker", "Sockets", "SplittableRandoms", "StructTypes"]
+deps = ["Chairmarks", "ColorTypes", "Colors", "Dates", "HTTP", "JSON3", "KernelAbstractions", "LinearAlgebra", "LispSyntax", "OhMyThreads", "ParserCombinator", "Pigeons", "Printf", "REPL", "Random", "ReplMaker", "Sockets", "SparseArrays", "SplittableRandoms", "Statistics", "StructTypes", "Test"]
 path = "."
 uuid = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
 version = "0.1.0"
@@ -1006,8 +1006,6 @@ weakdeps = ["ChainRulesCore"]
 [[deps.SplittableRandoms]]
 deps = ["Random"]
 git-tree-sha1 = "006fa0bccbe19ed9c6c0e1180598624a0f442ba0"
-repo-rev = "main"
-repo-url = "https://github.com/Julia-Tempering/SplittableRandoms.jl"
 uuid = "8efc31e9-3fb0-4277-b18c-5a3d5d07abad"
 version = "0.1.2"
 
