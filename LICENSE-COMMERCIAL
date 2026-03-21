@@ -1,0 +1,36 @@
+COMMERCIAL LICENSE
+
+Copyright (c) 2026 Plurigrid
+
+This software is dual-licensed.
+
+If you are not using this software under the terms of the AGPL-3.0
+(see LICENSE-CULTURAL), you must obtain a commercial license from
+Plurigrid.
+
+The commercial license grants you the right to:
+
+  1. Use, modify, and distribute this software in proprietary products
+     without the AGPL-3.0 copyleft obligation.
+
+  2. Deploy Gay.jl color generation, propagator networks, and Xy-pic
+     diagram generation in closed-source applications.
+
+  3. Sublicense to your customers under your own terms.
+
+The commercial license does NOT grant you the right to:
+
+  1. Alter the SplitMix64 deterministic color generation algorithm
+     such that the same seed produces different colors (the
+     reproducibility invariant must be preserved).
+
+  2. Remove the GF(3) balanced ternary conservation from propagator
+     or lattice operations.
+
+  3. Claim authorship of the splittable RNG color system or the
+     n-ary amb propagator extensions.
+
+To obtain a commercial license, contact:
+
+  b@ctzn.pub
+  https://plurigrid.xyz

@@ -4,7 +4,7 @@
 using Printf
 
 export EnergyMeasurement, measure_energy, with_energy_measurement
-export PowerSample, start_power_sampling, stop_power_sampling
+export PowerSample
 export energy_per_color, joules_per_billion_colors
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -1,29 +1,17 @@
 name = "Gay"
 uuid = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
-version = "0.4.0"
-
-# v0.4.0: Canonical seed alignment
-# - GAY_SEED changed from runtime parallel_fork_seed(0) to constant 1069
-# - Added GENESIS_COLORS tuple with verified MCP colors
-# - Added verify_genesis_chain() for reafference testing
-# - Breaking change: Default colors now match MCP server exactly
+version = "0.1.0"
 
 [deps]
-Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Chairmarks = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
 ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
-FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-ImageMagick = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
-Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 LispSyntax = "51c06dcf-91d3-5c9e-a52e-02df4e7cbcf5"
-Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
 OhMyThreads = "67456a42-1dca-4109-a031-0a68de7e3ad5"
 ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
 Pigeons = "0eb8d820-af6a-4919-95ae-11206f830c31"
@@ -31,44 +19,32 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 ReplMaker = "b873ce64-0db9-51f5-a568-4457d8e49576"
-SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
-SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 SplittableRandoms = "8efc31e9-3fb0-4277-b18c-5a3d5d07abad"
-Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StructTypes = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [weakdeps]
 AMDGPU = "21141c5a-9bdb-4563-92ae-f87d6854732e"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
-Carlo = "3cb61add-6c45-4282-9f8d-edc4e0318432"
-CliqueTrees = "bfc693e0-158d-496a-9037-c9aaabfb0d4a"
-HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
+Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
-Rimu = "c53c40cc-bd84-11e9-2cf4-a9fde2b9386e"
 
 [extensions]
-GayCarloExt = ["Carlo", "HDF5"]
-GayCliqueTreesExt = "CliqueTrees"
 GayEnzymeExt = "Enzyme"
 GayMetalExt = "Metal"
-GayRimuExt = "Rimu"
 
 [compat]
 AMDGPU = "1"
 CUDA = "5"
-Carlo = "0.3"
 Chairmarks = "1"
-CliqueTrees = "0.2"
 ColorTypes = "0.11"
 Colors = "0.12"
 Dates = "1"
 Enzyme = "0.13"
-HDF5 = "0.17"
+HTTP = "1"
 JSON3 = "1"
 KernelAbstractions = "0.9"
+LinearAlgebra = "1"
 LispSyntax = "0.2"
 Metal = "1"
 OhMyThreads = "0.7"
@@ -78,12 +54,9 @@ Printf = "1"
 REPL = "1"
 Random = "1"
 ReplMaker = "0.2"
-Rimu = "0.12"
+Sockets = "1"
 SplittableRandoms = "0.1"
-Statistics = "1"
-StatsBase = "0.33"
 StructTypes = "1"
-Test = "1"
 julia = "≥ 1.6.0"
 
 [extras]

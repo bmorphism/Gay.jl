@@ -21,7 +21,7 @@ module SExp
 isalpha(c::Char) = isletter(c)
 isalnum(c::Char) = isletter(c) || isdigit(c)
 
-export @sx, sexp_parse, sexp_eval, sexp_read
+export @sx, sexp_eval, sexp_read
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Tokenizer
@@ -539,6 +539,6 @@ macro sx_str(str)
     esc(expr)
 end
 
-export @sx, @sx_str, sexp_read, sexp_eval, sexp_parse
+export @sx, @sx_str, sexp_read, sexp_eval
 
 end # module SExp

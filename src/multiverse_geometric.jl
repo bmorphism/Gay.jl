@@ -34,8 +34,8 @@ using ..KripkeWorlds: KripkeFrame, World, accessible, truth_at
 using ..KripkeWorlds: ModalProposition, box, diamond
 
 export Verse, MultiverseFrame, GeometricMorphism
-export create_verse, partition, pushdown!, pullup!, resolve!
-export verse_fingerprint, verse_color, verify_multiverse_laws
+export partition, pushdown!, pullup!, resolve!
+export verify_multiverse_laws
 export HolographicColorGame, game_state, make_move!, check_win
 export world_multiverse, world_holographic_game
 

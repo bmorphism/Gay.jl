@@ -21,6 +21,7 @@ using Colors: RGB
 export KernelColorContext, kernel_color!, kernel_finalize!
 export eventual_color, eventual_fingerprint
 export @kernel_colored, verify_kernel_spi
+export index_color, iter_index_color, cartesian_color
 
 # Re-export from parent
 using ..Gay: GAY_SEED, hash_color, splitmix64, xor_fingerprint

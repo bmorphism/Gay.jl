@@ -136,6 +136,20 @@ Note: argument order is (index, seed) for consistency with color_at.
 end
 
 """
+    hash_color(seed::UInt64, t::TritTick) -> (Float32, Float32, Float32)
+
+Tick-aware color generation. The tick's GF(3) trit is mixed into the hash,
+so colors at maker/coordinator/checker ticks occupy different regions of
+color space structurally.
+"""
+@inline function hash_color(seed::UInt64, t::TritTick)
+    # Encode trit in top 2 bits: +1→3, 0→2, -1→1 (never 0, preserves information)
+    trit_bits = UInt64(trit(t) + 2) << 62
+    tick_mix = xor(t.tick, trit_bits)
+    hash_color(seed, tick_mix)
+end
+
+"""
     hash_color_lch(seed::UInt64, index::UInt64) -> (Float32, Float32, Float32)
 
 Generate deterministic LCH color components from seed and index.

@@ -27,11 +27,10 @@ using ..KernelLifetimes: eventual_color, eventual_fingerprint, iter_index_color,
 using Colors: RGB
 
 export TensorPartition, ShardedTensor, DistributedContext
-export shard!, gather!, verify_shard, verify_gather
 export color_hidden_states!, color_logits!, color_embeddings!
 export expected_fingerprint, verify_allgather, verify_allreduce
 export pipeline_stage_color, verify_pipeline_handoff
-export ExoPartition, verify_exo_ring
+export ExoPartition, create_exo_partitions, verify_exo_ring
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Partition Descriptors

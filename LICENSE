@@ -1,0 +1,31 @@
+DUAL LICENSE
+
+Copyright (c) 2026 Plurigrid
+
+This software is available under two licenses:
+
+1. CULTURAL LICENSE (AGPL-3.0-or-later)
+   See LICENSE-CULTURAL
+
+   Free for all use — research, art, education, personal, community,
+   network services — under the GNU Affero General Public License v3.
+   If you modify this software and make it available over a network,
+   you must share your modifications under the same terms.
+
+   This is the default license.
+
+2. COMMERCIAL LICENSE (proprietary)
+   See LICENSE-COMMERCIAL
+
+   For use in proprietary products where the AGPL-3.0 copyleft
+   obligation is incompatible with your business model.
+
+   Contact: b@ctzn.pub
+
+The cultural license ensures that the deterministic color system,
+propagator networks, and Xy-pic diagram generation remain available
+to the community. The commercial license enables proprietary adoption
+while preserving the reproducibility invariant (same seed = same color)
+and GF(3) conservation as non-negotiable constraints.
+
+SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Plurigrid-Commercial

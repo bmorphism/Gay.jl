@@ -73,6 +73,69 @@ include("regression_ternary.jl")
         @test custom isa ColorSpace
     end
     
+    @testset "Trit-Tick Time Base" begin
+        # Constants
+        @test EPOCH_1_HZ == 141_120_000
+        @test FLICKS_PER_TICK == 5
+        @test GF3_QUANTUM == 47_040_000
+        @test HUE_DEGREE_QUANTUM == 392_000
+
+        # TritTick construction
+        t = TritTick(1000)
+        @test t.tick == 1000
+        @test t.epoch == 1
+
+        # GF(3) trit: second 0 → trit, second 1 → trit, etc.
+        @test trit(TritTick(0)) in Int8[-1, 0, 1]
+        @test trit(TritTick(EPOCH_1_HZ)) in Int8[-1, 0, 1]
+        # Three consecutive seconds cycle through all three trits
+        trits_3sec = [trit(TritTick(UInt64(s) * EPOCH_1_HZ)) for s in 0:2]
+        @test sort(trits_3sec) == [-1, 0, 1]
+
+        # Conservation check
+        @test conservation_check([TritTick(0), TritTick(EPOCH_1_HZ), TritTick(2*EPOCH_1_HZ)], 0)
+
+        # Modality divisibility: 44100 Hz audio = 3200 trit-ticks/sample
+        @test EPOCH_1_HZ % 44100 == 0
+        @test EPOCH_1_HZ ÷ 44100 == 3200
+
+        # fits() — EEG 256 Hz should fit in a 1-second interval
+        @test fits(EPOCH_1_HZ, :eeg_256)
+        @test fits(EPOCH_1_HZ, :audio_44100)
+        @test fits(EPOCH_1_HZ, :heartbeat)
+
+        # Flick conversion exact
+        t = TritTick(1000)
+        @test to_flicks(t) == 5000
+        @test from_flicks(5000) == t
+        @test from_flicks(5003) == t  # rounds down, loses 3 flicks
+
+        # LogicalTicks source
+        lt = LogicalTicks()
+        t1 = current_tick(lt)
+        t2 = current_tick(lt)
+        @test t2.tick == t1.tick + 1  # monotonic increment
+
+        # TritTick-aware hash_color produces different colors than bare index
+        seed = UInt64(42)
+        t_maker = TritTick(EPOCH_1_HZ * 0)  # second 0
+        t_coord = TritTick(EPOCH_1_HZ * 1)  # second 1
+        c1 = hash_color(seed, t_maker)
+        c2 = hash_color(seed, t_coord)
+        # Different ticks → different colors (with overwhelming probability)
+        @test c1 != c2
+
+        # color_at with TritTick
+        c = color_at(TritTick(42))
+        @test c isa RGB{Float32}
+
+        # GayRNG now carries tick
+        gay_seed!(42)
+        state = gay_rng_state()
+        @test hasproperty(state, :tick)
+        @test hasproperty(state, :trit)
+    end
+
     @testset "Random Color Generation" begin
         c = random_color(SRGB())
         @test c isa RGB
@@ -341,6 +404,171 @@ include("regression_ternary.jl")
         end
     end
     
+    @testset "Color Entropy Sources" begin
+        using Gay: read_entropy, inject_watts!, inject_entropy!
+        using Gay: inject_heartbeat!, inject_aqi!, inject_commit!, inject_jerk!
+        using Gay: agreement, disagreement_signal, composite_from_readings
+        using Gay: CompositeTicks, current_colored_tick
+
+        @testset "ColoredTick creation" begin
+            ct = ColoredTick(TritTick(1000), Int8(1), UInt64(42), 0.9f0, :test)
+            @test ct.measured_trit == Int8(1)
+            @test ct.confidence == 0.9f0
+            @test ct.source == :test
+        end
+
+        @testset "classify_trit" begin
+            @test classify_trit(100.0, 5.0, 30.0) == Int8(1)   # above high
+            @test classify_trit(15.0, 5.0, 30.0) == Int8(0)    # between
+            @test classify_trit(2.0, 5.0, 30.0) == Int8(-1)    # below low
+            @test classify_trit(30.0, 5.0, 30.0) == Int8(0)    # at boundary = middle
+            @test classify_trit(5.0, 5.0, 30.0) == Int8(0)     # at boundary = middle
+        end
+
+        @testset "entropy_mix" begin
+            ct = ColoredTick(TritTick(0), Int8(1), UInt64(0xdeadbeef), 1.0f0, :test)
+            mixed = entropy_mix(UInt64(42), ct)
+            @test mixed isa UInt64
+            @test mixed != UInt64(42)  # mixing changed the seed
+            # Deterministic
+            @test entropy_mix(UInt64(42), ct) == mixed
+        end
+
+        @testset "DrandSource" begin
+            ds = DrandSource()
+            @test source_name(ds) == :drand
+            @test source_mortality(ds) == Immortal
+            ct1 = read_entropy(ds)
+            ct2 = read_entropy(ds)
+            @test ct1.source == :drand
+            @test ct2.tick.tick > ct1.tick.tick  # advancing
+            @test ct1.measured_trit in Int8[-1, 0, 1]
+        end
+
+        @testset "EnergySource" begin
+            es = EnergySource("127.0.0.1")
+            @test source_name(es) == :energy
+            @test source_mortality(es) == Immortal
+
+            # Inject readings at different levels
+            ct_high = inject_watts!(es, 50.0)
+            @test ct_high.measured_trit == Int8(1)  # >30W = maker
+
+            ct_mid = inject_watts!(es, 15.0)
+            @test ct_mid.measured_trit == Int8(0)   # 5-30W = coordinator
+
+            ct_low = inject_watts!(es, 2.0)
+            @test ct_low.measured_trit == Int8(-1)  # <5W = checker
+        end
+
+        @testset "BCISource" begin
+            bs = BCISource(device=:muse2)
+            @test source_name(bs) == :bci
+            @test source_mortality(bs) == Mortal
+
+            ct_high = inject_entropy!(bs, 0.9)
+            @test ct_high.measured_trit == Int8(1)  # high entropy = active cognition
+
+            ct_low = inject_entropy!(bs, 0.1)
+            @test ct_low.measured_trit == Int8(-1)  # low entropy = rest
+        end
+
+        @testset "HeartbeatSource" begin
+            hs = HeartbeatSource()
+            @test source_mortality(hs) == Mortal
+
+            ct = inject_heartbeat!(hs, 72.0, 55.0)  # normal BPM, high HRV
+            @test ct.measured_trit == Int8(1)        # high HRV = coherent
+
+            ct_stress = inject_heartbeat!(hs, 110.0, 10.0)  # high BPM, low HRV
+            @test ct_stress.measured_trit == Int8(-1)         # low HRV = stress
+
+            # Death interval
+            hs.alive = false
+            ct_dead = read_entropy(hs)
+            @test ct_dead.confidence == 0.0f0
+        end
+
+        @testset "AirQualitySource" begin
+            aqs = AirQualitySource()
+            ct_good = inject_aqi!(aqs, 25.0, 5.0)   # good air
+            @test ct_good.measured_trit == Int8(1)    # inverted: low AQI = good = maker
+
+            ct_bad = inject_aqi!(aqs, 200.0, 100.0)  # bad air
+            @test ct_bad.measured_trit == Int8(-1)    # inverted: high AQI = bad = checker
+        end
+
+        @testset "GitSource" begin
+            gs = GitSource(".")
+            @test source_mortality(gs) == Immortal
+            ct = inject_commit!(gs, UInt64(0xdeadbeefcafe1234))
+            @test ct.source == :git
+            @test ct.measured_trit in Int8[-1, 0, 1]
+        end
+
+        @testset "AccelerometerSource" begin
+            as = AccelerometerSource(rate=100)
+            @test source_mortality(as) == SemiMortal
+
+            ct_pos = inject_jerk!(as, 1.0)   # positive jerk
+            @test ct_pos.measured_trit == Int8(1)
+
+            ct_neg = inject_jerk!(as, -1.0)  # negative jerk
+            @test ct_neg.measured_trit == Int8(-1)
+
+            ct_zero = inject_jerk!(as, 0.0)  # near zero
+            @test ct_zero.measured_trit == Int8(0)
+        end
+
+        @testset "CompositeSource" begin
+            es = EnergySource("127.0.0.1")
+            gs = GitSource(".")
+            cs = CompositeSource([es, gs])
+            @test source_name(cs) == :composite
+
+            # Inject known values
+            inject_watts!(es, 50.0)  # maker
+            inject_commit!(gs, UInt64(0x010101))  # will produce some trit
+
+            ct = read_entropy(cs)
+            @test ct.source == :composite
+            @test ct.measured_trit in Int8[-1, 0, 1]
+        end
+
+        @testset "Agreement and disagreement" begin
+            makers = [
+                ColoredTick(TritTick(0), Int8(1), UInt64(1), 0.9f0, :a),
+                ColoredTick(TritTick(0), Int8(1), UInt64(2), 0.8f0, :b),
+                ColoredTick(TritTick(0), Int8(1), UInt64(3), 0.7f0, :c),
+            ]
+            @test agreement(makers) == 1.0f0  # unanimous
+
+            mixed = [
+                ColoredTick(TritTick(0), Int8(1), UInt64(1), 0.9f0, :brain),
+                ColoredTick(TritTick(0), Int8(-1), UInt64(2), 0.8f0, :air),
+                ColoredTick(TritTick(0), Int8(0), UInt64(3), 0.7f0, :energy),
+            ]
+            @test agreement(mixed) ≈ 1.0f0 / 3.0f0  # maximum disagreement
+
+            sig = disagreement_signal(mixed)
+            @test :brain in sig.makers
+            @test :air in sig.checkers
+            @test :energy in sig.coordinators
+        end
+
+        @testset "CompositeTicks as TickSource" begin
+            es = EnergySource("127.0.0.1")
+            inject_watts!(es, 15.0)
+            cs = CompositeSource([es])
+            ct_source = CompositeTicks(cs)
+            tick = current_tick(ct_source)
+            @test tick isa TritTick
+
+            colored = current_colored_tick(ct_source)
+            @test colored isa ColoredTick
+        end
+    end
+
     @testset "Backend Switching" begin
         using Gay: set_backend!, get_backend
         using KernelAbstractions: CPU

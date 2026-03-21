@@ -10,6 +10,9 @@ using ColorTypes
 using Random
 using SplittableRandoms
 
+# Layer 0: Trit-Tick — primary unit of time (must be first, no deps)
+include("trit_tick.jl")
+
 # Include wide-gamut color space support
 include("colorspaces.jl")
 
@@ -54,6 +57,28 @@ export comrade_show, comrade_mring, comrade_disk, comrade_crescent
 
 # Include KernelAbstractions SPMD kernels for portable parallel execution
 include("kernels.jl")
+
+# Include Reafference Proof (predict/observe/verify color identity)
+include("reafference.jl")
+using .Reafference
+export ReafferenceProof, reafference_challenge
+export EphemeralSeed, ephemeral_seed
+export dE2000_distance
+
+# Include Color Entropy Sources (physical measurements → GF(3) trits)
+include("entropy_sources.jl")
+using .EntropySources
+export ColoredTick, Mortality, EntropySource
+export Immortal, SemiMortal, Mortal
+export classify_trit, entropy_mix
+export DrandSource, EnergySource, BCISource, HeartbeatSource
+export GitSource, AirQualitySource, AccelerometerSource
+export CompositeSource
+export CompositeTicks, current_colored_tick
+export source_name, source_mortality, source_trustworthiness
+export read_entropy, inject_watts!, inject_entropy!
+export inject_heartbeat!, inject_aqi!, inject_commit!, inject_jerk!
+export agreement, disagreement_signal, composite_from_readings
 
 # Include parallel color generation (OhMyThreads + Pigeons SPI + KA)
 include("parallel.jl")
@@ -137,10 +162,9 @@ include("abductive.jl")
 # Include Chairmarks benchmarking
 include("bench.jl")
 
-# Include SPI Regression Benchmarks
-include("bench_spi_regression.jl")
-using .SPIRegressionBench
-export run_spi_regression_tests, calibrate_baselines
+# TODO: include("bench_spi_regression.jl")
+# using .SPIRegressionBench
+# export run_spi_regression_tests, calibrate_baselines
 
 # Include Concept Tensor (69³ parallel interaction space)
 include("concept_tensor.jl")
@@ -154,12 +178,11 @@ export concept_to_morphism, verify_exponential_laws, morphism_fingerprint
 export step_as_morphism, iterate_morphism, fixed_points, orbit
 export trace_morphism, verify_trace_laws, self_application
 
-# Include Regression Tests That Don't Suck
-include("regression.jl")
-using .SPIRegression
-export run_regression_suite, verify_splitmix64_reference
-export verify_galois_closure, verify_parallel_order_independence
-export verify_concept_tensor_invariants, @test_spi
+# TODO: include("regression.jl")
+# using .SPIRegression
+# export run_regression_suite, verify_splitmix64_reference
+# export verify_galois_closure, verify_parallel_order_independence
+# export verify_concept_tensor_invariants, @test_spi
 
 # Metal GPU backend is now in ext/GayMetalExt.jl (loaded when Metal.jl is available)
 # Check if Metal is available (macOS Apple Silicon only)
@@ -209,8 +232,7 @@ export OBJECT_LEVEL, META_LEVEL, HIGHER_META
 export ChromaticPredicate_v2
 export world_color_logic_pullback
 
-# Include Tropical Semirings with verification
-include("tropical_semirings.jl")
+# TODO: include("tropical_semirings.jl")
 
 # Include JSON3 serialization
 include("serialization.jl")
@@ -237,24 +259,18 @@ export world_triadic_subagents
 # Include deterministic test tracking
 include("tracking.jl")
 
-# Include Whale-Human Translation Bridge
-include("whale_bridge.jl")
+# TODO: include("whale_bridge.jl")
 
-# Include Real Whale Data (EC-1 Clan from Sharma et al. 2024)
-include("whale_data.jl")
+# TODO: include("whale_data.jl")
 
-# Include Whale Demo
-include("whale_demo.jl")
+# TODO: include("whale_demo.jl")
 
-# Include Whale World (Parallel SPI Demonstration through tripartite synergy)
+# TODO: include("whale_world.jl")
 # NOTE: Must come before spc_repl.jl which uses WhaleWorld types
-include("whale_world.jl")
 
-# Include Whale Curriculum (Omniglot-style hierarchical refinement)
-include("whale_curriculum.jl")
+# TODO: include("whale_curriculum.jl")
 
-# Include SPC REPL (Symbolic · Possible · Compositional)
-include("spc_repl.jl")
+# TODO: include("spc_repl.jl")
 
 # Include xy-pic LaTeX diagram generation
 include("xypic.jl")
@@ -314,61 +330,151 @@ export BraidedSuperposition, HypergraphSuperposition
 export cognitive_tensor, cognitive_trace, cognitive_spider
 export verify_cognitive_laws, world_cognitive_superposition
 
-# Include SPI CLI
-include("spi_cli.jl")
-using .SPICLI
-export spi_main, spi_verify
+# Include S-expression parser (standalone Lisp subset)
+include("sexp.jl")
+using .SExp: @sx, sexp_eval, sexp_read
+export @sx, sexp_eval, sexp_read
 
-# Include Tuning Parameters
-include("tuning.jl")
-using .Tuning
-export SPIConfig, default_config, with_config, preset, tune!, current_config, set_config!
+# Include deterministic derangements (permutations with no fixed points)
+include("derangeable.jl")
 
-# Include Kripke Semantics & Possible Worlds (Layers 6-8)
+# Include abductive inference for SPI color systems
+include("abduce.jl")
+
+# Include universal color view protocol
+include("protocol.jl")
+
+# Include we-ness (geometric neurophenomenology of joint action)
+include("we-ness.jl")
+
+# Include Enzyme autodiff visualization (optional Enzyme.jl, defines GayDifferentiable)
+include("enzyme.jl")
+
+# Include Enzyme DSL (S-expr → Julia compilation + @defenzyme)
+include("enzyme_dsl.jl")
+
+# Include learnable Okhsl color space (gradient descent, optional Enzyme.jl)
+include("okhsl_learnable.jl")
+using .OkhslLearnable: LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
+using .OkhslLearnable: forward_color, learn_colorspace!, compute_loss
+using .OkhslLearnable: EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
+export forward_color, learn_colorspace!, compute_loss
+export EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+
+# Include energy measurement (Apple Silicon powermetrics)
+include("energy.jl")
+
+# Include semiosis (semiotic theory of coloring with SSE)
+include("semiosis.jl")
+
+# TODO: include("traced_tensor.jl")
+# using .TracedTensor
+# export TracedMorphism, tensor_product, monoidal_unit, categorical_trace
+# export feedback_loop, TensorNetwork, add_node!, add_edge!, run_network!
+# export verify_traced_laws, demo_traced_tensor, network_fingerprint
+
+# TODO: include("thread_findings.jl")
+# using .ThreadFindings
+# export Finding, FindingsSet, ThreadContext, VerificationMonad
+# export bind_finding, return_finding, run_verification
+# export count_threads, fingerprint_threads, lazy_place!
+# export demo_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
+# export run_all_verifications
+
+# TODO: include("verification_report.jl")
+# using .VerificationReport
+# export generate_report, FullReport, ReportSection
+# export verify_coherence, attestation_fingerprint
+# export export_report_markdown, demo_report
+
+# TODO: include("amp_threads.jl")
+# using .AmpThreads
+# export AmpThread, thread_seed, thread_color, thread_fingerprint
+# export ThreadGenealogy, add_thread!, genealogy_fingerprint
+# export verify_thread_chain, demo_amp_threads
+
+# TODO: include("cognitive_superposition.jl") — depends on TracedTensor (missing)
+# using .CognitiveSuperposition
+# export CognitiveState, CognitiveMorphism, CognitiveCategory
+# export superpose, collapse, entails, induces, abduces
+# export BraidedSuperposition, HypergraphSuperposition
+# export cognitive_tensor, cognitive_trace, cognitive_spider
+# export verify_cognitive_laws, demo_cognitive_superposition
+
+# TODO: include("spi_cli.jl")
+# using .SPICLI
+# export spi_main, spi_verify
+
+# TODO: include("tuning.jl")
+# using .Tuning
+# export SPIConfig, default_config, with_config, preset, tune!, current_config, set_config!
+
 include("kripke_worlds.jl")
 using .KripkeWorlds
-export KripkeFrame, World, accessible, truth_at, necessity, possibility
+export KripkeFrame, World, accessible, truth_at
 export ModalProposition, box, diamond, verify_modal_laws
-export SheafSemantics, local_truth, global_sections, stalk_at
-export world_kripke, run_kripke_tests
+export nearest_necessary_neighbor, necessity_distance, necessity_landscape
+export world_frame, demo_kripke
 
-# Include Random Topos (Layers 9-11: Simpson's Three Toposes)
-include("random_topos.jl")
-using .RandomTopos
-export SampleSpace, RandomElement, RandomVariable, ProbabilitySheaf
-export GrowingRandomTopos, grow_random_topos!, world_random_topos
+include("physical_task_worlds.jl")
+using .PhysicalTaskWorlds
+export PhysicalState, TaskFrame, BodyState, ObjectState, ToolState
+export MotorPrimitive, REACH, GRASP, RELEASE, MOVE, WAIT
+export physical_accessible, action_cost, executable
+export affordance_at, affordances
+export plan_to_necessity, physical_necessity_landscape
+export motor_imagery_trit, efference_copy, reafference_check
+export demo_physical_task
+export WorkspaceGrid, GridCell, grid_frame, demo_rectangular_workspace
 
-# Include Strategic Differentiation (Semantic Blastoderm → Tower mapping)
-include("strategic_differentiation.jl")
-using .StrategicDifferentiation
-export StrategicChoice, DifferentiationBasin, SemanticFate
-export tower_basin, world_strategic_differentiation
-export differentiate!, fate_fingerprint, basin_color, TOWER_BASINS, fate_at_layer
+include("trit_tick_gists.jl")
+using .TritTickGists
+export PhenomenalChannel, GoblinSlot, GOBLIN_SLOTS
+export PhenomenalTick, phenomenal_trit
+export PhenomenalChallenge, create_challenge, settle_challenge
+export verify_challenge_set_conservation, compatible_modalities
+export ReceptorRole, RECEPTOR_SYNTHESIS, RECEPTOR_DEGRADATION, RECEPTOR_HOMEOSTASIS
+export ECSTimeSeries, ecs_step!, ECSSystem, ecs_advance!
+export ecs_conservation, adhd_precision_deficit, faah_intervention!
+export ACSetOpKind, ACSET_BUILD, ACSET_VERIFY, ACSET_MIGRATE
+export ACSetTickedOp, ACSetOpLog, log_op!
+export transaction_conservation, log_conservation
+export HammingTritStream, letter_trit, letter_hamming
+export push_letter!, detect_corruption, stream_conservation
+export TofuColorTick, tofu_color_at
 
-# Include Compositional World Bridge (Topos Institute research program)
-include("compositional_world.jl")
-using .CompositionalWorld
-export SystemProperty, DynamicalDoctrine, CompositionalBridge
-export property_layer, doctrine_fingerprint, world_compositional_world
-export SYSTEM_PROPERTIES, compose_systems, behavioral_intersection
+# TODO: include("random_topos.jl")
+# using .RandomTopos
+# export SampleSpace, RandomElement, RandomVariable, ProbabilitySheaf
+# export GrowingRandomTopos, grow_random_topos!, world_random_topos
 
-# Include Unified Tower (all 12 layers)
-include("tower.jl")
-using .Tower
-export TowerState, world_tower, tower_fingerprint, run_tower_tests
-export LAYER_INFO, layer_name, layer_category
+# TODO: include("strategic_differentiation.jl")
+# using .StrategicDifferentiation
+# export StrategicChoice, DifferentiationBasin, SemanticFate
+# export tower_basin, world_strategic_differentiation
+# export differentiate!, fate_fingerprint, basin_color, TOWER_BASINS, fate_at_layer
 
-# Include SplitMix64-CFT Verification (first principles SPI proof)
-include("splitmix_cft_verify.jl")
-using .SplitMixCFTVerify
-export run_verification_suite
+# TODO: include("compositional_world.jl")
+# using .CompositionalWorld
+# export SystemProperty, DynamicalDoctrine, CompositionalBridge
+# export property_layer, doctrine_fingerprint, world_compositional_world
+# export SYSTEM_PROPERTIES, compose_systems, behavioral_intersection
 
-# Include Multiverse Geometric Morphisms (Hamkins + Dave White)
+# TODO: include("tower.jl")
+# using .Tower
+# export TowerState, world_tower, tower_fingerprint, run_tower_tests
+# export LAYER_INFO, layer_name, layer_category
+
+# TODO: include("splitmix_cft_verify.jl")
+# using .SplitMixCFTVerify
+# export run_verification_suite
+
 include("multiverse_geometric.jl")
 # MISSING: using .MultiverseGeometric
 export Verse, MultiverseFrame, GeometricMorphism
-export create_verse, partition, pushdown!, pullup!, resolve!
-export verse_fingerprint, verse_color, verify_multiverse_laws
+export partition, pushdown!, pullup!, resolve!
+export verify_multiverse_laws
 export HolographicColorGame, game_state, make_move!, check_win
 export world_multiverse, world_holographic_game
 
@@ -1006,7 +1112,7 @@ gay_space(cs::Symbol) = (CURRENT_COLORSPACE[] = sym_to_colorspace(cs); current_c
 
 Show the current RNG state (seed and invocation count).
 """
-gay_rng_state() = (r = gay_rng(); (seed=r.seed, invocation=r.invocation))
+gay_rng_state() = (r = gay_rng(); (seed=r.seed, invocation=r.invocation, tick=r.tick, trit=trit(r.tick)))
 
 """
     gay_pride(flag::Symbol)
@@ -1943,7 +2049,8 @@ function __init__()
             init_spc_repl()
         end
     else
-        @info "Gay.jl loaded ◈ - Wide-gamut colors + splittable determinism"
+        @info "Gay.jl loaded ◈ - Wide-gamut colors + splittable determinism + trit-tick time"
+        @info "T1 = $(EPOCH_1_HZ) Hz, 1 trit-tick = $(FLICKS_PER_TICK) flicks"
         @info "In REPL: init_spc_repl() for SPC mode (press SPACE to enter)"
     end
 end

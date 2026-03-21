@@ -26,14 +26,17 @@ A splittable random number generator for deterministic color generation.
 Each color operation splits the RNG to ensure reproducibility regardless
 of execution order (Strong Parallelism Invariance).
 
-The RNG state tracks an invocation counter to generate a unique deterministic
-stream for each call, enabling reproducible sequences even across sessions.
+The RNG state tracks both an invocation counter (for backward compat) and
+a TritTick (for temporal awareness). The tick advances with each split,
+carrying GF(3) structure and modality-awareness into the color chain.
 """
 mutable struct GayRNG
     root::SplittableRandom
     current::SplittableRandom
     invocation::UInt64
     seed::UInt64
+    tick::TritTick               # current position in the trit-tick grid
+    tick_source::TickSource      # where ticks come from (logical, wall clock, etc.)
 end
 
 # Global RNG instance
@@ -208,14 +211,15 @@ end
 # backward compatibility, but new code should use GAY_SEED = 1069 directly.
 
 """
-    GayRNG(seed::Integer=GAY_SEED)
+    GayRNG(seed::Integer=GAY_SEED; tick_source::TickSource=LogicalTicks())
 
-Create a new GayRNG with the given seed.
+Create a new GayRNG with the given seed and tick source.
+Default tick source is LogicalTicks (pure counter, no wall clock).
 """
-function GayRNG(seed::Integer=GAY_SEED)
+function GayRNG(seed::Integer=GAY_SEED; tick_source::TickSource=LogicalTicks())
     root = SplittableRandom(UInt64(seed))
     current = split(root)
-    GayRNG(root, current, UInt64(0), UInt64(seed))
+    GayRNG(root, current, UInt64(0), UInt64(seed), TritTick(UInt64(0)), tick_source)
 end
 
 """
@@ -224,8 +228,8 @@ end
 Reset the global Gay RNG with a new seed.
 All subsequent color generations will be deterministic from this seed.
 """
-function gay_seed!(seed::Integer)
-    GLOBAL_GAY_RNG[] = GayRNG(seed)
+function gay_seed!(seed::Integer; tick_source::TickSource=LogicalTicks())
+    GLOBAL_GAY_RNG[] = GayRNG(seed; tick_source=tick_source)
     return seed
 end
 
@@ -249,6 +253,7 @@ Increments invocation counter for tracking.
 """
 function gay_split(gr::GayRNG=gay_rng())
     gr.invocation += 1
+    gr.tick = current_tick(gr.tick_source)
     gr.current = split(gr.current)
     return gr.current
 end
@@ -334,7 +339,26 @@ function color_at_slow(index::Integer, cs::ColorSpace=SRGB(); seed::Integer=GAY_
 end
 
 """
-    colors_at(indices::AbstractVector{<:Integer}, cs::ColorSpace=SRGB(); 
+    color_at(t::TritTick, cs::ColorSpace=SRGB(); seed::Integer=GAY_SEED)
+
+Get the color at a specific trit-tick. Tick-aware: the GF(3) trit
+influences the color, so maker/coordinator/checker moments have
+structurally different colors.
+
+# Example
+```julia
+t = tick_now()
+c = color_at(t)           # color at this moment
+trit(t)                    # -1, 0, or +1
+```
+"""
+function color_at(t::TritTick, cs::ColorSpace=SRGB(); seed::Integer=GAY_SEED)
+    r, g, b = hash_color(UInt64(seed), t)
+    RGB{Float32}(r, g, b)
+end
+
+"""
+    colors_at(indices::AbstractVector{<:Integer}, cs::ColorSpace=SRGB();
               seed::Integer=GAY_SEED)
 
 Get colors at specific invocation indices.
