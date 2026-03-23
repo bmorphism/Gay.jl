@@ -1,8 +1,33 @@
 # Gay Passport - Decentralized Identity via did:gay:* method
 # Blessed passports with IRL witnessing, vivid color stamps
 #
-# WorldID / passport.xyz successor: no stamps necessary
-# except maybe the special ones for vivid color experiences
+# ═══════════════════════════════════════════════════════════════════════════════
+# LINEAGE: WorldID / passport.xyz successor
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# WorldID (world.org/world-id):
+#   - Orb-based iris biometric → proof of unique human
+#   - Requires $300+ hardware device, faces regulatory bans in 10+ countries
+#   - ZKP privacy but centralized Orb manufacturing (Tools for Humanity)
+#   - did:gay:* replacement: IRL witnessing. Humans recognize humans.
+#     No Orb needed. Presence is the proof.
+#
+# Human Passport / passport.xyz (formerly Gitcoin Passport):
+#   - Stamp-weighted Sybil scoring (Google, GitHub, ENS, BrightID, etc.)
+#   - Must collect 20+ points across stamp providers to pass threshold
+#   - Stamps = verifiable credentials from identity authenticators
+#   - did:gay:* replacement: NO stamps necessary. Genesis colors ARE identity.
+#     Special stamps exist only for vivid color experiences — collectibles,
+#     not requirements. Your 3 genesis colors are your passport photo.
+#
+# did:gay:* synthesis:
+#   - Identity = deterministic color fingerprint from seed (SPI-compliant)
+#   - Verification = IRL witnessing (blessed passports) not biometrics/stamps
+#   - Sybil resistance = web of trust via witness attestation chains
+#   - Privacy = seed never leaves holder; DID is one-way hash
+#   - No hardware, no credential grind, no regulatory surface
+#   - First passports issued at Minecraft + BCI event at Vivarium
+# ═══════════════════════════════════════════════════════════════════════════════
 
 module GayPassport
 
@@ -17,6 +42,9 @@ export issue_passport, bless_passport, witness_passport
 export add_stamp, verify_passport, passport_fingerprint, passport_colors
 export premine_passports, world_passport
 export PassportWorld
+# Verification levels (WorldID lineage) & trust score (passport.xyz lineage)
+export VerificationLevel, UNVERIFIED, DEVICE_VERIFIED, WITNESS_VERIFIED, MULTI_WITNESS
+export verification_level, trust_score, is_human
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # did:gay:* — Decentralized Identifier Method
@@ -384,6 +412,79 @@ function world_passport(;
 
     PassportWorld(registry, fp, length(registry), n_blessed, n_stamps)
 end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Verification Levels & Trust Score
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# WorldID has: Device (phone), Orb (iris scan)
+# passport.xyz has: stamp score ≥ 20
+# did:gay:* has: witness count — humans verify humans
+#
+
+"""
+    VerificationLevel
+
+Verification levels for Gay Passports (cf. WorldID Device/Orb levels).
+
+- `UNVERIFIED`: Passport issued but no witnesses (self-attested)
+- `DEVICE_VERIFIED`: Passport exists with valid genesis colors (seed holder)
+- `WITNESS_VERIFIED`: At least 1 IRL witness attestation (blessed)
+- `MULTI_WITNESS`: 3+ independent witnesses (strong web of trust)
+"""
+@enum VerificationLevel UNVERIFIED=0 DEVICE_VERIFIED=1 WITNESS_VERIFIED=2 MULTI_WITNESS=3
+
+"""
+    verification_level(passport::Passport) -> VerificationLevel
+
+Determine the verification level of a passport.
+"""
+function verification_level(passport::Passport)
+    nw = length(passport.witnesses)
+    if nw >= 3
+        MULTI_WITNESS
+    elseif nw >= 1
+        WITNESS_VERIFIED
+    elseif verify_passport(passport)
+        DEVICE_VERIFIED
+    else
+        UNVERIFIED
+    end
+end
+
+"""
+    trust_score(passport::Passport) -> Float64
+
+Compute a trust score in [0, 1] analogous to passport.xyz's stamp-weighted
+scoring — but derived from witness attestations and stamp count rather than
+external credential providers.
+
+Scoring:
+- Genesis color validity: 0.2 (base — you exist)
+- Per witness: 0.2 each (up to 3 = 0.6)
+- Stamps bonus: 0.02 per stamp (up to 0.2)
+
+Score ≥ 0.4 ≈ passport.xyz threshold of 20 (one witness = sufficient).
+"""
+function trust_score(passport::Passport)
+    score = 0.0
+    # Base: valid genesis colors (like passport.xyz device stamp)
+    verify_passport(passport) && (score += 0.2)
+    # Witnesses (like passport.xyz identity stamps, but IRL)
+    score += min(length(passport.witnesses) * 0.2, 0.6)
+    # Stamps bonus (like passport.xyz activity stamps)
+    score += min(length(passport.stamps) * 0.02, 0.2)
+    clamp(score, 0.0, 1.0)
+end
+
+"""
+    is_human(passport::Passport) -> Bool
+
+The question WorldID answers with an iris scan, and passport.xyz answers
+with 20+ stamp points. did:gay:* answers with: has at least one IRL witness
+seen you? Humans recognize humans. No Orb needed.
+"""
+is_human(passport::Passport) = passport.blessed
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Display

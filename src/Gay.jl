@@ -1936,6 +1936,8 @@ export did_gay, resolve_did, verify_did
 export issue_passport, bless_passport, witness_passport
 export add_stamp, verify_passport, passport_fingerprint, passport_colors
 export premine_passports, world_passport, PassportWorld
+export VerificationLevel, UNVERIFIED, DEVICE_VERIFIED, WITNESS_VERIFIED, MULTI_WITNESS
+export verification_level, trust_score, is_human
 
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════

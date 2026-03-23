@@ -150,4 +150,59 @@ using Test
         s2 = sprint(show, p)
         @test contains(s2, "BLESSED")
     end
+
+    @testset "Verification levels (WorldID lineage)" begin
+        # WorldID has Device / Orb levels
+        # did:gay:* has UNVERIFIED / DEVICE_VERIFIED / WITNESS_VERIFIED / MULTI_WITNESS
+        p = Gay.issue_passport(UInt64(1069))
+
+        # Fresh passport with valid colors = DEVICE_VERIFIED
+        @test Gay.verification_level(p) == Gay.DEVICE_VERIFIED
+
+        # One witness = WITNESS_VERIFIED (like WorldID Orb, but no hardware)
+        Gay.witness_passport(p, UInt64(42), "witness-1")
+        @test Gay.verification_level(p) == Gay.WITNESS_VERIFIED
+
+        # Two witnesses still WITNESS_VERIFIED
+        Gay.witness_passport(p, UInt64(420), "witness-2")
+        @test Gay.verification_level(p) == Gay.WITNESS_VERIFIED
+
+        # Three witnesses = MULTI_WITNESS (strong web of trust)
+        Gay.witness_passport(p, UInt64(69), "witness-3")
+        @test Gay.verification_level(p) == Gay.MULTI_WITNESS
+    end
+
+    @testset "Trust score (passport.xyz lineage)" begin
+        # passport.xyz uses stamp-weighted scoring (threshold ~20 points)
+        # did:gay:* uses witness count + stamps → [0, 1] score
+        p = Gay.issue_passport(UInt64(1069))
+
+        # Base score: valid genesis colors = 0.2
+        @test Gay.trust_score(p) ≈ 0.2
+
+        # One witness: 0.2 + 0.2 = 0.4 (≈ passport.xyz threshold)
+        Gay.witness_passport(p, UInt64(42), "witness-1")
+        @test Gay.trust_score(p) ≈ 0.4
+
+        # Three witnesses: 0.2 + 0.6 = 0.8
+        Gay.witness_passport(p, UInt64(420), "witness-2")
+        Gay.witness_passport(p, UInt64(69), "witness-3")
+        @test Gay.trust_score(p) ≈ 0.8
+
+        # Add stamps for bonus
+        Gay.add_stamp(p, "vivid-1", "Vivarium")
+        Gay.add_stamp(p, "vivid-2", "Minecraft BCI")
+        @test Gay.trust_score(p) ≈ 0.84
+    end
+
+    @testset "is_human (the WorldID question)" begin
+        # WorldID: iris scan → human
+        # passport.xyz: score ≥ 20 → human
+        # did:gay:*: blessed (≥1 IRL witness) → human
+        p = Gay.issue_passport(UInt64(1069))
+        @test !Gay.is_human(p)
+
+        Gay.witness_passport(p, UInt64(42), "human-recognizer")
+        @test Gay.is_human(p)
+    end
 end
