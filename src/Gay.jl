@@ -1939,6 +1939,16 @@ export premine_passports, world_passport, PassportWorld
 export VerificationLevel, UNVERIFIED, DEVICE_VERIFIED, WITNESS_VERIFIED, MULTI_WITNESS
 export verification_level, trust_score, is_human
 
+# Include Open Passport Game - HumanAOS-shaped open games on did:gay:* holders
+include("open_passport_game.jl")
+using .OpenPassportGame
+export Bounty, BountyBoard, PassportPlayer, Commitment
+export OpenGame, Play, CoPlay, Outcome
+export post_bounty!, commit!, verify_and_pay!, withdraw!
+export board_magnetization, board_fingerprint
+export open_game_compose, open_game_tensor
+export world_open_passport_game, OpenPassportGameWorld
+
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════
 
