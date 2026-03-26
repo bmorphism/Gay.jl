@@ -1,0 +1,41 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{CGM{\etalchar{+}}18}
+
+\bibitem[BK25]{bumpus2021}
+Benjamin~Merlin Bumpus and Zoltan~A. Kocsis.
+\newblock Degree of satisfiability in heyting algebras.
+\newblock {\em Journal of Symbolic Logic}, 2025.
+\newblock arXiv:2110.11515, accepted 2024.
+
+\bibitem[CGM{\etalchar{+}}18]{cambou2018ternary}
+Bertrand Cambou, Michael Gowanlock, Julie~Bernadette Mezher, et~al.
+\newblock Securing ternary content addressable memories with physical
+  unclonable functions.
+\newblock In {\em IEEE International Conference on Application-Specific
+  Systems, Architectures and Processors (ASAP)}, pages 1--8. IEEE, 2018.
+
+\bibitem[Dom12]{entropy_viz}
+Christopher Domas.
+\newblock Cantordust: Binary visualization tool.
+\newblock \url{https://github.com/cortesi/scurve}, 2012.
+
+\bibitem[DRS04]{dodis2004extractors}
+Yevgeniy Dodis, Leonid Reyzin, and Adam Smith.
+\newblock Fuzzy extractors: How to generate strong keys from biometrics and
+  other noisy data.
+\newblock In {\em Advances in Cryptology -- EUROCRYPT 2004}, volume 3027 of
+  {\em Lecture Notes in Computer Science}, pages 523--540. Springer, 2004.
+
+\bibitem[NS95]{naor1995visual}
+Moni Naor and Adi Shamir.
+\newblock Visual cryptography.
+\newblock In {\em Advances in Cryptology -- EUROCRYPT '94}, volume 950 of {\em
+  Lecture Notes in Computer Science}, pages 1--12. Springer, 1995.
+
+\bibitem[T{\etalchar{+}}24]{tan2024}
+Ziqian Tan et~al.
+\newblock Low-dimensional intrinsic dimension reveals a phase transition in
+  gradient-based learning.
+\newblock {\em Springer}, 2024.
+
+\end{thebibliography}
