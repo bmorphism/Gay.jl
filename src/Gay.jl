@@ -10,6 +10,12 @@ using ColorTypes
 using Random
 using SplittableRandoms
 
+# Layer -1: ZMod3 — GF(3) as proper algebraic type (no deps, foundational)
+include("zmod3.jl")
+using .ZMod3Module
+export ZMod3, PLUS, ERGODIC, MINUS, balanced, moebius, char_three
+export padovan_mod3_period, padovan_residues, from_legacy_trit, to_legacy_trit
+
 # Layer 0: Trit-Tick — primary unit of time (must be first, no deps)
 include("trit_tick.jl")
 

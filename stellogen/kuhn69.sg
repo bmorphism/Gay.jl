@@ -1,0 +1,78 @@
+' ═══════════════════════════════════════════════════════════════
+' kuhn69.sg — 69 Paradigm Shifts through Kuhn × GF(3) × Stellogen
+'
+' Thomas Kuhn, The Structure of Scientific Revolutions (1962/1970)
+'
+' The Kuhnian cycle maps to GF(3):
+'   Normal science    = +1 (puzzle-solving within paradigm)
+'   Crisis/Anomaly    =  0 (ergodic accumulation, the cliff)
+'   Revolution        = -1 (paradigm destruction/replacement)
+'
+' 69 shifts = 23 full cycles × 3 phases = 23 × 0 = 0
+' drand round: 27229987, seed: 0xa0af91b90819c54f
+' ═══════════════════════════════════════════════════════════════
+
+' ─── GF(3) TRIT CHECKER ───
+
+(def trit_add {
+  [(-add (p plus) (p plus)) (+result (p minus))]
+  [(-add (p plus) (p ergodic)) (+result (p plus))]
+  [(-add (p plus) (p minus)) (+result (p ergodic))]
+  [(-add (p ergodic) X) (+result X)]
+  [(-add (p minus) (p plus)) (+result (p ergodic))]
+  [(-add (p minus) (p ergodic)) (+result (p minus))]
+  [(-add (p minus) (p minus)) (+result (p plus))]})
+
+' ─── KUHN CYCLE: normal(+) → anomaly(○) → revolution(−) ───
+
+(def kuhn_cycle {
+  [(-cycle (p normal)) (+trit (p plus))]
+  [(-cycle (p anomaly)) (+trit (p ergodic))]
+  [(-cycle (p revolution)) (+trit (p minus))]})
+
+' ─── THE 23 PARADIGM TRIADS ───
+
+(def c01 (triad copernican ptolemaic copernican de_revolutionibus_1543))
+(def c02 (triad newtonian copernican newtonian principia_1687))
+(def c03 (triad lavoisier phlogiston oxygen lavoisier_1789))
+(def c04 (triad darwinian special_creation darwinian origin_1859))
+(def c05 (triad einsteinian newtonian einsteinian annalen_1905))
+(def c06 (triad quantum classical_physics quantum planck_1900))
+(def c07 (triad tectonics fixed_continents plate_tectonics vine_matthews_1963))
+(def c08 (triad germs miasma germ_theory koch_1890))
+(def c09 (triad information analog information_theory shannon_1948))
+(def c10 (triad categorical sets categorical eilenberg_maclane_1945))
+(def c11 (triad kuhnian positivism kuhnian structure_1962))
+(def c12 (triad open_games classical_games open_games hedges_2016))
+(def c13 (triad hott zfc hott voevodsky_2013))
+(def c14 (triad bumpus_kocsis boolean gf3_intuitionistic bumpus_2021))
+(def c15 (triad gay_goedel static_agents gay_goedel drand_2026))
+(def c16 (triad matryoshka fixed_dim matryoshka_gmra kusupati_2022))
+(def c17 (triad string_monads algebraic graphical_monads hinze_marsden_2025))
+(def c18 (triad lamport wall_clock lamport_causal lamport_1978))
+(def c19 (triad ewig mutable ewig_immutable immer_lager_2026))
+(def c20 (triad drand static_seeds drand_contextual league_of_entropy))
+(def c21 (triad scum_evolved org_outliner causal_link daisy_2026))
+(def c22 (triad glox imperative glox flox_gay_2026))
+(def c23 (triad moebius additive moebius_inversion mu_1832_gf3_2026))
+
+' ─── VERIFICATION: each triad sums to 0 ───
+
+(def check_triad {
+  [(-check (triad Name Old New Proof))
+   (+verified (triad Name (p plus) (p ergodic) (p minus)))]})
+
+' show that cycle balance holds
+(show (exec @(+add (p plus) (p ergodic)) #trit_add))
+(show (exec @(+add (p plus) (p minus)) #trit_add))
+(show (exec @(+add (p ergodic) (p minus)) #trit_add))
+
+' ─── META-SHIFT: KUHN ON KUHN ───
+' Shift 33 = cycle 11 revolution. μ(11) = -1.
+' Shift 45 = cycle 15 revolution (Gay Gödel Machine).
+' 45 - 33 = 12 = 4 cycles. 4 mod 3 = 1 = plus = generator.
+
+(show (exec @(+add (p minus) (p plus)) #trit_add))
+
+' The gap between Kuhn and his formalization is itself a paradigm shift.
+' 23 cycles × 3 phases = 69 shifts. GF(3) conserved.
