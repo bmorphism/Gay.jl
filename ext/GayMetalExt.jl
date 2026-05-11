@@ -210,8 +210,10 @@ export gay_colors_gpu, gay_colors_gpu!
 
 function __init__()
     if metal_available()
-        @info "Gay.jl Metal extension loaded - GPU acceleration available 🚀"
-        @info "Use gay_colors_gpu(n) for 7B colors/sec on Apple Silicon"
+        if Gay.gay_verbose_load()
+            @info "Gay.jl Metal extension loaded - GPU acceleration available"
+            @info "Use gay_colors_gpu(n) for 7B colors/sec on Apple Silicon"
+        end
         set_backend!(MetalBackend())
     end
 end

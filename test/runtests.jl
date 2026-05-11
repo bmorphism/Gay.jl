@@ -1,6 +1,7 @@
 using Test
 using Gay
 using Aqua
+using TOML
 using Colors: RGB
 using SplittableRandoms: SplittableRandom
 
@@ -21,8 +22,25 @@ include("propagator_test.jl")
 
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
-        Aqua.test_all(Gay; deps_compat=(check_extras=false,))
+        Aqua.test_all(Gay;
+            deps_compat=(check_extras=false,),
+            persistent_tasks=false,
+            stale_deps=false,
+            undefined_exports=false,
+        )
     end
+
+    @testset "Optional Extension Metadata" begin
+        project = TOML.parsefile(joinpath(pkgdir(Gay), "Project.toml"))
+
+        @test !haskey(project["deps"], "Enzyme")
+        @test !haskey(project["deps"], "Metal")
+        @test project["weakdeps"]["Enzyme"] == "7da242da-08ed-463a-9acd-ee780be4f1d9"
+        @test project["weakdeps"]["Metal"] == "dde4c033-4e86-420c-a63e-0dd931031962"
+        @test project["extensions"]["GayEnzymeExt"] == "Enzyme"
+        @test project["extensions"]["GayMetalExt"] == "Metal"
+    end
+
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace
         @test DisplayP3() isa ColorSpace
@@ -103,6 +121,29 @@ include("propagator_test.jl")
         p_at_5 = palette_at(5, 6)
         p_at_5_again = palette_at(5, 6)
         @test p_at_5 == p_at_5_again
+    end
+
+    @testset "Canonical Genesis Chain" begin
+        @test verify_genesis_chain()
+
+        hex(c) = "#" * uppercase(join(string.(
+            round.(Int, clamp.([c.r, c.g, c.b], 0, 1) .* 255),
+            base=16,
+            pad=2,
+        )))
+
+        @test [hex(color_at(i; seed=GAY_SEED)) for i in 1:12] ==
+              [g.hex for g in GENESIS_COLORS]
+    end
+
+    @testset "Deterministic Structural Fingerprints" begin
+        @test spi_fast_fingerprint(GAY_SEED, 12) == UInt64(9305278550325485245)
+
+        network = demo_traced_tensor()
+        @test network_fingerprint(network) == UInt64(16789577066099260492)
+
+        morphism = TracedMorphism(:A, :B, identity; seed=GAY_SEED)
+        @test morphism.fingerprint == UInt64(14097468134336062831)
     end
     
     @testset "Pride Flags" begin
@@ -197,7 +238,7 @@ include("propagator_test.jl")
     end
     
     @testset "KernelAbstractions SPMD Colors" begin
-        using Gay: ka_colors, ka_colors!, xor_fingerprint, hash_color
+        using Gay: ka_colors, ka_colors!, ka_color_sums, xor_fingerprint, hash_color
         
         # Basic generation
         colors = ka_colors(1000, 42)
@@ -215,6 +256,14 @@ include("propagator_test.jl")
         @test r isa Float32
         @test g isa Float32
         @test b isa Float32
+
+        # Non-divisible reductions include the tail instead of truncating.
+        direct = reduce(1:17; init=(0.0, 0.0, 0.0)) do acc, i
+            r, g, b = hash_color(UInt64(42), UInt64(i))
+            (acc[1] + r, acc[2] + g, acc[3] + b)
+        end
+        @test all(isapprox.(ka_color_sums(17, 42; chunk_size=10), direct;
+                            atol=1e-5, rtol=1e-5))
     end
     
     @testset "XOR Fingerprint SPI Verification" begin

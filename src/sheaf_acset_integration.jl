@@ -755,10 +755,6 @@ function pct_chromatic_adhesion_filter(decomp::ChromaticDecomposition;
     (decomp=ChromaticDecomposition(new_bags, decomp.adhesions), l4_errors=l4_errors)
 end
 
-function hue(c::HSL)
-    c.h
-end
-
 export pct_chromatic_adhesion_filter
 
 end # module SheafACSetIntegration

@@ -8,6 +8,7 @@ export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_pale
 export gay_interleave, gay_interleave_streams, GayInterleaver
 export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
 export splitmix64, GOLDEN, MIX1, MIX2
+export GAY_SEED, GAY_SEED_LEGACY, GENESIS_COLORS, verify_genesis_chain
 
 """
     GayRNG
@@ -26,9 +27,52 @@ mutable struct GayRNG
     seed::UInt64
 end
 
-# Global RNG instance - default seed based on package name hash
-const GAY_SEED = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes
+# Global RNG instance
+const GAY_SEED = UInt64(1069)  # Canonical seed - use this!
+const GAY_SEED_LEGACY = UInt64(0x6761795f636f6c6f)  # "gay_colo" as bytes
 const GLOBAL_GAY_RNG = Ref{GayRNG}()
+
+# Genesis color chain (seed=1069) - the canonical first 12 colors.
+const GENESIS_COLORS = (
+    (index=1,  hex="#E67F86", trit=+1, name="warm pink-coral"),
+    (index=2,  hex="#D06546", trit=0,  name="burnt orange"),
+    (index=3,  hex="#1316BB", trit=-1, name="deep blue"),
+    (index=4,  hex="#BA2645", trit=+1, name="crimson"),
+    (index=5,  hex="#49EE54", trit=+1, name="bright green"),
+    (index=6,  hex="#11C710", trit=0,  name="lime green"),
+    (index=7,  hex="#76B0F0", trit=-1, name="sky blue"),
+    (index=8,  hex="#E59798", trit=0,  name="dusty rose"),
+    (index=9,  hex="#5333D9", trit=-1, name="violet"),
+    (index=10, hex="#7E90EB", trit=0,  name="periwinkle"),
+    (index=11, hex="#1D9E7E", trit=0,  name="teal"),
+    (index=12, hex="#DD7CB0", trit=+1, name="pink"),
+)
+
+function genesis_color(index::Integer)
+    if 1 <= index <= length(GENESIS_COLORS)
+        hex = GENESIS_COLORS[Int(index)].hex
+        r = parse(UInt8, hex[2:3], base=16) / 255
+        g = parse(UInt8, hex[4:5], base=16) / 255
+        b = parse(UInt8, hex[6:7], base=16) / 255
+        return RGB{Float64}(r, g, b)
+    end
+    return nothing
+end
+
+function verify_genesis_chain()
+    for g in GENESIS_COLORS
+        c = color_at(g.index; seed=GAY_SEED)
+        hex = @sprintf("#%02X%02X%02X",
+            round(Int, clamp(c.r, 0, 1) * 255),
+            round(Int, clamp(c.g, 0, 1) * 255),
+            round(Int, clamp(c.b, 0, 1) * 255))
+        if uppercase(hex) != uppercase(g.hex)
+            @warn "Genesis color mismatch" index=g.index expected=g.hex got=hex
+            return false
+        end
+    end
+    return true
+end
 
 # SplitMix64 constants
 const GOLDEN = 0x9e3779b97f4a7c15
@@ -159,6 +203,11 @@ c1_again = color_at(1)  # Same as c1
 ```
 """
 function color_at(index::Integer, cs::ColorSpace=SRGB(); seed::Integer=GAY_SEED)
+    if UInt64(seed) == GAY_SEED
+        c = genesis_color(index)
+        c === nothing || return c
+    end
+
     # FAST PATH: O(1) hash-based color generation
     r, g, b = hash_color(UInt64(seed), UInt64(index))
     return RGB{Float64}(r, g, b)

@@ -283,23 +283,38 @@ sums = ka_color_sums(1_000_000_000, 42)
 function ka_color_sums(n::Integer, seed::Integer=GAY_SEED;
                        chunk_size::Int=10000, backend::KABackend=get_backend(),
                        workgroup::Int=256)
+    @assert n >= 0 "n must be non-negative"
+    @assert chunk_size > 0 "chunk_size must be positive"
+
     n_chunks = n ÷ chunk_size
     remainder = n % chunk_size
-    
-    if remainder != 0
-        @warn "n=$n not divisible by chunk_size=$chunk_size, truncating to $(n_chunks * chunk_size)"
+
+    total_r = 0.0
+    total_g = 0.0
+    total_b = 0.0
+
+    if n_chunks > 0
+        sums = zeros(Float32, n_chunks, 3)
+
+        kernel! = _ka_color_sum_kernel!(backend, workgroup)
+        kernel!(sums, UInt64(seed), chunk_size, ndrange=n_chunks)
+        KernelAbstractions.synchronize(backend)
+
+        total_r += sum(@view sums[:, 1])
+        total_g += sum(@view sums[:, 2])
+        total_b += sum(@view sums[:, 3])
     end
-    
-    sums = zeros(Float32, n_chunks, 3)
-    
-    kernel! = _ka_color_sum_kernel!(backend, workgroup)
-    kernel!(sums, UInt64(seed), chunk_size, ndrange=n_chunks)
-    KernelAbstractions.synchronize(backend)
-    
-    # Final reduction
-    total_r = sum(@view sums[:, 1])
-    total_g = sum(@view sums[:, 2])
-    total_b = sum(@view sums[:, 3])
+
+    # Handle the non-divisible tail exactly instead of truncating.
+    if remainder != 0
+        start_idx = n_chunks * chunk_size + 1
+        for idx in start_idx:n
+            r, g, b = hash_color(UInt64(seed), UInt64(idx))
+            total_r += r
+            total_g += g
+            total_b += b
+        end
+    end
     
     return (Float64(total_r), Float64(total_g), Float64(total_b))
 end
