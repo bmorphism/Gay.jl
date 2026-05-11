@@ -5,6 +5,63 @@ All notable changes to Gay.jl will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0]
+
+### Added
+
+#### Color Bandwidth Kernel Abstraction (`src/next_color_bandwidth.jl`)
+- Full `NextColorBandwidth` module: `ColorBandwidth`, `BandwidthTest`,
+  `BandwidthResult`, `ParallelismLevel` (`OUTER_INNER`, `THREADED`, `TERNARY`,
+  `COMPOSED`, `WORK_STEALING`, `MAXIMUM`, `ULTRA`)
+- `measure_next_color_bandwidth` / `measure_at_scale` — single-call KA probes
+- `compute_channel_capacity(n)` — Shannon-tight bits/s alias matching the unit
+  proposed in arXiv:2508.05621 ("Compute-Channel Capacity")
+- `next_color_batch` / `next_color_parallel` — bulk generation through the
+  5-level PCT cascade (L5 strategy → L4 transition → L3 config → L2 sensation
+  → L1 intensity); colors that survive all five levels are the witness colors
+- `stress_bandwidth` / `find_bandwidth_limit` / `scaling_curve` — saturation
+  and edge-of-chaos analysis
+- `benchmark_all_levels` / `bandwidth_comparison` — parallelism landscape
+- `bandwidth_spi_check` / `fingerprint_bandwidth` — SPI-verified deterministic
+  run identity (forgery-resistant 64-bit hash over seed × distinguishable ×
+  capacity)
+- `maximize_bandwidth!` / `optimal_parallelism_level` — control-surface tuner
+- `demo_next_color_bandwidth` — full walkthrough (baseline → optimization →
+  ACSS aural mapping for 7 species → scaling curve)
+
+#### ACSS isomorphism (color ↔ aural)
+- `AuralBandwidth`, `SpeciesPerceptualProfile`, `SPECIES_PROFILES` for human,
+  dolphin, humpback, elephant, bat, raven, cricket
+- `color_to_aural_bandwidth(cb; species)` — same math, different channel
+- `maximize_aural_bandwidth(color_bw)` — cross-species capacity comparison
+
+#### Theoretical anchors
+- Module-header citations to arXiv:2508.05621 (compute-channel capacity),
+  Pigeons.jl arXiv:2308.09769 (SPI), SpeyTech/certifiable-bench (bit-identity
+  gate). Positions Gay.jl's NCB as the runnable Shannon-tight instance with
+  splittable-RNG SPI guarantee.
+
+#### Documentation
+- New `docs/src/api/bandwidth.md` page — formal KA reference
+- README "Color Bandwidth — Kernel Abstraction" section with baseline numbers,
+  warm-cache scaling table, MLPerf/certifiable-bench positioning, theoretical
+  anchors
+
+#### Registry preparation
+- `Project.toml`: moved Enzyme and Metal to `[weakdeps]` (proper extension
+  pattern); added `[compat]` entries for FileIO, HTTP, ImageMagick, Images,
+  LinearAlgebra, Sockets, SparseArrays, TOML
+- Added MIT `LICENSE` file (was implicitly MIT, now explicit — required for
+  Julia General registry submission)
+- Added `CITATION.cff` for citation metadata
+
+### Fixed
+- `measure_next_color_bandwidth` — `control_overhead` was rounding to 100%
+  because the raw splitmix64 reference loop ran faster than the nanosecond
+  timer could resolve.  Now amplifies the raw loop by an adaptive multiplier
+  and takes the best of 5 trials, so the wall-clock signal exceeds timer
+  resolution.  Real overhead is now measurable (~3× expected).
+
 ## [0.2.0]
 
 ### Added

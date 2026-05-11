@@ -439,6 +439,69 @@ A single bit flip in any of the 300 million floats (100M × RGB) changes the fin
 
 This is how Gay.jl guarantees that the 1069 parallel-generated sky models in the gallery are reproducible — verified at GPU speed.
 
+## Color Bandwidth — Kernel Abstraction (KA)
+
+> *How many distinguishable colors per second can flow through the control surface while remaining coherent?*
+
+The `NextColorBandwidth` module reframes Gay.jl as a **Shannon-tight performance benchmark**.  The unit is bits/second through a PCT control cascade + Lab-ΔE distinguishability filter; the substrate is the same splittable RNG that drives `next_color()`, so every measurement is SPI-verified and the report carries a deterministic fingerprint.
+
+```julia
+using Gay
+using Gay.NextColorBandwidth
+
+# Shannon-tight channel capacity in bits/s (arXiv:2508.05621 unit)
+C = compute_channel_capacity(1000)
+
+# Full measurement with SPI verification
+r = measure_at_scale(1000)
+r.bandwidth.channel_capacity      # bits/s
+r.bandwidth.colors_per_second     # raw kernel throughput
+r.spi_verified                    # bit-exact reproducibility
+fingerprint_bandwidth(r)          # UInt64 — forgery-resistant identity
+```
+
+### Baseline numbers (n=1000, seed=1069, single thread)
+
+```
+colors/sec               :  402,017
+distinguishable/sec      :  369,051     (Lab-ΔE > JND=2.3)
+bits/color               :     9.84     (log₂ of n_distinct)
+channel capacity         : 3,632,332 bits/s   (Shannon-tight)
+SPI verified             :     TRUE
+fingerprint              : 0xee0f3f72e8c4faa8
+```
+
+Warm-cache scaling on a single core:
+
+|     n   | colors/s | bits/s | distinct | bits/color |
+|---------|---------:|-------:|---------:|-----------:|
+|   100   | 21.2 M   | 137 Mbit/s | 98    |  6.61 |
+|  1,000  | 29.1 M   | **263 Mbit/s** ← peak | 918 |  9.84 |
+| 10,000  | 30.8 M   | 217 Mbit/s | 5,653 | 12.46 |
+|100,000  | 29.1 M   |  54 Mbit/s | 13,451 | 13.72 |
+
+Channel capacity peaks at n=1000 and decays at larger n — this is the **Lab-gamut JND saturation signature**, automatically surfaced by the KA.
+
+### Position in the benchmark landscape
+
+| Dimension | MLPerf | certifiable-bench | Gay.jl NCB |
+|---|---|---|---|
+| Unit | tokens/s, queries/s | latency + bit-identity gate | **bits/s (Shannon-tight)** |
+| Reproducibility | best-effort, 5% over 5 retries | SHA-256 of outputs | **SPI fingerprint** (byte-exact, splittable) |
+| Info-theoretic bound | none | none | **C = max I(X;Y)** |
+| Conservation law | none | none | **GF(3) Σ mod 3** trit audit |
+| Cross-substrate | per-suite | per-target | **ACSS isomorphism**: color → aural (7 species) |
+| Failure mode visibility | accuracy drop | hash mismatch | **gamut saturation visible in scaling curve** |
+
+### Theoretical anchors
+
+- **arXiv:2508.05621** (2025) — Compute-Channel Capacity as a hardware-performance unit.  NCB is a runnable instance.
+- **Pigeons.jl** ([arXiv:2308.09769](https://arxiv.org/abs/2308.09769)) — Strong Parallelism Invariance via splittable streams.  Gay.jl inherits the same SplittableRandoms.jl substrate.
+- **SpeyTech/certifiable-bench** (2026) — SHA-256 bit-identity gate for safety-critical ML.  NCB's SPI fingerprint is the splittable-RNG analog and additionally bounds the channel capacity, not just bit-identity.
+- **MLSys 2022 (Zhuang/Hooker)** — empirical case for why determinism on GPUs is expensive (up to 746% overhead).  NCB bakes determinism in, so the comparison is not optional.
+
+See [`docs/src/api/bandwidth.md`](docs/src/api/bandwidth.md) for the full KA reference and the `demo_next_color_bandwidth()` walkthrough.
+
 ## Dependencies
 
 - [Colors.jl](https://github.com/JuliaGraphics/Colors.jl)

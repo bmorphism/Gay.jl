@@ -63,6 +63,7 @@ makedocs(
             "Fault Tolerance" => "fault_tolerance.md",
         ],
         "Propagators" => "propagators.md",
+        "Color Bandwidth KA" => "api/bandwidth.md",
         "Abductive Testing" => "abductive_testing.md",
         "Examples" => [
             "Splittable Determinism" => "examples/splittable_determinism.md",

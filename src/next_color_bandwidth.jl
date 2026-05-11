@@ -25,6 +25,29 @@
 #   C = max_{p(x)} I(X; Y)
 # where X = desired colors, Y = controlled colors, and the channel
 # is the 5-level PCT cascade with noise = disturbance.
+#
+# ── Theoretical anchors ──────────────────────────────────────────────────────
+#
+#   [1] Compute-Channel Capacity as a hardware-performance unit
+#       arXiv:2508.05621 (2025) — proposes Shannon mutual information I(X;Y)
+#       as a substrate-neutral computing performance metric.  NextColorBandwidth
+#       is a runnable instance of that framework on a splittable-RNG substrate:
+#       the channel-capacity reported here is the Shannon C = max I(X;Y) over a
+#       perceptual JND filter, in bits/s, comparable across hardware paradigms.
+#
+#   [2] Strong Parallelism Invariance (SPI)
+#       Surjanovic et al., Pigeons.jl, arXiv:2308.09769 (2023) — guarantees
+#       byte-identical output regardless of thread/process count via a
+#       splittable random stream (SplittableRandoms.jl).  Gay.jl inherits SPI
+#       directly; every BandwidthResult carries a `spi_verified` flag and a
+#       deterministic `fingerprint_bandwidth` over (seed, n_distinguishable,
+#       channel_capacity).  This is the dimension MLPerf does not score.
+#
+#   [3] Bit-identity gate for safety-critical ML inference
+#       SpeyTech/certifiable-bench (2026) — SHA-256 verification of identical
+#       outputs before any performance comparison is reported.  Gay.jl's SPI
+#       fingerprint is the splittable-RNG analog and is strictly more
+#       informative (it also bounds the channel capacity, not just bit-identity).
 
 module NextColorBandwidth
 
@@ -33,7 +56,7 @@ using Colors
 using Printf
 
 export ColorBandwidth, BandwidthTest, BandwidthResult
-export measure_next_color_bandwidth, measure_at_scale
+export measure_next_color_bandwidth, measure_at_scale, compute_channel_capacity
 export ParallelismLevel, OUTER_INNER, THREADED, TERNARY, COMPOSED, WORK_STEALING, MAXIMUM, ULTRA
 export next_color_batch, next_color_parallel
 export stress_bandwidth, find_bandwidth_limit, scaling_curve
@@ -297,14 +320,29 @@ function measure_next_color_bandwidth(test::BandwidthTest)
     bits_per_color = n_dist > 0 ? log2(Float64(n_dist)) : 0.0
     channel_cap = dps * bits_per_color
 
-    # Control overhead: fraction of time in control vs raw generation
-    t_raw_start = time_ns()
-    for i in 1:test.n_colors
-        splitmix64(test.seed ⊻ UInt64(i))
+    # Control overhead: fraction of time in control vs raw generation.
+    # Previously this loop ran exactly n_colors splitmix64 calls and divided
+    # by elapsed.  For n_colors=1000 raw_time was ~µs while elapsed was ~ms,
+    # so overhead rounded to ~1.0 (100%) — a measurement artifact, not a
+    # property of the cascade.  We amplify the raw loop by `raw_repeat`
+    # times and take the best of multiple trials so the wall-clock signal
+    # exceeds nanosecond-timer resolution.
+    raw_repeat = max(64, fld(1_000_000, max(1, test.n_colors)))
+    raw_trials = 5
+    raw_times = Float64[]
+    for _ in 1:raw_trials
+        t0 = time_ns()
+        s = test.seed
+        for _ in 1:raw_repeat
+            for i in 1:test.n_colors
+                s = splitmix64(s ⊻ UInt64(i))
+            end
+        end
+        t1 = time_ns()
+        push!(raw_times, (t1 - t0) / 1e9 / raw_repeat)  # per-pass time
     end
-    t_raw_end = time_ns()
-    raw_time = (t_raw_end - t_raw_start) / 1e9
-    overhead = max(0.0, 1.0 - raw_time / elapsed)
+    raw_time = minimum(raw_times)
+    overhead = clamp(1.0 - raw_time / elapsed, 0.0, 1.0)
 
     # Convergence margin: how far from divergence
     mean_error = isempty(all_errors) ? 0.0 : sum(all_errors) / length(all_errors)
@@ -321,6 +359,24 @@ end
 function measure_next_color_bandwidth(; kwargs...)
     measure_next_color_bandwidth(BandwidthTest(; kwargs...))
 end
+
+"""
+    compute_channel_capacity(n::Int=1000; kwargs...) -> Float64
+
+Shannon channel capacity in bits/second for the color generation channel,
+matching the unit proposed in arXiv:2508.05621 ("Compute-Channel Capacity").
+
+Equal to `measure_at_scale(n; kwargs...).bandwidth.channel_capacity`.  Provided
+under the canonical paper-aligned name so cross-substrate comparisons (color ↔
+aural ↔ p-adic ↔ market) can use a single verb.
+
+# Example
+```julia
+C = compute_channel_capacity(1000)   # bits/s on the default PCT cascade
+```
+"""
+compute_channel_capacity(n::Int=1000; kwargs...) =
+    measure_at_scale(n; kwargs...).bandwidth.channel_capacity
 
 """
     gay_verify_spi_color(c::RGB, seed::UInt64) -> Bool

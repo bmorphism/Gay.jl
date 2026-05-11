@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+message: "If you use Gay.jl in your research, please cite it as below."
+title: "Gay.jl: Wide-gamut color sampling with splittable determinism"
+abstract: >
+  Gay.jl is a Julia package for wide-gamut deterministic color sampling with
+  Strong Parallelism Invariance (SPI) on a splittable random substrate.
+  It includes NextColorBandwidth, a runnable Shannon-tight kernel-abstraction
+  benchmark whose unit is bits/s through a perceptual JND filter, with SPI
+  fingerprint verification per run.
+authors:
+  - family-names: Rhodes
+    given-names: Barton
+    alias: bmorphism
+type: software
+license: MIT
+repository-code: "https://github.com/bmorphism/Gay.jl"
+url: "https://bmorphism.github.io/Gay.jl/"
+keywords:
+  - julia
+  - colors
+  - splittable-random
+  - strong-parallelism-invariance
+  - shannon-channel-capacity
+  - benchmark
+  - reproducibility
+  - gf3
+references:
+  - type: article
+    title: "Pigeons.jl: Distributed sampling from intractable distributions"
+    authors:
+      - family-names: Surjanovic
+        given-names: Nikola
+      - family-names: Biron-Lattes
+        given-names: Miguel
+      - family-names: Tiede
+        given-names: Paul
+      - family-names: Syed
+        given-names: Saifuddin
+      - family-names: Campbell
+        given-names: Trevor
+      - family-names: Bouchard-Côté
+        given-names: Alexandre
+    year: 2023
+    identifiers:
+      - type: other
+        value: "arXiv:2308.09769"
+        description: "Strong Parallelism Invariance formalization"
+  - type: article
+    title: "Computational Work as Information Flow"
+    year: 2025
+    identifiers:
+      - type: other
+        value: "arXiv:2508.05621"
+        description: "Compute-channel capacity as hardware-performance unit"
