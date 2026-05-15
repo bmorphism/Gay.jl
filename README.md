@@ -2,6 +2,28 @@
 
 Wide-gamut color sampling with **splittable determinism** — reproducible colors via [SplittableRandoms.jl](https://github.com/Julia-Tempering/SplittableRandoms.jl), inspired by [Pigeons.jl](https://pigeons.run)'s Strong Parallelism Invariance (SPI) pattern.
 
+## Where Gay.jl stands in the color discipline
+
+Most foundational Lisp / category-theory / mathematics textbooks treat color as *post-hoc* — a rendering convention, not a semantic primitive. Gay.jl deliberately occupies the small remaining camp where **color carries information**: GF(3) trits, chirality invariants, and deterministic palettes that are part of the computation, not its decoration. The classification below maps the precedent literature; Gay.jl lands in **Camp C** alongside the 2023 aperiodic-monotile work, where color is *forced by an invariant* and therefore semantic.
+
+| Book | What it does with color | Pressure exerted | Camp |
+|---|---|---|---|
+| **SICP** (Abelson–Sussman) | Picture-language § 2.2.4 — painters compose, color is a *rendering* of the painter; never a value. | Color is post-hoc to combinator structure. Painters are first-class; pixels aren't. | A |
+| **SICM** (Sussman–Wisdom) | Phase-space diagrams; color is a plotting convention. Symbol-driven, color is exogenous. | Color must never enter the symbolic core; it's a print-readable overlay. | A |
+| **Little Schemer** | Food icons (jelly bean, pizza) substitute for type. Yellow cover ≠ yellow semantics. | Color is mnemonic for type; if you've named a type, you've absorbed color. | A |
+| **Reasoned Schemer** | Pea / lentil / onion icons for goals / conjunction / disjunction. | Iconography > coloring. Polarity carried by glyph, not hue. | A |
+| **Little Typer** | Aggressive syntax color in code blocks (`claim` / `define` / `the`). Pie code uses red / blue / orange typographically. | Color is the renderer's job, never the language's. Pie has no color primitives. | A′ |
+| **Lisp in Small Pieces** (Queinnec) | Pure typography; no color. Heretical only in compiler claims. | Semantics is parenthetic, period. Color is contingent. | A |
+| **On Lisp / Let Over Lambda** (Graham / Hoyte) | Black / red diff coloring at most. Hoyte particularly austere. | Color is a versioning artifact, not a thing the program manipulates. | A |
+| **PAIP** (Norvig) | No color in the symbolic AI core. | Color is irrelevant to inference. | A |
+| **Lawvere–Schanuel** (*Conceptual Mathematics*) | Red for "process" arrows, blue for "data" arrows in 2-cat diagrams. | Color disambiguates arrow polarity when shape collides. | B |
+| **Bird & de Moor** (*Algebra of Programming*) | Color for banana `⦇⦈` vs. lens `⦃⦄` vs. envelope `⟦⟧` brackets. | Color disambiguates same-shape constructors. | B |
+| **Mac Lane** (*Categories for the Working Mathematician*) | Strict black-and-white. The chase is the proof. | Color is bourgeois ornament. | A++ |
+| **Spectre / monotile literature** (Smith et al. 2023) | Chirality labels — necessarily 2-colored even when the prototile is one tile. | Color is forced by the chirality invariant; conservation makes it semantic. | C |
+| **Gay.jl** (this library) | GF(3) trit ∈ {−1, 0, +1} with `Σ ≡ 0 mod 3` audit; SplitMix64-deterministic palettes; chirality-preserving rotations. | Color is the algebra. Conservation makes it the computation. | **C** |
+
+**Camp legend** — A: color post-hoc, never semantic. A′: color is renderer-only, not language. A++: color is ornament, refuse it. B: color disambiguates structure. **C: color is forced by an invariant and therefore semantic.** Gay.jl is unapologetically in C; everything else in this library follows from there.
+
 ## Release Notes
 
 ### v0.4.0 (2025-01-16) — Canonical Seed Alignment
