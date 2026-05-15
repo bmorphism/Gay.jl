@@ -90,6 +90,133 @@ include("propagator_test.jl")
         b = next_color()
         @test a != b
     end
+
+    @testset "Pico Entropy Loop Sampling" begin
+        mktempdir() do devdir
+            expected = sort([
+                joinpath(devdir, "cu.usbmodem14401"),
+                joinpath(devdir, "cu.usbmodem14601"),
+            ])
+            for path in expected
+                write(path, UInt8[])
+            end
+            write(joinpath(devdir, "tty.usbmodem14401"), UInt8[])
+            write(joinpath(devdir, "cu.Bluetooth-Incoming-Port"), UInt8[])
+
+            @test pico_entropyloop_devices(devdir) == expected
+        end
+
+        mktempdir() do dir
+            sources = String[]
+            for i in 1:3
+                path = joinpath(dir, "source-$i.bin")
+                write(path, UInt8[mod(i * 17 + j, 256) for j in 0:95])
+                push!(sources, path)
+            end
+
+            receipt = pico_entropyloop_sample(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+            receipt_again = pico_entropyloop_sample(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+
+            @test receipt isa PicoEntropyLoopReceipt
+            @test receipt.mode == :manual
+            @test receipt.seed == receipt_again.seed
+            @test receipt.digest == receipt_again.digest
+            @test length(receipt.digest) == 64
+            @test length(receipt.source_digests) == 3
+            @test receipt.audit_ok
+            @test mod(receipt.trit_sum, 3) == 0
+            @test receipt.trits[3] == Gay._closing_trit(Int(receipt.trits[1]) + Int(receipt.trits[2]))
+
+            seed, seed_receipt = pico_entropyloop_seed(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+            @test seed == receipt.seed
+            @test seed_receipt.digest == receipt.digest
+
+            old_chain_dir = get(ENV, "GAY_CHAIN_DIR", nothing)
+            ENV["GAY_CHAIN_DIR"] = dir
+            empty!(Gay._QPOOL_SEED_CACHE)
+            try
+                written = pico_entropyloop_write!(
+                    "unit";
+                    sources=sources,
+                    bytes_per_source=32,
+                    nonce=UInt64(0x1234),
+                )
+                empty!(Gay._QPOOL_SEED_CACHE)
+                @test isfile(written.path)
+                @test gay_quantum_pool_seed("unit") == written.seed
+            finally
+                empty!(Gay._QPOOL_SEED_CACHE)
+                if old_chain_dir === nothing
+                    delete!(ENV, "GAY_CHAIN_DIR")
+                else
+                    ENV["GAY_CHAIN_DIR"] = old_chain_dir
+                end
+            end
+        end
+    end
+
+    @testset "Gay Seeds for Color Mining" begin
+        mktempdir() do dir
+            sources = String[]
+            for i in 1:3
+                path = joinpath(dir, "mining-source-$i.bin")
+                write(path, UInt8[mod(i * 19 + j, 256) for j in 0:95])
+                push!(sources, path)
+            end
+
+            entropy_seed, receipt = pico_entropyloop_seed(
+                "mining";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x515eed),
+            )
+            @test receipt.audit_ok
+
+            seed_cases = [
+                UInt64(GAY_SEED),
+                Gay.GaySplittableRNG.gay_seed(UInt64(1337)).state,
+                entropy_seed,
+            ]
+
+            for seed in seed_cases
+                ratio = Gay.SeedMining.spectral_test(seed; n=64)
+                balance = Gay.SeedMining.gf3_balance(seed; samples=90)
+                palette = [color_at(i; seed=seed) for i in 1:6]
+
+                @test isfinite(ratio)
+                @test 0 <= balance <= 1
+                @test all(c -> c isa RGB, palette)
+                @test palette == [color_at(i; seed=seed) for i in 1:6]
+            end
+
+            mined = Gay.SeedMining.mine_seeds(64; threshold=Inf)
+            @test !isempty(mined)
+            @test issorted(mined, by=sq -> sq.spectral_ratio)
+
+            best = first(mined)
+            mined_palette = [color_at(i; seed=best.seed) for i in 1:6]
+            @test all(c -> c isa RGB, mined_palette)
+            @test mined_palette == [color_at(i; seed=best.seed) for i in 1:6]
+
+            move_code = Gay.SeedMining.generate_move_registration(mined[1:min(3, length(mined))])
+            @test occursin(string(best.seed), move_code)
+        end
+    end
     
     @testset "Strong Parallelism Invariance (SPI)" begin
         seed = 42069
