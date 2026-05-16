@@ -92,7 +92,7 @@ export
     
     # Integration
     DiscoPyGayWorld, launch_discopy_mitsein!, full_multiverse_step!,
-    demo_discopy_mitsein
+    world_discopy_mitsein
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -1373,7 +1373,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 
-function demo_discopy_mitsein()
+function world_discopy_mitsein()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════╗")
     println("║  DISCOPY MITSEIN MULTIVERSE                                                       ║")

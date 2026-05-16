@@ -98,7 +98,7 @@ export
     GaySupremacyWalk, launch_supremacy!, vibe_snipe_bounty,
     
     # Demo
-    demo_gay_enzyme_supremacy
+    world_gay_enzyme_supremacy
 
 # ═══════════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -1373,7 +1373,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_enzyme_supremacy()
+function world_gay_enzyme_supremacy()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY ENZYME SUPREMACY: Maximally Affordable Convergent Random Walks       ║")

@@ -78,7 +78,7 @@ export
     decide!, must, may, must_and_may,
     
     # Demo
-    demo_universal_gay_ext
+    world_universal_gay_ext
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -1032,7 +1032,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_universal_gay_ext()
+function world_universal_gay_ext()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  UNIVERSAL GAY EXT: Modal Decisions with Lossless Multiscale             ║")

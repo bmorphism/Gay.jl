@@ -13,8 +13,11 @@
 using KernelAbstractions
 using SplittableRandoms: SplittableRandom, split
 
+export XF_SEED, SplitMixRGB, splitmix_rgb, with_splitmix_rgb
 export xf_ka_colors!, xf_ka_colors, xf_ka_benchmark
 export XFBackend, xf_get_backend, xf_set_backend!
+
+const XF_SEED = UInt64(0x78656e6f66656d21)  # "xenofem!"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Backend selection
@@ -104,6 +107,43 @@ Note: Uses Float32 arithmetic throughout for Metal GPU compatibility.
     
     (r, g, b)
 end
+
+"""
+    SplitMixRGB(seed::Integer=XF_SEED)
+
+Callable SplitMix64 RGB stream. `SplitMixRGB(seed)(index)` returns the same
+`(r, g, b)::NTuple{3,Float32}` as `splitmix_rgb(index; seed)`.
+"""
+struct SplitMixRGB
+    seed::UInt64
+end
+
+SplitMixRGB(seed::Integer=XF_SEED) = SplitMixRGB(UInt64(seed))
+
+"""
+    splitmix_rgb(index::Integer; seed::Integer=XF_SEED)
+    splitmix_rgb(seed::Integer, index::Integer)
+
+Return the deterministic XF SplitMix64 RGB color at `index` for `seed`.
+This is the scalar reference for `_xf_colors_kernel!` and `xf_ka_colors!`.
+"""
+@inline splitmix_rgb(index::Integer; seed::Integer=XF_SEED) =
+    hash_color_rgb(UInt64(seed), UInt64(index))
+
+@inline splitmix_rgb(seed::Integer, index::Integer) =
+    hash_color_rgb(UInt64(seed), UInt64(index))
+
+@inline (stream::SplitMixRGB)(index::Integer) =
+    splitmix_rgb(index; seed=stream.seed)
+
+"""
+    with_splitmix_rgb(f::Function, seed::Integer=XF_SEED)
+
+Create a `SplitMixRGB` resource and pass it to continuation `f`.
+The continuation owns the stream boundary and decides what value persists.
+"""
+with_splitmix_rgb(f::Function, seed::Integer=XF_SEED) =
+    f(SplitMixRGB(seed))
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SPMD Kernels

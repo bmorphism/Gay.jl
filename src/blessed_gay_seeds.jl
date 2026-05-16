@@ -75,7 +75,7 @@ export
     create_bridge, invoke_bridge, bridge_color,
     
     # Demo
-    demo_blessed_seeds
+    world_blessed_seeds
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CANONICAL SEEDS
@@ -619,7 +619,7 @@ world gay-world {
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_blessed_seeds()
+function world_blessed_seeds()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════╗")
     println("║  BLESSED GAY SEEDS                                                               ║")

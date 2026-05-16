@@ -32,7 +32,7 @@ export QuiverRepresentation, indecomposables
 export NarrativeQuiver, NARRATIVE_A3
 export pluck!, measure_path, entangle_arrows
 export ADE_TYPE, gabriel_check, dynkin_diagram
-export demo_quantum_quiver
+export world_quantum_quiver
 
 # ═══════════════════════════════════════════════════════════════════════════
 # QUIVER STRUCTURE
@@ -535,7 +535,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_quantum_quiver()
+function world_quantum_quiver()
     println("═══════════════════════════════════════════════════════════════")
     println("  QUANTUM QUIVER: Superposition over Path Algebras")
     println("═══════════════════════════════════════════════════════════════")

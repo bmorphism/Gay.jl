@@ -66,7 +66,7 @@ export
     ChromaticHandshake, initiate_handshake, complete_handshake,
     
     # Demo
-    demo_gay_radio
+    world_gay_radio
 
 # ═══════════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -1003,7 +1003,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_radio()
+function world_gay_radio()
     println()
     println("╔═════════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY RADIO: GNU Radio & SDR for Collaborative Incentive Discovery          ║")

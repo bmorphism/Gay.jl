@@ -778,7 +778,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_compendium()
+function world_compendium()
     comp = get_universal_compendium()
     
     println("\n🌈 GAY COMPENDIUM: ArenaIndeterminismError Correction\n")
@@ -806,7 +806,7 @@ function demo_compendium()
 end
 
 """Demo AbstractOtherStage categorical interpretation"""
-function demo_other_stages()
+function world_other_stages()
     println("\n🐱 ABSTRACT OTHER STAGE: Small vs Big Categories\n")
     
     println("╔═══════════════════════════════════════════════════════════════════════╗")

@@ -55,7 +55,7 @@ export
     KrepState, krep_step!, krep_parallel!,
     
     # Demo
-    demo_pliny_krep
+    world_pliny_krep
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -476,7 +476,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_pliny_krep()
+function world_pliny_krep()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY PLINY KREP: Rapid next_color ACSet Parallelism                       ║")

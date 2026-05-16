@@ -50,7 +50,7 @@ export
     # Teachers
     TeacherStudent, teacher_step!, gimbal_free_orientation,
     # Demo
-    demo_gay_sexp
+    world_gay_sexp
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS - Minimal set
@@ -496,7 +496,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_sexp()
+function world_gay_sexp()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY S-EXPRESSION: Kolmogorov-Optimal Colored Parentheses                 ║")

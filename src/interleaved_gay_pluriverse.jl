@@ -706,11 +706,11 @@ using Statistics: mean, std
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_interleaved_pluriverse(seed::UInt64=0x6761795f636f6c6f)
+    world_interleaved_pluriverse(seed::UInt64=0x6761795f636f6c6f)
 
 Demonstrate the InterleavedGay Pluriverse with 3 narrators.
 """
-function demo_interleaved_pluriverse(seed::UInt64=0x6761795f636f6c6f)
+function world_interleaved_pluriverse(seed::UInt64=0x6761795f636f6c6f)
     println("╔══════════════════════════════════════════════════════════════════╗")
     println("║  InterleavedGay Pluriverse: Self-Avoiding Walk with 3 Narrators  ║")
     println("╚══════════════════════════════════════════════════════════════════╝")
@@ -809,4 +809,4 @@ function demo_interleaved_pluriverse(seed::UInt64=0x6761795f636f6c6f)
     return pv
 end
 
-export demo_interleaved_pluriverse
+export world_interleaved_pluriverse

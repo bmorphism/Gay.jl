@@ -22,6 +22,9 @@ include("propagator_test.jl")
 # Include regression tests for ternary/gamut systems
 include("regression_ternary.jl")
 
+# Include XF SplitMixRGB scalar/kernel equivalence tests
+include("xf/splitmixrgb_test.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         # Individual tests for better diagnostics

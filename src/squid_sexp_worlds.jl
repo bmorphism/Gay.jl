@@ -19,7 +19,7 @@ using SplittableRandoms: SplittableRandom, split
 
 export GaySexp, SexpWorld, SQUIDSensor, GravityMagnetismRegime
 export sexp_color, parallel_explore!, squid_measure
-export demo_squid_worlds, run_max_parallel_experiment
+export world_squid_worlds, run_max_parallel_experiment
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Constants
@@ -500,7 +500,7 @@ end
 # Demo and Main Experiment
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_squid_worlds()
+function world_squid_worlds()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  SQUID S-Expression Worlds: Gravity-Magnetism Phase Space Exploration     ║")

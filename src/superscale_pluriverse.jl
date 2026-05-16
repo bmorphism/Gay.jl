@@ -643,11 +643,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_superscale_pluriverse()
+    world_superscale_pluriverse()
 
 Demonstrate the superscale pluriverse with all features.
 """
-function demo_superscale_pluriverse(seed::UInt64=0x6761795f636f6c6f)
+function world_superscale_pluriverse(seed::UInt64=0x6761795f636f6c6f)
     println("╔══════════════════════════════════════════════════════════════════════════════╗")
     println("║   SUPERSCALE PLURIVERSE: O(1) Selection in Agentically Closed World Model   ║")
     println("╚══════════════════════════════════════════════════════════════════════════════╝")
@@ -753,4 +753,4 @@ function demo_superscale_pluriverse(seed::UInt64=0x6761795f636f6c6f)
     return sp
 end
 
-export demo_superscale_pluriverse
+export world_superscale_pluriverse

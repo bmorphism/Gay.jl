@@ -73,7 +73,7 @@ export
     GayDuality, superpose, collapse, observe,
     
     # Demo
-    demo_lazy_eager_duality
+    world_lazy_eager_duality
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -943,7 +943,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_lazy_eager_duality()
+function world_lazy_eager_duality()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  LAZY/EAGER DUALITY: Self-Dual Functors for Gay Superposition            ║")

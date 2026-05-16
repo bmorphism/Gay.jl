@@ -35,7 +35,7 @@ using Printf
 
 export WorldAssignment, OrgWorld, RepoManifest, ColorOpsMetrics
 export assign_world, materialize_worlds!, parallel_random_walk!
-export generate_clone_script, demo_maximally_parallel
+export generate_clone_script, world_maximally_parallel
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 const ZAHN_SEED = UInt64(0x5A41484E)
@@ -382,7 +382,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_maximally_parallel()
+function world_maximally_parallel()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  MAXIMALLY PARALLEL WORLDS: Gay Random Walk Clone & Color Ops             ║")

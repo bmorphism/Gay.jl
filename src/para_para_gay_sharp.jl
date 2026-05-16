@@ -44,7 +44,7 @@ export
     InteractionColor, derive_interaction_color,
     
     # Demo
-    demo_contrastive_para
+    world_contrastive_para
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS & RNG
@@ -512,7 +512,7 @@ end
 # DEMO: CONTRASTIVE LEARNING ParaParaGay vs ParaParaGay#
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_contrastive_para()
+function world_contrastive_para()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  PARA(PARA(GAY)) vs PARA(PARA(GAY#)) — CONTRASTIVE LEARNING          ║")

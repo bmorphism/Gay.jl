@@ -29,7 +29,7 @@ export parallel_ssh, parallel_sftp, parallel_exec
 export chromatic_session, ablative_fetch, ablative_send
 export MagnetResource, magnet_parse, magnet_color
 export ParallelRemotePool, create_pool, with_sessions
-export demo_parallel_remote
+export world_parallel_remote
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
@@ -702,7 +702,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_parallel_remote()
+function world_parallel_remote()
     println("═══════════════════════════════════════════════════════════════")
     println("  PARALLEL REMOTE: Maximum Parallelism SSH/SFTP/Tramp")
     println("═══════════════════════════════════════════════════════════════")

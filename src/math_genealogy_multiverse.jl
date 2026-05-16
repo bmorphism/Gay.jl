@@ -80,7 +80,7 @@ export
     find_optimal_3tuple, bandwidth_tournament, rank_all_3tuples,
     
     # Demo
-    demo_math_genealogy_multiverse
+    world_math_genealogy_multiverse
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -816,7 +816,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_math_genealogy_multiverse()
+function world_math_genealogy_multiverse()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════╗")
     println("║  MATH GENEALOGY MULTIVERSE                                                        ║")
