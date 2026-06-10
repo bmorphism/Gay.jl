@@ -188,21 +188,37 @@ function rgb_to_oklab(rgb::NTuple{3,T}, space::GayLearnablePerceptualColorSpace{
     return (L, a, b)
 end
 
+# Saturation asymptote in OkLab units (≈ 10 JND of ~0.02). The Mahalanobis
+# form below is a LOCAL metric (flat Riemannian — valid only for small
+# differences, Bujack 2022); fitting A jointly with metric_matrix from
+# discrimination data is nonlinear with no closed form — this is where
+# Enzyme reverse-mode is load-bearing, not decorative.
+const OKLAB_SAT_ASYMPTOTE = 0.2
+
 """
     perceptual_distance(c1, c2, space::GayLearnablePerceptualColorSpace)
 
-Compute learnable perceptual distance between two colors.
-Uses learned Mahalanobis-style metric.
+Learnable LOCAL metric + saturating readout.
+
+The learned Mahalanobis form `√(δᵀMδ)` is valid in the small-difference
+regime only; the output is passed through `f(d) = A(1 − exp(−d/A))`
+(strictly subadditive, exact defect `f(x)+f(y)−f(x+y) = f(x)f(y)/A`,
+see SatReadout.lean) so large differences show the diminishing returns
+human perception has. No Riemannian form — flat, curved, or learned —
+can represent that; the readout is not a refinement of the metric, it is
+the exit from the metric class.
 """
-function perceptual_distance(c1::NTuple{3,T}, c2::NTuple{3,T}, 
+function perceptual_distance(c1::NTuple{3,T}, c2::NTuple{3,T},
                              space::GayLearnablePerceptualColorSpace{T}) where T
     lab1 = rgb_to_oklab(c1, space)
     lab2 = rgb_to_oklab(c2, space)
-    
+
     delta = [lab1[1] - lab2[1], lab1[2] - lab2[2], lab1[3] - lab2[3]]
-    
-    # Mahalanobis distance with learned metric
-    sqrt(dot(delta, space.metric_matrix * delta))
+
+    # Local Mahalanobis kernel, then saturating (non-Riemannian) readout
+    local_d = sqrt(dot(delta, space.metric_matrix * delta))
+    A = T(OKLAB_SAT_ASYMPTOTE)
+    A * (1 - exp(-local_d / A))
 end
 
 """

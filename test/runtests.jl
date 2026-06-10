@@ -22,6 +22,11 @@ include("propagator_test.jl")
 # Include regression tests for ternary/gamut systems
 include("regression_ternary.jl")
 
+# Non-Riemannian gate: strict subadditivity on collinear triplets, with
+# tolerances DERIVED from the SatReadout defect identity (not tuned).
+# Metrics failing the collinear-triplet test are barred from large-difference use.
+include("test_nonriemannian_gate.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         # Individual tests for better diagnostics

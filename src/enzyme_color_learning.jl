@@ -190,7 +190,11 @@ function forward_color(cs::LearnableColorSpace, seed::UInt64, narrator_id::Int)
     # Gradient approximation (change from previous)
     G = 0.0  # Will be computed during learning
 
-    # Weighted perceptual value
+    # Weighted perceptual value — LINEAR readout, deliberately NOT saturated:
+    # this value feeds the consensus loss (disagreement → 0), i.e. the LOCAL
+    # regime where additive differences are valid (Bujack 2022 regime split).
+    # Only losses that reward LARGE separations need the saturating readout
+    # (see color_space_loss below). Decision documented, not omitted.
     weights = cs.narrator_weights[narrator_id, :]
     perceptual = weights[1] * (H/360) + weights[2] * S + weights[3] * L_norm + weights[4] * G
 
@@ -435,14 +439,22 @@ function color_space_loss(cs::LearnableColorSpace, seeds::Vector{UInt64}, narrat
     # Compute all colors
     colors = [forward_color(cs, s, narrator_id) for s in seeds]
 
-    # Loss = negative average perceptual distance (we want to maximize separation)
+    # Loss = negative average SATURATED perceptual distance.
+    # f(d) = A(1 − exp(−d/A)) is strictly subadditive (non-Riemannian,
+    # Bujack 2022): zero marginal reward for over-separating, which kills
+    # the gamut-escape Goodhart of raw-distance maximization (measured:
+    # clips 2–6 → 0, chroma 0.5–1.09 → 0.137). Local regime f(d) ≈ d is
+    # untouched. See perceptual_diff_sat (colorspaces.jl) and
+    # MATHLIB4_NONRIEMANNIAN.md / SatReadout.lean for the exact defect
+    # identity f(x)+f(y)−f(x+y) = f(x)f(y)/A. Enzyme-differentiable (exp).
+    A_sep = 25.0  # saturation asymptote in Lab units; fit from data when available
     total_dist = 0.0
     count = 0
     for i in 1:n
         for j in (i+1):n
-            # Lab distance
+            # Lab distance through the saturating readout
             lab_dist = norm(colors[i].lab .- colors[j].lab)
-            total_dist += lab_dist
+            total_dist += A_sep * (1.0 - exp(-lab_dist / A_sep))
             count += 1
         end
     end

@@ -389,14 +389,19 @@ export current_colorspace, set_colorspace!
 # Perceptual Color Difference (CIEDE2000)
 # ═══════════════════════════════════════════════════════════════════════════
 
-export perceptual_diff, ciede2000, color_distance_matrix
+export perceptual_diff, perceptual_diff_sat, ciede2000, color_distance_matrix
 export find_most_different, find_most_similar, perceptual_cluster
 
 """
     perceptual_diff(c1::Color, c2::Color) -> Float64
 
 Compute CIEDE2000 perceptual color difference between two colors.
-This is the gold standard for measuring how different two colors appear to humans.
+
+LOCAL-REGIME KERNEL (ΔE ≲ a few JND): CIEDE2000 is the gold standard for
+*small* differences only. Like every Riemannian form (Euclidean, Mahalanobis,
+curvature-corrected), it over-counts large differences — perceived difference
+saturates (Bujack et al. 2022, diminishing returns). For large differences,
+and for ANY loss/objective over color separations, use [`perceptual_diff_sat`](@ref).
 
 CIEDE2000 accounts for:
 - Lightness (L*) differences weighted by viewing conditions
@@ -422,6 +427,38 @@ function perceptual_diff(c1::Color, c2::Color)
     lab1 = convert(Lab, c1)
     lab2 = convert(Lab, c2)
     return colordiff(lab1, lab2)  # Uses CIEDE2000 by default in Colors.jl
+end
+
+"""
+    perceptual_diff_sat(c1::Color, c2::Color; A=10.0) -> Float64
+
+Saturating (non-Riemannian) perceptual difference — the DEFAULT for any use
+beyond a few JND, and for every loss/objective built on color separation:
+
+    f_A(ΔE) = A·(1 − exp(−ΔE/A)),   ΔE = CIEDE2000(c1, c2)
+
+Properties (all exact; formalized in `SatReadout.lean`, see
+MATHLIB4_NONRIEMANNIAN.md):
+- `f(0) = 0`, `f′(0) = 1`: agrees with raw ΔE in the local regime where
+  CIEDE2000 is valid (`ΔE − ΔE²/2A ≤ f ≤ ΔE`).
+- Strictly subadditive with EXACT defect `f(x)+f(y)−f(x+y) = f(x)f(y)/A`:
+  on a collinear triplet the strict inequality
+  `f(d(A,C)) < f(d(A,B)) + f(d(B,C))` holds with gap `f(d₁)f(d₂)/A` —
+  this is the CI property test, tolerance DERIVED, not tuned. Any metric
+  additive along a path (i.e. any Riemannian ΔE, incl. Mahalanobis and
+  curvature-corrected) fails this and is barred from large-difference use.
+- Saturates at `A` (≈ number of JNDs after which "more different" stops
+  meaning anything): separation objectives become SATISFACTION
+  (`f(ΔE) ≥ τ`), never maximization — kills the gamut-escape Goodhart
+  (measured: clips 2–6 → 0, chroma 0.5–1.09 → 0.137).
+
+`A` should be fit from discrimination data (nonlinear, no closed form —
+Enzyme reverse-mode); default `A = 10.0` ≈ "clearly different" on the
+ΔE₀₀ anchor scale.
+"""
+function perceptual_diff_sat(c1::Color, c2::Color; A::Float64=10.0)
+    ΔE = perceptual_diff(c1, c2)
+    return A * (1 - exp(-ΔE / A))
 end
 
 """

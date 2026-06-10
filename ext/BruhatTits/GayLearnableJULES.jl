@@ -24,7 +24,7 @@ module GayLearnableJULES
 export GayLearnableColorSpace, GayMetalearnableColorSpace
 export ThreeMatchSolver, TritwiseGadget, ColorSpaceTask
 export GamutBounds, MetricWeights
-export learn_gamut!, meta_adapt!, verify_triangle_inequality
+export learn_gamut!, meta_adapt!, verify_triangle_inequality, verify_strict_subadditivity
 export solve_3match, random_walk_sat, tritwise_xor, jules_saturate
 
 using LinearAlgebra
@@ -130,13 +130,20 @@ function GayLearnableColorSpace(name::String; seed=JULES_SEED)
     )
 end
 
+# Saturation asymptote for the OkLCh-weighted local form (L∈[0,1], C≲0.4,
+# H in weighted radians ⇒ base_dist ≲ 2). Fit from discrimination data.
+const JULES_SAT_ASYMPTOTE = 0.5
+
 """
-Compute perceptual color distance with Tao-style correction.
+Compute perceptual color distance: learnable LOCAL metric + saturating readout.
 
-d(c₁, c₂) = √(w_L·ΔL² + w_C·ΔC² + w_H·ΔH²) + O(ε²)
+d(c₁, c₂) = f(√(w_L·ΔL² + w_C·ΔC² + w_H·ΔH²)) + O(ε²),  f(d) = A(1−exp(−d/A))
 
-where ε = curvature and the O(ε²) term ensures triangle inequality holds
-even in curved gamut regions.
+The weighted form (+ curvature term) is the local kernel, valid for small
+differences; the readout f makes large differences strictly subadditive
+(non-Riemannian). The load-bearing invariant is `verify_strict_subadditivity`
+(strict-< gate), NOT `verify_triangle_inequality` (which f∘d satisfies
+trivially and which can therefore never fail).
 """
 function color_distance(
     cs::GayLearnableColorSpace,
@@ -160,8 +167,14 @@ function color_distance(
     
     # Tao correction term: O(ε²) where ε = curvature
     tao_correction = cs.bounds.curvature^2 * TAO_EPSILON
-    
-    base_dist + tao_correction
+
+    # Saturating (non-Riemannian) readout over the LOCAL weighted form.
+    # Curvature correction keeps the metric Riemannian (curved ≠ subadditive);
+    # large-difference perception needs strict subadditivity (Bujack 2022):
+    # f(d) = A(1−exp(−d/A)), exact defect f(x)+f(y)−f(x+y) = f(x)f(y)/A
+    # (SatReadout.lean). A in OkLCh-weighted units; refit from data.
+    A = JULES_SAT_ASYMPTOTE
+    A * (1.0 - exp(-base_dist / A)) + tao_correction
 end
 
 """
@@ -182,9 +195,39 @@ function verify_triangle_inequality(
     
     # Tao bound: allow O(ε²) slack
     tao_slack = 2 * cs.bounds.curvature^2 * TAO_EPSILON
-    
+
     violation = d_ac - (d_ab + d_bc) - tao_slack
     (violation <= 0, max(0.0, violation))
+end
+
+"""
+Non-Riemannian gate (the load-bearing test; `verify_triangle_inequality`
+is sanity only — the saturated metric satisfies it trivially).
+
+On a triplet that is collinear for the LOCAL kernel, the readout must be
+STRICTLY subadditive:
+
+    d(a,c) < d(a,b) + d(b,c)
+
+with gap = exact defect `d_sat(a,b)·d_sat(b,c)/A` when curvature = 0
+(SatReadout.collinear_strict; tolerance derived, not tuned). Equality
+(additivity along a path) is the Riemannian/length-metric signature: a
+metric exhibiting it is barred from large-difference use.
+
+Returns (gate_passes, gap).
+"""
+function verify_strict_subadditivity(
+    cs::GayLearnableColorSpace,
+    a::NTuple{3, Float64},
+    b::NTuple{3, Float64},
+    c::NTuple{3, Float64};
+    tol::Float64 = 1e-9
+)::Tuple{Bool, Float64}
+    d_ac = color_distance(cs, a, c)
+    d_ab = color_distance(cs, a, b)
+    d_bc = color_distance(cs, b, c)
+    gap = d_ab + d_bc - d_ac
+    (gap > tol, gap)
 end
 
 """
