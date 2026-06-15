@@ -54,7 +54,7 @@ export BulkSampler, sample_bulk!, find_solution_geodesic
 export AsymmetricResilience, species_reach, failover_chain
 export ThreeSATClause, ThreeColoringInstance, AlgorithmicChoice
 export solve_via_bulk!, tractability_proof
-export demo_hyperbolic_mining, demo_mario_choices
+export world_hyperbolic_mining, world_mario_choices
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SPECIES (from arena_error.jl)
@@ -936,7 +936,7 @@ end
 # DEMOS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_hyperbolic_mining(; seed::UInt64=UInt64(0x6761795f636f6c6f))
+function world_hyperbolic_mining(; seed::UInt64=UInt64(0x6761795f636f6c6f))
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  HYPERBOLIC BULK MINING: Tractable 3-Coloring via Rewriting Gadgets      ║")
     println("╚═══════════════════════════════════════════════════════════════════════════╝")
@@ -989,7 +989,7 @@ function demo_hyperbolic_mining(; seed::UInt64=UInt64(0x6761795f636f6c6f))
     (instance, solution, stats)
 end
 
-function demo_mario_choices(; seed::UInt64=UInt64(0x6761795f636f6c6f))
+function world_mario_choices(; seed::UInt64=UInt64(0x6761795f636f6c6f))
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  MARIO-STYLE CHOICE GADGETS: Power-Ups, Warp Pipes, Coins, Stars         ║")
     println("╚═══════════════════════════════════════════════════════════════════════════╝")

@@ -28,7 +28,7 @@ export QuantumGuitar, QuantumPhoneme, IPAFeatures
 export MusicalScale, sonify, phonemize
 export DynamicCategoricalSystem, DynamicSufficiency
 export multiversal_baez, SFI_ADEQUACY_THRESHOLD
-export demo_baez_topos, baez_plays, measure_sufficiency
+export world_baez_topos, baez_plays, measure_sufficiency
 
 const SFI_ADEQUACY_THRESHOLD = 0.618  # Golden ratio: minimal complexity for emergence
 
@@ -613,7 +613,7 @@ end
 """
 Demo: The Baez Topos in action.
 """
-function demo_baez_topos()
+function world_baez_topos()
     println("═══════════════════════════════════════════════════════════════")
     println("  BAEZ TOPOS: Multiversal n-Category Theory")
     println("═══════════════════════════════════════════════════════════════")

@@ -68,7 +68,7 @@ export
     tritwise_placement_score,
     
     # Demo
-    demo_worldnet, demo_tritwise_comparison
+    world_worldnet, world_tritwise_comparison
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS (SPI Compliant)
@@ -863,7 +863,7 @@ placement_fingerprint(p::GayPlacement) = p.fingerprint
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_worldnet()
+function world_worldnet()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY WORLDNET: Tritwise Anticipatory Blockchain Parallelism               ║")
@@ -1012,7 +1012,7 @@ function demo_worldnet()
     return (net=net, placement_hf=placement, placement_batch=placement_batch)
 end
 
-function demo_tritwise_comparison()
+function world_tritwise_comparison()
     println()
     println("─── Tritwise Comparison: {T-, T0, T+} ───")
     println()

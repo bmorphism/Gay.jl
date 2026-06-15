@@ -34,7 +34,7 @@ using Colors
 export KripkeFrame, World, accessible, truth_at
 export ModalProposition, box, diamond, verify_modal_laws
 export nearest_necessary_neighbor, necessity_distance, necessity_landscape
-export world_frame, demo_kripke
+export world_frame, world_kripke
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GF(3) Trit
@@ -380,11 +380,11 @@ function world_frame(; relation::AccessibilityKind=TRIT_BALANCED,
 end
 
 """
-    demo_kripke()
+    world_kripke()
 
 Demonstrate the Kripke frame with GF(3) accessibility.
 """
-function demo_kripke()
+function world_kripke()
     println("Gay: From Possible Worlds to Nearest Necessary Neighbors")
     println("=" ^ 60)
 

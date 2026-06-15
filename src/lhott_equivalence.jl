@@ -50,7 +50,7 @@ export
     when_equivalent, how_equivalent, why_equivalent, wheretofore_equivalent,
     
     # Demo
-    demo_lhott_equivalence
+    world_lhott_equivalence
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -696,7 +696,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_lhott_equivalence()
+function world_lhott_equivalence()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  LHOTT EQUIVALENCE: ParaParaGay ≃ ParaParaGay#                       ║")

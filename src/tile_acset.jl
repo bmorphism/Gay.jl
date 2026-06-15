@@ -58,7 +58,7 @@ export
     delegation_to_adjacency, adjacency_to_delegation,
     
     # Demo
-    demo_tile_acset, demo_org_tiling
+    world_tile_acset, world_org_tiling
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -834,7 +834,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_tile_acset()
+function world_tile_acset()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  TileACSet: Aperiodic Tilings as Attributed C-Sets                        ║")
@@ -983,7 +983,7 @@ function demo_tile_acset()
     (lattice=lattice, inflated=inflated, stream=stream, superposition=sup, graph=graph)
 end
 
-function demo_org_tiling()
+function world_org_tiling()
     println()
     println("═══════════════════════════════════════════════════════════════════════════")
     println("  ORG MONAD ↔ TILING CORRESPONDENCE")

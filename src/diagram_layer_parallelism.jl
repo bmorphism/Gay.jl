@@ -59,7 +59,7 @@ export
     maximally_parallel_thread_discovery,
     
     # Demo
-    demo_diagram_layer
+    world_diagram_layer
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant base)
@@ -1113,7 +1113,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_diagram_layer()
+function world_diagram_layer()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  DIAGRAM LAYER PARALLELISM: Safely Exceeding SPI                          ║")

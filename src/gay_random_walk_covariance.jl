@@ -62,7 +62,7 @@ export
     MetalearningConnection, cfr_as_metalearning,
     
     # Demo
-    demo_gay_random_walk_covariance
+    world_gay_random_walk_covariance
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -701,7 +701,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_random_walk_covariance()
+function world_gay_random_walk_covariance()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY RANDOM WALK COVARIANCE: Parallel Worlds Seed Bundle Proof            ║")

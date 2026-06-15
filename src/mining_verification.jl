@@ -699,7 +699,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_mining_verification()
+function world_mining_verification()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  MINING VERIFICATION: Deterministic Color Chains as Runtime Proofs       ║")
     println("╚═══════════════════════════════════════════════════════════════════════════╝")
@@ -748,7 +748,7 @@ end
 
 # Register as world
 function world_mining_verification(; seed::UInt64=GENESIS_SEED, kwargs...)
-    demo_mining_verification()
+    world_mining_verification()
 end
 
 end # module MiningVerification

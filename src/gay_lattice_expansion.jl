@@ -59,7 +59,7 @@ export
     color_affinity, affinity_direction, affinity_matrix,
     
     # Demo
-    demo_lattice_expansion, launch_3x3_walks
+    world_lattice_expansion, launch_3x3_walks
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -691,7 +691,7 @@ function launch_3x3_walks()
     (lattice=lattice, walks=result.walks, fingerprint=result.fingerprint, groupings=groupings)
 end
 
-function demo_lattice_expansion()
+function world_lattice_expansion()
     result = launch_3x3_walks()
     
     println("─── Ready for 23x23x23 Expansion ───")

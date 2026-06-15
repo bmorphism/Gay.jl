@@ -363,10 +363,10 @@ include("enzyme_dsl.jl")
 include("okhsl_learnable.jl")
 using .OkhslLearnable: LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
 using .OkhslLearnable: forward_color, learn_colorspace!, compute_loss
-using .OkhslLearnable: EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+using .OkhslLearnable: EnzymeColorState, enzyme_color_gradient, world_learnable_okhsl
 export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
 export forward_color, learn_colorspace!, compute_loss
-export EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+export EnzymeColorState, enzyme_color_gradient, world_learnable_okhsl
 
 # Include energy measurement (Apple Silicon powermetrics)
 include("energy.jl")
@@ -378,27 +378,27 @@ include("semiosis.jl")
 # using .TracedTensor
 # export TracedMorphism, tensor_product, monoidal_unit, categorical_trace
 # export feedback_loop, TensorNetwork, add_node!, add_edge!, run_network!
-# export verify_traced_laws, demo_traced_tensor, network_fingerprint
+# export verify_traced_laws, world_traced_tensor, network_fingerprint
 
 # TODO: include("thread_findings.jl")
 # using .ThreadFindings
 # export Finding, FindingsSet, ThreadContext, VerificationMonad
 # export bind_finding, return_finding, run_verification
 # export count_threads, fingerprint_threads, lazy_place!
-# export demo_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
+# export world_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
 # export run_all_verifications
 
 # TODO: include("verification_report.jl")
 # using .VerificationReport
 # export generate_report, FullReport, ReportSection
 # export verify_coherence, attestation_fingerprint
-# export export_report_markdown, demo_report
+# export export_report_markdown, world_report
 
 # TODO: include("amp_threads.jl")
 # using .AmpThreads
 # export AmpThread, thread_seed, thread_color, thread_fingerprint
 # export ThreadGenealogy, add_thread!, genealogy_fingerprint
-# export verify_thread_chain, demo_amp_threads
+# export verify_thread_chain, world_amp_threads
 
 # TODO: include("cognitive_superposition.jl") — depends on TracedTensor (missing)
 # using .CognitiveSuperposition
@@ -406,7 +406,7 @@ include("semiosis.jl")
 # export superpose, collapse, entails, induces, abduces
 # export BraidedSuperposition, HypergraphSuperposition
 # export cognitive_tensor, cognitive_trace, cognitive_spider
-# export verify_cognitive_laws, demo_cognitive_superposition
+# export verify_cognitive_laws, world_cognitive_superposition
 
 # TODO: include("spi_cli.jl")
 # using .SPICLI
@@ -421,7 +421,7 @@ using .KripkeWorlds
 export KripkeFrame, World, accessible, truth_at
 export ModalProposition, box, diamond, verify_modal_laws
 export nearest_necessary_neighbor, necessity_distance, necessity_landscape
-export world_frame, demo_kripke
+export world_frame, world_kripke
 
 include("physical_task_worlds.jl")
 using .PhysicalTaskWorlds
@@ -431,8 +431,8 @@ export physical_accessible, action_cost, executable
 export affordance_at, affordances
 export plan_to_necessity, physical_necessity_landscape
 export motor_imagery_trit, efference_copy, reafference_check
-export demo_physical_task
-export WorkspaceGrid, GridCell, grid_frame, demo_rectangular_workspace
+export world_physical_task
+export WorkspaceGrid, GridCell, grid_frame, world_rectangular_workspace
 
 include("trit_tick_gists.jl")
 using .TritTickGists

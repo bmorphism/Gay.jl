@@ -624,7 +624,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_self_game()
+function world_self_game()
     println("╔════════════════════════════════════════════════════════════════╗")
     println("║  SELF GAME: Husserlian Moment as Colorable Derangeable         ║")
     println("║  Open Game with 2-Para on Random Interaction Network           ║")

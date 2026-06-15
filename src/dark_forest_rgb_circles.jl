@@ -61,7 +61,7 @@ export hiding_score, detection_risk, predation_probability
 export dark_forest_reward, dark_forest_loss
 export enzyme_dark_forest_gradient!, learn_dark_forest!
 export camouflage_color, optimal_camouflage
-export demo_dark_forest
+export world_dark_forest
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SPECIES AS RGB PRIMARIES
@@ -706,7 +706,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_dark_forest(seed::UInt64=UInt64(0x6761795f636f6c6f))
+function world_dark_forest(seed::UInt64=UInt64(0x6761795f636f6c6f))
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  DARK FOREST RGB CIRCLES: Learned Subobject Classifier χ: HSL → Ω₃   ║")
     println("║                                                                       ║")

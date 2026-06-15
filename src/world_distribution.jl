@@ -624,7 +624,7 @@ end
 # DEMO (Meta: a world that spawns worlds)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_world_distribution(; seed::UInt64=GAY_SEED)
+function world_world_distribution(; seed::UInt64=GAY_SEED)
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  WORLD DISTRIBUTION: Transform Demos into Distributable Worlds           ║")
     println("╚═══════════════════════════════════════════════════════════════════════════╝")
@@ -681,7 +681,7 @@ end
 
 # Make this module itself a world
 function __init__()
-    register_world!(:world_distribution, demo_world_distribution;
+    register_world!(:world_distribution, world_world_distribution;
                    module_name=:WorldDistribution,
                    description="Meta-world that manages other worlds")
 end

@@ -69,7 +69,7 @@ export
     insert_leitmotif, remove_leitmotif, reconstruct_trajectory,
     
     # Demo
-    demo_gayzip_strategy, analyze_compression_game
+    world_gayzip_strategy, analyze_compression_game
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -775,7 +775,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gayzip_strategy()
+function world_gayzip_strategy()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAYZIP STRATEGY: GayOpenGame for Compression Paradigm Selection         ║")

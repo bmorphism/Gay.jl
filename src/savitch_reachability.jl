@@ -67,7 +67,7 @@ export
     TransportChain, chain_from_reach, verify_chain,
     
     # Demo
-    demo_savitch_reachability
+    world_savitch_reachability
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -558,7 +558,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_savitch_reachability()
+function world_savitch_reachability()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  SAVITCH REACHABILITY: NPSPACE = PSPACE via Chromatic Configuration       ║")

@@ -55,7 +55,7 @@ export Species, Duck, Worm, Ape
 export ClassifierParameters, LearnedClassifier
 export enzyme_classifier_gradient, learn_classifier!
 export tier_reward, open_game_loss
-export verify_spi_invariance, demo_subobject_classifier
+export verify_spi_invariance, world_subobject_classifier
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SPECIES / TIER (from ArenaErrors)
@@ -664,11 +664,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_subobject_classifier()
+    world_subobject_classifier()
 
 Demonstrate the learned subobject classifier.
 """
-function demo_subobject_classifier(seed::UInt64=UInt64(0x6761795f636f6c6f))
+function world_subobject_classifier(seed::UInt64=UInt64(0x6761795f636f6c6f))
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  Learned Subobject Classifier for Gay Gamut Decisions                 ║")
     println("║  χ: Color → Ω₃ = {Duck, Worm, Ape}                                    ║")

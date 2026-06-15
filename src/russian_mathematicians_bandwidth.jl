@@ -8,7 +8,7 @@
 
 module RussianMathematiciansBandwidth
 
-export russian_mathematicians, compute_3tuple_bandwidths, rank_by_bandwidth, demo_russian_bandwidth
+export russian_mathematicians, compute_3tuple_bandwidths, rank_by_bandwidth, world_russian_bandwidth
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SPLITMIX64
@@ -223,7 +223,7 @@ end
 
 const RESET = "\e[0m"
 
-function demo_russian_bandwidth()
+function world_russian_bandwidth()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════╗")
     println("║  RUSSIAN MATHEMATICIANS: 3-Tuple Color Bandwidth Ranking                          ║")

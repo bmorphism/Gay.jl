@@ -75,7 +75,7 @@ export
     AffectPrimeLatticeWalk, launch_affect_walk!, expand_or_contract!,
     
     # Demo
-    demo_affect_prime_lattice
+    world_affect_prime_lattice
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -661,7 +661,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_affect_prime_lattice()
+function world_affect_prime_lattice()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  AFFECT PRIME LATTICE: Anticipatory Semantic Active Inference             ║")

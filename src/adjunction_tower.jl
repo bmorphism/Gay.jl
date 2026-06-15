@@ -20,7 +20,7 @@
 
 module AdjunctionTower
 
-export demo_tower, Level, ToposLevel, LogicLevel, CohesiveLevel, ColorLevel, SPILevel
+export world_tower, Level, ToposLevel, LogicLevel, CohesiveLevel, ColorLevel, SPILevel
 export adjoint_pair, transport_up, transport_down, verify_closure
 export TowerState, run_through_tower, chromatic_invariant
 
@@ -300,7 +300,7 @@ function _show_color(rgb::NTuple{3,Float64}; width::Int=4)
     "\e[38;2;$(r);$(g);$(b)m$(block)\e[0m"
 end
 
-function demo_tower()
+function world_tower()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║            THE COLOR-LOGIC TOWER OF ADJUNCTIONS                           ║")

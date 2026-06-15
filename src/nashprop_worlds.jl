@@ -60,7 +60,7 @@ export
     IntegratedGaySystem, run_integrated_system!,
     
     # Demo
-    demo_nashprop_worlds
+    world_nashprop_worlds
 
 # ═══════════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -857,7 +857,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════════
 
-function demo_nashprop_worlds()
+function world_nashprop_worlds()
     println()
     println("╔═════════════════════════════════════════════════════════════════════════════╗")
     println("║  NASHPROP WORLDS: Coalition Formation Across Profinite Ergodic Worlds      ║")

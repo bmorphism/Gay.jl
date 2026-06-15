@@ -40,7 +40,7 @@ export physical_accessible, action_cost, executable
 export affordance_at, affordances
 export plan_to_necessity, physical_necessity_landscape
 export motor_imagery_trit, efference_copy, reafference_check
-export demo_physical_task
+export world_physical_task
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Body State: proprioceptive configuration
@@ -565,7 +565,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_physical_task()
+    world_physical_task()
 
 Demonstrate a reach-grasp-move-release task as a physical Kripke frame.
 
@@ -579,7 +579,7 @@ Five states of a pick-and-place:
 Accessibility = motor primitives. Modal propositions = affordances.
 Plan = BFS to □completed (state where completion is necessary).
 """
-function demo_physical_task()
+function world_physical_task()
     println("Physical Task World Model")
     println("=" ^ 60)
     println("Embodied Kripke frame: worlds = task states, R = motor primitives\n")
@@ -712,7 +712,7 @@ end
 # The rectangle IS the Kripke frame's topology: rows x cols worlds,
 # 4-connectivity accessibility, affordances from object placement.
 
-export WorkspaceGrid, GridCell, grid_frame, demo_rectangular_workspace
+export WorkspaceGrid, GridCell, grid_frame, world_rectangular_workspace
 
 """
     GridCell
@@ -873,7 +873,7 @@ function grid_frame(grid::WorkspaceGrid; seed::UInt64=GAY_SEED)
 end
 
 """
-    demo_rectangular_workspace()
+    world_rectangular_workspace()
 
 4x4 grid, one block at (1,1), target at (4,4).
 Hand starts at (1,1), must navigate grid to pick up block, carry to (4,4), release.
@@ -884,7 +884,7 @@ Shows:
   - ◇completed landscape (how many steps until completion becomes possible)
   - Plan via BFS
 """
-function demo_rectangular_workspace()
+function world_rectangular_workspace()
     println("Rectangular Workspace Grid")
     println("=" ^ 60)
 

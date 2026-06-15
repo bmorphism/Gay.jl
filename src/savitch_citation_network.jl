@@ -42,7 +42,7 @@ export
     citation_depth, most_recent_citing, topic_clusters,
     
     # Demo
-    demo_savitch_network
+    world_savitch_network
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -533,7 +533,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_savitch_network()
+function world_savitch_network()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  SAVITCH CITATION NETWORK: Colorable Papers from 1970 to 2025            ║")

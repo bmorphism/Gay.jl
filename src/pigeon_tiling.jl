@@ -729,9 +729,9 @@ end
 # Unified Demo: Pigeon-Penrose-QECC-Expander-Swift
 # ═══════════════════════════════════════════════════════════════════════════════
 
-export demo_pigeon_tiling
+export world_pigeon_tiling
 
-function demo_pigeon_tiling()
+function world_pigeon_tiling()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  PIGEON TILING: Cryptochrome + Penrose + QECC + Expander + Swift R1       ║")

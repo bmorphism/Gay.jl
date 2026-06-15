@@ -32,7 +32,7 @@ using Base.Threads
 
 export ThreadACSet, Thread, Topic, Concept, GapAnalysis
 export build_thread_acset, zigzag_walk, identify_gaps
-export coverage_analysis, critical_path, demo_thread_walk
+export coverage_analysis, critical_path, world_thread_walk
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
@@ -508,7 +508,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_thread_walk()
+function world_thread_walk()
     println("═══════════════════════════════════════════════════════════════")
     println("  THREAD ACSET WALK: ZigZagBoomerang Gap Analysis")
     println("═══════════════════════════════════════════════════════════════")

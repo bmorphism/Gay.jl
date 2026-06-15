@@ -53,7 +53,7 @@ export
     export_to_octave, generate_itaca_matlab,
 
     # Demo
-    demo_chebotarev_colors
+    world_chebotarev_colors
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -785,7 +785,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_chebotarev_colors()
+function world_chebotarev_colors()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  CHEBOTAREV COLOR FIXED POINTS: Gay Seeds in Learnable Color Spaces      ║")

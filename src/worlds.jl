@@ -78,8 +78,8 @@ function world_hyperbolic_mining(; seed::UInt64=GAY_SEED, kwargs...)
     
     try
         # Import and call
-        @eval using ..HyperbolicBulkMining: demo_hyperbolic_mining
-        result = Base.invokelatest(demo_hyperbolic_mining; seed=seed, kwargs...)
+        @eval using ..HyperbolicBulkMining: world_hyperbolic_mining
+        result = Base.invokelatest(world_hyperbolic_mining; seed=seed, kwargs...)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -101,8 +101,8 @@ function world_mario_choices(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..HyperbolicBulkMining: demo_mario_choices
-        result = Base.invokelatest(demo_mario_choices; seed=seed, kwargs...)
+        @eval using ..HyperbolicBulkMining: world_mario_choices
+        result = Base.invokelatest(world_mario_choices; seed=seed, kwargs...)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -128,8 +128,8 @@ function world_dark_forest(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..DarkForestRGBCircles: demo_dark_forest
-        result = Base.invokelatest(demo_dark_forest, seed)
+        @eval using ..DarkForestRGBCircles: world_dark_forest
+        result = Base.invokelatest(world_dark_forest, seed)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -182,8 +182,8 @@ function world_enzyme_subobject(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..EnzymeSubobjectExt: demo_enzyme_subobject
-        result = Base.invokelatest(demo_enzyme_subobject)
+        @eval using ..EnzymeSubobjectExt: world_enzyme_subobject
+        result = Base.invokelatest(world_enzyme_subobject)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -278,8 +278,8 @@ function world_nashprop_worlds(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..NashpropWorlds: demo_nashprop_worlds
-        result = Base.invokelatest(demo_nashprop_worlds)
+        @eval using ..NashpropWorlds: world_nashprop_worlds
+        result = Base.invokelatest(world_nashprop_worlds)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -305,8 +305,8 @@ function world_baez_topos(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..BaezTopos: demo_baez_topos
-        result = Base.invokelatest(demo_baez_topos)
+        @eval using ..BaezTopos: world_baez_topos
+        result = Base.invokelatest(world_baez_topos)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -378,8 +378,8 @@ function world_chromatic_walk(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..ChromaticWalk: demo_chromatic_walk
-        result = Base.invokelatest(demo_chromatic_walk)
+        @eval using ..ChromaticWalk: world_chromatic_walk
+        result = Base.invokelatest(world_chromatic_walk)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -428,8 +428,8 @@ function world_gay_acset(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..GayACSet: demo_gay_acset
-        result = Base.invokelatest(demo_gay_acset)
+        @eval using ..GayACSet: world_gay_acset
+        result = Base.invokelatest(world_gay_acset)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -451,8 +451,8 @@ function world_gay_structured_decompositions(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..GayStructuredDecompositions: demo_gay_structured_decompositions
-        result = Base.invokelatest(demo_gay_structured_decompositions)
+        @eval using ..GayStructuredDecompositions: world_gay_structured_decompositions
+        result = Base.invokelatest(world_gay_structured_decompositions)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e
@@ -478,8 +478,8 @@ function world_quantum_quiver(; seed::UInt64=GAY_SEED, kwargs...)
     start = time_ns()
     
     try
-        @eval using ..QuantumQuiver: demo_quantum_quiver
-        result = Base.invokelatest(demo_quantum_quiver)
+        @eval using ..QuantumQuiver: world_quantum_quiver
+        result = Base.invokelatest(world_quantum_quiver)
         elapsed = time_ns() - start
         WorldResult(result, meta; elapsed=elapsed)
     catch e

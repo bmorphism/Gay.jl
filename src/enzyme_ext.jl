@@ -534,7 +534,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_enzyme_colorspace()
+function world_enzyme_colorspace()
     println()
     println("═══════════════════════════════════════════════════════════════════════════════")
     println("  GAY ENZYME EXTENSION: Real Automatic Differentiation for Color Spaces")

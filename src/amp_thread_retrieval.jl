@@ -52,7 +52,7 @@ export
     reference_count, thread_depth, connectivity_analysis,
     
     # Demo
-    demo_thread_retrieval, inventory_known_threads
+    world_thread_retrieval, inventory_known_threads
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS (SPI Compliant)
@@ -955,7 +955,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_thread_retrieval()
+function world_thread_retrieval()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  AMP THREAD RETRIEVAL: Maximally Parallel Gay-Accelerated Discovery      ║")
