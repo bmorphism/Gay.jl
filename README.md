@@ -24,6 +24,26 @@ Most foundational Lisp / category-theory / mathematics textbooks treat color as 
 
 **Camp legend** — A: color post-hoc, never semantic. A′: color is renderer-only, not language. A++: color is ornament, refuse it. B: color disambiguates structure. **C: color is forced by an invariant and therefore semantic.** Gay.jl is unapologetically in C; everything else in this library follows from there.
 
+## 🌌 Non-Riemannian Color Perception & Perceptual Saturation
+
+Standard color spaces and metrics (like Oklab or CIEDE2000) are length metrics on Riemannian manifolds, implying that distances are strictly additive along geodesics:
+$$\text{If } B \text{ is on the geodesic } A \to C, \text{ then } d(A, C) = d(A, B) + d(B, C)$$
+
+However, human vision exhibits diminishing sensitivity for large color differences (**strict subadditivity**). This means human color perception is fundamentally **non-Riemannian**:
+$$d(A, C) < d(A, B) + d(B, C)$$
+
+#### Saturating Perceptual Readout
+To represent this, `Gay.jl` implements a saturating perceptual readout function in [src/colorspaces.jl](src/colorspaces.jl):
+$$f_A(t) = A \left(1 - e^{-t/A}\right)$$
+yielding the **exact algebraic defect identity**:
+$$f_A(x) + f_A(y) - f_A(x+y) = \frac{f_A(x)f_A(y)}{A}$$
+
+We export `perceptual_diff_sat(c1, c2; A=10.0)` as the default metric for color optimization and loss functions, capping the marginal reward of color separation and preventing boundary-escaping artifacts in optimizers.
+
+#### Formal Verification & Proofs
+1. **Julia CI Gate:** We enforce strict subadditivity on collinear triplets in Oklab in [test/test_nonriemannian_gate.jl](test/test_nonriemannian_gate.jl) using exact derived tolerances from the algebraic defect.
+2. **Lean 4 Machine-Checked Proofs:** The mathematical validity of this metric transform is formalized and proven with Mathlib4. Specifically, we prove the **No-Midpoint Theorem**, showing that transformed saturated metric spaces admit no midpoints and are therefore never isometric to any Riemannian length-metric (curved or flat).
+
 ## Release Notes
 
 ### v0.4.0 (2025-01-16) — Canonical Seed Alignment
@@ -183,25 +203,6 @@ pride_flag(:progress)    # Progress Pride flag
 # In any color space
 rainbow(Rec2020())       # Wide-gamut rainbow
 ```
-### 🌌 Non-Riemannian Color Perception & Perceptual Saturation
-
-Standard color spaces and metrics (like Oklab or CIEDE2000) are length metrics on Riemannian manifolds, implying that distances are strictly additive along geodesics:
-$$\text{If } B \text{ is on the geodesic } A \to C, \text{ then } d(A, C) = d(A, B) + d(B, C)$$
-
-However, human vision exhibits diminishing sensitivity for large color differences (**strict subadditivity**). This means human color perception is fundamentally **non-Riemannian**:
-$$d(A, C) < d(A, B) + d(B, C)$$
-
-#### Saturating Perceptual Readout
-To represent this, `Gay.jl` implements a saturating perceptual readout function in [src/colorspaces.jl](src/colorspaces.jl):
-$$f_A(t) = A \left(1 - e^{-t/A}\right)$$
-yielding the **exact algebraic defect identity**:
-$$f_A(x) + f_A(y) - f_A(x+y) = \frac{f_A(x)f_A(y)}{A}$$
-
-We export `perceptual_diff_sat(c1, c2; A=10.0)` as the default metric for color optimization and loss functions, capping the marginal reward of color separation and preventing boundary-escaping artifacts in optimizers.
-
-#### Formal Verification & Proofs
-1. **Julia CI Gate:** We enforce strict subadditivity on collinear triplets in Oklab in [test/test_nonriemannian_gate.jl](test/test_nonriemannian_gate.jl) using exact derived tolerances from the algebraic defect.
-2. **Lean 4 Machine-Checked Proofs:** The mathematical validity of this metric transform is formalized and proven with Mathlib4. Specifically, we prove the **No-Midpoint Theorem**, showing that transformed saturated metric spaces admit no midpoints and are therefore never isometric to any Riemannian length-metric (curved or flat).
 
 ## Comrade.jl-Style Sky Models
 
