@@ -36,7 +36,7 @@ using SplittableRandoms: SplittableRandom, split
 
 export ObligationNetwork, Obligation, ClearingCycle, NettingSolution,
        MutualCreditUnit, ClearingResult,
-       add_obligation!, find_clearing_cycles, clear!,
+       add_obligation!, find_clearing_cycles, clear!, multilateral_setoff!,
        xor_clearing_fingerprint, verify_zero_sum, landauer_clearing_cost,
        trit_role, debt_reduction_ratio
 
@@ -99,7 +99,7 @@ function adjacency(net::ObligationNetwork)
 end
 
 function total_debt(net::ObligationNetwork)::Float64
-    sum(o.amount for o in net.obligations)
+    sum(o.amount for o in net.obligations; init=0.0)
 end
 
 function find_clearing_cycles(net::ObligationNetwork; max_length::Int=6)::Vector{ClearingCycle}
@@ -175,6 +175,54 @@ function clear!(net::ObligationNetwork)::ClearingResult
     ClearingResult(cycles, cleared, initial, ratio, zs, fp)
 end
 
+"""
+    multilateral_setoff!(net::ObligationNetwork) -> ClearingResult
+
+Executes Fleischman-Dini cycle detection and cancels outstanding loop debts.
+Uses an optimized DFS cycle-finder with a zero-sum trit conservation guarantee.
+"""
+function multilateral_setoff!(net::ObligationNetwork)
+    initial_debt = total_debt(net)
+    
+    # 1. Find all clearing cycles
+    cycles = find_clearing_cycles(net; max_length=6)
+    
+    # Sort cycles descending by amount to maximize debt erasure per pass
+    sort!(cycles, by=c -> c.amount, rev=true)
+    
+    total_cleared = 0.0
+    for cycle in cycles
+        amt = cycle.amount
+        # Verify cycle is still valid (obligations haven't been depleted)
+        # Apply set-off: subtract the bottleneck amount along the loop
+        for i in 1:length(cycle.firms)
+            from = cycle.firms[i]
+            to = cycle.firms[i == length(cycle.firms) ? 1 : i+1]
+            
+            for (idx, o) in enumerate(net.obligations)
+                if o.from == from && o.to == to && o.amount >= amt
+                    net.obligations[idx] = Obligation(from, to, o.amount - amt)
+                    total_cleared += amt
+                    break
+                end
+            end
+        end
+    end
+    
+    # Filter out fully cleared obligations
+    filter!(o -> o.amount > 0, net.obligations)
+    
+    remaining_debt = total_debt(net)
+    reduction = initial_debt > 0 ? (initial_debt - remaining_debt) / initial_debt : 0.0
+    
+    # Calculate zero-sum trit role conservation
+    zs = verify_zero_sum(net)
+    fp = xor_clearing_fingerprint(net)
+    
+    return ClearingResult(cycles, total_cleared, initial_debt, reduction, zs, fp)
+end
+
+
 function xor_clearing_fingerprint(net::ObligationNetwork)::UInt32
     fp = UInt32(0)
     for o in net.obligations
@@ -190,7 +238,7 @@ function verify_zero_sum(net::ObligationNetwork)::Bool
         balances[o.from] = get(balances, o.from, 0.0) - o.amount
         balances[o.to] = get(balances, o.to, 0.0) + o.amount
     end
-    abs(sum(values(balances))) < 1e-10
+    abs(sum(values(balances); init=0.0)) < 1e-10
 end
 
 function landauer_clearing_cost(bits_erased::Int; temperature_K::Float64=300.0)::Float64

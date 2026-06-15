@@ -22,6 +22,10 @@ include("trit_tick.jl")
 # Include wide-gamut color space support
 include("colorspaces.jl")
 
+# Include Schrödinger's intrinsic non-Riemannian HSL
+include("intrinsic_nonriemannian_hsl.jl")
+export IntrinsicHSL, to_intrinsic_hsl
+
 # Include splittable RNG for deterministic color generation
 include("splittable.jl")
 export color_at, colors_at, palette_at, GAY_SEED
@@ -206,8 +210,18 @@ export create_vdf, verify_vdf, vdf_output
 export create_pocp, verify_pocp, world_pocp
 export Seed  # Universal seed wrapper
 
+# Include Obligation Clearing (Sardex/Fleischman Mutual Credit as GF(3) Conservation)
+include("obligation_clearing.jl")
+using .ObligationClearing
+export ObligationNetwork, Obligation, ClearingCycle, NettingSolution,
+       MutualCreditUnit, ClearingResult,
+       add_obligation!, find_clearing_cycles, clear!, multilateral_setoff!,
+       xor_clearing_fingerprint, verify_zero_sum, landauer_clearing_cost,
+       trit_role, debt_reduction_ratio
+
 # Include Ergodic Bridge (Wall Clock ↔ Color Bandwidth ↔ Compositionality)
 include("ergodic_bridge.jl")
+
 using .ErgodicBridge
 export WallClockBridge, ColorBandwidth, ErgodicMeasure, CompositionObstruction
 export create_bridge, verify_bridge, measure_bandwidth, measure_ergodicity
@@ -505,6 +519,19 @@ export ThreadAncestryNode, ThreadAncestryForest, to_chromatic_decomposition
 export RewritingGadget, apply_gadget
 export TritValue, TernaryAddress, AdhesionFilterOp, ADHESION_FILTER_OPS
 export ternary_execution_trace, seed_1069_signature
+export CellularSheaf, build_sheaf_laplacian, cohomology_dimensions, rank_gf3
+
+
+# Include Time Delay Embedding (Takens' Embedding Theorem & Chaotic Attractor Reconstruction)
+include("time_delay_embedding.jl")
+using .TimeDelayEmbedding
+export DelayEmbedding, reconstruct_phase_space,
+       autocorrelation, average_mutual_information,
+       false_nearest_neighbors, find_optimal_delay_acf_zero,
+       find_optimal_delay_acf_decay, find_optimal_delay_ami,
+       find_optimal_dimension, lyapunov_divergence_curve,
+       estimate_lyapunov_exponent, embed_colored_ticks
+
 
 # Include Gamut-Constrained Learnable Color Space
 include("gamut_learnable.jl")

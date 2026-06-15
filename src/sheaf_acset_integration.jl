@@ -508,6 +508,111 @@ function hue(c::HSL)
     c.h
 end
 
+using LinearAlgebra
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Cellular Sheaf Theory & Čech Cohomology Audits
+# ═══════════════════════════════════════════════════════════════════════════════
+
+struct CellularSheaf
+    vertices::Vector{Int}
+    edges::Vector{Tuple{Int, Int}}
+    stalk_dim::Int
+    edge_dim::Int
+    restrictions::Dict{Tuple{Int, Tuple{Int, Int}}, Matrix{Int}} # (v, e) -> d x c matrix over GF(3)
+end
+
+"""
+    build_sheaf_laplacian(sheaf::CellularSheaf) -> Matrix{Int}
+
+Constructs the block Sheaf Laplacian matrix over GF(3).
+"""
+function build_sheaf_laplacian(sheaf::CellularSheaf)
+    n = length(sheaf.vertices)
+    d = sheaf.stalk_dim
+    L = zeros(Int, n * d, n * d)
+    
+    for (u, v) in sheaf.edges
+        e = (u, v)
+        R_u = sheaf.restrictions[(u, e)]
+        R_v = sheaf.restrictions[(v, e)]
+        
+        # Block diagonal updates
+        L[(u-1)*d+1 : u*d, (u-1)*d+1 : u*d] += R_u' * R_u
+        L[(v-1)*d+1 : v*d, (v-1)*d+1 : v*d] += R_v' * R_v
+        
+        # Off-diagonal updates
+        L[(u-1)*d+1 : u*d, (v-1)*d+1 : v*d] -= R_u' * R_v
+        L[(v-1)*d+1 : v*d, (u-1)*d+1 : u*d] -= R_v' * R_u
+    end
+    
+    # Apply modulo 3 arithmetic to keep within GF(3)
+    return mod.(L, 3)
+end
+
+"""
+    cohomology_dimensions(sheaf::CellularSheaf) -> (dim_H0, dim_H1)
+
+Computes the dimension of H^0 (global sections) and H^1 (arbitrage obstructions)
+using the Sheaf Laplacian rank over GF(3).
+"""
+function cohomology_dimensions(sheaf::CellularSheaf)
+    L = build_sheaf_laplacian(sheaf)
+    n = length(sheaf.vertices)
+    d = sheaf.stalk_dim
+    total_dim = n * d
+    
+    # Kernel dimension of Sheaf Laplacian is dim H^0
+    # We compute rank over GF(3) using row-reduction
+    r = rank_gf3(L)
+    dim_H0 = total_dim - r
+    
+    # By Euler-Poincaré characteristics for cellular sheaves:
+    # dim H^0 - dim H^1 = dim(V) * d - dim(E) * c
+    num_vertices_dim = length(sheaf.vertices) * sheaf.stalk_dim
+    num_edges_dim = length(sheaf.edges) * sheaf.edge_dim
+    euler_characteristic = num_vertices_dim - num_edges_dim
+    
+    dim_H1 = dim_H0 - euler_characteristic
+    
+    return (dim_H0, max(0, dim_H1))
+end
+
+function rank_gf3(A::Matrix{Int})
+    # Helper to calculate matrix rank over finite field GF(3)
+    M = copy(A)
+    rows, cols = size(M)
+    r = 0
+    for col in 1:cols
+        pivot_row = 0
+        for row in (r+1):rows
+            if mod(M[row, col], 3) != 0
+                pivot_row = row
+                break
+            end
+        end
+        if pivot_row != 0
+            r += 1
+            # Swap pivot row
+            M[r, :], M[pivot_row, :] = M[pivot_row, :], M[r, :]
+            
+            # Normalize pivot element to 1
+            if mod(M[r, col], 3) == 2
+                M[r, :] = mod.(M[r, :] .* 2, 3)
+            end
+            
+            # Eliminate other rows
+            for row in 1:rows
+                if row != r && mod(M[row, col], 3) != 0
+                    factor = mod(M[row, col], 3)
+                    M[row, :] = mod.(M[row, :] .- factor .* M[r, :], 3)
+                end
+            end
+        end
+    end
+    return r
+end
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Exports
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -518,6 +623,8 @@ export chromatic_adhesion_filter, decide_chromatic_sheaf
 export ThreadAncestryNode, ThreadAncestryForest, to_chromatic_decomposition
 export RewritingGadget, apply_gadget
 export colors_compatible, blend_colors
+export CellularSheaf, build_sheaf_laplacian, cohomology_dimensions, rank_gf3
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Balanced Ternary Decomposition of adhesion_filter (Seed 1069)

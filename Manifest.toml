@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.3"
+julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "04b521071a07b62f380ef46846bcb087cb910b55"
+project_hash = "f652476ab0d3f0738b0d3e3f6bd1ede2015c6b36"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f7304359109c768cf32dc5fa2d371565bb63b68a"
@@ -144,6 +144,12 @@ git-tree-sha1 = "0691e34b3bb8be9307330f88d1a3c3f25466c24d"
 uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
 version = "0.1.9"
 
+[[deps.BitIntegers]]
+deps = ["Random"]
+git-tree-sha1 = "091d591a060e43df1dd35faab3ca284925c48e46"
+uuid = "c3b6d118-76ef-56ca-8cc7-ebb389d030a1"
+version = "0.3.7"
+
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra"]
 git-tree-sha1 = "e4c6a16e77171a5f5e25e9646617ab1c276c5607"
@@ -242,6 +248,11 @@ git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 version = "4.1.1"
 
+[[deps.DBInterface]]
+git-tree-sha1 = "a444404b3f94deaa43ca2a58e18153a82695282b"
+uuid = "a10d1c49-ce27-4219-8d33-6db1a4562965"
+version = "2.6.1"
+
 [[deps.DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -300,6 +311,18 @@ deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.7.0"
 
+[[deps.DuckDB]]
+deps = ["DBInterface", "Dates", "DuckDB_jll", "FixedPointDecimals", "Tables", "UUIDs", "WeakRefStrings"]
+git-tree-sha1 = "656133510fa02a4f70a9d3ce6c1d083318406550"
+uuid = "d2f5444f-75bc-4fdf-ac35-56f514c445e1"
+version = "1.5.2"
+
+[[deps.DuckDB_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "a3f4fda40383140ac28b9b047bf8096c2d8ebc68"
+uuid = "2cbbab25-fc8b-58cf-88d4-687a02676033"
+version = "1.5.3+0"
+
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
 git-tree-sha1 = "d36f682e590a83d63d1c7dbd287573764682d12a"
@@ -329,6 +352,12 @@ weakdeps = ["PDMats", "SparseArrays", "StaticArrays", "Statistics"]
     FillArraysStaticArraysExt = "StaticArrays"
     FillArraysStatisticsExt = "Statistics"
 
+[[deps.FixedPointDecimals]]
+deps = ["BitIntegers", "Parsers"]
+git-tree-sha1 = "41d3a5de0eab320cc04833a373f0fcb3640073d5"
+uuid = "fb4d412d-6eee-574d-9565-ede6634db7b0"
+version = "0.6.5"
+
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
@@ -341,7 +370,7 @@ uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 version = "1.11.0"
 
 [[deps.Gay]]
-deps = ["Chairmarks", "ColorTypes", "Colors", "Dates", "HTTP", "JSON3", "KernelAbstractions", "LinearAlgebra", "LispSyntax", "OhMyThreads", "ParserCombinator", "Pigeons", "Printf", "REPL", "Random", "ReplMaker", "Sockets", "SparseArrays", "SplittableRandoms", "Statistics", "StructTypes", "Test"]
+deps = ["Chairmarks", "ColorTypes", "Colors", "Dates", "DuckDB", "HTTP", "JSON3", "KernelAbstractions", "LinearAlgebra", "LispSyntax", "OhMyThreads", "ParserCombinator", "Pigeons", "Printf", "REPL", "Random", "ReplMaker", "Sockets", "SparseArrays", "SplittableRandoms", "Statistics", "StructTypes", "Test"]
 path = "."
 uuid = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
 version = "0.1.0"
@@ -688,7 +717,7 @@ version = "1.11.0"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2025.5.20"
+version = "2025.11.4"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
@@ -1149,6 +1178,12 @@ version = "0.3.0"
 
     [deps.UnsafeAtomics.weakdeps]
     LLVM = "929cbde3-209d-540e-8aea-75f648917ca0"
+
+[[deps.WeakRefStrings]]
+deps = ["DataAPI", "InlineStrings", "Parsers"]
+git-tree-sha1 = "0716e01c3b40413de5dedbc9c5c69f27cddfddfc"
+uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
+version = "1.4.3"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]

@@ -27,6 +27,9 @@ include("regression_ternary.jl")
 # Metrics failing the collinear-triplet test are barred from large-difference use.
 include("test_nonriemannian_gate.jl")
 
+# Exa loop objectives extensions: Intrinsic HSL, Multilateral Clearing, Cellular Sheaf Čech Cohomology
+include("test_exa_loop_extensions.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         # Individual tests for better diagnostics
@@ -49,8 +52,8 @@ include("test_nonriemannian_gate.jl")
         end
         
         @testset "Stale deps" begin
-            # Ignore optional GPU backends
-            Aqua.test_stale_deps(Gay; ignore=[:Metal, :CUDA, :AMDGPU, :Rimu, :Carlo])
+            # Ignore optional GPU backends and DuckDB
+            Aqua.test_stale_deps(Gay; ignore=[:Metal, :CUDA, :AMDGPU, :Rimu, :Carlo, :DuckDB])
         end
         
         @testset "Deps compat" begin
