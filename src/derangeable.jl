@@ -62,16 +62,7 @@ end
 # Core derangement generation via rejection sampling
 # ═══════════════════════════════════════════════════════════════════════════
 
-"""
-    mix64(z::UInt64) -> UInt64
 
-SplitMix64 mixing function for deterministic hashing.
-"""
-function mix64(z::UInt64)
-    z = (z ⊻ (z >> 30)) * 0xbf58476d1ce4e5b9
-    z = (z ⊻ (z >> 27)) * 0x94d049bb133111eb
-    z ⊻ (z >> 31)
-end
 
 """
     fisher_yates_derangement!(arr::Vector, rng_state::UInt64) -> (Vector, UInt64)

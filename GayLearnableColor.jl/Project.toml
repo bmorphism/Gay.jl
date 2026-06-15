@@ -1,0 +1,20 @@
+name = "GayLearnableColor"
+uuid = "7a71c010-1069-4c01-8b44-00000000c101"
+authors = ["Physeter Macrocephalus <physeter@plurigrid.com>"]
+version = "0.1.0"
+
+[deps]
+Gay = "f3dee6b2-1ce2-4cc9-bfb1-25e98f6f315b"
+
+[sources]
+Gay = {path = ".."}
+
+[compat]
+Gay = "0.1"
+julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
