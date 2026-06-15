@@ -268,7 +268,8 @@ end
 export enzyme_forward_color, enzyme_gradient_params, enzyme_learn_colorspace!
 
 function __init__()
-    @info "Gay.jl: Enzyme extension loaded - autodiff enabled for LearnableColorSpace"
+    Gay.gay_verbose_load() &&
+        @info "Gay.jl: Enzyme extension loaded - autodiff enabled for LearnableColorSpace"
 end
 
 end # module GayEnzymeExt

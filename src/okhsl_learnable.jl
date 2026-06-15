@@ -532,7 +532,8 @@ function register_enzyme_rules!()
         end
         
         ENZYME_RULES_REGISTERED[] = true
-        @info "Gay.jl: Enzyme rules registered for LearnableColorSpace"
+        lowercase(get(ENV, "GAY_VERBOSE_LOAD", "0")) in ("1", "true", "yes", "on") &&
+            @info "Gay.jl: Enzyme rules registered for LearnableColorSpace"
     catch e
         @debug "Gay.jl: Enzyme not available, using finite differences" exception=e
     end

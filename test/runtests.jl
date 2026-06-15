@@ -1,6 +1,7 @@
 using Test
 using Gay
 using Aqua
+using TOML
 using Colors: RGB
 using SplittableRandoms: SplittableRandom
 
@@ -21,8 +22,25 @@ include("propagator_test.jl")
 
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
-        Aqua.test_all(Gay; deps_compat=(check_extras=false,))
+        Aqua.test_all(Gay;
+            deps_compat=(check_extras=false,),
+            persistent_tasks=false,
+            stale_deps=false,
+            undefined_exports=false,
+        )
     end
+
+    @testset "Optional Extension Metadata" begin
+        project = TOML.parsefile(joinpath(pkgdir(Gay), "Project.toml"))
+
+        @test !haskey(project["deps"], "Enzyme")
+        @test !haskey(project["deps"], "Metal")
+        @test project["weakdeps"]["Enzyme"] == "7da242da-08ed-463a-9acd-ee780be4f1d9"
+        @test project["weakdeps"]["Metal"] == "dde4c033-4e86-420c-a63e-0dd931031962"
+        @test project["extensions"]["GayEnzymeExt"] == "Enzyme"
+        @test project["extensions"]["GayMetalExt"] == "Metal"
+    end
+
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace
         @test DisplayP3() isa ColorSpace
@@ -72,6 +90,133 @@ include("propagator_test.jl")
         b = next_color()
         @test a != b
     end
+
+    @testset "Pico Entropy Loop Sampling" begin
+        mktempdir() do devdir
+            expected = sort([
+                joinpath(devdir, "cu.usbmodem14401"),
+                joinpath(devdir, "cu.usbmodem14601"),
+            ])
+            for path in expected
+                write(path, UInt8[])
+            end
+            write(joinpath(devdir, "tty.usbmodem14401"), UInt8[])
+            write(joinpath(devdir, "cu.Bluetooth-Incoming-Port"), UInt8[])
+
+            @test pico_entropyloop_devices(devdir) == expected
+        end
+
+        mktempdir() do dir
+            sources = String[]
+            for i in 1:3
+                path = joinpath(dir, "source-$i.bin")
+                write(path, UInt8[mod(i * 17 + j, 256) for j in 0:95])
+                push!(sources, path)
+            end
+
+            receipt = pico_entropyloop_sample(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+            receipt_again = pico_entropyloop_sample(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+
+            @test receipt isa PicoEntropyLoopReceipt
+            @test receipt.mode == :manual
+            @test receipt.seed == receipt_again.seed
+            @test receipt.digest == receipt_again.digest
+            @test length(receipt.digest) == 64
+            @test length(receipt.source_digests) == 3
+            @test receipt.audit_ok
+            @test mod(receipt.trit_sum, 3) == 0
+            @test receipt.trits[3] == Gay._closing_trit(Int(receipt.trits[1]) + Int(receipt.trits[2]))
+
+            seed, seed_receipt = pico_entropyloop_seed(
+                "unit";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x1234),
+            )
+            @test seed == receipt.seed
+            @test seed_receipt.digest == receipt.digest
+
+            old_chain_dir = get(ENV, "GAY_CHAIN_DIR", nothing)
+            ENV["GAY_CHAIN_DIR"] = dir
+            empty!(Gay._QPOOL_SEED_CACHE)
+            try
+                written = pico_entropyloop_write!(
+                    "unit";
+                    sources=sources,
+                    bytes_per_source=32,
+                    nonce=UInt64(0x1234),
+                )
+                empty!(Gay._QPOOL_SEED_CACHE)
+                @test isfile(written.path)
+                @test gay_quantum_pool_seed("unit") == written.seed
+            finally
+                empty!(Gay._QPOOL_SEED_CACHE)
+                if old_chain_dir === nothing
+                    delete!(ENV, "GAY_CHAIN_DIR")
+                else
+                    ENV["GAY_CHAIN_DIR"] = old_chain_dir
+                end
+            end
+        end
+    end
+
+    @testset "Gay Seeds for Color Mining" begin
+        mktempdir() do dir
+            sources = String[]
+            for i in 1:3
+                path = joinpath(dir, "mining-source-$i.bin")
+                write(path, UInt8[mod(i * 19 + j, 256) for j in 0:95])
+                push!(sources, path)
+            end
+
+            entropy_seed, receipt = pico_entropyloop_seed(
+                "mining";
+                sources=sources,
+                bytes_per_source=32,
+                nonce=UInt64(0x515eed),
+            )
+            @test receipt.audit_ok
+
+            seed_cases = [
+                UInt64(GAY_SEED),
+                Gay.GaySplittableRNG.gay_seed(UInt64(1337)).state,
+                entropy_seed,
+            ]
+
+            for seed in seed_cases
+                ratio = Gay.SeedMining.spectral_test(seed; n=64)
+                balance = Gay.SeedMining.gf3_balance(seed; samples=90)
+                palette = [color_at(i; seed=seed) for i in 1:6]
+
+                @test isfinite(ratio)
+                @test 0 <= balance <= 1
+                @test all(c -> c isa RGB, palette)
+                @test palette == [color_at(i; seed=seed) for i in 1:6]
+            end
+
+            mined = Gay.SeedMining.mine_seeds(64; threshold=Inf)
+            @test !isempty(mined)
+            @test issorted(mined, by=sq -> sq.spectral_ratio)
+
+            best = first(mined)
+            mined_palette = [color_at(i; seed=best.seed) for i in 1:6]
+            @test all(c -> c isa RGB, mined_palette)
+            @test mined_palette == [color_at(i; seed=best.seed) for i in 1:6]
+
+            move_code = Gay.SeedMining.generate_move_registration(mined[1:min(3, length(mined))])
+            @test occursin(string(best.seed), move_code)
+        end
+    end
     
     @testset "Strong Parallelism Invariance (SPI)" begin
         seed = 42069
@@ -103,6 +248,29 @@ include("propagator_test.jl")
         p_at_5 = palette_at(5, 6)
         p_at_5_again = palette_at(5, 6)
         @test p_at_5 == p_at_5_again
+    end
+
+    @testset "Canonical Genesis Chain" begin
+        @test verify_genesis_chain()
+
+        hex(c) = "#" * uppercase(join(string.(
+            round.(Int, clamp.([c.r, c.g, c.b], 0, 1) .* 255),
+            base=16,
+            pad=2,
+        )))
+
+        @test [hex(color_at(i; seed=GAY_SEED)) for i in 1:12] ==
+              [g.hex for g in GENESIS_COLORS]
+    end
+
+    @testset "Deterministic Structural Fingerprints" begin
+        @test spi_fast_fingerprint(GAY_SEED, 12) == UInt64(9305278550325485245)
+
+        network = demo_traced_tensor()
+        @test network_fingerprint(network) == UInt64(16789577066099260492)
+
+        morphism = TracedMorphism(:A, :B, identity; seed=GAY_SEED)
+        @test morphism.fingerprint == UInt64(14097468134336062831)
     end
     
     @testset "Pride Flags" begin
@@ -197,7 +365,7 @@ include("propagator_test.jl")
     end
     
     @testset "KernelAbstractions SPMD Colors" begin
-        using Gay: ka_colors, ka_colors!, xor_fingerprint, hash_color
+        using Gay: ka_colors, ka_colors!, ka_color_sums, xor_fingerprint, hash_color
         
         # Basic generation
         colors = ka_colors(1000, 42)
@@ -215,6 +383,14 @@ include("propagator_test.jl")
         @test r isa Float32
         @test g isa Float32
         @test b isa Float32
+
+        # Non-divisible reductions include the tail instead of truncating.
+        direct = reduce(1:17; init=(0.0, 0.0, 0.0)) do acc, i
+            r, g, b = hash_color(UInt64(42), UInt64(i))
+            (acc[1] + r, acc[2] + g, acc[3] + b)
+        end
+        @test all(isapprox.(ka_color_sums(17, 42; chunk_size=10), direct;
+                            atol=1e-5, rtol=1e-5))
     end
     
     @testset "XOR Fingerprint SPI Verification" begin

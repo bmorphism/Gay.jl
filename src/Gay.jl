@@ -20,6 +20,8 @@ export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_pale
 export gay_interleave, gay_interleave_streams, GayInterleaver
 export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
 export splitmix64, GOLDEN, MIX1, MIX2
+export PicoEntropyLoopReceipt, pico_entropyloop_devices, pico_entropyloop_sample
+export pico_entropyloop_receipt, pico_entropyloop_seed, pico_entropyloop_write!
 
 # Include Swarm Triad - Mandatory 3-way split with sentinel monitoring
 include("swarm_triad.jl")
@@ -397,6 +399,15 @@ export map_to_gamut, is_in_gamut, gamut_distance
 export learn_gamut_map!, gamut_loss, chroma_preservation_loss
 export GayChain, chain_to_gamut, verify_chain_in_gamut, process_gay_chain
 export enzyme_gamut_gradient, enzyme_learn_gamut!  # Stubs, overridden by GayEnzymeExt
+
+# Include Okhsl-Specific Learnable Color Space (Enzyme-differentiable)
+include("okhsl_learnable.jl")
+using .OkhslLearnable
+export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
+export OkhslParameters, SeedProjection, EquivalenceClassObjective
+export forward_color, learn_colorspace!, compute_loss
+export EnzymeColorState, enzyme_color_gradient
+export demo_learnable_okhsl
 
 # Include Gay Hyperdoctrines - chromatic categorical logic
 include("hyperdoctrine.jl")
@@ -1929,19 +1940,26 @@ export world_all, world_run, WorldResult, WORLD_DEMOS
 # Module initialization
 # ═══════════════════════════════════════════════════════════════════════════
 
+gay_verbose_load() = lowercase(get(ENV, "GAY_VERBOSE_LOAD", "0")) in ("1", "true", "yes", "on")
+
 function __init__()
     # Initialize global splittable RNG
     gay_seed!(GAY_SEED)
-    
-    # Auto-initialize REPL if running interactively
-    if isdefined(Base, :active_repl) && Base.active_repl !== nothing
+
+    # Auto-initialize SPC only for an actual interactive REPL.
+    interactive_repl = isinteractive() &&
+        isdefined(Base, :active_repl) &&
+        Base.active_repl !== nothing
+
+    if interactive_repl
         @async begin
             sleep(0.1)  # Let REPL finish loading
             # Initialize SPC REPL (press SPACE to enter)
             init_spc_repl()
         end
-    else
-        @info "Gay.jl loaded 🏳️‍🌈 - Wide-gamut colors + splittable determinism"
+        gay_verbose_load() && @info "Gay.jl loaded - SPC REPL initialized"
+    elseif gay_verbose_load()
+        @info "Gay.jl loaded - Wide-gamut colors + splittable determinism"
         @info "In REPL: init_spc_repl() for SPC mode (press SPACE to enter)"
     end
 end
