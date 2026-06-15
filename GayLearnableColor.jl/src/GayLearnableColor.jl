@@ -141,10 +141,15 @@ function diagnose(s::DiminishingReturnScale, a, b, c; tol::Float64=1e-9)
     x  = local_diff(s, a, b)
     y  = local_diff(s, b, c)
     z  = local_diff(s, a, c)
-    collinear = abs(x + y - z) ≤ 1e-6 * max(1.0, z)
+    collinear = abs(x + y - z) ≤ 1e-6 * max(1.0, z)   # structural: LOCAL-kernel additivity threshold
     gap = compare(s, a, b) + compare(s, b, c) - compare(s, a, c)
     expected = global_diff_raw(s, x) * global_diff_raw(s, y) / s.A
-    gate = collinear ? (gap > tol && abs(gap - expected) ≤ 1e-6 * max(1.0, expected)) :
+    # Identity-match tolerance DERIVED from SatReadout.key_identity' (gap == expected
+    # EXACTLY over ℝ) + IEEE-754 exp() rounding ≈ 2·ε·A. 64·ε·scale is the certified
+    # ceiling — replaces the tuned 1e-6, ~10⁹× tighter, and falsifiable: a kernel
+    # outside the f_A family overshoots it and the gate fires.
+    idtol = 64.0 * eps(Float64) * max(s.A, abs(expected), 1.0)
+    gate = collinear ? (gap > tol && abs(gap - expected) ≤ idtol) :
                        (gap > tol)
     (gate=gate, gap=gap, expected_gap=expected, collinear=collinear)
 end

@@ -24,7 +24,11 @@ const _saturate = (ΔE, A) -> A * (1 - exp(-ΔE / A))
 
 @testset "non-Riemannian gate (derived tolerances)" begin
     A = 10.0
-    slop = 1e-9   # float slop only; NOT a tunable
+    # Tolerance DERIVED, not tuned (now literally): SatReadout.key_identity'
+    # proves f(x)+f(y)-f(x+y) = f(x)f(y)/A EXACTLY over ℝ, so the only admissible
+    # slack is IEEE-754 rounding of exp(), ≈ 2·ε·A. 64·ε·A is the certified
+    # ceiling (cross-substrate measured residual ≤ 3.6e-15 ≪ this at A=10; bb≡julia).
+    slop = 64 * eps(Float64) * A   # ≈ 1.42e-13 — a rounding bound, not a knob
 
     @testset "exact defect identity f(x)+f(y)-f(x+y) = f(x)f(y)/A" begin
         for x in (0.5, 1.0, 3.7, 25.0, 80.0), y in (0.25, 1.0, 9.9, 60.0)
@@ -75,7 +79,7 @@ const _saturate = (ΔE, A) -> A * (1 - exp(-ΔE / A))
 
         # Quantitative when the triplet is metrically collinear for d:
         if abs(dAB + dBC - dAC) < 1e-6
-            @test (fAB + fBC - fAC) ≥ _saturate(dAB, A) * _saturate(dBC, A) / A - 1e-6
+            @test (fAB + fBC - fAC) ≥ _saturate(dAB, A) * _saturate(dBC, A) / A - slop
         end
 
         # The contrast that names the failure mode: raw CIEDE2000's gap on
