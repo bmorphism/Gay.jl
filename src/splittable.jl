@@ -1135,3 +1135,101 @@ function world_padic(; n::Int=10000, precision::Int=20, verify_triples::Int=10)
         sample = [(i, colors[i]) for i in [1, 2, 3, 10, 100] if i <= length(colors)],
     )
 end
+
+# ═══════════════════════════════════════════════════════════════════════════
+# O(1) Random-Access Hashing and Seeding Utilities (Gay.jl-splitmixrgb-xf)
+# ═══════════════════════════════════════════════════════════════════════════
+
+const GOLDEN_GAMMA = GOLDEN
+
+@inline function mix64(z::UInt64)
+    z = (z ⊻ (z >> 30)) * MIX1
+    z = (z ⊻ (z >> 27)) * MIX2
+    z ⊻ (z >> 31)
+end
+
+@inline split_mix_64(x::UInt64) = mix64(x + GOLDEN_GAMMA)
+
+@inline function hash_color_rgb(seed::Integer, index::Integer)
+    h = mix64(xor(UInt64(seed), UInt64(index) * GOLDEN_GAMMA))
+    (Float32(h & 0xFF) / 255.0f0,
+     Float32((h >> 8) & 0xFF) / 255.0f0,
+     Float32((h >> 16) & 0xFF) / 255.0f0)
+end
+
+@inline function hash_color_lch(seed::Integer, index::Integer)
+    h1 = mix64(xor(UInt64(seed), UInt64(index) * GOLDEN_GAMMA))
+    h2 = mix64(h1); h3 = mix64(h2)
+    (30.0f0 + Float32(h1 & 0xFFFF) / 65535.0f0 * 50.0f0,
+     40.0f0 + Float32(h2 & 0xFFFF) / 65535.0f0 * 40.0f0,
+     Float32(h3 & 0xFFFF) / 65535.0f0 * 360.0f0)
+end
+
+function okhsl_to_rgb(h::Float64, s::Float64, l::Float64)
+    hn = mod(h, 360.0) / 360.0
+    c = (1 - abs(2l - 1)) * s
+    x = c * (1 - abs(mod(hn * 6, 2) - 1))
+    m = l - c / 2
+    r, g, b = if hn < 1/6
+        (c, x, 0.0)
+    elseif hn < 2/6
+        (x, c, 0.0)
+    elseif hn < 3/6
+        (0.0, c, x)
+    elseif hn < 4/6
+        (0.0, x, c)
+    elseif hn < 5/6
+        (x, 0.0, c)
+    else
+        (c, 0.0, x)
+    end
+    (clamp(r + m, 0.0, 1.0), clamp(g + m, 0.0, 1.0), clamp(b + m, 0.0, 1.0))
+end
+
+rgb_hex(r, g, b) = @sprintf("#%02X%02X%02X", trunc(Int, r*255), trunc(Int, g*255), trunc(Int, b*255))
+
+hash_color_hex(seed::Integer, index::Integer) = rgb_hex(hash_color_rgb(seed, index)...)
+
+const FNV_OFFSET = 0xcbf29ce484222325
+const FNV_PRIME = 0x100000001b3
+
+function stable_seed(x; seed::Integer=GAY_SEED)
+    h = FNV_OFFSET ⊻ UInt64(seed)
+    for b in codeunits(string(x))
+        h = (h ⊻ UInt64(b)) * FNV_PRIME
+    end
+    mix64(h)
+end
+
+mutable struct GaySplittableRandom <: Random.AbstractRNG
+    seed::UInt64
+    gamma::UInt64
+end
+
+@inline function _gay_next!(r::GaySplittableRandom)
+    r.seed += r.gamma
+    return r.seed
+end
+
+@inline function gay_randf(r::GaySplittableRandom)
+    Float64(mix64(_gay_next!(r))) / 1.8446744073709552e19
+end
+
+@inline function gay_split(r::GaySplittableRandom)
+    a = mix64(_gay_next!(r))
+    b = mix64(_gay_next!(r)) | UInt64(1)
+    GaySplittableRandom(a, b)
+end
+
+function trit(index::Integer; seed::Union{Nothing,Integer}=nothing, gamma::Integer=GOLDEN_GAMMA)
+    if seed === nothing
+        return trit(TritTick(index))
+    else
+        rng = GaySplittableRandom(seed, gamma)
+        for _ in 1:index
+            rng = gay_split(rng)
+        end
+        return Int8(floor(Int, gay_randf(rng) * 3) - 1)
+    end
+end
+

@@ -29,6 +29,8 @@ export GayRNG, gay_seed!, gay_rng, gay_split, next_color, next_colors, next_pale
 export gay_interleave, gay_interleave_streams, GayInterleaver
 export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color, gay_exchange_colors
 export splitmix64, GOLDEN, MIX1, MIX2
+export stable_seed, hash_color_hex, okhsl_to_rgb, rgb_hex
+
 
 # Include Swarm Triad - Mandatory 3-way split with sentinel monitoring
 include("swarm_triad.jl")

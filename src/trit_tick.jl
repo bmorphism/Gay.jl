@@ -129,12 +129,7 @@ Based on which second this tick falls in: `floor(tick / T₁) mod 3`, balanced.
     Int8((second + 1) % 3) - Int8(1)
 end
 
-"""
-    trit(tick::Integer) -> Int8
 
-GF(3) trit for a bare tick value (convenience).
-"""
-@inline trit(tick::Integer) = trit(TritTick(tick))
 
 """
     trit_role(t) -> Symbol
