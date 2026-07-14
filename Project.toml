@@ -1,0 +1,46 @@
+name = "Gay"
+uuid = "8b449cd3-8280-14dd-1069-000000000042"
+version = "0.4.0"
+authors = ["Physeter Macrocephalus <physeter@plurigrid.com>"]
+
+[deps]
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Unicode = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[weakdeps]
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+FractalDimensions = "4665ce21-e117-4649-aed8-08bbe5ccbead"
+PersistenceDiagrams = "90b4794c-894b-4756-a0f8-5efeb5ddf7ae"
+Ripserer = "aa79e827-bd0b-42a8-9f10-2b302677a641"
+
+[extensions]
+GayColorsExt = "Colors"
+GayFractalExt = "FractalDimensions"
+GayPersistenceDiagramsExt = ["PersistenceDiagrams", "Ripserer"]
+GayRipsererExt = "Ripserer"
+
+[compat]
+Aqua = "0.8"
+Colors = "0.12, 0.13"
+FractalDimensions = "1"
+PersistenceDiagrams = "0.9, 1"
+Printf = "1"
+Random = "1"
+SHA = "0.7"
+Unicode = "1"
+Ripserer = "0.15, 0.16"
+Test = "1"
+julia = "1.10"
+
+[extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+FractalDimensions = "4665ce21-e117-4649-aed8-08bbe5ccbead"
+PersistenceDiagrams = "90b4794c-894b-4756-a0f8-5efeb5ddf7ae"
+Ripserer = "aa79e827-bd0b-42a8-9f10-2b302677a641"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "Aqua", "Colors", "FractalDimensions", "PersistenceDiagrams", "Ripserer"]

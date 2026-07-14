@@ -1,0 +1,41 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.12.6"
+manifest_format = "2.0"
+project_hash = "1bade0b3ceb44afc368a0ec86dcfba97afdf97ed"
+
+[[deps.Gay]]
+deps = ["Printf", "Random", "SHA", "Unicode"]
+path = "."
+uuid = "8b449cd3-8280-14dd-1069-000000000042"
+version = "0.4.0"
+
+    [deps.Gay.extensions]
+    GayColorsExt = "Colors"
+    GayFractalExt = "FractalDimensions"
+    GayPersistenceDiagramsExt = ["PersistenceDiagrams", "Ripserer"]
+    GayRipsererExt = "Ripserer"
+
+    [deps.Gay.weakdeps]
+    Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+    FractalDimensions = "4665ce21-e117-4649-aed8-08bbe5ccbead"
+    PersistenceDiagrams = "90b4794c-894b-4756-a0f8-5efeb5ddf7ae"
+    Ripserer = "aa79e827-bd0b-42a8-9f10-2b302677a641"
+
+[[deps.Printf]]
+deps = ["Unicode"]
+uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+version = "1.11.0"
+
+[[deps.Random]]
+deps = ["SHA"]
+uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+version = "1.11.0"
+
+[[deps.SHA]]
+uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+version = "0.7.0"
+
+[[deps.Unicode]]
+uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+version = "1.11.0"
