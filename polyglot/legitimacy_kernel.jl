@@ -85,4 +85,6 @@ function main()
     println("TOTAL fp=$(string(total, base=16, pad=16)) legit=$(legit_n)/16 wev=$(wevsum)")
 end
 
-main()
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
