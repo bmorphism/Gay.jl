@@ -213,8 +213,10 @@ The core stays dep-free; loading a companion package activates its extension:
 | `using FractalDimensions` | `GayFractalExt` | `gay_fractal_dimension` (Grassberger–Procaccia) |
 | `using PersistenceDiagrams, Ripserer` | `GayPersistenceDiagramsExt` | `gay_bottleneck`, `gay_wasserstein`, `gay_matching` |
 
-See `docs/color_topology_integration_memo.md` for the integration audit and
-the MiniQhull/Nix repair script under `scripts/`.
+See `docs/color_topology_integration_memo.md` for the integration audit.
+With Ripserer ≥ 0.17 / MiniQhull ≥ 0.4 (JLL-backed) no build repair is needed;
+`scripts/build_miniqhull_with_nix_qhull.jl` remains only for legacy
+MiniQhull 0.3 depots.
 
 ## Honest gaps
 

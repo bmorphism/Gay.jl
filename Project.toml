@@ -1,6 +1,6 @@
 name = "Gay"
 uuid = "8b449cd3-8280-14dd-1069-000000000042"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Physeter Macrocephalus <physeter@plurigrid.com>"]
 
 [deps]
@@ -30,7 +30,7 @@ Printf = "1"
 Random = "1"
 SHA = "0.7"
 Unicode = "1"
-Ripserer = "0.15, 0.16"
+Ripserer = "0.15, 0.16, 0.17"
 Test = "1"
 julia = "1.10"
 
