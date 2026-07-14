@@ -27,3 +27,30 @@ itself is not fast-forward.
 
 To recover anything from a prior lineage: `git checkout lineage/<name> -- <path>`,
 or port it forward as a weakdep extension on the current kernel.
+
+## Family-tree census (measured 2026-07-14)
+
+There are exactly **two** lineage roots in this repo, not many: the orphan
+kernel root (`c58702c`, current `gay`) and the `bb1d1d8` family, of which the
+archived monorepo HEAD and all ten legacy branches are divergent limbs.
+Divergence points below are measured merge-bases against
+`lineage/monorepo-v0.1.0`; these branches are family, so ordinary git
+machinery (merge/rebase/cherry-pick) applies among them — the semilattice
+join is only needed across the two roots.
+
+| branch | commits | diverged | last | contents |
+|---|---|---|---|---|
+| `master` | 76 | `0f27610` 2025-12-15 | 2026-06-15 PR #229 | parallel main line through PR #229 |
+| `xf-integration` | 98 | `9034077` 2026-03-25 | 2026-06-15 PR #231 | splitmixrgb-xf — direct ancestor of kernel `hash_color_*`; **port-to-kernel candidate** |
+| `zmod3-elegant` | 89 | (bb1d1d8 family) | 2026-03-25 | 176 Lean 4 GF(3) theorems + trit type; **pairs with `spi_trit`, port candidate** |
+| `claude/launch-gay-passport-LW6hS` | 87 | (family) | 2026-03-26 | Ghani–Hedges open games on did:gay holders |
+| `feature/topos-staging-area` | 95 | (family) | 2026-01-16 | dafny `spi_galois.dfy`, seed-1069 alignment |
+| `propagator` | 58 | `df0e481` 2025-12-11 | 2025-12-11 | LearnableColorSpace + Enzyme autodiff |
+| `slave` | 71 | = its own HEAD `0f27610` | 2025-12-15 | frozen fork-point marker of the master/gay split (GaySplittableRNG) |
+| `add-zigzagboomerang-rebased` | — | (family) | 2025-12-15 | seed-as-secret hygiene |
+| `bruhat-tits-curriculum` | — | (family) | 2025-12-15 | `world()` runner, Split3 + Sentinel |
+| `integrate-ferrite-…` | — | (family) | 2026-03-26 | CI extras/targets fix |
+
+`compathelper/*` (192 refs) are lineage citizens of the family tree — the
+bots' proposal record. They were deleted once in error and restored
+SHA-identical from the Activity API; they are not sweepable ("we are we").
