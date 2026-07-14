@@ -1,243 +1,369 @@
 # Gay.jl
 
-`SplittableRandom(seed) → split(index×) → Okhsl color`, plus a cross-runtime
-O(1) kernel byte-identical to `spi-race`'s `libspi`.
+Deterministic semantic color, explicit SplitMix64 conventions, and
+evidence-preserving visual and auditory projections for Julia.
 
-A small, dep-free Julia package (Printf/Random/SHA/Unicode only) authored from
-a single 64-bit hash — the amp-thread tag `0x8b449cd3828014dd` — to answer the
-question *"this hash, into Gay.jl as a gay seed, how?"* Heavier color science
-and topology load lazily as package extensions.
+Gay.jl turns a seed and an index into reproducible color while keeping the
+algorithmic convention visible. Its compact core depends only on Julia standard
+libraries; color science, persistent homology, and fractal-dimension analysis
+load through package extensions.
 
-## The essential feature set
+## Current lineage
 
-Triangulated across this package, `spi-race`, and `xf.jl`, five things are
-load-bearing; everything else is an optional layer:
+The current `gay` branch is the compact kernel lineage:
 
+```text
+name    = Gay
+uuid    = 8b449cd3-8280-14dd-1069-000000000042
+version = 0.5.0
 ```
-color(seed, index) = extract(mix64(seed + γ·index))    # pure, O(1), stateless
-γ = 0x9e3779b97f4a7c15                                  # GOLDEN_GAMMA
+
+An older monorepo lineage has a different UUID and different behavior. It is
+preserved at `lineage/monorepo-v0.1.0`; it is not ordinary branch drift. See
+[`LINEAGE.md`](LINEAGE.md) for the append-only lineage policy.
+
+Two packages with the same Julia module name cannot be selected together by an
+ordinary `using Gay` environment. Cross-lineage work therefore uses an explicit
+Arrow, DuckDB, CSV, or JSON boundary carrying the package UUID, commit, seed,
+index, and algorithm convention.
+
+## Install
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/bmorphism/Gay.jl")
 ```
 
-1. **SplitMix64 kernel** — the constants every implementation shares.
-2. **Deterministic seed×index→color** — same inputs ⇒ same color, forever.
-3. **SPI** (Strong Parallelism Invariance) — sequential ≡ reversed ≡ shuffled
-   ≡ parallel.
-4. **XOR-fold fingerprint** — commutative + associative ⇒ any partition, any
-   order, same answer. This is what makes SPI *checkable*.
-5. **GF(3) trit** — `(r+g+b) mod 3` centered to `{-1,0,+1}`; Σ conserved.
+Optional analysis packages can be added independently:
 
-## Cross-runtime SPI kernel (`spi_*`)
+```julia
+Pkg.add(["Colors", "FractalDimensions", "Ripserer", "PersistenceDiagrams"])
+```
 
-The canonical constant-time kernel, byte-identical to
-`spi-race/libspi.zig`'s C ABI — so Julia, Zig, Swift/Metal, C/NEON, Python,
-Ruby, and anything with FFI agree on every color:
+## Three color surfaces
 
 ```julia
 using Gay
 
-spi_color_hex(42, 0)                       # "#727622"  == spi_color_at(42,0)
-spi_color_hex(42, 69)                      # "#A8E8BD"
-spi_color_u32(42, 0)                       # 0x00727622 (packed 0x00RRGGBB)
+seed = UInt64(0xC91F14)
 
-spi_trit(42, 0)                            # +1   (centered, {-1,0,+1})
-spi_trit_sum(42, 0, 100)                   # 2    (raw mod-3 residue, ABI-exact)
-
-spi_xor_fingerprint(42, 0, 1_000_000)      # 0x0000000010de88
-spi_xor_fingerprint_parallel(42, 1_000_000; chunks=4)
-                                           # 0x0000000010de88 — SPI holds
+color_at(68; seed=seed)       # split-lattice HSL-like walk, O(index)
+hash_color_hex(seed, 68)      # XOR-addressed RGB hash, O(1)
+spi_color_hex(seed, 68)       # cross-runtime additive SPI kernel, O(1)
 ```
 
-Verified two independent ways:
+These functions deliberately answer different questions:
 
-- **Pinned vectors** in `test/runtests.jl` (colors, fingerprints at 1M/10M,
-  trits) taken from the Zig reference binary.
-- **Live ABI cross-validation**: `scripts/spi_ffi_crossvalidate.jl` `ccall`s
-  into `libspi.dylib` and compares 2144 checks across all five entry points —
-  including Julia `Threads.@threads` chunking vs Zig pthreads producing the
-  same fingerprint. 0 mismatches.
+| surface | recurrence | projection | role |
+|---|---|---|---|
+| `color_at` | repeated `split()` | simplified HSL-like projection | legacy sequential palette |
+| `hash_color_*` | `M(seed xor index*G)` | low byte first | O(1) GPU-portable indexed hash |
+| `spi_color_*` | `M(seed + index*G)` | packed `0xRRGGBB` | cross-runtime canonical SPI kernel |
+
+Here `M` is the SplitMix64 finalizer and
+`G = 0x9e3779b97f4a7c15`. All `UInt64` arithmetic is modulo `2^64`.
+
+## What “extra advance” means
+
+For an XOR-addressed indexed word
+
+```text
+x_i = seed xor (index * G),
+```
+
+the two conventions are:
+
+```text
+no advance:     C_no(i)  = RGB24(M(x_i))
+extra advance:  C_adv(i) = RGB24(M(x_i + G))
+```
+
+No advance treats `x_i` as the word to finalize. Extra advance treats `x_i`
+as RNG state immediately before `next()`, so the state advances by `G` before
+finalization.
+
+Extra advance is not stronger randomness. It is a state-origin convention.
+Because indexed addressing uses XOR while advancement uses addition,
+`C_adv(i)` is generally not `C_no(i + 1)`: XOR and addition do not commute.
+
+This lineage makes the distinction explicit:
+
+- `hash_color_*` is the no-advance XOR convention;
+- `split_mix_64(x)` is the advance-then-finalize primitive `M(x + G)`;
+- `spi_color_*` uses additive addressing directly and does not add a hidden
+  extra step;
+- `color_at` is a separate split-lattice walk, not either indexed hash.
+
+The archived monorepo lineage used the extra-advance convention in its main
+O(1) `hash_color`/`color_at` path. A seed alone therefore cannot identify a
+cross-lineage color. Persist at least:
+
+```text
+package_uuid, package_commit, seed, index, gamma,
+address_rule, advance_rule, byte_projection
+```
+
+Both 64-bit mixers are bijective before projection, but RGB24 projection is
+not. Exact color collisions remain possible and expected; neither indexed
+kernel is a self-avoiding color walk.
+
+## Parallel invariance
+
+The `spi_*` surface is the cross-runtime contract. It supports stateless random
+access and an associative XOR-fold fingerprint:
+
+```julia
+using Gay
+
+sequential = spi_xor_fingerprint(42, 0, 1_000_000)
+parallel = spi_xor_fingerprint_parallel(42, 1_000_000; chunks=4)
+@assert sequential == parallel
+```
+
+Pinned Julia vectors and the optional `libspi` FFI cross-validation check Julia
+against the Zig reference through its C ABI. Swift/Metal and other consumers
+are intended to implement the same byte contract, but each consumer requires
+its own comparison evidence.
+
+## FractalDimensions extension
+
+Loading `FractalDimensions` activates
+[`GayFractalExt`](ext/GayFractalExt.jl). The extension accepts:
+
+- a vector of `#RRGGBB` strings;
+- a `WalkResult`;
+- an integer number of sequential `color_at` samples.
+
+```julia
+using Gay, FractalDimensions
+
+seed = UInt64(0xC91F14)
+colors = [hash_color_hex(seed, i) for i in 0:511]
+D = gay_fractal_dimension(colors; metric=:euclidean, show_progress=false)
+```
+
+The integer overload `gay_fractal_dimension(n)` generates `color_at(0:n-1)`.
+Comparisons between indexed kernels must therefore construct each color vector
+explicitly and pass the vector overload.
+
+Loading `Colors` as well enables the perceptual path, where pairwise distance is
+CIEDE2000 through `gay_colordiff`. Without it, the extension warns and falls
+back to Euclidean distance in sRGB.
+
+The current automatic perceptual path is diagnostic rather than a clean
+CIEDE2000 correlation dimension: its default `epsilon` grid is estimated from
+the extension's one-dimensional index surrogate before the custom CIEDE2000
+norm is applied. A scientifically interpreted perceptual curve must instead
+derive its scale grid from perceptual pairwise distances and call the underlying
+FractalDimensions correlation-sum API explicitly.
+
+### Why one dimension is not an algorithm identifier
+
+An unordered RGB point cloud from either indexed convention resembles a nearly
+uniform sample. A single global correlation dimension therefore cannot reliably
+reconstruct the state-origin convention. The ordinary correlation sum with
+Theiler window `w=0` mostly discards sequence order.
+
+To compare causal color chains, retain one or more order-aware witnesses:
+
+- the full correlation curve `C(epsilon)` and its local slopes;
+- pointwise dimensions replayed in index order;
+- a nonzero Theiler window;
+- Higuchi length and dimension on R, G, B, luminance, or unwrapped hue;
+- delay embeddings of those indexed channels;
+- persistent-homology births and lifetimes.
+
+FractalDimensions estimates scaling behavior, typically fitting
+
+```text
+log C(epsilon) approximately equals D * log epsilon.
+```
+
+Convenience functions ending in `_dim` automate scale and fit-region choices.
+Reproducible scientific output should retain the scale curve, preprocessing,
+metric, fit configuration, and uncertainty rather than only the returned
+scalar.
+
+## Sonifying fractal evidence
+
+The package does not ship an audio engine. Gay supplies a deterministic seed and
+color token; FractalDimensions supplies the multiscale evidence; a separate
+renderer assigns that token to a voice and produces PCM, MIDI, OSC, or another
+auditory carrier.
+
+The evidence-preserving mapping is:
+
+| Fractal evidence | Auditory mapping |
+|---|---|
+| `log(epsilon)` | event time |
+| local slope `d log(C) / d log(epsilon)` | pitch |
+| `C(epsilon)` | gain or event density |
+| confidence interval or fit residual | detuning, vibrato, or noise width |
+| pointwise dimension | melody or polyphony |
+| posterior draw, worker, or chain | voice and pan |
+| Gay color identity | categorical timbre identity |
+| persistence birth and lifetime | onset and duration |
+
+Dimension-to-pitch should be monotone. Hashing the final dimension would destroy
+neighborhood structure: nearby estimates could sound unrelated while distant
+estimates could collide.
+
+### Minimal event extractor
+
+The following adapter exposes the evidence needed by an external renderer:
+
+```julia
+using Gay, FractalDimensions
+
+function rgb_state_space(colors)
+    data = Matrix{Float64}(undef, length(colors), 3)
+    for (i, hex) in pairs(colors)
+        data[i, 1] = parse(Int, hex[2:3]; base=16) / 255
+        data[i, 2] = parse(Int, hex[4:5]; base=16) / 255
+        data[i, 3] = parse(Int, hex[6:7]; base=16) / 255
+    end
+    StateSpaceSet(data)
+end
+
+function fractal_score(colors, source_id;
+                       chain=0, fit=LargestLinearRegion())
+    X = rgb_state_space(colors)
+    epsilon = estimate_boxsizes(X)
+    C = correlationsum(X, epsilon; show_progress=false)
+
+    keep = (C .> 0) .& isfinite.(C)
+    epsilon_fit = epsilon[keep]
+    x = log2.(epsilon_fit)
+    y = log2.(C[keep])
+    D, D_low, D_high = slopefit(x, y, fit)
+
+    D_local = diff(y) ./ diff(x)
+    event_time_logscale = (x[1:end-1] .+ x[2:end]) ./ 2
+
+    # Proposed monotone rendering: D in [0, 3] maps to MIDI 48:84.
+    midi = 48 .+ 12 .* clamp.(D_local, 0, 3)
+    frequency_hz = 440 .* 2 .^ ((midi .- 69) ./ 12)
+
+    identity_seed = stable_seed(source_id)
+    identity_color = hash_color_hex(identity_seed, chain)
+
+    (; source_id, colors, chain, metric=:euclidean,
+       preprocessing=:rgb_unit_cube, fit,
+       epsilon, C, keep, epsilon_fit, D, D_low, D_high,
+       D_local, event_time_logscale, frequency_hz,
+       identity_seed, identity_color)
+end
+```
+
+The MIDI range above is a rendering choice, not a scientific invariant. The
+returned record keeps the source colors and estimator choices needed to replace
+the shown pitch renderer. A downstream renderer can normalize the log-scale
+event positions into its desired playback interval.
+
+## Operational cobordism with the ptiede Julia ecosystem
+
+There is no separate `ptiede` algebra in this package. The name refers to Paul
+Tiede’s Julia ecosystem around Comrade, VIDA, and parallel posterior inference.
+The archived monorepo described this architectural path:
+
+```text
+Comrade.jl -> Pigeons.jl -> SplittableRandoms.jl -> Gay.jl
+```
+
+That path is an interoperability map, not a dependency claim. Comrade,
+VLBISkyModels, VIDA, and Pigeons are not dependencies of the compact Gay core.
+
+The practical cobordism is a shared evidence object with two renderings:
+
+```text
+Comrade / VIDA posterior image ---\
+fNIRS or another timeseries -------+--> StateSpaceSet
+Gay indexed color walk -----------/          |
+                                      FractalDimensions
+                                             |
+                  E = {epsilon, C, D_local, D, CI, provenance}
+                                   /                 \
+                         Gay color boundary     audio boundary
+```
+
+[`VIDA.jl`](https://github.com/ptiede/VIDA.jl) supplies image-domain feature
+extraction through ComradeBase and VLBISkyModels interfaces.
+[`Pigeons.jl`](https://github.com/Julia-Tempering/Pigeons.jl) supplies parallel
+posterior draws. Dimension can be estimated per image or posterior draw, while
+Gay assigns a stable color token that the auditory renderer can bind to a
+voice.
+
+The middle evidence object establishes the correspondence. A shared seed alone
+does not prove that visual and auditory outputs represent the same observation.
+
+### Neutral evidence schema
+
+DuckDB, Arrow, CSV, or JSON records should include at least:
+
+```text
+source_id, draw_id, chain_id, worker_id, index,
+package_uuid, package_commit, seed, gamma,
+address_rule, advance_rule, byte_projection,
+estimator, metric, preprocessing, theiler_window,
+epsilon, correlation_sum, local_dimension, global_dimension,
+ci_low, ci_high, fit_region,
+color_hex, pitch_hz, gain, pan
+```
+
+This schema also lets the archived and current Gay lineages interoperate without
+ambiguous same-name package resolution.
+
+## fNIRS and BCI trajectories
+
+For fNIRS, an order-aware score can use sliding-window `higuchi_dim` on HbO and
+HbR, or delay-embed each channel before estimating local or correlation
+dimension:
+
+```text
+window time             -> event time
+D_HbO(t), D_HbR(t)      -> separate pitches or voices
+hemodynamic amplitude   -> gain
+dimension uncertainty   -> vibrato or detuning width
+channel or participant  -> stable Gay voice identity
+```
+
+The ordered hemodynamic signal remains the scientific input. Gay color and
+sound are queryable projections with provenance, not replacements for the
+measurement.
+
+## Other optional extensions
+
+| load | extension | result |
+|---|---|---|
+| `using Colors` | `GayColorsExt` | CIEDE2000 comparison on hex colors |
+| `using FractalDimensions` | `GayFractalExt` | Grassberger-Procaccia diagnostics |
+| `using Ripserer` | `GayRipsererExt` | persistent homology of color walks |
+| `using PersistenceDiagrams, Ripserer` | `GayPersistenceDiagramsExt` | bottleneck, Wasserstein, and matching operations |
+
+The dated
+[`docs/color_topology_integration_memo.md`](docs/color_topology_integration_memo.md)
+records the pre-promotion integration investigation. Its branch and version
+status is historical; the current extension source and test suite are the
+authority for v0.5.0.
+
+## Verify
+
+```sh
+julia --project -e 'using Pkg; Pkg.test()'
+```
+
+Optional live ABI comparison requires a built `spi-race` library:
 
 ```sh
 SPI_LIB=/path/to/libspi.dylib julia --project scripts/spi_ffi_crossvalidate.jl
 ```
 
-### Three index→color conventions, disambiguated
+## Epistemic contract
 
-This package deliberately keeps three conventions with distinct jobs; do not
-mix their outputs:
-
-| function | recurrence | cost | at `(42,0)` |
-|---|---|---|---|
-| `color_at` | repeated `split()`, Okhsl | O(index) | `#6E33B8` |
-| `hash_color_*` | `mix64(seed ⊻ γ·index)`, low-byte-first | O(1) | `#227672` |
-| `spi_color_*` | `mix64(seed + γ·index)`, `0xRRGGBB` | O(1) | `#727622` |
-
-`spi_*` is the cross-runtime canonical one. `color_at` is the original
-split-lattice palette (perceptually nicer, order-dependent lattice).
-`hash_color_*` is the GPU-portable Float32 port of splitmixrgb-xf.
-
-## Born from a seed
-
-```julia
-Gay.HASH_SEED                       # 0x8b449cd3828014dd
-color_at(0; seed=Gay.HASH_SEED)     # "#55DB2A"
-color_at(1; seed=Gay.HASH_SEED)     # "#CF851D"
-```
-
-The seed slot takes any `UInt64`; the canonical Gay seed is
-`GAY_SEED = 1069 = 0x42D` (Douglas Adams + Deterministic).
-
-The gamma slot is the interesting one:
-
-```julia
-color_at(0; seed=Gay.HASH_SEED, gamma=Gay.HASH_SEED | 1)   # "#D06BE7"
-```
-
-Forcing the hash as the odd gamma instead of the seed walks a different
-SplitMix lattice — the per-index palette stays in a narrow chromatic band
-instead of spanning the hue circle. Useful for a *thematic* palette tied to a
-tag rather than a uniform sampling.
-
-## GF(3) trits from the same stream
-
-```julia
-trit(0; seed=Gay.HASH_SEED)  # -1
-trit(1; seed=Gay.HASH_SEED)  # -1
-trit(2; seed=Gay.HASH_SEED)  # +1
-```
-
-`-1 / 0 / +1` = Coplay / Witness / Play. The triad sum mod 3 is the **scalar**
-Čech audit (necessary-not-sufficient: canceling pairs hide). For the
-holonomy-vector audit, see `~/worlds/gay-lisp/colorholonomy.py`.
-
-## Semantic fault atlas
-
-Distributed-systems audit findings named as semantic keys map to stable
-addresses:
-
-```julia
-uri = "jepsen://tigerbeetle/0.16.11/transfer/strict-serializable/partition+crash/elle/pass"
-seed = stable_seed(uri)             # 0xb701dde86a270bcc
-color_at(0; seed=seed)              # "#D70E86"
-trit(0; seed=seed)                  # 1, the +1 Play lane
-hierarchical_colors(uri)[end]       # ("jepsen/tigerbeetle/.../elle/pass", "#82E4F6")
-```
-
-Gay.jl does not replace Jepsen, Elle, Knossos, or a model checker. It gives
-the finding a deterministic visible chip, trit lane, and prefix trail so
-passes, faults, regressions, and coverage gaps can be browsed and pinned.
-See `docs/semantic_fault_atlas.md` and `examples/semantic_fault_atlas.jl`.
-
-## Deterministic port rotation + TOFU
-
-Assign listening ports to parallel workers with no scheduler state:
-
-```julia
-identity = "jank-lang/activity-map|nrepl|blog+github-2026|world"
-
-port_for_worker(0, identity)   # 46711
-port_for_worker(1, identity)   # 46712
-
-report = assert_port_noncontention(20_000, identity)
-report.unique_ports            # 20000
-report.collisions              # 0
-```
-
-The default interval `29000:48999` holds exactly 20,000 ports below the macOS
-ephemeral range; `20_000` workers form a full cyclic permutation, `20_001`
-must collide by pigeonhole (`port_rotation_report(20_001, identity).collisions == 1`).
-`port_proof_catalog` gives 13 independent witness families for the same fact;
-`frames_in_flight_bound` composes planner throughput with socket-drain time.
-
-Treat a schedule as a first-use contract — pin it like an SSH host key:
-
-```julia
-pin = port_tofu_record(identity; requested_processes=17)
-verify_port_tofu(pin)                                  # true
-verify_port_tofu(pin; identity=identity * "|renamed")  # false
-verify_port_tofu(pin; frame=1)                         # false
-```
-
-Not a replacement for transport security; an opt-in drift detector for
-deterministic local-world infrastructure. See
-`docs/port_rotation_tofu_neighbors.md` and `examples/port_rotation*.jl`.
-
-## Induced colors across Jank and Basilisp
-
-A portable `.cljc` core keeps one root color while each host runtime receives
-a stable accent and an induced carrier motif:
-
-```julia
-core = cljc_core_id(read("portable.cljc", String))
-jank = cljc_runtime_color(core, :jank)
-basilisp = cljc_runtime_color(core, :basilisp)
-
-jank.core_color == basilisp.core_color       # same declared portable root
-transition = cljc_runtime_transition(jank, basilisp)
-verify_cljc_transition_structure(transition)
-```
-
-Authoritative identities are the full SHA-256 descriptor and runtime label;
-seeds and RGB remain deterministic presentation only. See
-`docs/cljc_runtime_color.md`.
-
-## Private `iphone://` color identifiers
-
-A paired Mac maps only coarse, consented interaction outcomes into a learnable
-neighborhood and issues an opaque color reference:
-
-```julia
-observation = macos_iphone_observation()
-probe = materialize_iphone_probe(observation)
-key = generate_iphone_pair_key()
-record = iphone_color_record(probe; pair_key=key, scope="external-mac",
-    epoch="session-1", semantic_root="passport.gay", space=IPhoneColorSpace())
-
-iphone_uri(record)      # iphone://g1-<model>-<color>/...
-passport_uri(record)    # passport://gay/iphone/g1-<model>-<color>/...
-```
-
-The URI never contains the semantic alias, exact counts, hardware/account
-identifiers, or raw timing; pair and color tokens are domain-separated
-HMAC-SHA-256 tags under a fresh per-enrollment key. Color is presentation, not
-authentication. Only a keyed-verified local registry resolves it back. See
-`docs/iphone_color_uri.md`.
-
-## Optional extensions (weakdeps)
-
-The core stays dep-free; loading a companion package activates its extension:
-
-| load | extension | gives |
-|---|---|---|
-| `using Colors` | `GayColorsExt` | `gay_colordiff`, CIEDE2000 on hex chips |
-| `using Ripserer` | `GayRipsererExt` | `gay_ripserer`, persistent homology of color walks |
-| `using FractalDimensions` | `GayFractalExt` | `gay_fractal_dimension` (Grassberger–Procaccia) |
-| `using PersistenceDiagrams, Ripserer` | `GayPersistenceDiagramsExt` | `gay_bottleneck`, `gay_wasserstein`, `gay_matching` |
-
-See `docs/color_topology_integration_memo.md` for the integration audit.
-With Ripserer ≥ 0.17 / MiniQhull ≥ 0.4 (JLL-backed) no build repair is needed;
-`scripts/build_miniqhull_with_nix_qhull.jl` remains only for legacy
-MiniQhull 0.3 depots.
-
-## Honest gaps
-
-- **Simplified Okhsl** matches the Python bridge / GayMCP.jl, not Björn
-  Ottosson's perceptually-uniform Oklab→HSL. A future minor version can add
-  real Okhsl without breaking the seed contract.
-- **`SplittableRandom` is inline** rather than a dependency on
-  `SplittableRandoms.jl`. The algorithm matches; interop via the
-  `seed`/`gamma` fields.
-- **`spi_trit_sum` returns the raw residue `{0,1,2}`**, matching `libspi.zig`
-  exactly; the balanced representative is `r == 2 ? -1 : r`. Only the single
-  `spi_trit` is centered. (This asymmetry is upstream's; we mirror it rather
-  than silently diverge — the FFI cross-validation caught exactly this.)
-- **The hash has no payload.** `0x8b449cd3828014dd` is an opaque 64-bit tag;
-  splitmix erases provenance.
-
-## Run
-
-```sh
-julia --project -e 'using Pkg; Pkg.test()'          # 385 tests
-julia --project examples/semantic_fault_atlas.jl
-julia --project examples/port_rotation.jl
-julia --project scripts/spi_ffi_crossvalidate.jl    # needs spi-race libspi.dylib
-```
+- A seed is presentation identity, not provenance or authentication.
+- A color collision does not imply an evidence collision.
+- A global fractal dimension does not identify an ordered color algorithm.
+- An automatically selected scaling region is a hypothesis to inspect.
+- A deterministic audio mapping is not canonical merely because it repeats.
+- Package, commit, kernel convention, metric, estimator, and source record
+  together define a reproducible rendering.
