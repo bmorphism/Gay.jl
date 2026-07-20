@@ -56,7 +56,7 @@ export
     render_circuit, qubit_color_timeline,
     
     # Demo
-    demo_gay_qasm
+    world_gay_qasm
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -1008,7 +1008,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_qasm()
+function world_gay_qasm()
     println("═══ GAY QASM: Chromatic Quantum Assembly ═══")
     println()
     

@@ -25,7 +25,7 @@ export UnifiedGayParallelism, ParallelismMode, ParallelWorld
 export parallel_walk!, converge_worlds!, unified_fingerprint
 export spawn_narrator_worlds, merge_narrator_consensus
 export world_assignment, chromatic_partition
-export demo_unified_parallelism
+export world_unified_parallelism
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # PARALLELISM MODES
@@ -501,11 +501,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_unified_parallelism()
+    world_unified_parallelism()
 
 Demonstrate the unified parallelism system.
 """
-function demo_unified_parallelism(seed::UInt64=UInt64(0x6761795f636f6c6f))
+function world_unified_parallelism(seed::UInt64=UInt64(0x6761795f636f6c6f))
     println("╔══════════════════════════════════════════════════════════════════════════════╗")
     println("║   UNIFIED GAY PARALLELISM: All Modes Under One Roof                         ║")
     println("╚══════════════════════════════════════════════════════════════════════════════╝")
@@ -583,4 +583,4 @@ function demo_unified_parallelism(seed::UInt64=UInt64(0x6761795f636f6c6f))
     return ugp
 end
 
-export demo_unified_parallelism
+export world_unified_parallelism

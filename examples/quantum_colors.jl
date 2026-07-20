@@ -247,7 +247,7 @@ function render_phase_wheel(; seed::Integer=QUANTUM_SEED)
     println("         -π" * " "^30 * "0" * " "^30 * "+π")
 end
 
-function demo_quantum_spi()
+function world_quantum_spi()
     println("\n  ═══════════════════════════════════════════════════════")
     println("  SPI Verification: :quantum branch independence")
     println("  ═══════════════════════════════════════════════════════\n")
@@ -330,7 +330,7 @@ function main()
     compare_classical_quantum()
     
     # Verify branch independence
-    demo_quantum_spi()
+    world_quantum_spi()
     
     println("\n  Properties:")
     println("  ◆ Quantum phase θ → deterministic color")

@@ -1,0 +1,44 @@
+Gay.jl Test Olog Counterfactual World
+fingerprint: 0x4935ecc3c6e5e45e
+source: 0x9c42f77c568c4f2e
+counterfactuals: 2856 = 204 witnesses x 14 alternate aspects
+complete: true cost(mean): 0.88259
+
+idx  from                         -> to                           delta  color    cost
+  1  color_space_object           -> trit_tick_object                  1  #F01299  0.7532
+  1  color_space_object           -> rng_determinism_object           -1  #49740B  1.1045
+  1  color_space_object           -> parallel_invariance_object        0  #6EADBE  1.2263
+  1  color_space_object           -> palette_interface_object          1  #F1C08A  1.0266
+  1  color_space_object           -> lisp_semantics_object            -1  #639C60  1.1496
+  1  color_space_object           -> entropy_source_object             0  #EC6ABD  1.0590
+  1  color_space_object           -> propagator_cell_object            1  #11BC30  1.2493
+  1  color_space_object           -> abductive_world_object           -1  #0C0515  1.1776
+  1  color_space_object           -> fuzz_soundness_object             0  #A3AF39  1.0708
+  1  color_space_object           -> ternary_regression_object         1  #204DD9  0.6826
+  1  color_space_object           -> nonriemannian_gate_object        -1  #645E90  0.9630
+  1  color_space_object           -> exa_loop_object                   0  #DE5E73  0.4909
+  1  color_space_object           -> aqua_hygiene_object               1  #5BE15E  0.8239
+  1  color_space_object           -> scip_catcolab_object             -1  #B8D97B  1.2058
+  2  trit_tick_object             -> color_space_object               -1  #3317A9  1.0047
+  2  trit_tick_object             -> rng_determinism_object            1  #37C90A  1.2492
+  2  trit_tick_object             -> parallel_invariance_object       -1  #F0B29D  0.7229
+  2  trit_tick_object             -> palette_interface_object          0  #7F146C  0.4981
+  2  trit_tick_object             -> lisp_semantics_object             1  #BD7C65  0.8412
+  2  trit_tick_object             -> entropy_source_object            -1  #7E645B  0.7182
+  2  trit_tick_object             -> propagator_cell_object            0  #A0974A  0.7931
+  2  trit_tick_object             -> abductive_world_object            1  #70DF79  0.7310
+  2  trit_tick_object             -> fuzz_soundness_object            -1  #C923F0  1.1637
+  2  trit_tick_object             -> ternary_regression_object         0  #A47ECC  0.8757
+  2  trit_tick_object             -> nonriemannian_gate_object         1  #23A799  0.9811
+  2  trit_tick_object             -> exa_loop_object                  -1  #9E2EBE  0.8382
+  2  trit_tick_object             -> aqua_hygiene_object               0  #568291  0.4609
+  2  trit_tick_object             -> scip_catcolab_object              1  #99380E  0.6729
+  3  rng_determinism_object       -> color_space_object                1  #7BBAFF  1.2529
+  3  rng_determinism_object       -> trit_tick_object                 -1  #6D4C2E  1.0696
+  3  rng_determinism_object       -> parallel_invariance_object        1  #5FF908  1.2665
+  3  rng_determinism_object       -> palette_interface_object         -1  #F71C86  0.7452
+  3  rng_determinism_object       -> lisp_semantics_object             0  #873CF5  0.3219
+  3  rng_determinism_object       -> entropy_source_object             1  #9AD575  1.0365
+  3  rng_determinism_object       -> propagator_cell_object           -1  #87064D  0.9462
+  3  rng_determinism_object       -> abductive_world_object            0  #A84A63  1.0007
+... 2820 more counterfactuals

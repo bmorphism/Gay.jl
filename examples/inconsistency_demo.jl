@@ -78,7 +78,7 @@ end
 Demo: Run multiple trials and show how inconsistent colors vary,
 while using consistent colors to label each unique outcome.
 """
-function demo_inconsistency(; n_colors::Int=100, n_trials::Int=7)
+function world_inconsistency(; n_colors::Int=100, n_trials::Int=7)
     println()
     println("╔══════════════════════════════════════════════════════════════════════╗")
     println("║  COLORING INCONSISTENCY WITH CONSISTENT COLORS                      ║")
@@ -193,7 +193,7 @@ end
 Show a race condition timeline where each thread's writes are colored
 consistently by thread ID, but the final result is chaotic.
 """
-function demo_race_timeline(; n_colors::Int=50, n_trials::Int=5)
+function world_race_timeline(; n_colors::Int=50, n_trials::Int=5)
     println()
     println("╔══════════════════════════════════════════════════════════════════════╗")
     println("║  RACE CONDITION TIMELINE                                            ║")
@@ -254,8 +254,8 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_inconsistency()
-    demo_race_timeline()
+    world_inconsistency()
+    world_race_timeline()
 end
 
-export demo_inconsistency, demo_race_timeline
+export world_inconsistency, world_race_timeline

@@ -870,7 +870,7 @@ end # module GayPerceptualFABRIZ
 # DEMONSTRATION
 # ============================================================================
 
-function demo_fabriz()
+function world_fabriz()
     println("=" ^ 70)
     println("FABRIZ: Gay Perceptual Color Space Demonstration")
     println("Target: Apple Vision Pro (M5/R1, 92% DCI-P3, 23M pixels)")
@@ -932,5 +932,5 @@ end
 
 # Run demo if executed directly
 if abspath(PROGRAM_FILE) == @__FILE__
-    demo_fabriz()
+    world_fabriz()
 end

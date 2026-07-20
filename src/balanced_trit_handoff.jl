@@ -772,7 +772,7 @@ function demonstrate_handoff()
     y = BalancedTernary(-17)
     z = trit_add(x, y)
     
-    ternary_demo = (
+    ternary_world = (
         x = (value=to_int(x), trits=join([string(t) for t in x.trits])),
         y = (value=to_int(y), trits=join([string(t) for t in y.trits])),
         sum = (value=to_int(z), trits=join([string(t) for t in z.trits])),
@@ -782,7 +782,7 @@ function demonstrate_handoff()
     # 2. Gay parallelism
     capacity = GayParallelCapacity()
     
-    parallelism_demo = (
+    parallelism_world = (
         theoretical_max = capacity.theoretical_max,
         cpu = capacity.cpu_multicore.practical_streams,
         gpu = capacity.gpu.practical_streams,
@@ -808,8 +808,8 @@ function demonstrate_handoff()
     post_darwin = what_comes_after_darwin()
     
     (
-        balanced_ternary = ternary_demo,
-        gay_parallelism = parallelism_demo,
+        balanced_ternary = ternary_world,
+        gay_parallelism = parallelism_world,
         
         handoffs = (
             to_trit = (
@@ -829,9 +829,9 @@ function demonstrate_handoff()
         BALANCED TRIT HANDOFF TO POST-DARWIN SUBSTRATES
         
         1. BALANCED TERNARY
-           - 42 in balanced ternary: $(ternary_demo.x.trits)
-           - -17 in balanced ternary: $(ternary_demo.y.trits)
-           - Sum verified: $(ternary_demo.verification)
+           - 42 in balanced ternary: $(ternary_world.x.trits)
+           - -17 in balanced ternary: $(ternary_world.y.trits)
+           - Sum verified: $(ternary_world.verification)
         
         2. GAY PARALLELISM BOUNDS
            - Theoretical: 2^64 = $(capacity.theoretical_max) streams

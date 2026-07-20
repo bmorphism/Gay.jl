@@ -30,6 +30,9 @@ include("test_nonriemannian_gate.jl")
 # Exa loop objectives extensions: Intrinsic HSL, Multilateral Clearing, Cellular Sheaf Čech Cohomology
 include("test_exa_loop_extensions.jl")
 
+# Jank-like LispSyntax projection into GATlab/Catlab-style artifacts
+include("lisp_gatlab_bridge_tests.jl")
+
 @testset "Gay.jl" begin
     @testset "Aqua.jl" begin
         # Individual tests for better diagnostics

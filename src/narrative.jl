@@ -583,7 +583,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_narrative_categories()
+function world_narrative_categories()
     println("╔════════════════════════════════════════════════════════════════╗")
     println("║  Narrative Categories with O(1) SELF Reafference               ║")
     println("║  Cumulative ⊣ Persistent Adjunction + Para(Narrative)          ║")

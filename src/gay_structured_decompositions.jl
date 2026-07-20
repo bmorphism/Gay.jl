@@ -89,7 +89,7 @@ export
     world_transition, invariant_world_path,
     
     # Demo
-    demo_gay_structured_decompositions
+    world_gay_structured_decompositions
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -1109,7 +1109,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_structured_decompositions()
+function world_gay_structured_decompositions()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY STRUCTURED DECOMPOSITIONS: Profinite Ergodic Path Invariance        ║")

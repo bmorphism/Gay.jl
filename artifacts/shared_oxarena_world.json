@@ -1,0 +1,40 @@
+{
+  "artifact": "shared-oxarena-world",
+  "version": 1,
+  "generated_at": "2026-07-08T14:54:51.555",
+  "arena": {
+    "uri": "arena://gay/ox/shared-bisimulation",
+    "seed": "1069",
+    "players": 3,
+    "interfaces": 6,
+    "witnesses": 9,
+    "trit_sum": 0,
+    "gf3_conserved": true,
+    "source_fingerprint_hex": "0x3417d9d6e6060864",
+    "fingerprint_hex": "0x391b517a3112a7aa"
+  },
+  "players": [
+    {"id": "O", "trit": 1, "role": "spoiler / concealer", "objective": "Choose a source or interface move whose hidden ideology should be hard to distinguish.", "color_hex": "#4E62C2"},
+    {"id": "X", "trit": -1, "role": "duplicator / detector", "objective": "Answer each O move with a derivation-preserving observation and corrective pressure.", "color_hex": "#F96F5F"},
+    {"id": "W", "trit": 0, "role": "witness / arena", "objective": "Hold shared state, certificate context, and the accepted/rejected boundary.", "color_hex": "#C1361E"}
+  ],
+  "interfaces": [
+    {"uri": "optic://gay/ox/source-observation", "optic_kind": "OpticC", "players": "O+X", "play": "surface -> observable trace", "coplay": "(surface, finding) -> naming pressure", "payoff": "X severity minus O concealment slack", "color_hex": "#9635CC"},
+    {"uri": "optic://gay/ox/scip-derivation", "optic_kind": "OpticC", "players": "X+W", "play": "finding -> scip derivation URI", "coplay": "(finding, certificate) -> exact navigation obligation", "payoff": "stable derivation closes the local proof trail", "color_hex": "#901B34"},
+    {"uri": "paraoptic://gay/ox/strategy-family", "optic_kind": "ParaOpticC", "players": "O+X", "play": "(parameters, surface) -> O/X strategy response", "coplay": "(parameters, response, pressure) -> parameter update", "payoff": "strategies are compared under a shared pressure budget", "color_hex": "#FA61FB"},
+    {"uri": "paraoptic://gay/ox/certificate-context", "optic_kind": "ParaOpticC", "players": "O+X+W", "play": "(arena, world fingerprint) -> accepted observation", "coplay": "(arena, observation, rejected candidate) -> coworld residue", "payoff": "accepted world state is bisimilar across code and derivation lanes", "color_hex": "#85566E"},
+    {"uri": "optic://gay/ox/artifact-replay", "optic_kind": "OpticC", "players": "W", "play": "world -> JSON/text artifact", "coplay": "(world, artifact) -> replay check", "payoff": "artifact fingerprint preserves tileable shared memory", "color_hex": "#DC021A"},
+    {"uri": "paraoptic://gay/ox/player-combinations", "optic_kind": "ParaOpticC", "players": "O+X+W", "play": "subset(O,X,W) x lane -> local game", "coplay": "(subset, local game, shared arena) -> merged arena state", "payoff": "two-player, three-player, and mixed games share one equivalence relation", "color_hex": "#C06747"}
+  ],
+  "witnesses": [
+    {"uri": "bisim://gay/ox/1", "left_state": "scip://gay/src/Gay.jl#L290", "right_state": "scip://gay/src/Gay.jl#L290::semantic_alias", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#7EC01A"},
+    {"uri": "bisim://gay/ox/2", "left_state": "scip://gay/src/Gay.jl#L293", "right_state": "scip://gay/src/Gay.jl#L293::semantic_alias", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#83D94A"},
+    {"uri": "bisim://gay/ox/3", "left_state": "scip://gay/src/Gay.jl#L485", "right_state": "scip://gay/src/Gay.jl#L485::semantic_alias", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#6E0B5F"},
+    {"uri": "bisim://gay/ox/4", "left_state": "scip://gay/src/Gay.jl#L568", "right_state": "scip://gay/src/Gay.jl#L568::export_surface", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#AB7B82"},
+    {"uri": "bisim://gay/ox/5", "left_state": "scip://gay/src/Gay.jl#L568", "right_state": "scip://gay/src/Gay.jl#L568::literal_surface", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#85ECC2"},
+    {"uri": "bisim://gay/ox/6", "left_state": "scip://gay/src/Gay.jl#L639", "right_state": "scip://gay/src/Gay.jl#L639::semantic_alias", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#67BF76"},
+    {"uri": "bisim://gay/ox/7", "left_state": "scip://gay/src/Gay.jl#L735", "right_state": "scip://gay/src/Gay.jl#L735::derivable_interface", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#EFD581"},
+    {"uri": "bisim://gay/ox/8", "left_state": "scip://gay/src/Gay.jl#L769", "right_state": "scip://gay/src/Gay.jl#L769::semantic_alias", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#ECD6F6"},
+    {"uri": "bisim://gay/ox/9", "left_state": "scip://gay/src/Gay.jl#L773", "right_state": "scip://gay/src/Gay.jl#L773::derivable_interface", "relation": "source state and SCIP-derived state expose the same O/X observation", "color_hex": "#2A1285"}
+  ]
+}

@@ -39,7 +39,7 @@ export ParaPara, Para, AnomaRepo, CloneOrder, CNOTGate
 export para_sample, para_para_sample, compute_clone_order
 export cnot!, cnot_cnot!, verify_reversibility
 export anticipatory_clone!, surprisal_score, satisfice_order
-export ANOMA_REPOS, clone_all_anoma!, demo_para_para_clone
+export ANOMA_REPOS, clone_all_anoma!, world_para_para_clone
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 const ANOMA_SEED = UInt64(0x616E6F6D61)  # "anoma"
@@ -526,7 +526,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_para_para_clone()
+function world_para_para_clone()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  Para(Para(AbstractMC)) → GayMC Clone Ordering                            ║")

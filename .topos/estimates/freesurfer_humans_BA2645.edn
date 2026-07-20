@@ -1,0 +1,809 @@
+{:estimate/id :freesurfer/humans-ever-interacted
+ :estimate/as-of "2026-07-08"
+ :estimate/question "How many humans have at any point meaningfully interacted with FreeSurfer software?"
+ :estimate/definition
+ {:meaningful-interaction
+  "Installed, ran, configured, taught, debugged, inspected FreeSurfer outputs, or used FreeSurfer-derived outputs in an analysis workflow."
+  :excluded
+  ["Only reading a paper that mentions FreeSurfer."
+   "Only being a study participant whose scan was processed by FreeSurfer."
+   "Only receiving a clinical or research report without engaging the FreeSurfer output."]}
+
+ :gay/seed 1069
+ :gay/source "src/splittable.jl::GENESIS_COLORS"
+ :gay/color-chain
+ [{:tick/index 4
+   :tick/hex "#BA2645"
+   :tick/trit 1
+   :tick/name "crimson"
+   :event/kind :local-next-color
+   :event/label "Current next_color() seed for this estimate pass."}
+  {:tick/index 5
+   :tick/hex "#49EE54"
+   :tick/trit 1
+   :tick/name "bright green"
+   :event/kind :official-context
+   :event/label "FreeSurfer scope and current release context."}
+  {:tick/index 6
+   :tick/hex "#11C710"
+   :tick/trit 0
+   :tick/name "lime green"
+   :event/kind :license-registration-context
+   :event/label "License-key/registration anchor."}
+  {:tick/index 7
+   :tick/hex "#76B0F0"
+   :tick/trit -1
+   :tick/name "sky blue"
+   :event/kind :community-proxy
+   :event/label "GitHub and public developer proxy."}
+  {:tick/index 8
+   :tick/hex "#E59798"
+   :tick/trit 0
+   :tick/name "dusty rose"
+   :event/kind :publication-proxy
+   :event/label "OpenAlex citation anchor for Fischl 2012."}
+  {:tick/index 9
+   :tick/hex "#5333D9"
+   :tick/trit -1
+   :tick/name "violet"
+   :event/kind :reverse-backtrack
+   :event/label "Duplicate installs, repeat authors, passive readers, and passive subjects removed."}
+  {:tick/index 10
+   :tick/hex "#7E90EB"
+   :tick/trit 0
+   :tick/name "periwinkle"
+   :event/kind :logspace-merge
+   :event/label "Weighted log-space branch merge."}
+  {:tick/index 11
+   :tick/hex "#1D9E7E"
+   :tick/trit 0
+   :tick/name "teal"
+   :event/kind :author-dedupe-refinement
+   :event/label "Seeded OpenAlex citing-author samples and capture-recapture backtrack."}
+  {:tick/index 12
+   :tick/hex "#DD7CB0"
+   :tick/trit 1
+   :tick/name "pink"
+   :event/kind :full-core-author-union
+   :event/label "Full OpenAlex pagination over six canonical FreeSurfer citation surfaces."}
+  {:tick/index 3
+   :tick/hex "#1316BB"
+   :tick/trit -1
+   :tick/name "deep blue"
+   :event/kind :parallel-nearest-coplay
+   :event/label "Counterweight: publication authorship is not identical to meaningful software interaction."}
+  {:tick/index 2
+   :tick/hex "#D06546"
+   :tick/trit 0
+   :tick/name "burnt orange"
+   :event/kind :role-weighted-author-equivalents
+   :event/label "Author-position and corresponding-author role weights over the full core-paper union."}
+  {:tick/index 1
+   :tick/hex "#E67F86"
+   :tick/trit 1
+   :tick/name "warm pink-coral"
+   :event/kind :abstract-methods-calibration
+   :event/label "Sampled OpenAlex abstract/title classifier for active FreeSurfer method language."}
+  {:tick/index 9
+   :tick/hex "#5333D9"
+   :tick/trit -1
+   :tick/name "violet"
+   :event/kind :abstract-lower-bound-coplay
+   :event/reuse? true
+   :event/label "Counterweight: abstracts under-report methods that live in full text."}
+  {:tick/index 10
+   :tick/hex "#7E90EB"
+   :tick/trit 0
+   :tick/name "periwinkle"
+   :event/kind :pmc-oa-methods-probe
+   :event/reuse? true
+   :event/label "PMCID/Open-access text probe enriches abstract-visible FreeSurfer methods evidence without moving the branch yet."}
+  {:tick/index 6
+   :tick/hex "#11C710"
+   :tick/trit 0
+   :tick/name "lime green"
+   :event/kind :pdf-extraction-coverage
+   :event/reuse? true
+   :event/label "PDF candidates are now attempted with JVM PDFBox; PDF-first runs now include greedy, core-stratified, and shrunk full-text uplift benchmarks."}]
+
+ :source/anchors
+ [{:anchor/id :freesurfer/home
+   :source/strength :official
+   :source/url "https://surfer.nmr.mgh.harvard.edu/"
+   :anchor/value "Open-source neuroimaging toolkit for processing, analysis, and visualization of human brain MR images."}
+  {:anchor/id :freesurfer/release-8-2-0
+   :source/strength :official
+   :source/url "https://surfer.nmr.mgh.harvard.edu/fswiki/ReleaseNotes"
+   :anchor/value "Stable 8.2.0 release dated 2026-03-18."}
+  {:anchor/id :freesurfer/registration
+   :source/strength :official
+   :source/url "https://surfer.nmr.mgh.harvard.edu/registration.html"
+   :anchor/value "A license.txt key file is necessary to make the software fully operational."}
+  {:anchor/id :freesurfer/stats-secondary
+   :source/strength :secondary-mirror
+   :source/url "https://en.wikipedia.org/wiki/FreeSurfer"
+   :anchor/value "57,541 registered copies as of 2022-04, attributed there to FreeSurfer FsStats."}
+  {:anchor/id :github/freesurfer
+   :source/strength :api-observed
+   :source/url "https://api.github.com/repos/freesurfer/freesurfer"
+   :anchor/value {:stars 859
+                  :forks 294
+                  :tags-observed 65
+                  :repo-created "2017-02-24T19:15:01Z"
+                  :repo-updated "2026-07-07T03:36:02Z"}}
+  {:anchor/id :openalex/fischl-2012
+   :source/strength :api-observed
+   :source/url "https://api.openalex.org/works/doi:10.1016%2Fj.neuroimage.2012.01.021"
+   :anchor/value {:title "FreeSurfer"
+                  :publication-year 2012
+                  :cited-by-count 9972}}
+  {:anchor/id :openalex/fischl-2012-citing-sample
+   :source/strength :api-observed-sampled
+   :source/url "https://api.openalex.org/works?filter=cites:W4241074797&sample=200&seed=1069&per-page=200&select=id,publication_year,authorships"
+   :anchor/value {:work-id "W4241074797"
+                  :citing-filter-count-observed 9902
+                  :sample-size 200
+                  :seeds [1069 1070 1071 1072 1073]
+                  :sample-observations
+                  [{:seed 1069 :works 200 :author-events 1763 :unique-authors 1597}
+                   {:seed 1070 :works 200 :author-events 1849 :unique-authors 1685}
+                   {:seed 1071 :works 200 :author-events 1961 :unique-authors 1707}
+                   {:seed 1072 :works 200 :author-events 1815 :unique-authors 1713}
+                   {:seed 1073 :works 200 :author-events 1820 :unique-authors 1658}]
+                  :union-unique-authors-across-samples 6871
+                  :lincoln-petersen-unique-author-estimate {:min 11502 :median 13842.0 :max 19823}}}
+  {:anchor/id :openalex/freesurfer-core-citing-union
+   :source/strength :api-observed-full-pagination
+   :source/url "https://api.openalex.org/works?filter=cites:W2151721316&per-page=200&cursor=*&select=id,authorships"
+   :anchor/value {:work-ids ["W2151721316" "W2113319997" "W2004293194" "W2151130155" "W2157270343" "W4241074797"]
+                  :query-per-page 200
+                  :works-full-pagination true
+                  :citation-slots-filter-count 43378
+                  :citation-slots-fetched 43378
+                  :citation-slots-coverage 1.0
+                  :unique-citing-works-fetched 28461
+                  :unique-authors-fetched 80923
+                  :author-events-fetched 360979
+                  :role-weighted-author-equivalents 28511.9
+                  :role-weight-scheme {:first 0.75
+                                       :last 0.45
+                                       :middle 0.18
+                                       :unknown 0.15
+                                       :corresponding-bonus 0.20
+                                       :cap 1.0}
+                  :role-events-fetched {:first 43350
+                                        :middle 275835
+                                        :last 41794
+                                        :corresponding 40214}
+                  :work-summaries
+                  [{:work-id "W2151721316" :label :surface-analysis-i :year 1999 :citing-filter-count 11418 :pages 58 :unique-authors 35628 :role-weighted-author-equivalents 12429.7}
+                   {:work-id "W2113319997" :label :surface-analysis-ii :year 1999 :citing-filter-count 6374 :pages 32 :unique-authors 21049 :role-weighted-author-equivalents 7165.1}
+                   {:work-id "W2004293194" :label :whole-brain-segmentation :year 2002 :citing-filter-count 9002 :pages 46 :unique-authors 34733 :role-weighted-author-equivalents 11441.4}
+                   {:work-id "W2151130155" :label :cortical-parcellation :year 2003 :citing-filter-count 4426 :pages 23 :unique-authors 18222 :role-weighted-author-equivalents 5971.0}
+                   {:work-id "W2157270343" :label :skull-stripping :year 2004 :citing-filter-count 2256 :pages 12 :unique-authors 10083 :role-weighted-author-equivalents 3332.5}
+                   {:work-id "W4241074797" :label :freesurfer-overview :year 2012 :citing-filter-count 9902 :pages 50 :unique-authors 40124 :role-weighted-author-equivalents 13057.5}]}}
+  {:anchor/id :openalex/freesurfer-abstract-methods-calibration
+   :source/strength :api-observed-sampled-text-classifier
+   :source/url "https://api.openalex.org/works?filter=cites:W4241074797&sample=100&seed=1069&per-page=100&select=id,title,publication_year,abstract_inverted_index,authorships"
+   :anchor/value {:core-work-ids ["W2151721316" "W2113319997" "W2004293194" "W2151130155" "W2157270343" "W4241074797"]
+                  :seeds [1069 1070]
+                  :sample-size-per-work-seed 100
+                  :raw-slots 1200
+                  :unique-citing-works 868
+                  :unique-authors-sampled 5761
+                  :class-counts {:no-abstract-evidence 740
+                                 :mention-only 61
+                                 :pipeline-inherited 46
+                                 :active-explicit 21}
+                  :class-weights {:active-explicit 1.0
+                                  :mention-only 0.45
+                                  :pipeline-inherited 0.25
+                                  :no-abstract-evidence 0.10}
+                  :active-equivalent-work-rate 0.154
+                  :role-weighted-author-equivalents 1836.3
+                  :method-weighted-author-equivalents 306.1
+                  :method-to-role-ratio 0.167
+                  :interpretation "Abstract/title classifier is a lower-bound methods signal because detailed FreeSurfer processing language often lives outside abstracts."}}
+  {:anchor/id :openalex/freesurfer-oa-methods-probe
+   :source/strength :api-observed-sampled-pmc-oa-pdf-text-classifier
+   :source/url "https://api.openalex.org/works?filter=cites:W4241074797&sample=25&seed=1069&per-page=25&select=id,title,doi,ids,publication_year,abstract_inverted_index,authorships,open_access,best_oa_location,primary_location"
+   :anchor/value {:core-work-ids ["W2151721316" "W2113319997" "W2004293194" "W2151130155" "W2157270343" "W4241074797"]
+                  :seeds [1069]
+                  :fetch-order :text-first
+                  :sample-size-per-work-seed 25
+                  :fetch-limit 12
+                  :raw-slots 150
+                  :unique-citing-works 108
+                  :unique-authors-sampled 847
+                  :open-access-summary {:works-is-oa 88
+                                        :works-with-candidate-url 108
+                                        :works-with-nonpdf-candidate 108
+                                        :works-with-pdf-candidate 53
+                                        :works-repository-fulltext-flagged 77
+                                        :oa-status-counts {:hybrid 10
+                                                           :gold 28
+                                                           :green 29
+                                                           :closed 20
+                                                           :bronze 19
+                                                           :diamond 2}}
+                  :pmc-summary {:works-with-pmid 85
+                                :works-with-pmcid 68
+                                :pmc-coverage 0.63}
+                  :fetch-summary {:attempted 12
+                                  :text-fetched 10
+                                  :no-fetchable-text 2
+                                  :not-attempted 96
+                                  :source-counts {:pmc-xml 9
+                                                  :pdf-clojure-pdfbox 1}
+                                  :pdf-attempted 2
+                                  :pdf-attempt-count 2
+                                  :status-counts {:text-fetched 10
+                                                  :no-fetchable-text 2
+                                                  :not-attempted 96}}
+                  :pdf-summary {:requested-extractor :auto
+                                :selected-extractor :clojure-pdfbox
+                                :available-extractors [:clojure-pdfbox :strings]
+                                :works-with-pdf-candidate 53
+                                :attempted-works 2
+                                :attempt-count 2
+                                :attempt-status-counts {:ok 1
+                                                        :failed 1}
+                                :text-fetched 1}
+                  :pdf-first-benchmark {:sample-size-per-work-seed 20
+                                        :seeds [1069]
+                                        :fetch-order :pdf-first
+                                        :fetch-limit 20
+                                        :unique-citing-works 90
+                                        :works-with-pdf-candidate 44
+                                        :attempted-works 20
+                                        :attempt-count 20
+                                        :attempt-status-counts {:ok 8
+                                                                :failed 12}
+                                        :text-fetched 8
+                                        :text-fetched-total 17
+                                        :source-counts {:pdf-clojure-pdfbox 8
+                                                        :pmc-xml 9}
+                                        :active-equivalent-work-rate 0.271
+                                        :method-to-role-ratio 0.29}
+                  :pdf-first-stratified-benchmark {:sample-size-per-work-seed 20
+                                                   :seeds [1069]
+                                                   :fetch-order :pdf-first
+                                                   :stratify-by :core-work
+                                                   :fetch-limit 24
+                                                   :unique-citing-works 90
+                                                   :works-with-pdf-candidate 44
+                                                   :selection {:candidate-count 90
+                                                               :selected-count 24
+                                                               :candidate-pdf-candidate-count 44
+                                                               :selected-pdf-candidate-count 22
+                                                               :candidate-stratum-counts {:cortical-parcellation 14
+                                                                                          :freesurfer-overview 16
+                                                                                          :skull-stripping 16
+                                                                                          :surface-analysis-i 20
+                                                                                          :surface-analysis-ii 10
+                                                                                          :whole-brain-segmentation 14}
+                                                               :selected-stratum-counts {:cortical-parcellation 4
+                                                                                         :freesurfer-overview 4
+                                                                                         :skull-stripping 4
+                                                                                         :surface-analysis-i 4
+                                                                                         :surface-analysis-ii 4
+                                                                                         :whole-brain-segmentation 4}
+                                                               :candidate-source-work-counts {:cortical-parcellation 20
+                                                                                              :freesurfer-overview 20
+                                                                                              :skull-stripping 20
+                                                                                              :surface-analysis-i 20
+                                                                                              :surface-analysis-ii 20
+                                                                                              :whole-brain-segmentation 20}
+                                                               :selected-source-work-counts {:cortical-parcellation 5
+                                                                                             :freesurfer-overview 6
+                                                                                             :skull-stripping 6
+                                                                                             :surface-analysis-i 4
+                                                                                             :surface-analysis-ii 6
+                                                                                             :whole-brain-segmentation 6}}
+                                                   :attempted-works 22
+                                                   :fetch-attempted 24
+                                                   :attempt-count 22
+                                                   :attempt-status-counts {:ok 6
+                                                                           :failed 16}
+                                                   :text-fetched 6
+                                                   :text-fetched-total 20
+                                                   :source-counts {:pmc-xml 13
+                                                                   :pdf-clojure-pdfbox 6
+                                                                   :oa-or-landing 1}
+                                                   :final-class-counts {:active-explicit 12
+                                                                        :mention-only 7
+                                                                        :no-text-evidence 62
+                                                                        :pipeline-inherited 9}
+                                                   :active-equivalent-work-rate 0.262
+                                                   :method-weighted-author-equivalents 62.3
+                                                   :method-to-role-ratio 0.282
+                                                   :fulltext-uplift-estimator {:prior-strength 8.0
+                                                                               :population-count 90
+                                                                               :text-fetched-count 20
+                                                                               :observed-strata 6
+                                                                               :stratum-count 6
+                                                                               :abstract-rate 0.174
+                                                                               :lower-bound-final-rate 0.262
+                                                                               :poststratified-rate 0.288
+                                                                               :poststratified-method-weighted-author-equivalents 66.9
+                                                                               :poststratified-method-to-role-ratio 0.302
+                                                                               :strata {:cortical-parcellation {:population-count 14
+                                                                                                                 :text-fetched-count 3
+                                                                                                                 :abstract-rate 0.146
+                                                                                                                 :lower-bound-final-rate 0.146
+                                                                                                                 :mean-fulltext-uplift 0.0
+                                                                                                                 :uplift-shrinkage 0.273
+                                                                                                                 :shrunk-fulltext-uplift 0.0
+                                                                                                                 :poststratified-rate 0.146
+                                                                                                                 :observed? true}
+                                                                                        :freesurfer-overview {:population-count 16
+                                                                                                              :text-fetched-count 3
+                                                                                                              :abstract-rate 0.188
+                                                                                                              :lower-bound-final-rate 0.3
+                                                                                                              :mean-fulltext-uplift 0.6
+                                                                                                              :uplift-shrinkage 0.273
+                                                                                                              :shrunk-fulltext-uplift 0.164
+                                                                                                              :poststratified-rate 0.341
+                                                                                                              :observed? true}
+                                                                                        :skull-stripping {:population-count 16
+                                                                                                          :text-fetched-count 4
+                                                                                                          :abstract-rate 0.253
+                                                                                                          :lower-bound-final-rate 0.331
+                                                                                                          :mean-fulltext-uplift 0.313
+                                                                                                          :uplift-shrinkage 0.333
+                                                                                                          :shrunk-fulltext-uplift 0.104
+                                                                                                          :poststratified-rate 0.344
+                                                                                                          :observed? true}
+                                                                                        :surface-analysis-i {:population-count 20
+                                                                                                             :text-fetched-count 3
+                                                                                                             :abstract-rate 0.118
+                                                                                                             :lower-bound-final-rate 0.208
+                                                                                                             :mean-fulltext-uplift 0.6
+                                                                                                             :uplift-shrinkage 0.273
+                                                                                                             :shrunk-fulltext-uplift 0.164
+                                                                                                             :poststratified-rate 0.281
+                                                                                                             :observed? true}
+                                                                                        :surface-analysis-ii {:population-count 10
+                                                                                                              :text-fetched-count 3
+                                                                                                              :abstract-rate 0.115
+                                                                                                              :lower-bound-final-rate 0.295
+                                                                                                              :mean-fulltext-uplift 0.6
+                                                                                                              :uplift-shrinkage 0.273
+                                                                                                              :shrunk-fulltext-uplift 0.164
+                                                                                                              :poststratified-rate 0.279
+                                                                                                              :observed? true}
+                                                                                        :whole-brain-segmentation {:population-count 14
+                                                                                                                   :text-fetched-count 4
+                                                                                                                   :abstract-rate 0.221
+                                                                                                                   :lower-bound-final-rate 0.311
+                                                                                                                   :mean-fulltext-uplift 0.313
+                                                                                                                   :uplift-shrinkage 0.333
+                                                                                                                   :shrunk-fulltext-uplift 0.104
+                                                                                                                   :poststratified-rate 0.318
+                                                                                                                   :observed? true}}}}
+                  :abstract-class-counts {:no-text-evidence 86
+                                          :mention-only 7
+                                          :pipeline-inherited 10
+                                          :active-explicit 5}
+                  :final-class-counts {:active-explicit 14
+                                       :mention-only 6
+                                       :no-text-evidence 79
+                                       :pipeline-inherited 9}
+                  :class-weights {:active-explicit 1.0
+                                  :mention-only 0.45
+                                  :pipeline-inherited 0.25
+                                  :no-text-evidence 0.10}
+                  :active-equivalent-work-rate 0.249
+                  :role-weighted-author-equivalents 259.2
+                  :method-weighted-author-equivalents 69.6
+                  :method-to-role-ratio 0.269
+                  :interpretation "PMCID/Open-access/PDF enrichment shows abstract-visible methods evidence is a lower bound: active-explicit evidence rose from 5 abstract-visible works to 14 final-class works in this 108-work sample. JVM PDFBox supplied one quality PDF extraction in the default text-first sample, eight quality PDF extractions in a greedy 20-work PDF-first benchmark, and six quality PDF extractions in a 24-work core-stratified benchmark. A shrunk stratum-level full-text uplift estimator moves the 90-work benchmark from a 0.262 lower-bound final rate to a 0.288 post-stratified rate."}}
+  {:anchor/id :openalex/pipeline-dataset-contact-probe
+   :source/strength :api-observed-sampled-proxy-lower-bound
+   :source/url "https://api.openalex.org/works"
+   :anchor/value {:proxy-work-ids ["W2507387536" "W2607804943" "W2966883685" "W2951583631" "W2169918686" "W2001477615"]
+                  :proxy-labels [:hcp-neuroimaging
+                                 :uk-biobank-image-processing
+                                 :abcd-image-processing
+                                 :fmriprep
+                                 :mne-python
+                                 :adni-progress]
+                  :sample-size-per-proxy-seed 100
+                  :seeds [1069 1070]
+                  :proxy-count 6
+                  :proxy-works [{:proxy-id :hcp-neuroimaging
+                                 :work-id "W2507387536"
+                                 :title "The Human Connectome Project's neuroimaging approach"
+                                 :doi "https://doi.org/10.1038/nn.4361"
+                                 :citing-filter-count 1201
+                                 :contact-weight 0.55
+                                 :median-role-weighted-density 2.077
+                                 :role-weighted-author-equivalents 2493.9
+                                 :contact-weighted-author-equivalents 1371.7
+                                 :sample-union-unique-authors 1155}
+                                {:proxy-id :uk-biobank-image-processing
+                                 :work-id "W2607804943"
+                                 :title "Image processing and Quality Control for the first 10,000 brain imaging datasets from UK Biobank"
+                                 :doi "https://doi.org/10.1016/j.neuroimage.2017.10.034"
+                                 :citing-filter-count 1743
+                                 :contact-weight 0.5
+                                 :median-role-weighted-density 2.639
+                                 :role-weighted-author-equivalents 4599.3
+                                 :contact-weighted-author-equivalents 2299.7
+                                 :sample-union-unique-authors 1747}
+                                {:proxy-id :abcd-image-processing
+                                 :work-id "W2966883685"
+                                 :title "Image processing and analysis methods for the Adolescent Brain Cognitive Development Study"
+                                 :doi "https://doi.org/10.1016/j.neuroimage.2019.116091"
+                                 :citing-filter-count 1142
+                                 :contact-weight 0.5
+                                 :median-role-weighted-density 2.072
+                                 :role-weighted-author-equivalents 2366.7
+                                 :contact-weighted-author-equivalents 1183.3
+                                 :sample-union-unique-authors 1066}
+                                {:proxy-id :fmriprep
+                                 :work-id "W2951583631"
+                                 :title "fMRIPrep: a robust preprocessing pipeline for functional MRI"
+                                 :doi "https://doi.org/10.1038/s41592-018-0235-4"
+                                 :citing-filter-count 4222
+                                 :contact-weight 0.65
+                                 :median-role-weighted-density 2.384
+                                 :role-weighted-author-equivalents 10064.6
+                                 :contact-weighted-author-equivalents 6542.0
+                                 :sample-union-unique-authors 1461}
+                                {:proxy-id :mne-python
+                                 :work-id "W2169918686"
+                                 :title "MEG and EEG data analysis with MNE-Python"
+                                 :doi "https://doi.org/10.3389/fnins.2013.00267"
+                                 :citing-filter-count 4005
+                                 :contact-weight 0.25
+                                 :median-role-weighted-density 1.983
+                                 :role-weighted-author-equivalents 7943.3
+                                 :contact-weighted-author-equivalents 1985.8
+                                 :sample-union-unique-authors 1073}
+                                {:proxy-id :adni-progress
+                                 :work-id "W2001477615"
+                                 :title "The Alzheimer's Disease Neuroimaging Initiative: Progress report and future plans"
+                                 :doi "https://doi.org/10.1016/j.jalz.2010.03.007"
+                                 :citing-filter-count 602
+                                 :contact-weight 0.25
+                                 :median-role-weighted-density 2.068
+                                 :role-weighted-author-equivalents 1244.7
+                                 :contact-weighted-author-equivalents 311.2
+                                 :sample-union-unique-authors 1259}]
+                  :overlap {:sum-proxy-unique-authors 7761
+                            :union-unique-authors 6987
+                            :overlap-retention-ratio 0.9
+                            :overlap-discount-ratio 0.1}
+                  :naive-contact-weighted-author-equivalents 13693.7
+                  :overlap-adjusted-contact-author-equivalents 12324.3
+                  :human-contact-multiplier 1.8
+                  :pipeline-contact-human-equivalents 22184
+                  :lower-bound-proxy? true
+                  :branch-current-point 210000
+                  :branch-range [80000 450000]
+                  :inside-branch-range? false
+                  :implied-multiplier-for-range-low 6.491
+                  :implied-multiplier-for-current-point 17.039
+                  :interpretation "This is a conservative lower-bound proxy for pipeline/dataset contact. It does not move the branch point; instead it exposes the downstream-user multiplier needed for the existing branch range and point."}}]
+
+ :estimate/branches
+ [{:branch/id :license-growth
+   :branch/color "#49EE54"
+   :branch/weight 0.40
+   :branch/point 105000
+   :branch/range [60000 170000]
+   :branch/forward
+   ["Start from the 57,541 registered-copy secondary anchor."
+    "Allow growth from 2022 to 2026 and non-registered/container/course users."
+    "Allow shared cluster installations to represent more than one human."]
+   :branch/backtrack
+   ["A registered copy is not a unique human."
+    "Some licenses are stale, duplicated, or never used."
+    "One lab can generate many registrations over time."]
+   :branch/sources [:freesurfer/registration :freesurfer/stats-secondary]}
+  {:branch/id :publication-authorship
+   :branch/color "#D06546"
+   :branch/weight 0.25
+   :branch/point 70000
+   :branch/range [35000 140000]
+   :branch/forward
+   ["Use full OpenAlex pagination over six canonical FreeSurfer papers, not only a sampled citing set."
+    "Union authors across 28,461 unique citing works and 43,378 citation slots, then role-weight author positions before multiplying by non-author technical helpers."
+    "Count people who interacted with outputs or commands, not only first authors."]
+   :branch/backtrack
+   ["Full pagination gives 80,923 unique OpenAlex authors across the six core citing populations."
+    "Role weighting reduces that to 28,511.9 author-equivalents before non-author helpers and uncited workflow users are added back."
+    "A sampled abstract/title classifier found 21 active-explicit works among 868 unique citing works; this is treated as a lower-bound because abstracts under-report methods."
+    "A smaller PMCID/OA/PDF text probe found 68 PMCIDs among 108 unique citing works, fetched 10 text bodies, and lifted active-explicit evidence from 5 abstract-visible works to 14 final-class works."
+    "The same PMCID/OA/PDF probe found 53 PDF candidates; JVM PDFBox produced 1 quality PDF extraction in the default sample, 8 quality extractions in a greedy 20-work PDF-first benchmark, and 6 quality extractions in a 24-work core-stratified PDF-first benchmark."
+    "A shrunk full-text uplift estimator over the 24-work core-stratified benchmark raises the sampled lower-bound final rate from 0.262 to 0.288, with method-to-role ratio 0.302."
+    "Publication authorship is not direct evidence of personally running FreeSurfer."
+    "Citations are paper-events, not person-events."
+    "The same labs and analysts recur across many papers."
+    "Some citations are methodological boilerplate rather than direct use."]
+   :branch/sources [:openalex/fischl-2012 :openalex/fischl-2012-citing-sample :openalex/freesurfer-core-citing-union :openalex/freesurfer-oa-methods-probe]}
+  {:branch/id :pipeline-dataset-contact
+   :branch/color "#76B0F0"
+   :branch/weight 0.25
+   :branch/point 210000
+   :branch/range [80000 450000]
+   :branch/forward
+   ["Large neuroimaging datasets and downstream tools expose many people to FreeSurfer outputs."
+    "Human Connectome Project, UK Biobank, ABCD, ADNI, MNE, fMRIPrep-style workflows, and related training materials broaden contact."
+    "A sampled OpenAlex proxy probe over six dataset/pipeline papers gives a conservative lower-bound of 22,184 pipeline-contact human equivalents."]
+   :branch/backtrack
+   ["Dataset participants are excluded."
+    "Passive readers of derived papers are excluded."
+    "Many downstream users never inspect FreeSurfer-specific artifacts."
+    "The proxy probe is below the branch range; the current 210,000 point assumes about 17.0 downstream/non-author contacts per overlap-adjusted proxy author-equivalent."]
+   :branch/sources [:freesurfer/home :github/freesurfer :openalex/pipeline-dataset-contact-probe]}
+  {:branch/id :github-course-community
+   :branch/color "#11C710"
+   :branch/weight 0.10
+   :branch/point 65000
+   :branch/range [25000 100000]
+   :branch/forward
+   ["GitHub stars/forks are tiny relative to total user community but witness active technical contact."
+    "Courses, documentation, support, and teaching create many non-publishing users."]
+   :branch/backtrack
+   ["GitHub stars and forks are not users."
+    "Course enrollment is not necessarily lasting software interaction."
+    "Some support/forum contacts are duplicated across years."]
+   :branch/sources [:github/freesurfer :freesurfer/home]}]
+
+ :estimate/merge
+ {:method :weighted-logspace-zigzag
+  :logspace-point-raw 107547
+  :point 110000
+  :range [70000 300000]
+  :direct-ran-or-installed-range [40000 120000]
+  :broad-derived-output-contact-range [150000 800000]
+  :interpretation "Current best colored Fermi estimate: about 110,000 humans, with a central meaningful-interaction range of 70,000 to 300,000."}
+
+ :estimate/uncertainty-propagation
+ {:refinement/id :freesurfer-uncertainty-propagation
+  :refinement/script "scripts/freesurfer_uncertainty_propagation.bb"
+  :simulation {:method :deterministic-log-triangular-latin-hypercube
+               :samples 4096
+               :merge-method :weighted-logspace-zigzag
+               :rounding-quantum 10000}
+  :baseline {:raw 107547
+             :rounded 110000
+             :edn-rounded 110000}
+  :merge-quantiles {:p05 64405
+                    :p25 84620
+                    :p50 103836
+                    :p75 125363
+                    :p95 160410}
+  :branch-sensitivity {:github-course-community {:low-branch-point 25000
+                                                 :low-merge-rounded 100000
+                                                 :high-branch-point 100000
+                                                 :high-merge-rounded 110000
+                                                 :span-rounded 10000}
+                       :license-growth {:low-branch-point 60000
+                                        :low-merge-rounded 90000
+                                        :high-branch-point 170000
+                                        :high-merge-rounded 130000
+                                        :span-rounded 40000}
+                       :pipeline-dataset-contact {:low-branch-point 80000
+                                                  :low-merge-rounded 80000
+                                                  :high-branch-point 450000
+                                                  :high-merge-rounded 130000
+                                                  :span-rounded 50000}
+                       :publication-authorship {:low-branch-point 35000
+                                                :low-merge-rounded 90000
+                                                :high-branch-point 140000
+                                                :high-merge-rounded 130000
+                                                :span-rounded 40000}}
+  :log-variance-contribution {:method :independent-logspace-variance-share
+                              :samples 4096
+                              :total-weighted-log-variance 0.020898
+                              :priority-order [:pipeline-dataset-contact
+                                               :license-growth
+                                               :publication-authorship
+                                               :github-course-community]
+                              :branches {:github-course-community {:rank 4
+                                                                    :branch-weight 0.1
+                                                                    :log-variance 0.083923
+                                                                    :weighted-log-variance 0.000839
+                                                                    :share 0.04}
+                                         :license-growth {:rank 2
+                                                          :branch-weight 0.4
+                                                          :log-variance 0.045288
+                                                          :weighted-log-variance 0.007246
+                                                          :share 0.347}
+                                         :pipeline-dataset-contact {:rank 1
+                                                                    :branch-weight 0.25
+                                                                    :log-variance 0.124909
+                                                                    :weighted-log-variance 0.007807
+                                                                    :share 0.374}
+                                         :publication-authorship {:rank 3
+                                                                  :branch-weight 0.25
+                                                                  :log-variance 0.080095
+                                                                  :weighted-log-variance 0.005006
+                                                                  :share 0.24}}}
+  :publication-uplift-sensitivity {:full-core-role-weighted-author-equivalents 28511.9
+                                   :calibration-ratio 0.269
+                                   :calibration-source :openalex/freesurfer-oa-methods-probe
+                                   :scenario-source :pdf-first-stratified-benchmark
+                                   :scenarios {:abstract-title-lower {:method-to-role-ratio 0.167
+                                                                      :publication-branch-point 43457
+                                                                      :merge-rounded 100000
+                                                                      :implied-helper-multiplier 9.127}
+                                               :oa-default {:method-to-role-ratio 0.269
+                                                            :publication-branch-point 70000
+                                                            :merge-rounded 110000
+                                                            :implied-helper-multiplier 9.127}
+                                               :stratified-lower-bound {:method-to-role-ratio 0.282
+                                                                        :publication-branch-point 73383
+                                                                        :merge-rounded 110000
+                                                                        :implied-helper-multiplier 9.127}
+                                               :stratified-shrunk-uplift {:method-to-role-ratio 0.302
+                                                                          :publication-branch-point 78587
+                                                                          :merge-rounded 110000
+                                                                          :implied-helper-multiplier 9.127}}}
+  :interpretation "Deterministic uncertainty propagation samples each branch over its stated range with a log-triangular distribution centered on the branch point. The shrunk full-text uplift scenario raises the publication branch to 78,587 but the whole estimate still rounds to 110,000. Log-space variance is driven most by pipeline/dataset contact, then license growth, then publication authorship."}
+
+ :estimate/downstream-multiplier-calibration
+ {:refinement/id :pipeline-downstream-multiplier-calibration
+  :refinement/script "scripts/pipeline_downstream_multiplier_calibration.bb"
+  :inputs {:pipeline-anchor :openalex/pipeline-dataset-contact-probe
+           :pipeline-branch :pipeline-dataset-contact
+           :overlap-adjusted-contact-author-equivalents 12324.3
+           :publication-helper-multiplier 9.127
+           :branch-current-point 210000
+           :branch-range [80000 450000]}
+  :scenarios {:observed-proxy-lower-bound {:multiplier 1.8
+                                           :pipeline-branch-point 22184
+                                           :merge-raw 61313
+                                           :merge-rounded 60000
+                                           :inside-current-branch-range? false
+                                           :relative-to-current-branch-point 0.106}
+              :branch-range-low {:multiplier 6.491
+                                 :pipeline-branch-point 80000
+                                 :merge-raw 84492
+                                 :merge-rounded 80000
+                                 :inside-current-branch-range? true
+                                 :relative-to-current-branch-point 0.381}
+              :publication-helper-calibrated {:multiplier 9.127
+                                              :pipeline-branch-point 112484
+                                              :merge-raw 92006
+                                              :merge-rounded 90000
+                                              :inside-current-branch-range? true
+                                              :relative-to-current-branch-point 0.536}
+              :current-branch-point {:multiplier 17.04
+                                     :pipeline-branch-point 210000
+                                     :merge-raw 107547
+                                     :merge-rounded 110000
+                                     :inside-current-branch-range? true
+                                     :relative-to-current-branch-point 1.0}
+              :branch-range-high {:multiplier 36.513
+                                  :pipeline-branch-point 450000
+                                  :merge-raw 130120
+                                  :merge-rounded 130000
+                                  :inside-current-branch-range? true
+                                  :relative-to-current-branch-point 2.143}}
+  :interpretation "Internal downstream multiplier calibration compares the observed proxy lower bound, branch range boundaries, the publication branch helper multiplier, and the current pipeline branch point. Publication-helper calibration would lower the merged point to 90,000, but the current estimate is left unchanged until an external downstream-user multiplier anchor is available."}
+
+ :estimate/refinements
+ [{:refinement/id :openalex-author-capture-recapture
+   :refinement/color "#1D9E7E"
+   :refinement/script "scripts/sample_openalex_freesurfer_authors.bb"
+   :refinement/technique :seeded-sample-capture-recapture
+   :refinement/summary "Seeded OpenAlex samples over papers citing W4241074797 give a median capture-recapture estimate of about 13,842 unique authors in that citing population."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 95000
+                              :current-point 85000
+                              :reason "Deduplicated author overlap makes raw citation-count expansion less aggressive."}}
+  {:refinement/id :openalex-core-paper-author-union
+   :refinement/color "#DD7CB0"
+   :refinement/script "scripts/openalex_freesurfer_core_union.bb"
+   :refinement/technique :full-pagination-author-union
+   :refinement/summary "Full OpenAlex pagination over six canonical FreeSurfer papers gives 43,378 citation slots, 28,461 unique citing works, and 80,923 unique authors."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 85000
+                              :current-point 90000
+                              :reason "The full six-paper author union replaces one-paper sampling; it supports a slightly higher publication branch while preserving the coauthor/user backtrack."}}
+  {:refinement/id :openalex-core-author-role-weighting
+   :refinement/color "#D06546"
+   :refinement/script "scripts/openalex_freesurfer_core_union.bb"
+   :refinement/technique :role-weighted-author-equivalents
+   :refinement/summary "The same full six-paper pagination gives 80,923 unique authors but 28,511.9 role-weighted author-equivalents under first/last/middle/corresponding weights."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 90000
+                              :current-point 70000
+                              :reason "Role weighting backtracks passive coauthorship while retaining room for technical helpers and uncited workflow users."}}
+  {:refinement/id :openalex-abstract-methods-calibration
+   :refinement/color "#E67F86"
+   :refinement/script "scripts/openalex_freesurfer_methods_calibration.bb"
+   :refinement/technique :abstract-title-methods-language-classifier
+   :refinement/summary "A 1,200-slot seeded OpenAlex sample deduped to 868 citing works; 21 were active-explicit, 61 mention-only, 46 pipeline-inherited, and 740 had no abstract-visible FreeSurfer method evidence."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 70000
+                              :current-point 70000
+                              :reason "This is a useful lower-bound diagnostic but should not move the branch until full-text methods sections are sampled."}}
+  {:refinement/id :openalex-oa-methods-probe
+   :refinement/color "#7E90EB"
+   :refinement/script "scripts/openalex_freesurfer_oa_methods_probe.bb"
+   :refinement/technique :pmcid-open-access-pdf-methods-enrichment
+   :refinement/summary "A 150-slot OpenAlex sample deduped to 108 citing works; 68 had PMCIDs, 10 text bodies were fetched, active-explicit evidence rose from 5 abstract-visible works to 14 final-class works, and PDF-first benchmarking now includes greedy, core-stratified, and shrunk full-text uplift selection."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 70000
+                              :current-point 70000
+                              :reason "PMC/OA/PDF text enrichment confirms abstract undercounting; the point estimate waits for a larger stratified PDF-first sample before moving."}}
+  {:refinement/id :openalex-pipeline-dataset-contact-probe
+   :refinement/color "#76B0F0"
+   :refinement/script "scripts/openalex_pipeline_dataset_contact_probe.bb"
+   :refinement/technique :dataset-pipeline-proxy-author-density
+   :refinement/summary "A two-seed, 100-work-per-proxy OpenAlex sample over six dataset/pipeline proxy papers gives 13,693.7 naive contact-weighted author-equivalents, 12,324.3 after sampled overlap retention, and 22,184 lower-bound human-contact equivalents at multiplier 1.8. The current 210,000 branch point implies multiplier 17.039."
+   :refinement/branch-impact {:branch/id :pipeline-dataset-contact
+                              :previous-point 210000
+                              :current-point 210000
+                              :reason "The proxy probe is a lower bound over only six anchor papers; it constrains the downstream-user multiplier but is not broad enough to replace the branch point."}}
+  {:refinement/id :pipeline-downstream-multiplier-calibration
+   :refinement/color "#76B0F0"
+   :refinement/script "scripts/pipeline_downstream_multiplier_calibration.bb"
+   :refinement/technique :cross-branch-downstream-multiplier-sensitivity
+   :refinement/summary "Reusing the publication branch helper multiplier 9.127 on the pipeline/dataset proxy lower bound gives a pipeline branch point of 112,484 and a merged estimate rounding to 90,000; the current 210,000 branch point requires multiplier 17.04."
+   :refinement/branch-impact {:branch/id :pipeline-dataset-contact
+                              :previous-point 210000
+                              :current-point 210000
+                              :reason "This is internal calibration, not an external anchor; it shows downward sensitivity but does not by itself justify moving the branch."}}
+  {:refinement/id :freesurfer-uncertainty-propagation
+   :refinement/color "#7E90EB"
+   :refinement/script "scripts/freesurfer_uncertainty_propagation.bb"
+   :refinement/technique :deterministic-log-triangular-uncertainty-propagation
+   :refinement/summary "A 4,096-point deterministic log-triangular propagation over stated branch ranges gives p05 64,405, median 103,836, and p95 160,410; accepting the shrunk publication uplift raises the publication branch to 78,587 but leaves the rounded merged point at 110,000. Log-space variance shares rank pipeline/dataset contact 0.374, license growth 0.347, publication authorship 0.240, and GitHub/course community 0.040."
+   :refinement/branch-impact {:branch/id :publication-authorship
+                              :previous-point 70000
+                              :current-point 70000
+                              :reason "Sensitivity propagation shows the new uplift evidence is directionally supportive but not enough to move the rounded weighted-logspace estimate."}}]
+
+ :estimate/guarantees
+ {:color-chain "Each retrieval/branch event is assigned a distinct Gay.jl genesis color tick."
+  :gf3-balance "The selected tick trits sum to zero: +1 +1 +0 -1 +0 -1 +0 +0 +1 -1 +0 +1 -1 +0 +0 = 0."
+  :zigzag-backtracking "Every forward-expanding branch must carry at least one reverse/backtrack reason."
+  :spi-shape "The trace is deterministic data: same EDN, same branch weights, same log-space point."
+  :not-guaranteed "The numeric estimate is not a census; it is a reproducible, source-backed estimate that should be replaced when stronger anchors appear."}
+
+ :estimate/next-improvements
+ [{:improvement/id :recover-official-fsstats
+   :improvement/status :wanted
+   :improvement/why "Replace the secondary mirror of registered copies with a directly accessible official FreeSurfer stats page or archived copy."}
+  {:improvement/id :count-container-downloads
+   :improvement/status :wanted
+   :improvement/why "Docker/BIDS/fMRIPrep-derived usage would constrain non-registered and course/cloud use."}
+  {:improvement/id :deduplicate-publication-authors
+   :improvement/status :substantially-complete
+   :improvement/why "Full pagination over six core FreeSurfer papers is now present; remaining uncertainty is role weighting, not author-id deduplication."}
+  {:improvement/id :publication-role-weighting
+   :improvement/status :partial
+   :improvement/why "Author-position/corresponding role weighting is now present; the next step is empirical calibration from paper full text or acknowledgements."}
+  {:improvement/id :fulltext-methods-calibration
+   :improvement/status :partial
+   :improvement/why "Abstract/title calibration and a small PMCID/OA/PDFBox text probe are now present; the next step is a larger stratified full-text sample."}
+  {:improvement/id :pmc-methods-extraction
+   :improvement/status :partial
+   :improvement/why "The OA probe maps sampled PMIDs to PMCIDs and fetches PMC XML for the first eligible bodies; broaden this to a larger stratified sample."}
+  {:improvement/id :pdf-text-extraction
+   :improvement/status :partial
+   :improvement/why "The OA probe can now attempt PDFs with JVM PDFBox; the default sample yielded 1 quality PDF text, the greedy PDF-first benchmark yielded 8, and the core-stratified benchmark yielded 6."}
+  {:improvement/id :install-strong-pdf-extractor
+   :improvement/status :substantially-complete
+   :improvement/why "JVM PDFBox is now available through Clojure deps; system pdftotext or mutool would still improve speed and robustness."}
+  {:improvement/id :pdf-first-stratified-sample
+   :improvement/status :partial
+   :improvement/why "A 24-work PDF-first benchmark now selects four primary-stratum works per canonical FreeSurfer citation surface and carries a shrunk full-text uplift estimator; broaden it across more seeds before moving the publication branch point."}
+  {:improvement/id :uncertainty-propagation
+   :improvement/status :substantially-complete
+   :improvement/why "A deterministic log-triangular propagation script now checks the stated branch ranges, publication-uplift sensitivity, and log-space variance contribution; remaining work is to replace subjective branch ranges with stronger outside anchors."}
+  {:improvement/id :pipeline-dataset-contact-anchor
+   :improvement/status :partial
+   :improvement/why "The log-space variance decomposition ranks pipeline/dataset contact as the largest uncertainty contributor; a six-proxy OpenAlex lower-bound probe now exists, but it covers only publication authors around selected proxy papers."}
+  {:improvement/id :downstream-user-multiplier-calibration
+   :improvement/status :wanted
+   :improvement/why "The current pipeline/dataset branch point requires about 17.0 downstream/non-author contacts per overlap-adjusted proxy author-equivalent, while publication-helper calibration suggests about 9.1; this multiplier should be calibrated from dataset download counts, course materials, or platform usage rather than guessed."}
+  {:improvement/id :institutional-hpc-survey
+   :improvement/status :wanted
+   :improvement/why "A small sample of neuroimaging centers could estimate humans per license or per shared install."}]}

@@ -64,7 +64,7 @@ export
     message_dyck_path, message_fingerprint,
     
     # Demo
-    demo_gay_dyck_catalan
+    world_gay_dyck_catalan
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -1219,7 +1219,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_dyck_catalan()
+function world_gay_dyck_catalan()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY-DYCK-CATALAN: The Stammering Trinity for Chromatic Sheafification   ║")

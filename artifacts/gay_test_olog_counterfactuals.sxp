@@ -1,0 +1,12 @@
+(gay-test-olog-counterfactual-bridge
+  (:fingerprint "0x4935ecc3c6e5e45e")
+  (:source-fingerprint "0x9c42f77c568c4f2e")
+  (:complete true)
+  (:counterfactuals 2856)
+  (:per-witness-choices 14)
+  (:cost (:min 0.060244) (:mean 0.88259) (:max 1.645565))
+  (:calls
+    (world-gay-test-olog-counterfactuals)
+    (gay-test-olog-counterfactuals)
+    (gay-test-olog-counterfactual-summary)
+  ))

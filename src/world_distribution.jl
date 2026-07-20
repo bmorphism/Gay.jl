@@ -1,16 +1,16 @@
-# World Distribution: Transform Demos into Distributable Worlds
+# World Distribution: Transform Callables into Distributable Worlds
 # ═══════════════════════════════════════════════════════════════════════════════
 #
-# Every `demo_*` becomes a `world_*` that can be:
+# Every `world_*` becomes a `world_*` that can be:
 # - Spawned independently
 # - Distributed across nodes
 # - Composed with other worlds
 # - Checkpointed and resumed
 # - Forked into parallel branches
 #
-# DEMO → WORLD TRANSFORMATION:
+# CALLABLE → WORLD TRANSFORMATION:
 # ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  demo_X() → world_X() with:                                                 │
+# │  world_X() → world_X() with:                                                 │
 # │    • Seed parameter for determinism                                         │
 # │    • Return type: WorldResult{T} with metadata                              │
 # │    • Registration in WORLD_REGISTRY                                         │
@@ -25,7 +25,7 @@ module WorldDistribution
 
 export WorldResult, WorldMetadata, WorldRegistry
 export register_world!, spawn_world, spawn_all_worlds
-export world_from_demo, distribute_worlds!
+export world_from_callable, distribute_worlds!
 export checkpoint_world, resume_world, fork_world
 export WORLD_REGISTRY, list_worlds, find_world
 export @world, @distribute
@@ -105,7 +105,7 @@ Entry in the world registry.
 """
 mutable struct WorldEntry
     name::Symbol
-    demo_name::Symbol           # Original demo_* function name
+    world_name::Symbol           # Original world_* function name
     world_fn::Function          # The world_* function
     module_name::Symbol
     file_path::String
@@ -122,9 +122,9 @@ mutable struct WorldEntry
     forks::Vector{Symbol}        # Forked world names
 end
 
-function WorldEntry(name::Symbol, demo_name::Symbol, fn::Function;
+function WorldEntry(name::Symbol, world_name::Symbol, fn::Function;
                     mod::Symbol=:Unknown, file::String="", desc::String="")
-    WorldEntry(name, demo_name, fn, mod, file, desc,
+    WorldEntry(name, world_name, fn, mod, file, desc,
                0, UInt64(0), 0.0, nothing, Int[], Symbol[])
 end
 
@@ -159,18 +159,18 @@ WorldRegistry() = WorldRegistry(
 const WORLD_REGISTRY = WorldRegistry()
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# DEMO → WORLD TRANSFORMATION
+# CALLABLE → WORLD TRANSFORMATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    world_from_demo(demo_fn, name; kwargs...) -> Function
+    world_from_callable(world_fn, name; kwargs...) -> Function
 
-Transform a demo function into a distributable world function.
+Transform a callable into a distributable world function.
 """
-function world_from_demo(demo_fn::Function, name::Symbol;
-                         module_name::Symbol=:Unknown,
-                         file_path::String="",
-                         description::String="")
+function world_from_callable(world_fn::Function, name::Symbol;
+                             module_name::Symbol=:Unknown,
+                             file_path::String="",
+                             description::String="")
     function world_fn(; seed::UInt64=GAY_SEED, kwargs...)
         meta = WorldMetadata(name; 
                             source_module=module_name,
@@ -179,13 +179,13 @@ function world_from_demo(demo_fn::Function, name::Symbol;
         
         start_time = time_ns()
         try
-            # Run the demo with seed if it accepts one
+            # Run the callable with seed if it accepts one
             result = try
-                demo_fn(; seed=seed, kwargs...)
+                world_fn(; seed=seed, kwargs...)
             catch e
                 if e isa MethodError
-                    # Demo doesn't take seed, run without
-                    demo_fn(; kwargs...)
+                    # Callable does not take seed, run without it
+                    world_fn(; kwargs...)
                 else
                     rethrow(e)
                 end
@@ -202,23 +202,23 @@ function world_from_demo(demo_fn::Function, name::Symbol;
 end
 
 """
-    register_world!(name, demo_fn; kwargs...)
+    register_world!(name, world_fn; kwargs...)
 
-Register a demo as a distributable world.
+Register a callable as a distributable world.
 """
-function register_world!(name::Symbol, demo_fn::Function;
-                         demo_name::Union{Nothing,Symbol}=nothing,
+function register_world!(name::Symbol, world_fn::Function;
+                         world_name::Union{Nothing,Symbol}=nothing,
                          module_name::Symbol=:Unknown,
                          file_path::String="",
                          description::String="")
-    actual_demo_name = something(demo_name, Symbol("demo_", name))
+    actual_world_name = something(world_name, Symbol("world_", name))
     
-    world_fn = world_from_demo(demo_fn, name;
-                               module_name=module_name,
-                               file_path=file_path,
-                               description=description)
+    world_fn = world_from_callable(world_fn, name;
+                                   module_name=module_name,
+                                   file_path=file_path,
+                                   description=description)
     
-    entry = WorldEntry(name, actual_demo_name, world_fn;
+    entry = WorldEntry(name, actual_world_name, world_fn;
                        mod=module_name, file=file_path, desc=description)
     
     WORLD_REGISTRY.worlds[name] = entry
@@ -439,7 +439,7 @@ function fork_world(name::Symbol; n_forks::Int=3,
         # Create forked world entry
         fork_entry = WorldEntry(
             fork_name,
-            entry.demo_name,
+            entry.world_name,
             entry.world_fn;
             mod=entry.module_name,
             file=entry.file_path,
@@ -490,13 +490,13 @@ find_world(name::Symbol) = get(WORLD_REGISTRY.worlds, name, nothing)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    @world name demo_fn [description]
+    @world name world_fn [description]
 
-Register a world from a demo function.
+Register a world from a callable.
 """
-macro world(name, demo_fn, description="")
+macro world(name, world_fn, description="")
     quote
-        register_world!($(QuoteNode(name)), $(esc(demo_fn));
+        register_world!($(QuoteNode(name)), $(esc(world_fn));
                        description=$(esc(description)))
     end
 end
@@ -513,58 +513,58 @@ macro distribute(pattern, nodes)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# AUTO-DISCOVERY: Find all demo_* functions and register them
+# AUTO-DISCOVERY: Find all world_* functions and register them
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    discover_demos_in_module(mod) -> Vector{Symbol}
+    discover_worlds_in_module(mod) -> Vector{Symbol}
 
-Discover all demo_* functions in a module.
+Discover all world_* functions in a module.
 """
-function discover_demos_in_module(mod::Module)
-    demos = Symbol[]
+function discover_worlds_in_module(mod::Module)
+    worlds = Symbol[]
     
     for name in names(mod; all=true)
         name_str = string(name)
-        if startswith(name_str, "demo_")
+        if startswith(name_str, "world_")
             fn = getfield(mod, name)
             if fn isa Function
-                # Convert demo_xyz to world :xyz
+                # Convert world_xyz to world :xyz
                 world_name = Symbol(name_str[6:end])
-                push!(demos, world_name)
+                push!(worlds, world_name)
                 
                 register_world!(world_name, fn;
-                               demo_name=name,
+                               world_name=name,
                                module_name=nameof(mod),
                                description="Auto-discovered from $name")
             end
         end
     end
     
-    demos
+    worlds
 end
 
 """
-    discover_all_demos!(; modules)
+    discover_all_worlds!(; modules)
 
-Discover and register all demo_* functions from specified modules.
+Discover and register all world_* functions from specified modules.
 """
-function discover_all_demos!(; modules::Vector{Module}=Module[])
-    all_demos = Symbol[]
+function discover_all_worlds!(; modules::Vector{Module}=Module[])
+    all_worlds = Symbol[]
     
     for mod in modules
-        demos = discover_demos_in_module(mod)
-        append!(all_demos, demos)
+        worlds = discover_worlds_in_module(mod)
+        append!(all_worlds, worlds)
     end
     
-    all_demos
+    all_worlds
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# KNOWN DEMOS: Pre-register the discovered demos
+# KNOWN WORLDS: Pre-register discovered worlds
 # ═══════════════════════════════════════════════════════════════════════════════
 
-const KNOWN_DEMO_FILES = [
+const KNOWN_WORLD_FILES = [
     # (world_name, file_path, module_name)
     (:hyperbolic_mining, "hyperbolic_bulk_mining.jl", :HyperbolicBulkMining),
     (:mario_choices, "hyperbolic_bulk_mining.jl", :HyperbolicBulkMining),
@@ -601,11 +601,11 @@ const KNOWN_DEMO_FILES = [
 Register all known world definitions (stubs until modules are loaded).
 """
 function register_known_worlds!()
-    for (name, file, mod) in KNOWN_DEMO_FILES
+    for (name, file, mod) in KNOWN_WORLD_FILES
         # Create a stub that will be replaced when module is loaded
         stub_fn = (;kwargs...) -> error("Module $mod not loaded. Include $file first.")
         
-        entry = WorldEntry(name, Symbol("demo_", name), stub_fn;
+        entry = WorldEntry(name, Symbol("world_", name), stub_fn;
                           mod=mod, file=file, 
                           desc="From $mod (load $file to enable)")
         
@@ -617,16 +617,16 @@ function register_known_worlds!()
         push!(WORLD_REGISTRY.by_module[mod], name)
     end
     
-    length(KNOWN_DEMO_FILES)
+    length(KNOWN_WORLD_FILES)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# DEMO (Meta: a world that spawns worlds)
+# META WORLD: a world that spawns worlds
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_world_distribution(; seed::UInt64=GAY_SEED)
+function world_world_distribution(; seed::UInt64=GAY_SEED)
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
-    println("║  WORLD DISTRIBUTION: Transform Demos into Distributable Worlds           ║")
+    println("║  WORLD DISTRIBUTION: Transform Callables into Distributable Worlds       ║")
     println("╚═══════════════════════════════════════════════════════════════════════════╝")
     println()
     
@@ -681,7 +681,7 @@ end
 
 # Make this module itself a world
 function __init__()
-    register_world!(:world_distribution, demo_world_distribution;
+    register_world!(:world_distribution, world_world_distribution;
                    module_name=:WorldDistribution,
                    description="Meta-world that manages other worlds")
 end

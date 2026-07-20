@@ -1,0 +1,10 @@
+{
+    "acset_hint": "Textual Catlab/GATlab projection only; load GayAlgebraicJuliaExt for package-backed realization.",
+    "backend": "projection",
+    "fingerprint": "0xcd427d9e037e640e",
+    "packages": [
+    ],
+    "parser": "lispsyntax",
+    "rewriting_hint": "Counterfactual assignments are rewrite candidates until AlgebraicRewriting is loaded.",
+    "extension": "Gay"
+}

@@ -297,7 +297,7 @@ end
 # Part 5: Demonstration
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_petri_bisimulation()
+function world_petri_bisimulation()
     println()
     println("═" ^ 75)
     println("  PETRI NETS AND BISIMULATION")
@@ -332,7 +332,7 @@ function demo_petri_bisimulation()
     println()
 end
 
-function demo_spi_as_bisimulation()
+function world_spi_as_bisimulation()
     println("═" ^ 75)
     println("  SPI AS BISIMULATION")
     println("  Different execution paths, same observation")
@@ -379,7 +379,7 @@ function demo_spi_as_bisimulation()
     println()
 end
 
-function demo_span_structure()
+function world_span_structure()
     println("═" ^ 75)
     println("  THE SPI SPAN: Seed as Common Refinement")
     println("═" ^ 75)
@@ -417,7 +417,7 @@ function demo_span_structure()
     println()
 end
 
-function demo_xor_commutativity()
+function world_xor_commutativity()
     println("═" ^ 75)
     println("  XOR COMMUTATIVITY: Why Order Doesn't Matter")
     println("═" ^ 75)
@@ -461,7 +461,7 @@ function demo_xor_commutativity()
     println()
 end
 
-function demo_categorical_picture()
+function world_categorical_picture()
     println("═" ^ 75)
     println("  THE CATEGORICAL PICTURE")
     println("  Following Baez, Genovese, Master, Shulman")
@@ -513,11 +513,11 @@ function main()
     println("║  The bridge between categorical semantics and SPI                     ║")
     println("╚" * "═" ^ 73 * "╝")
     
-    demo_petri_bisimulation()
-    demo_spi_as_bisimulation()
-    demo_span_structure()
-    demo_xor_commutativity()
-    demo_categorical_picture()
+    world_petri_bisimulation()
+    world_spi_as_bisimulation()
+    world_span_structure()
+    world_xor_commutativity()
+    world_categorical_picture()
     
     println("═" ^ 75)
     println("  SUMMARY: The Gay.jl SPI Bridge")

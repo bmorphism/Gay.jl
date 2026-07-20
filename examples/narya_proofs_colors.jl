@@ -214,7 +214,7 @@ function render_proof_comparison(; seed::Integer=NARYA_SEED)
     end
 end
 
-function demo_narya_spi()
+function world_narya_spi()
     println("\n  ═══════════════════════════════════════════════════════")
     println("  SPI Verification: :narya_proofs branch independence")
     println("  ═══════════════════════════════════════════════════════\n")
@@ -259,7 +259,7 @@ function main()
     render_proof_comparison()
     
     # Verify branch independence
-    demo_narya_spi()
+    world_narya_spi()
     
     println("\n  Properties:")
     println("  ◆ Each proof element → deterministic color")

@@ -44,7 +44,7 @@ using LinearAlgebra
 
 export BruhatTitsNode, SymplectomorphicCurriculum
 export saturate_curriculum!, compute_global_fingerprint
-export run_full_curriculum, demo_curriculum
+export run_full_curriculum, world_curriculum
 
 # ============================================================================
 # BRUHAT-TITS TREE STRUCTURE
@@ -457,7 +457,7 @@ function run_full_curriculum(; n_colors=100, epochs=50, verbose=true)
     )
 end
 
-function demo_curriculum()
+function world_curriculum()
     println("""
     ╔══════════════════════════════════════════════════════════════════════════╗
     ║     GAYSYMPLECTOMORPHICCURRICULUM - BRUHAT-TITS 3×3 SATURATION           ║
@@ -486,5 +486,5 @@ end # module
 
 # Run if executed directly
 if abspath(PROGRAM_FILE) == @__FILE__
-    GaySymplectomorphicCurriculum.demo_curriculum()
+    GaySymplectomorphicCurriculum.world_curriculum()
 end

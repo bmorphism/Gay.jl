@@ -78,7 +78,7 @@ export
     pattern_to_colors, beam_to_rgb,
     
     # Demo
-    demo_gay_phased_array
+    world_gay_phased_array
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -1264,7 +1264,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_phased_array()
+function world_gay_phased_array()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY PHASED ARRAY RADAR: Self-Avoiding Chromatic Traversal               ║")

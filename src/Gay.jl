@@ -1,3 +1,5 @@
+__precompile__(false)
+
 module Gay
 
 # Re-export LispSyntax for the Lisp REPL
@@ -35,6 +37,36 @@ export gay_checkerboard_2d, gay_heisenberg_bonds, gay_sublattice, gay_xor_color,
 export splitmix64, GOLDEN, MIX1, MIX2
 export stable_seed, hash_color_hex, okhsl_to_rgb, rgb_hex
 
+# Include Retinal Dither naming world
+include("retinal_dither_world.jl")
+export RetinalDitherInterpretation, RetinalDitherNameWorld
+export world_retinal_dither_names, retinal_dither_interpretations
+export retinal_dither_fingerprint, retinal_dither_color_chains
+
+# Include adversarial O/X naming ideology open game
+include("concealment_oxgame.jl")
+export OxSurface, OxFinding, OxMove, OxRound, ConcealmentOxGameWorld
+export OxScreenRow, OxScreen
+export OxgameRemixSource, OxgameRemixLane, OxgameRemixWorld
+export OxArenaPlayer, OxOpticInterface, OxBisimulationWitness, SharedOxArena
+export ScipEndpoint, ColoredScipMorphism, ScipOxcamlBridgeWorld
+export world_concealment_oxgame, oxgame_summary, concealment_color
+export world_oxscreen, render_oxscreen
+export world_oxgame_remix, oxgame_remix_summary, render_oxgame_remix
+export world_shared_oxarena, shared_oxarena_summary, render_shared_oxarena
+export world_scip_oxcaml_bridge, scip_oxcaml_bridge_summary, render_scip_oxcaml_bridge
+
+# Include CatColab olog coloring of the Gay.jl test suite
+include("test_olog_colors.jl")
+export GayTestOlogAspect, GayTestOlogWitness, GayTestOlogMorphism, GayTestOlogWorld
+export GayTestOlogCounterfactual, GayTestOlogCounterfactualWorld
+export world_gay_test_olog, gay_test_olog_summary, catcolab_olog_declarations
+export gay_test_olog_aspects, gay_test_olog_aspect_names, gay_test_olog_aspect
+export gay_test_olog_declarations, gay_test_olog_lisp_bridge
+export gay_test_olog_counterfactuals, world_gay_test_olog_counterfactuals
+export gay_test_olog_counterfactual_summary, gay_test_olog_counterfactual_lisp_bridge
+export render_gay_test_olog, render_gay_test_olog_lisp_bridge
+export render_gay_test_olog_counterfactuals, render_gay_test_olog_counterfactual_lisp_bridge
 
 # Include Swarm Triad - Mandatory 3-way split with sentinel monitoring
 include("swarm_triad.jl")
@@ -285,8 +317,6 @@ include("tracking.jl")
 
 # TODO: include("whale_data.jl")
 
-# TODO: include("whale_demo.jl")
-
 # TODO: include("whale_world.jl")
 # NOTE: Must come before spc_repl.jl which uses WhaleWorld types
 
@@ -357,6 +387,46 @@ include("sexp.jl")
 using .SExp: @sx, sexp_eval, sexp_read
 export @sx, sexp_eval, sexp_read
 
+# Include jank-like Lisp/GATlab bridge over all test-olog counterfactuals
+include("lisp_gatlab_bridge.jl")
+export LispGATObject, LispGATMorphism, LispGATEquation, LispGATCounterfactual
+export LispGATRewriteCandidate, LispGATQueryResult, LispGATRewritePlan, LispGATRewriteExecution
+export LispGATRewriteRequest, LispGATRewriteProgram, LispGATRewriteProgramExecution
+export LispGATRewriteProgramStep, LispGATRewriteProgramTrace
+export LispGATBridgeWorld
+export AlgebraicJuliaCapability, AlgebraicJuliaRealization, AlgebraicJuliaMaterialization
+export default_lisp_gatlab_form, parse_lisp_gatlab_form, world_lisp_gatlab_bridge
+export default_lisp_gatlab_rewrite_form, parse_lisp_gatlab_rewrite_form, lisp_gatlab_rewrite_request
+export default_lisp_gatlab_rewrite_program_form, default_lisp_gatlab_rewrite_trace_form
+export parse_lisp_gatlab_rewrite_program
+export lisp_gatlab_lispsyntax_form, lisp_gatlab_parse_backend
+export @gat_str, lisp_gatlab_compile
+export @gat_rewrite_str, @gat_rewrite_program_str, @gat_rewrite_trace_str
+export lisp_gatlab_rewrite_compile, lisp_gatlab_rewrite_program_compile, lisp_gatlab_rewrite_trace_compile
+export parse_lisp_gatlab_rewrite_program_trace_form
+export validate_lisp_gatlab_rewrite_program_trace_form
+export lisp_gatlab_bridge_summary, lisp_gatlab_declarations
+export lisp_gatlab_rewrite_candidates, lisp_gatlab_counterfactual_coverage
+export lisp_gatlab_query, lisp_gatlab_rewrite_plan, lisp_gatlab_rewrite_execution
+export lisp_gatlab_rewrite_program_execution, lisp_gatlab_rewrite_program_trace
+export lisp_gatlab_rewrite_request_payload, lisp_gatlab_query_payload
+export lisp_gatlab_rewrite_plan_payload, lisp_gatlab_rewrite_execution_payload
+export lisp_gatlab_rewrite_program_payload, lisp_gatlab_rewrite_program_execution_payload
+export lisp_gatlab_rewrite_program_step_payload, lisp_gatlab_rewrite_program_trace_payload
+export lisp_gatlab_rewrite_trace_validation, lisp_gatlab_rewrite_trace_validation_payload
+export render_lisp_gatlab_presentation, render_lisp_gatlab_bridge, lisp_gatlab_bridge
+export algebraicjulia_capabilities, algebraicjulia_bridge_status
+export render_lisp_gatlab_theory, render_lisp_gatlab_json, render_algebraicjulia_projection
+export render_lisp_gatlab_rewrite_request, render_lisp_gatlab_rewrite_program
+export render_lisp_gatlab_rewrite_program_step, render_lisp_gatlab_rewrite_program_trace
+export render_lisp_gatlab_rewrite_request_json, render_lisp_gatlab_rewrite_execution_json
+export render_lisp_gatlab_rewrite_program_json, render_lisp_gatlab_rewrite_program_execution_json
+export render_lisp_gatlab_rewrite_program_trace_json
+export render_lisp_gatlab_rewrite_trace_validation_json
+export algebraicjulia_realization_plan, algebraicjulia_materialization_plan
+export realize_lisp_gatlab_bridge, materialize_lisp_gatlab_bridge
+export materialize_lisp_gatlab_rewrite_plan
+
 # Include deterministic derangements (permutations with no fixed points)
 include("derangeable.jl")
 
@@ -379,10 +449,10 @@ include("enzyme_dsl.jl")
 include("okhsl_learnable.jl")
 using .OkhslLearnable: LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
 using .OkhslLearnable: forward_color, learn_colorspace!, compute_loss
-using .OkhslLearnable: EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+using .OkhslLearnable: EnzymeColorState, enzyme_color_gradient, world_learnable_okhsl
 export LearnableColorSpace, LearnableOkhsl, LearnableSeedMap
 export forward_color, learn_colorspace!, compute_loss
-export EnzymeColorState, enzyme_color_gradient, demo_learnable_okhsl
+export EnzymeColorState, enzyme_color_gradient, world_learnable_okhsl
 
 # Include energy measurement (Apple Silicon powermetrics)
 include("energy.jl")
@@ -394,27 +464,27 @@ include("semiosis.jl")
 # using .TracedTensor
 # export TracedMorphism, tensor_product, monoidal_unit, categorical_trace
 # export feedback_loop, TensorNetwork, add_node!, add_edge!, run_network!
-# export verify_traced_laws, demo_traced_tensor, network_fingerprint
+# export verify_traced_laws, world_traced_tensor, network_fingerprint
 
 # TODO: include("thread_findings.jl")
 # using .ThreadFindings
 # export Finding, FindingsSet, ThreadContext, VerificationMonad
 # export bind_finding, return_finding, run_verification
 # export count_threads, fingerprint_threads, lazy_place!
-# export demo_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
+# export world_thread_findings, LazyThreadStream, next_thread!, LAYER_NAMES
 # export run_all_verifications
 
 # TODO: include("verification_report.jl")
 # using .VerificationReport
 # export generate_report, FullReport, ReportSection
 # export verify_coherence, attestation_fingerprint
-# export export_report_markdown, demo_report
+# export export_report_markdown, world_report
 
 # TODO: include("amp_threads.jl")
 # using .AmpThreads
 # export AmpThread, thread_seed, thread_color, thread_fingerprint
 # export ThreadGenealogy, add_thread!, genealogy_fingerprint
-# export verify_thread_chain, demo_amp_threads
+# export verify_thread_chain, world_amp_threads
 
 # TODO: include("cognitive_superposition.jl") — depends on TracedTensor (missing)
 # using .CognitiveSuperposition
@@ -422,7 +492,7 @@ include("semiosis.jl")
 # export superpose, collapse, entails, induces, abduces
 # export BraidedSuperposition, HypergraphSuperposition
 # export cognitive_tensor, cognitive_trace, cognitive_spider
-# export verify_cognitive_laws, demo_cognitive_superposition
+# export verify_cognitive_laws, world_cognitive_superposition
 
 # TODO: include("spi_cli.jl")
 # using .SPICLI
@@ -437,7 +507,7 @@ using .KripkeWorlds
 export KripkeFrame, World, accessible, truth_at
 export ModalProposition, box, diamond, verify_modal_laws
 export nearest_necessary_neighbor, necessity_distance, necessity_landscape
-export world_frame, demo_kripke
+export world_frame, world_kripke
 
 include("physical_task_worlds.jl")
 using .PhysicalTaskWorlds
@@ -447,8 +517,8 @@ export physical_accessible, action_cost, executable
 export affordance_at, affordances
 export plan_to_necessity, physical_necessity_landscape
 export motor_imagery_trit, efference_copy, reafference_check
-export demo_physical_task
-export WorkspaceGrid, GridCell, grid_frame, demo_rectangular_workspace
+export world_physical_task
+export WorkspaceGrid, GridCell, grid_frame, world_rectangular_workspace
 
 include("trit_tick_gists.jl")
 using .TritTickGists

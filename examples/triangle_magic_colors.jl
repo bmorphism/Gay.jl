@@ -204,7 +204,7 @@ function render_magic_configs(; seed::Integer=TRIANGLE_SEED)
     end
 end
 
-function demo_triangle_spi()
+function world_triangle_spi()
     println("\n  ═══════════════════════════════════════════════════════")
     println("  SPI Verification: :triangle_magic branch independence")
     println("  ═══════════════════════════════════════════════════════\n")
@@ -244,7 +244,7 @@ function main()
     render_magic_configs()
     
     # Verify branch independence
-    demo_triangle_spi()
+    world_triangle_spi()
     
     println("\n  Properties:")
     println("  ◆ (r,θ) → deterministic color")

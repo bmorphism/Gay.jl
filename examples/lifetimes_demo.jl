@@ -20,7 +20,7 @@ using Colors
 # Mortal Computations: Finite, Terminating
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_mortal()
+function world_mortal()
     println()
     println("═" ^ 70)
     println("  MORTAL COMPUTATIONS (finite, terminating)")
@@ -69,7 +69,7 @@ end
 # Immortal Computations: Infinite, Productive
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_immortal()
+function world_immortal()
     println()
     println("═" ^ 70)
     println("  IMMORTAL COMPUTATIONS (infinite, productive)")
@@ -131,7 +131,7 @@ end
 # Parallel SPI Verification
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_parallel_spi()
+function world_parallel_spi()
     println()
     println("═" ^ 70)
     println("  PARALLEL SPI VERIFICATION")
@@ -176,7 +176,7 @@ end
 # Metatheory: Ascend and Harvest Functors
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_functors()
+function world_functors()
     println()
     println("═" ^ 70)
     println("  METATHEORY: Ascend and Harvest Functors")
@@ -262,10 +262,10 @@ function main()
     println("║  Immortal: infinite, productive, rolling fingerprint               ║")
     println("╚" * "═" ^ 68 * "╝")
     
-    demo_mortal()
-    demo_immortal()
-    demo_parallel_spi()
-    demo_functors()
+    world_mortal()
+    world_immortal()
+    world_parallel_spi()
+    world_functors()
     
     println()
     println("═" ^ 70)

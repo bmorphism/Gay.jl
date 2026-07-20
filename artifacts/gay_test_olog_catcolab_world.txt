@@ -1,0 +1,51 @@
+Gay.jl Test Olog Color World
+fingerprint: 0x9c42f77c568c4f2e
+tests: 204 pass, 2 broken, 206 total
+catcolab: scip://catcolab documents=425 addresses=425
+closure: mutually_exclusive=true all_passing_colored=true gf3_conserved=true
+
+Aspects
+trit  color    object
+  -1  #3DED94  color_space_object
+   0  #68D255  trit_tick_object
+   1  #CAB90B  rng_determinism_object
+  -1  #E643E3  parallel_invariance_object
+   0  #33308E  palette_interface_object
+   1  #87246B  lisp_semantics_object
+  -1  #D13AA8  entropy_source_object
+   0  #DF6124  propagator_cell_object
+   1  #61C0EF  abductive_world_object
+  -1  #F02C2B  fuzz_soundness_object
+   0  #2F710F  ternary_regression_object
+   1  #A5AF4A  nonriemannian_gate_object
+  -1  #6CAE75  exa_loop_object
+   0  #389C9A  aqua_hygiene_object
+   1  #3650E8  scip_catcolab_object
+
+Witnesses
+idx  color    aspect                         testset
+  1  #08BC2B  color_space_object             Aqua.jl package hygiene
+  2  #8965DB  trit_tick_object               Color Spaces
+  3  #531C2C  rng_determinism_object         Trit-Tick Time Base
+  4  #537D7B  parallel_invariance_object     Random Color Generation
+  5  #61BC68  palette_interface_object       Splittable Determinism
+  6  #D5CEB8  lisp_semantics_object          Strong Parallelism Invariance
+  7  #5BCA4A  entropy_source_object          Palette Generation
+  8  #7B106C  propagator_cell_object         Pride Flags
+  9  #E2324B  abductive_world_object         Gamut Operations
+ 10  #70C5FD  fuzz_soundness_object          Comrade Sky Models
+ 11  #A5685C  ternary_regression_object      Lisp Interface
+ 12  #0F16F7  nonriemannian_gate_object      Parallel Color Generation
+ 13  #319854  exa_loop_object                KernelAbstractions SPMD Colors
+ 14  #2F39FC  aqua_hygiene_object            XOR Fingerprint SPI Verification
+ 15  #7C2444  scip_catcolab_object           SPI Multi-Seed Verification
+ 16  #DD739C  color_space_object             SPI Workgroup Independence
+ 17  #B9E1BD  trit_tick_object               Color Entropy Sources
+ 18  #642D21  rng_determinism_object         Backend Switching
+ 19  #C923C3  parallel_invariance_object     Abductive Tests
+ 20  #B27E38  palette_interface_object       QUIC Tests
+ 21  #942B7E  lisp_semantics_object          Fuzz and Jepsen Tests
+ 22  #9C1852  entropy_source_object          Propagator Tests
+ 23  #006D4E  propagator_cell_object         Regression Ternary
+ 24  #5B7186  abductive_world_object         Non-Riemannian Gate
+... 180 more witnesses

@@ -6,8 +6,6 @@
 
 module GamutLearnable
 
-__precompile__(false)  # Disable precompilation due to complex constructor patterns
-
 using Colors, ColorTypes
 
 export GamutConstraint, GaySRGBGamut, GayP3Gamut, GayRec2020Gamut
@@ -443,7 +441,6 @@ struct GayChain{T<:RGB}
 end
 
 GayChain(colors::Vector{<:RGB}) = GayChain(colors, GaySRGBGamut())
-GayChain(colors::Vector{<:RGB}, gamut::GamutConstraint) = GayChain{eltype(colors)}(colors, gamut)
 
 """
     chain_to_gamut(chain::GayChain, target::GamutConstraint)

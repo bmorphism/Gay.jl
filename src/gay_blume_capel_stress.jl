@@ -71,7 +71,7 @@ export
     VMInstance, StressTestEnsemble, launch_stress_test!,
     
     # Demo
-    demo_blume_capel_stress
+    world_blume_capel_stress
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -820,7 +820,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_blume_capel_stress()
+function world_blume_capel_stress()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY BLUME-CAPEL STRESS TEST                                                      ║")

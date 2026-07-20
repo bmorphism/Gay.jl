@@ -70,7 +70,7 @@ export
     verify_confidentiality, economic_security_level,
     
     # Demo
-    demo_interleaved_gay_enzyme
+    world_interleaved_gay_enzyme
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -1090,7 +1090,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 
-function demo_interleaved_gay_enzyme()
+function world_interleaved_gay_enzyme()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════════════════╗")
     println("║  INTERLEAVED GAY ENZYME                                                              ║")

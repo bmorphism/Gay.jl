@@ -41,7 +41,7 @@ end
 # DEMO: Single walk
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_single_walk()
+function world_single_walk()
     println("\n" * "="^80)
     println("DEMO 1: Single EG-Walker")
     println("="^80)
@@ -81,7 +81,7 @@ end
 # DEMO: Parallel walks with SPI verification
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_parallel_spi()
+function world_parallel_spi()
     println("\n" * "="^80)
     println("DEMO 2: Parallel SPI Verification")
     println("="^80)
@@ -128,7 +128,7 @@ end
 # DEMO: Energy-aware analysis
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_energy_analysis()
+function world_energy_analysis()
     println("\n" * "="^80)
     println("DEMO 3: Energy-Aware Path Analysis")
     println("="^80)
@@ -180,7 +180,7 @@ end
 # DEMO: Color distribution
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_color_distribution()
+function world_color_distribution()
     println("\n" * "="^80)
     println("DEMO 4: Chromatic Distribution Analysis")
     println("="^80)
@@ -244,10 +244,10 @@ function main()
     println("="^80)
     
     # Run demonstrations
-    result1 = demo_single_walk()
-    results2 = demo_parallel_spi()
-    results3 = demo_energy_analysis()
-    result4 = demo_color_distribution()
+    result1 = world_single_walk()
+    results2 = world_parallel_spi()
+    results3 = world_energy_analysis()
+    result4 = world_color_distribution()
     
     # Summary
     println("\n" * "="^80)

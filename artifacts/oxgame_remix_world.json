@@ -1,0 +1,38 @@
+{
+  "artifact": "oxgame-remix-world",
+  "version": 2,
+  "generated_at": "2026-07-08T14:54:51.446",
+  "remix": {
+    "gay_head": "e3c403ad9873",
+    "oxgame_status": "github: plurigrid/oxgame unresolved here; using docs://oxgame mirror",
+    "docs_root": "/Users/dietrich/worlds/docs-clone/oxgame",
+    "docs_sources": 9,
+    "lanes": 6,
+    "lane_sum": 0,
+    "gf3_conserved": true,
+    "local_findings": 20,
+    "local_fingerprint_hex": "0x3417d9d6e6060864",
+    "screen_fingerprint_hex": "0x18211bc8643621d7",
+    "shared_arena_fingerprint_hex": "0x391b517a3112a7aa",
+    "fingerprint_hex": "0x7c1fe96ca068e69f"
+  },
+  "lanes": [
+    {"uri": "tile://oxgame/convergence", "trit": 0, "role": "neutral benchmark and rendered locality", "color_hex": "#C89AE2"},
+    {"uri": "strategy://oxgame/best-response", "trit": 1, "role": "accelerated profile update", "color_hex": "#A5D5CA"},
+    {"uri": "arena://oxgame/fixed-point", "trit": 0, "role": "capsule boundary for mutable play state", "color_hex": "#F42710"},
+    {"uri": "world://oxgame/equilibrium", "trit": 1, "role": "accepted forward equilibrium", "color_hex": "#484846"},
+    {"uri": "coworld://oxgame/rejected-accelerants", "trit": -1, "role": "rejected candidates kept out of accepted state", "color_hex": "#D61998"},
+    {"uri": "scip://oxgame-derived/convergence-hot-path", "trit": -1, "role": "exact derivation and hot-path evidence", "color_hex": "#9F7295"}
+  ],
+  "sources": [
+    {"uri": "docs://oxgame/.topos/69x3_adversarial_probes.md", "score": 1081, "color_hex": "#F9FF7B", "excerpt": "# 69x3 Adversarial Probes for oxgame Differentiating Factors"},
+    {"uri": "docs://oxgame/.topos/resonant-codebases-2026-04-18.md", "score": 930, "color_hex": "#722FB3", "excerpt": "date: 2026-04-18"},
+    {"uri": "docs://oxgame/.topos/reports/pontryagin-duality-index.md", "score": 732, "color_hex": "#1441D9", "excerpt": "# Pontryagin Duality Audit Index"},
+    {"uri": "docs://oxgame/.topos/side-by-side-vs-cybercat-2026-04-28.md", "score": 542, "color_hex": "#268D84", "excerpt": "date: 2026-04-28"},
+    {"uri": "docs://oxgame/.topos/oxgame-growth-17ram-2026-04-28.md", "score": 536, "color_hex": "#2E6AF3", "excerpt": "date: 2026-04-28"},
+    {"uri": "docs://oxgame/.topos/oxgame-map-2026-04-28.md", "score": 429, "color_hex": "#A8EEC8", "excerpt": "date: 2026-04-28"},
+    {"uri": "docs://oxgame/.topos/emergent-simplicity-interleave-2026-04-28.md", "score": 376, "color_hex": "#65ED2D", "excerpt": "date: 2026-04-28"},
+    {"uri": "docs://oxgame/.topos/ambition-reality-gaps.md", "score": 344, "color_hex": "#196266", "excerpt": "date: 2026-04-29"},
+    {"uri": "docs://oxgame/.topos/cross-substrate-distillation-2026-04-18.md", "score": 321, "color_hex": "#AAB1E6", "excerpt": "date: 2026-04-18"}
+  ]
+}

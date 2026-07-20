@@ -222,7 +222,7 @@ function render_ternary_family(; seed::Integer=POLYLOG_SEED)
     println("  Each cell: Li_n(1/3^m) with deterministic color")
 end
 
-function demo_polylog_spi()
+function world_polylog_spi()
     println("\n  ═══════════════════════════════════════════════════════")
     println("  SPI Verification: :polylog branch independence")
     println("  ═══════════════════════════════════════════════════════\n")
@@ -267,7 +267,7 @@ function main()
     render_ternary_family()
     
     # Verify branch independence
-    demo_polylog_spi()
+    world_polylog_spi()
     
     println("\n  Properties:")
     println("  ◆ (n, b) → deterministic color")

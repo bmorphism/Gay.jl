@@ -624,11 +624,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_enzyme_color_learning()
+    world_enzyme_color_learning()
 
 Demonstrate Enzyme-style color space learning.
 """
-function demo_enzyme_color_learning(seed::UInt64=0x6761795f636f6c6f)
+function world_enzyme_color_learning(seed::UInt64=0x6761795f636f6c6f)
     println("╔══════════════════════════════════════════════════════════════════╗")
     println("║     Enzyme.jl Color Space Learning at Every Level                ║")
     println("╚══════════════════════════════════════════════════════════════════╝")
@@ -704,4 +704,4 @@ function demo_enzyme_color_learning(seed::UInt64=0x6761795f636f6c6f)
     return (cs, learner)
 end
 
-export demo_enzyme_color_learning
+export world_enzyme_color_learning

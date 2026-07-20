@@ -307,7 +307,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_dynamic_sufficiency(; L::Int=32, seed::UInt64=ORIGINARY_SEED)
+function world_dynamic_sufficiency(; L::Int=32, seed::UInt64=ORIGINARY_SEED)
     println("╔════════════════════════════════════════════════════════════════╗")
     println("║  Dynamic Sufficiency: Guaranteed Eventual Termination          ║")
     println("║  Blume-Capel Model with Metalearned Hyperparameters            ║")

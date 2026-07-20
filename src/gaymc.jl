@@ -333,7 +333,7 @@ export Replica, TemperatureLadder, ReplicaExchange
 export replica_exchange!, attempt_swap!, swap_replicas!
 export temperature_color, energy_color
 export visualize_ladder, ladder_to_mermaid
-export demo_replica_exchange
+export world_replica_exchange
 
 using Printf
 
@@ -700,12 +700,12 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_replica_exchange(; n_sweeps=1000, n_replicas=8)
+    world_replica_exchange(; n_sweeps=1000, n_replicas=8)
 
 Demonstrate replica exchange on a 1D double-well potential.
 The system should tunnel between wells via high-temperature replicas.
 """
-function demo_replica_exchange(; n_sweeps::Int=1000, n_replicas::Int=8, seed::Int=42)
+function world_replica_exchange(; n_sweeps::Int=1000, n_replicas::Int=8, seed::Int=42)
     # Double-well potential: V(x) = (x² - 1)²
     energy(x::Float64) = (x^2 - 1)^2
     

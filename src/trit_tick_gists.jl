@@ -584,12 +584,12 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_phenomenal_vibesnipe()
+    world_phenomenal_vibesnipe()
 
 Demonstrate trit-tick integration with phenomenal prediction markets.
 Creates 3 challenges across different goblin slots and checks conservation.
 """
-function demo_phenomenal_vibesnipe()
+function world_phenomenal_vibesnipe()
     source = LogicalTicks()
     println("=== PHENOMENOLOGICAL VIBESNIPE with Trit-Ticks ===\n")
 
@@ -625,11 +625,11 @@ function demo_phenomenal_vibesnipe()
 end
 
 """
-    demo_adhd_ecs_trit_ticks()
+    world_adhd_ecs_trit_ticks()
 
 Demonstrate trit-tick integration with ADHD-ECS receptor dynamics.
 """
-function demo_adhd_ecs_trit_ticks()
+function world_adhd_ecs_trit_ticks()
     println("\n=== ADHD-ECS with Trit-Ticks ===\n")
 
     sys = ECSSystem()
@@ -669,11 +669,11 @@ function demo_adhd_ecs_trit_ticks()
 end
 
 """
-    demo_acset_operations()
+    world_acset_operations()
 
 Demonstrate trit-ticked ACSet operation logging.
 """
-function demo_acset_operations()
+function world_acset_operations()
     println("\n=== ACSet Operations with Trit-Ticks ===\n")
 
     log = ACSetOpLog()
@@ -717,11 +717,11 @@ function demo_acset_operations()
 end
 
 """
-    demo_hamming_trit_stream()
+    world_hamming_trit_stream()
 
 Demonstrate temporal error correction on the Hamming trit stream.
 """
-function demo_hamming_trit_stream()
+function world_hamming_trit_stream()
     println("\n=== HAMMING SWARM with Trit-Ticks ===\n")
 
     source = LogicalTicks()
@@ -749,19 +749,19 @@ function demo_hamming_trit_stream()
 end
 
 """
-    demo_all()
+    world_all()
 
 Run all trit-tick gist integration demos.
 """
-function demo_all()
+function world_all()
     println("╔══════════════════════════════════════════════════════════════╗")
     println("║  Trit-Tick Integration for bmorphism Gist Patterns          ║")
     println("╚══════════════════════════════════════════════════════════════╝\n")
 
-    challenges = demo_phenomenal_vibesnipe()
-    sys = demo_adhd_ecs_trit_ticks()
-    log = demo_acset_operations()
-    stream = demo_hamming_trit_stream()
+    challenges = world_phenomenal_vibesnipe()
+    sys = world_adhd_ecs_trit_ticks()
+    log = world_acset_operations()
+    stream = world_hamming_trit_stream()
 
     println("\n=== SUMMARY ===")
     println("  Tier 1A (VIBESNIPE): $(length(challenges)) challenges, trit-tick timestamps")
@@ -787,7 +787,7 @@ export transaction_conservation, log_conservation
 export HammingTritStream, letter_trit, letter_hamming
 export push_letter!, detect_corruption, stream_conservation
 export TofuColorTick, tofu_color_at
-export demo_phenomenal_vibesnipe, demo_adhd_ecs_trit_ticks
-export demo_acset_operations, demo_hamming_trit_stream, demo_all
+export world_phenomenal_vibesnipe, world_adhd_ecs_trit_ticks
+export world_acset_operations, world_hamming_trit_stream, world_all
 
 end # module TritTickGists

@@ -54,7 +54,7 @@ export
     lossless_parallel_execute, parallel_type_recovery,
     
     # Demo
-    demo_43_interpretations, demo_type_erasure_correction
+    world_43_interpretations, world_type_erasure_correction
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS (SPI Compliant)
@@ -638,7 +638,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_43_interpretations()
+function world_43_interpretations()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY STRATEGY 43: Complete Tritwise Interpretation Space                 ║")
@@ -699,7 +699,7 @@ function demo_43_interpretations()
     println("═══════════════════════════════════════════════════════════════════════════")
 end
 
-function demo_type_erasure_correction()
+function world_type_erasure_correction()
     println()
     println("─── TYPE ERASURE CORRECTION DEMO ───")
     println()

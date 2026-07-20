@@ -29,7 +29,7 @@ export BidirectionalACSET, add_vertex!, add_edge!, rewrite!
 export LHoTTType, LinearResource, HomotopyPath, transport
 export RandomEdgeGadget, sample_gadgets, parallel_rewrite_test
 export DafnySpec, requires, ensures, invariant, verify_spec!
-export demo_galois_rewriting
+export world_galois_rewriting
 
 const GAY_SEED = UInt64(0x6761795f636f6c6f)
 
@@ -767,7 +767,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_galois_rewriting()
+function world_galois_rewriting()
     println("═══════════════════════════════════════════════════════════════")
     println("  GALOIS REWRITING: Dafny-Style Verified Parallel Edge Gadgets")
     println("═══════════════════════════════════════════════════════════════")

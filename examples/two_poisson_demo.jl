@@ -21,7 +21,7 @@ using .TwoPoisson
 # DEMO 1: Constant Intensity
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_constant_intensity()
+function world_constant_intensity()
     println("\n" * "="^80)
     println("DEMO 1: Constant Intensity Poisson Process")
     println("="^80)
@@ -53,7 +53,7 @@ end
 # DEMO 2: Gaussian Intensity
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_gaussian_intensity()
+function world_gaussian_intensity()
     println("\n" * "="^80)
     println("DEMO 2: Gaussian Intensity Poisson Process")
     println("="^80)
@@ -82,7 +82,7 @@ end
 # DEMO 3: Thinning & Superposition
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_thinning_superposition()
+function world_thinning_superposition()
     println("\n" * "="^80)
     println("DEMO 3: Thinning and Superposition")
     println("="^80)
@@ -123,7 +123,7 @@ end
 # DEMO 4: Parallel SPI Verification
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_parallel_spi()
+function world_parallel_spi()
     println("\n" * "="^80)
     println("DEMO 4: Parallel SPI Verification")
     println("="^80)
@@ -172,7 +172,7 @@ end
 # DEMO 5: Chromatic Analysis
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_chromatic_analysis()
+function world_chromatic_analysis()
     println("\n" * "="^80)
     println("DEMO 5: Chromatic Identity Analysis")
     println("="^80)
@@ -230,11 +230,11 @@ function main()
     println("="^80)
     
     # Run demos
-    result1 = demo_constant_intensity()
-    result2 = demo_gaussian_intensity()
-    results3 = demo_thinning_superposition()
-    results4 = demo_parallel_spi()
-    result5 = demo_chromatic_analysis()
+    result1 = world_constant_intensity()
+    result2 = world_gaussian_intensity()
+    results3 = world_thinning_superposition()
+    results4 = world_parallel_spi()
+    result5 = world_chromatic_analysis()
     
     # Summary
     println("\n" * "="^80)

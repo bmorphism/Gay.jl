@@ -1,0 +1,326 @@
+{
+    "summary": {
+        "passing_tests": 204,
+        "broken_tests": 2,
+        "total_tests": 206,
+        "aspects": 15,
+        "mutually_exclusive": true,
+        "fingerprint": "0x9c42f77c568c4f2e",
+        "gf3_conserved": true,
+        "equations": 7,
+        "morphisms": 20,
+        "all_passing_colored": true
+    },
+    "aspects": [
+        {
+            "trit": -1,
+            "id": "color_space_object",
+            "catcolab_uri": "scip://catcolab/olog/object/color_space_object",
+            "object_uri": "gay://test-olog/object/color_space_object",
+            "color_hex": "#3DED94",
+            "closure_role": "Color spaces and gamut identity",
+            "evidence": "Color spaces, gamut checks, RGB/hex identity, and canonical genesis colors"
+        },
+        {
+            "trit": 0,
+            "id": "trit_tick_object",
+            "catcolab_uri": "scip://catcolab/olog/object/trit_tick_object",
+            "object_uri": "gay://test-olog/object/trit_tick_object",
+            "color_hex": "#68D255",
+            "closure_role": "Trit-tick time base",
+            "evidence": "GF(3) trits, flics, ticks, and time-color invariants"
+        },
+        {
+            "trit": 1,
+            "id": "rng_determinism_object",
+            "catcolab_uri": "scip://catcolab/olog/object/rng_determinism_object",
+            "object_uri": "gay://test-olog/object/rng_determinism_object",
+            "color_hex": "#CAB90B",
+            "closure_role": "Splittable deterministic color",
+            "evidence": "SplitMix64, SplittableRandom, SPI reproducibility, and seed stability"
+        },
+        {
+            "trit": -1,
+            "id": "parallel_invariance_object",
+            "catcolab_uri": "scip://catcolab/olog/object/parallel_invariance_object",
+            "object_uri": "gay://test-olog/object/parallel_invariance_object",
+            "color_hex": "#E643E3",
+            "closure_role": "Parallel invariance",
+            "evidence": "OhMyThreads, Pigeons, KernelAbstractions, and workgroup independence"
+        },
+        {
+            "trit": 0,
+            "id": "palette_interface_object",
+            "catcolab_uri": "scip://catcolab/olog/object/palette_interface_object",
+            "object_uri": "gay://test-olog/object/palette_interface_object",
+            "color_hex": "#33308E",
+            "closure_role": "Palette interface",
+            "evidence": "Palette generation, pride flags, perceptual separation, and named color surfaces"
+        },
+        {
+            "trit": 1,
+            "id": "lisp_semantics_object",
+            "catcolab_uri": "scip://catcolab/olog/object/lisp_semantics_object",
+            "object_uri": "gay://test-olog/object/lisp_semantics_object",
+            "color_hex": "#87246B",
+            "closure_role": "Lisp semantic interface",
+            "evidence": "S-expression/language surfaces that let colors travel through symbolic forms"
+        },
+        {
+            "trit": -1,
+            "id": "entropy_source_object",
+            "catcolab_uri": "scip://catcolab/olog/object/entropy_source_object",
+            "object_uri": "gay://test-olog/object/entropy_source_object",
+            "color_hex": "#D13AA8",
+            "closure_role": "Entropy source audit",
+            "evidence": "Color entropy sources, mortality classes, and composite readings"
+        },
+        {
+            "trit": 0,
+            "id": "propagator_cell_object",
+            "catcolab_uri": "scip://catcolab/olog/object/propagator_cell_object",
+            "object_uri": "gay://test-olog/object/propagator_cell_object",
+            "color_hex": "#DF6124",
+            "closure_role": "Propagator closure",
+            "evidence": "Propagator cells, supports, contradictions, and scoped ancestry materialization"
+        },
+        {
+            "trit": 1,
+            "id": "abductive_world_object",
+            "catcolab_uri": "scip://catcolab/olog/object/abductive_world_object",
+            "object_uri": "gay://test-olog/object/abductive_world_object",
+            "color_hex": "#61C0EF",
+            "closure_role": "Abductive world update",
+            "evidence": "World teleportation, abductive sampling, and hypothesized closure repair"
+        },
+        {
+            "trit": -1,
+            "id": "fuzz_soundness_object",
+            "catcolab_uri": "scip://catcolab/olog/object/fuzz_soundness_object",
+            "object_uri": "gay://test-olog/object/fuzz_soundness_object",
+            "color_hex": "#F02C2B",
+            "closure_role": "Fuzz soundness",
+            "evidence": "QUIC, fuzz, Jepsen-style faults, and adversarial pressure tests"
+        },
+        {
+            "trit": 0,
+            "id": "ternary_regression_object",
+            "catcolab_uri": "scip://catcolab/olog/object/ternary_regression_object",
+            "object_uri": "gay://test-olog/object/ternary_regression_object",
+            "color_hex": "#2F710F",
+            "closure_role": "Ternary regression",
+            "evidence": "Balanced ternary regression and GF(3) compatibility checks"
+        },
+        {
+            "trit": 1,
+            "id": "nonriemannian_gate_object",
+            "catcolab_uri": "scip://catcolab/olog/object/nonriemannian_gate_object",
+            "object_uri": "gay://test-olog/object/nonriemannian_gate_object",
+            "color_hex": "#A5AF4A",
+            "closure_role": "Non-Riemannian gate",
+            "evidence": "Derived tolerance gates and intrinsic HSL distance checks"
+        },
+        {
+            "trit": -1,
+            "id": "exa_loop_object",
+            "catcolab_uri": "scip://catcolab/olog/object/exa_loop_object",
+            "object_uri": "gay://test-olog/object/exa_loop_object",
+            "color_hex": "#6CAE75",
+            "closure_role": "Exa loop extension",
+            "evidence": "Clearing, embeddings, sheaf loops, and external search-adjacent closure"
+        },
+        {
+            "trit": 0,
+            "id": "aqua_hygiene_object",
+            "catcolab_uri": "scip://catcolab/olog/object/aqua_hygiene_object",
+            "object_uri": "gay://test-olog/object/aqua_hygiene_object",
+            "color_hex": "#389C9A",
+            "closure_role": "Package hygiene",
+            "evidence": "Aqua package checks, stale dependency checks, and project consistency"
+        },
+        {
+            "trit": 1,
+            "id": "scip_catcolab_object",
+            "catcolab_uri": "scip://catcolab/olog/object/scip_catcolab_object",
+            "object_uri": "gay://test-olog/object/scip_catcolab_object",
+            "color_hex": "#3650E8",
+            "closure_role": "CatColab SCIP olog bridge",
+            "evidence": "SCIP address-space anchoring for CatColab object/morphism/equation declarations"
+        }
+    ],
+    "catcolab_path": "/Users/dietrich/worlds/.topos/catcolab",
+    "equations": [
+        {
+            "rhs": "test.has_color.seeds_aspect.declares_object",
+            "lhs": "test.has_aspect.declares_object"
+        },
+        {
+            "rhs": "unique(test.has_aspect)",
+            "lhs": "test.has_aspect"
+        },
+        {
+            "rhs": "204",
+            "lhs": "count(test where status = pass)"
+        },
+        {
+            "rhs": "0",
+            "lhs": "sum(aspect.trit) mod 3"
+        },
+        {
+            "rhs": "scip://catcolab/ObDecl",
+            "lhs": "aspect.declares_object.in_scip"
+        },
+        {
+            "rhs": "scip://catcolab/MorDecl",
+            "lhs": "relation.declares_morphism.in_scip"
+        },
+        {
+            "rhs": "scip://catcolab/EqDecl",
+            "lhs": "path.commutes_as.in_scip"
+        }
+    ],
+    "catcolab_uri": "scip://catcolab",
+    "seed": "1069",
+    "morphisms": [
+        {
+            "name": "has_aspect",
+            "cod": "gay://test-olog/aspect",
+            "color_hex": "#55B0E6",
+            "dom": "gay://test-suite/pass",
+            "description": "assigns each passing test witness to exactly one semantic closure aspect"
+        },
+        {
+            "name": "has_color",
+            "cod": "gay://color-chain/seed/1069",
+            "color_hex": "#C8A0C2",
+            "dom": "gay://test-suite/pass",
+            "description": "colors every witness using Gay.jl's deterministic color_at stream"
+        },
+        {
+            "name": "declares_object",
+            "cod": "scip://catcolab/ObDecl",
+            "color_hex": "#FFA6C2",
+            "dom": "gay://test-olog/aspect",
+            "description": "views each aspect as a CatColab olog object declaration"
+        },
+        {
+            "name": "declares_morphism",
+            "cod": "scip://catcolab/MorDecl",
+            "color_hex": "#789A20",
+            "dom": "gay://test-olog/relation",
+            "description": "views test-to-aspect and aspect-to-object edges as CatColab morphism declarations"
+        },
+        {
+            "name": "commutes_as",
+            "cod": "scip://catcolab/EqDecl",
+            "color_hex": "#54C1ED",
+            "dom": "gay://test-olog/path",
+            "description": "records semantic closure constraints as CatColab equation declarations"
+        },
+        {
+            "name": "closes_color_space_object",
+            "cod": "gay://test-olog/object/color_space_object",
+            "color_hex": "#D3AE7D",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Color spaces and gamut identity close through this olog object"
+        },
+        {
+            "name": "closes_trit_tick_object",
+            "cod": "gay://test-olog/object/trit_tick_object",
+            "color_hex": "#B3A2DA",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Trit-tick time base close through this olog object"
+        },
+        {
+            "name": "closes_rng_determinism_object",
+            "cod": "gay://test-olog/object/rng_determinism_object",
+            "color_hex": "#67518C",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Splittable deterministic color close through this olog object"
+        },
+        {
+            "name": "closes_parallel_invariance_object",
+            "cod": "gay://test-olog/object/parallel_invariance_object",
+            "color_hex": "#95BFDA",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Parallel invariance close through this olog object"
+        },
+        {
+            "name": "closes_palette_interface_object",
+            "cod": "gay://test-olog/object/palette_interface_object",
+            "color_hex": "#418B56",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Palette interface close through this olog object"
+        },
+        {
+            "name": "closes_lisp_semantics_object",
+            "cod": "gay://test-olog/object/lisp_semantics_object",
+            "color_hex": "#FA6528",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Lisp semantic interface close through this olog object"
+        },
+        {
+            "name": "closes_entropy_source_object",
+            "cod": "gay://test-olog/object/entropy_source_object",
+            "color_hex": "#EE5E9B",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Entropy source audit close through this olog object"
+        },
+        {
+            "name": "closes_propagator_cell_object",
+            "cod": "gay://test-olog/object/propagator_cell_object",
+            "color_hex": "#6E3F2E",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Propagator closure close through this olog object"
+        },
+        {
+            "name": "closes_abductive_world_object",
+            "cod": "gay://test-olog/object/abductive_world_object",
+            "color_hex": "#1CE6FE",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Abductive world update close through this olog object"
+        },
+        {
+            "name": "closes_fuzz_soundness_object",
+            "cod": "gay://test-olog/object/fuzz_soundness_object",
+            "color_hex": "#70F155",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Fuzz soundness close through this olog object"
+        },
+        {
+            "name": "closes_ternary_regression_object",
+            "cod": "gay://test-olog/object/ternary_regression_object",
+            "color_hex": "#9DC40F",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Ternary regression close through this olog object"
+        },
+        {
+            "name": "closes_nonriemannian_gate_object",
+            "cod": "gay://test-olog/object/nonriemannian_gate_object",
+            "color_hex": "#0DD043",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Non-Riemannian gate close through this olog object"
+        },
+        {
+            "name": "closes_exa_loop_object",
+            "cod": "gay://test-olog/object/exa_loop_object",
+            "color_hex": "#12ADD9",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Exa loop extension close through this olog object"
+        },
+        {
+            "name": "closes_aqua_hygiene_object",
+            "cod": "gay://test-olog/object/aqua_hygiene_object",
+            "color_hex": "#C2411C",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise Package hygiene close through this olog object"
+        },
+        {
+            "name": "closes_scip_catcolab_object",
+            "cod": "gay://test-olog/object/scip_catcolab_object",
+            "color_hex": "#40C9FA",
+            "dom": "gay://test-suite/pass",
+            "description": "passing tests that exercise CatColab SCIP olog bridge close through this olog object"
+        }
+    ]
+}

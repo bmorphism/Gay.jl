@@ -171,7 +171,7 @@ end
 # SPI Parallel Sublattice Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_spi_sublattices()
+function world_spi_sublattices()
     println("═══ SPI Parallel Sublattices (Even/Odd Decomposition) ═══\n")
     
     seed = UInt64(0x7232636f6c6f7273)  # "r2colors"
@@ -225,7 +225,7 @@ end
 # Colored Disassembly Demo
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_colored_disasm()
+function world_colored_disasm()
     println("═══ Colored Disassembly (r2 main function) ═══\n")
     
     # Representative ARM64 instructions from main
@@ -256,7 +256,7 @@ end
 # S-expression Coloring (from semiosis.jl)
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_sexpr_binary()
+function world_sexpr_binary()
     println("═══ S-expression View of Binary Structure ═══\n")
     
     # Represent call graph as S-expression
@@ -306,9 +306,9 @@ function r2_semiosis()
     println("╚══════════════════════════════════════════════════════════════╝")
     
     test_determinism()
-    demo_spi_sublattices()
-    demo_colored_disasm()
-    demo_sexpr_binary()
+    world_spi_sublattices()
+    world_colored_disasm()
+    world_sexpr_binary()
     
     println("╔══════════════════════════════════════════════════════════════╗")
     println("║  \"The colored address is the sign;                           ║")
@@ -321,5 +321,5 @@ if abspath(PROGRAM_FILE) == @__FILE__
     r2_semiosis()
 end
 
-export r2_semiosis, test_determinism, demo_spi_sublattices
+export r2_semiosis, test_determinism, world_spi_sublattices
 export R2_FUNCTIONS, XREFS_TO_SDB_NEW, XREFS_TO_SDB_SET

@@ -1,0 +1,172 @@
+{
+    "summary": {
+        "kinds": [
+            {
+                "colored_morphism_lift": 1
+            },
+            {
+                "docs_to_symbol_expectation": 1
+            },
+            {
+                "external_symbol_bridge": 1
+            },
+            {
+                "mode_annotation_evidence": 1
+            },
+            {
+                "paraoptic_bisimulation": 1
+            },
+            {
+                "typedtree_index": 1
+            }
+        ],
+        "fingerprint": 5319580393491277614,
+        "endpoints": 4,
+        "trit_sum": 0,
+        "morphisms": 6,
+        "gf3_conserved": true,
+        "scip_ocaml_head": "1e27bfe4626f",
+        "statuses": [
+            {
+                "blocked": 1
+            },
+            {
+                "partial": 1
+            },
+            {
+                "proposed": 1
+            },
+            {
+                "witnessed": 3
+            }
+        ]
+    },
+    "fingerprint": "0x49d2f22efc2e272e",
+    "commitments": [
+        {
+            "name": "version lock",
+            "value": "SCIP over OCaml is a typed-tree morphism; compiler-libs ABI mismatch is a real red edge, not noise."
+        },
+        {
+            "name": "docs-to-code color",
+            "value": "Oxcaml docs color the intended mode/kind semantics; scip://oxcaml should eventually carry those colors on symbols."
+        },
+        {
+            "name": "source-to-doc witness",
+            "value": "Oxgame already names Lens, Para, Arena, Color_unifier, and mode comments that map into docs://oxcaml."
+        },
+        {
+            "name": "external edges",
+            "value": "bmorphism/scip-ocaml makes cross-index dependency references visible with deterministic Path.t-derived symbols."
+        },
+        {
+            "name": "Gay.jl replay",
+            "value": "Every morphism gets a stable Gay.jl color so interpretation changes can be replayed as color-chain deltas."
+        }
+    ],
+    "endpoints": [
+        {
+            "kind": "indexer",
+            "uri": "tool://bmorphism/scip-ocaml",
+            "local_path": "/Users/dietrich/worlds/scip-work/scip-ocaml",
+            "status": "latest local bmorphism/scip-ocaml master; external-symbol Path.t resolution available",
+            "evidence_count": 275,
+            "color_hex": "#459047"
+        },
+        {
+            "kind": "code_index",
+            "uri": "scip://oxgame",
+            "local_path": "/Users/dietrich/worlds/x/src/oxgame",
+            "status": "Oxgame source has 275 OCaml source/interface files and 678 typed-tree files; partial scip-ocaml probe present; compiler-libs mismatch leaves this as boundary evidence",
+            "evidence_count": 3,
+            "color_hex": "#F02C2B"
+        },
+        {
+            "kind": "docs",
+            "uri": "docs://oxcaml",
+            "local_path": "/Users/dietrich/worlds/docs-clone/oxcaml",
+            "status": "docs://oxcaml clone exposes 37 pages for modes, kinds, uniqueness, capsules, and stack allocation",
+            "evidence_count": 37,
+            "color_hex": "#54C1ED"
+        },
+        {
+            "kind": "code_index",
+            "uri": "scip://oxcaml",
+            "local_path": "pending:oxcaml-source",
+            "status": "target code-index lane; represented here by scip-ocaml symbol grammar and external-symbol morphisms until an OxCaml source index exists",
+            "evidence_count": 0,
+            "color_hex": "#CAA693"
+        }
+    ],
+    "seed": "1069",
+    "scip_ocaml_head": "1e27bfe4626f",
+    "morphisms": [
+        {
+            "limitation": "Rebuild Oxgame and scip-ocaml with the same compiler-libs ABI to turn this red edge green.",
+            "kind": "typedtree_index",
+            "uri": "morphism://scip-ocaml/typedtree-to-scip-oxgame",
+            "trit": -1,
+            "status": "blocked",
+            "source_uri": "tool://bmorphism/scip-ocaml",
+            "color_hex": "#D2F2B4",
+            "evidence": "scip-ocaml emitted a tiny valid probe index, but most Oxgame .cmt/.cmti files were produced by OCaml 5.4.1 and are unreadable by this binary.",
+            "target_uri": "scip://oxgame"
+        },
+        {
+            "limitation": "Docs evidence is semantic rather than a compiler-checked source edge in this Gay.jl artifact.",
+            "kind": "mode_annotation_evidence",
+            "uri": "morphism://oxgame/source-to-oxcaml-docs",
+            "trit": 0,
+            "status": "witnessed",
+            "source_uri": "scip://oxgame",
+            "color_hex": "#326DEE",
+            "evidence": "Oxgame Lens, Para, Arena, and PettingZoo interfaces carry comments for local_, portable, unique_, exclave_, and capsule boundaries.",
+            "target_uri": "docs://oxcaml"
+        },
+        {
+            "limitation": "The docs clone is not a SCIP index; it seeds the expected color semantics.",
+            "kind": "docs_to_symbol_expectation",
+            "uri": "morphism://docs-oxcaml/to-scip-oxcaml-symbols",
+            "trit": 1,
+            "status": "proposed",
+            "source_uri": "docs://oxcaml",
+            "color_hex": "#5BF6A1",
+            "evidence": "Oxcaml docs define the modes/kinds/uniqueness vocabulary that should color future SCIP symbols, occurrences, and type-signature hovers.",
+            "target_uri": "scip://oxcaml"
+        },
+        {
+            "limitation": "Package-accurate cross-repo navigation still needs a module-to-package resolution table.",
+            "kind": "external_symbol_bridge",
+            "uri": "morphism://scip-ocaml/external-symbol-bridge",
+            "trit": 1,
+            "status": "partial",
+            "source_uri": "scip://oxgame",
+            "color_hex": "#6ED225",
+            "evidence": "scip-ocaml resolves missed in-tree Texp_ident references through Path.t into deterministic external symbols such as scip-ocaml opam <head-module> . <descriptors>.",
+            "target_uri": "scip://oxcaml"
+        },
+        {
+            "limitation": "The bridge colors semantic lanes; it does not assert perceptual equivalence without Gay.jl color-chain replay.",
+            "kind": "colored_morphism_lift",
+            "uri": "morphism://oxgame/color-unifier/scip-colors",
+            "trit": 0,
+            "status": "witnessed",
+            "source_uri": "scip://oxgame/lib/oxgame_kernel/color_unifier.mli",
+            "color_hex": "#7E6CD6",
+            "evidence": "Oxgame Color_unifier lifts Color_trit, Secret_colors, Share3, Trit, DisCoPy wires, and CatColab places into one conserved color record.",
+            "target_uri": "docs://oxcaml/documentation/kinds/intro/"
+        },
+        {
+            "limitation": "Bisimulation here is structural and artifact-level, not a full proof over every Oxgame module.",
+            "kind": "paraoptic_bisimulation",
+            "uri": "morphism://paraoptic/shared-arena-to-scip",
+            "trit": -1,
+            "status": "witnessed",
+            "source_uri": "arena://gay/ox/shared-bisimulation",
+            "color_hex": "#D6E9BC",
+            "evidence": "SharedOxArena models O/X/W as Para(Optic(C)); scip://oxgame supplies concrete Lens/Para/Arena names for the same play-coplay split.",
+            "target_uri": "scip://oxgame"
+        }
+    ],
+    "type": "ScipOxcamlBridgeWorld"
+}

@@ -4338,7 +4338,7 @@ SPC_CMDS["world"] = function(args...)
         
     elseif action == "spi"
         println("  🎯 Running SPI Demonstration...")
-        result = spi_parallel_demo(world; verbose=true)
+        result = verify_spi_parallel_synergy(world; verbose=true)
         
     elseif action == "verify"
         challenge = first_contact_challenge(world)

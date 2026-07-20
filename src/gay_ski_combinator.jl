@@ -58,7 +58,7 @@ export
     maximally_parallel_index, color_coherent_search,
     
     # Demo
-    demo_gay_ski
+    world_gay_ski
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -881,7 +881,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_ski()
+function world_gay_ski()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY SKI COMBINATOR: Maximally Parallel Color-Indexed Random Access       ║")

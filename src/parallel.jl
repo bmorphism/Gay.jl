@@ -12,7 +12,7 @@ using OhMyThreads: tmap, tforeach
 using Pigeons: SplittableRandom as PigeonsSR
 using Random: shuffle
 
-export parallel_palette, parallel_colors_at, spi_demo
+export parallel_palette, parallel_colors_at, verify_spi_parallelism
 export fast_parallel_colors, fast_parallel_palette
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -66,22 +66,22 @@ function sample_optimal_palette(n::Int; seed::Int=42)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SPI Demonstration
+# SPI Parallelism Verification
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    spi_demo(; seed=42, n=100)
+    verify_spi_parallelism(; seed=42, n=100)
 
-Demonstrate Strong Parallelism Invariance:
+Verify Strong Parallelism Invariance:
 - Sequential and parallel execution produce identical results
 - Thread count doesn't affect output
 - Execution order doesn't matter
 
 This is the key insight from Pigeons.jl applied to color generation.
 """
-function spi_demo(; seed::Int=42, n::Int=100)
+function verify_spi_parallelism(; seed::Int=42, n::Int=100)
     println("═══════════════════════════════════════════════════════════════")
-    println("  Strong Parallelism Invariance (SPI) Demonstration")
+    println("  Strong Parallelism Invariance (SPI) Verification")
     println("═══════════════════════════════════════════════════════════════")
     println()
     

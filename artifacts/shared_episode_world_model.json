@@ -1,0 +1,274 @@
+{
+  "artifact": "gay-shared-episode-world-model",
+  "version": 1,
+  "created_for": "Gay.jl shared play-coplay world update substrate",
+  "premise": "A jointly learned world model can be reached through bounded shared episodes, bidirectional play/coplay feedback, and together-observed environmental updates, without reconstructing every participant's full origin path or metatheory.",
+  "source_anchors": {
+    "gay_jl": {
+      "repo": "/Users/dietrich/worlds/z/bmorphism/Gay.jl",
+      "branch": "gay",
+      "head": "e3c403a",
+      "anchors": [
+        "src/trit_tick.jl defines TritTick, EPOCH_1_HZ=141120000, FLICKS_PER_TICK=5, GF3_QUANTUM, and trit roles",
+        "src/splittable.jl defines GAY_SEED=1069, SplitMix64 constants, color_at, color_at(TritTick), and SPI verification",
+        "src/entropy_sources.jl defines ColoredTick and physical entropy sources with mortality classes",
+        "src/obligation_clearing.jl treats zero-sum clearing as GF(3) conservation and XOR fingerprint verification",
+        "docs/WORLD_PATTERN.md requires persistent world_ builders with length, merge, and fingerprint"
+      ]
+    },
+    "zig_syrup": {
+      "repo": "/Users/dietrich/worlds/z/plurigrid/zig-syrup",
+      "head": "66dc6eb",
+      "anchors": [
+        "src/glimpse.zig defines glimpse as epoch-1 time quantum, 141120000 glimpses/sec, 1 glimpse = 5 flicks",
+        "src/trit_tick.zig preserves the backward-compatible trit-tick name for the same time base",
+        "src/splitmix_trit.zig maps GF(3) roles to validator -1, coordinator 0, generator +1",
+        "src/gf3_palette.zig maps five trits to a 243-color GF(3)^5 palette with checksum conservation"
+      ]
+    },
+    "related_anthropology": [
+      "/Users/dietrich/worlds/GayReflectionsOS/artifacts/reflectionsos_semantic_assignment_world.json",
+      "/Users/dietrich/worlds/b/discopy/artifacts/discopy_color_code_anthropology.md",
+      "/Users/dietrich/worlds/b/discopy/artifacts/discopy_semantic_assignment_world.json"
+    ]
+  },
+  "world": {
+    "name": "SharedEpisodeWorld",
+    "purpose": "Give huemans, machines, embodied small agents, simulations, and other systems a minimal common substrate for learning from shared episodes.",
+    "not_a_goal": [
+      "Do not require full ancestry reconstruction for every participant.",
+      "Do not require importing every theory, metatheory, or agent architecture.",
+      "Do not clone Concordia, AI-town, or social simulation stacks; interoperate by episode records."
+    ],
+    "core_claim": "The smallest useful common world model is an order-independent ledger of shared episodes whose colors, trits, time coordinates, fingerprints, and update outcomes are reproducible."
+  },
+  "hueman_ideography": {
+    "definition": "A hueman is a color-bearing, embodied, socially legible participant role rather than a species-exclusive bucket.",
+    "standard": "When a name can return durable state, prefer world_ builders with length, merge, and fingerprint over throwaway display identity.",
+    "ideographic_bias": [
+      "Keep the substrate visible in the name.",
+      "Keep the operation composable in the name.",
+      "Use shared pronouns and shared episode records at boundaries."
+    ],
+    "examples": [
+      "retinal_dither",
+      "mosaic_refresh",
+      "ganglion_sync",
+      "shared_episode"
+    ]
+  },
+  "entities": {
+    "Participant": {
+      "description": "Any system that can observe, act, or be affected in a shared episode.",
+      "roles": [
+        "hueman",
+        "machine",
+        "embodied_animal",
+        "simulated_agent",
+        "sensor",
+        "environment_process"
+      ],
+      "fields": [
+        "participant_id",
+        "capabilities",
+        "sensorium",
+        "actuators",
+        "trust_boundary",
+        "mortality_class"
+      ]
+    },
+    "Now": {
+      "description": "A bounded episode coordinate that aligns participants without requiring shared wall-clock metaphysics.",
+      "fields": [
+        "glimpse_start",
+        "glimpse_span",
+        "trit_phase",
+        "flick_span",
+        "modality_alignment",
+        "local_observer_offsets"
+      ]
+    },
+    "SharedEpisode": {
+      "description": "A together-observed interaction window with play, coplay, evidence, and update pressure.",
+      "fields": [
+        "episode_id",
+        "now",
+        "participants",
+        "environment_refs",
+        "observations",
+        "actions",
+        "feedback",
+        "updates",
+        "fitness_gate",
+        "fingerprint",
+        "color"
+      ]
+    },
+    "Observation": {
+      "description": "A participant-local reading of the shared episode.",
+      "fields": [
+        "observer",
+        "modality",
+        "value_ref",
+        "confidence",
+        "measured_trit",
+        "entropy"
+      ]
+    },
+    "Play": {
+      "description": "Forward generative action into the environment.",
+      "gf3_role": 1,
+      "fields": [
+        "actor",
+        "action_ref",
+        "expected_effect",
+        "resource_budget"
+      ]
+    },
+    "Coplay": {
+      "description": "Backward feedback, validation, correction, or environment-returned consequence.",
+      "gf3_role": -1,
+      "fields": [
+        "receiver",
+        "feedback_ref",
+        "error_signal",
+        "constraint"
+      ]
+    },
+    "Witness": {
+      "description": "Neutral observed closure of play and coplay into a shareable update.",
+      "gf3_role": 0,
+      "fields": [
+        "witness_ref",
+        "agreement",
+        "residual",
+        "justification"
+      ]
+    },
+    "WorldUpdate": {
+      "description": "The smallest committed change to a participant or shared world state after an episode.",
+      "fields": [
+        "prior_ref",
+        "posterior_ref",
+        "delta_ref",
+        "learning_rate_hint",
+        "surprisal",
+        "accepted"
+      ]
+    },
+    "FitnessGate": {
+      "description": "A bounded resource rule: unfit candidate updates terminate before exhausting the open dynamical system.",
+      "fields": [
+        "budget",
+        "energy_cost",
+        "latency_cost",
+        "coherence_gain",
+        "survival_decision"
+      ]
+    }
+  },
+  "time_model": {
+    "glimpse": {
+      "ticks_per_second": 141120000,
+      "seconds": 7.086167800453514e-9,
+      "relationship": "1 glimpse = 5 flicks",
+      "source": "zig-syrup/src/glimpse.zig and Gay.jl/src/trit_tick.jl"
+    },
+    "trit_tick": {
+      "alias": "epoch-1 glimpse in older naming",
+      "role": "time coordinate carrying GF(3) phase",
+      "source": "zig-syrup/src/trit_tick.zig and Gay.jl/src/trit_tick.jl"
+    },
+    "flick": {
+      "ticks_per_second": 705600000,
+      "relationship": "5 flicks = 1 glimpse"
+    },
+    "helek": {
+      "status": "external vocabulary requested by the user; reserve as a coarse rendezvous window until a local code definition is added",
+      "recommended_mapping": "A helek should be represented as an integer number of glimpses and never as a float."
+    },
+    "episode_now": {
+      "recommended_default": "A window of enough glimpses to include all participating modalities that must agree.",
+      "examples": [
+        "EEG 250 Hz sample: 564480 glimpses",
+        "video 60 Hz frame: 2352000 glimpses",
+        "GF(3) phase quantum: 47040000 glimpses"
+      ]
+    }
+  },
+  "learning_loop": [
+    {
+      "step": 1,
+      "name": "observe_together",
+      "description": "Participants publish observations into the same episode window, preserving local offsets and modality rates."
+    },
+    {
+      "step": 2,
+      "name": "play",
+      "description": "A participant acts, proposes, gestures, speaks, simulates, or perturbs the environment."
+    },
+    {
+      "step": 3,
+      "name": "coplay",
+      "description": "Other participants and the environment return constraint, surprise, correction, reward, or refusal."
+    },
+    {
+      "step": 4,
+      "name": "witness",
+      "description": "The episode closes only when a shareable trace, justification, or residual is recorded."
+    },
+    {
+      "step": 5,
+      "name": "update_or_die",
+      "description": "Accepted updates alter world state; incoherent or over-budget candidates die before resource exhaustion."
+    },
+    {
+      "step": 6,
+      "name": "fingerprint",
+      "description": "The episode's canonical bytes, trits, and colors yield an order-independent verification handle."
+    }
+  ],
+  "gay_jl_responsibilities": {
+    "color": "Map episode ids, participants, and updates to deterministic colors with color_at and hash_color.",
+    "time": "Represent shared nows with TritTick/glimpse-compatible integer coordinates.",
+    "trit": "Classify play/coplay/witness pressure as GF(3) roles: +1, -1, 0.",
+    "entropy": "Admit physical reality through ColoredTick sources rather than pure text-only assertions.",
+    "fingerprint": "Provide SPI-compliant identity and order-independent merge checks.",
+    "world_builder": "Expose any runtime implementation as a persistent world_ builder, not a print-and-discard routine."
+  },
+  "syrup_responsibilities": {
+    "serialization": "Encode SharedEpisode records into canonical bytes for transport and hashing.",
+    "capability_transport": "Carry episode references across OCapN/CapTP-style boundaries without collapsing trust boundaries.",
+    "zig_alignment": "Keep time/color primitives available to low-level devices, sensors, and replay tools."
+  },
+  "invariants": [
+    "Same canonical episode bytes imply same episode_id, fingerprint, color, and trit checksum.",
+    "Merging episode sets is commutative and associative when fingerprints are XOR-style reductions over canonical episode fingerprints.",
+    "No participant's private origin story is required for episode-level convergence.",
+    "A world update must cite at least one shared observation or environmental feedback edge.",
+    "Resource budgets are first-class: losing hypotheses, bad fits, and incoherent candidates terminate early.",
+    "Play plus coplay plus witness conserves GF(3): generator, validator, and coordinator pressure must not drift unchecked.",
+    "Time is represented as integer glimpses/trit-ticks/flicks, never floating wall-clock time, at the verification boundary."
+  ],
+  "schema_sketch": {
+    "SharedEpisodeRecord": {
+      "episode_id": "u64-or-cid",
+      "now": "Now",
+      "participants": "Participant[]",
+      "observations": "Observation[]",
+      "plays": "Play[]",
+      "coplays": "Coplay[]",
+      "witnesses": "Witness[]",
+      "updates": "WorldUpdate[]",
+      "fitness_gate": "FitnessGate",
+      "canonical_bytes": "syrup-bytes",
+      "fingerprint": "u64",
+      "color": "rgb-or-gf3-palette-index"
+    }
+  },
+  "next_open_dynamical_system": {
+    "description": "The successor system is opened by replaying accepted episode updates, not by re-deriving every prior ontology.",
+    "entry_condition": "Enough shared episodes have accumulated that participants can predict, correct, and co-attend to each other's updates within bounded resource budgets.",
+    "exit_condition": "A successor world exposes a smaller, more coherent episode interface than the world it replaced."
+  }
+}

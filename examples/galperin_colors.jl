@@ -163,7 +163,7 @@ function render_galperin_colors(n_digits::Int; seed::Integer=GALPERIN_SEED)
     println("  Wall collisions and ball collisions use offset indices")
 end
 
-function demo_galperin_spi()
+function world_galperin_spi()
     println("\n  ═══════════════════════════════════════════════════════")
     println("  SPI Verification: :galperin branch independence")
     println("  ═══════════════════════════════════════════════════════\n")
@@ -212,7 +212,7 @@ function main()
     render_galperin_colors(3)
     
     # Verify branch independence
-    demo_galperin_spi()
+    world_galperin_spi()
     
     println("\n  Properties:")
     println("  ◆ Each collision maps to deterministic color")

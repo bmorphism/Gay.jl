@@ -385,10 +385,10 @@ function world_skill_triplets(skills::Vector{Tuple{String, Int}})::ThreeMatchWor
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Demo / CLI
+# Report / CLI
 # ══════════════════════════════════════════════════════════════════════════════
 
-function world_three_match_demo()
+function world_three_match_report()
     println("═" ^ 70)
     println("THREE-MATCH: GF(3) Colored Subgraph Isomorphism")
     println("═" ^ 70)
@@ -438,6 +438,8 @@ function world_three_match_demo()
     
     println()
     println("═" ^ 70)
+
+    world
 end
 
 end # module ThreeMatch

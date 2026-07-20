@@ -1,0 +1,45 @@
+====================================================================================================
+Oxgame Remix World - latest overall                                                                 
+Gay.jl e3c403ad9873 + github: plurigrid/oxgame unresolved here; using docs://oxgame mirror          
+----------------------------------------------------------------------------------------------------
+remix fp: 0x7c1fe96ca068e69f                                                                        
+local O/X fp: 0x3417d9d6e6060864                                                                    
+screen fp: 0x18211bc8643621d7                                                                       
+docs root: /Users/dietrich/worlds/docs-clone/oxgame                                                 
+----------------------------------------------------------------------------------------------------
+lanes                                                                                               
+0   #C89AE2 tile://oxgame/convergence - neutral benchmark and rendered locality                     
++1  #A5D5CA strategy://oxgame/best-response - accelerated profile update                            
+0   #F42710 arena://oxgame/fixed-point - capsule boundary for mutable play state                    
++1  #484846 world://oxgame/equilibrium - accepted forward equilibrium                               
+-1  #D61998 coworld://oxgame/rejected-accelerants - rejected candidates kept out of accepted state  
+-1  #9F7295 scip://oxgame-derived/convergence-hot-path - exact derivation and hot-path evidence     
+----------------------------------------------------------------------------------------------------
+sources                                                                                             
+ 1081 #F9FF7B docs://oxgame/.topos/69x3_adversarial_probes.md                                       
+      # 69x3 Adversarial Probes for oxgame Differentiating Factors                                  
+  930 #722FB3 docs://oxgame/.topos/resonant-codebases-2026-04-18.md                                 
+      date: 2026-04-18                                                                              
+  732 #1441D9 docs://oxgame/.topos/reports/pontryagin-duality-index.md                              
+      # Pontryagin Duality Audit Index                                                              
+  542 #268D84 docs://oxgame/.topos/side-by-side-vs-cybercat-2026-04-28.md                           
+      date: 2026-04-28                                                                              
+  536 #2E6AF3 docs://oxgame/.topos/oxgame-growth-17ram-2026-04-28.md                                
+      date: 2026-04-28                                                                              
+  429 #A8EEC8 docs://oxgame/.topos/oxgame-map-2026-04-28.md                                         
+      date: 2026-04-28                                                                              
+  376 #65ED2D docs://oxgame/.topos/emergent-simplicity-interleave-2026-04-28.md                     
+      date: 2026-04-28                                                                              
+  344 #196266 docs://oxgame/.topos/ambition-reality-gaps.md                                         
+      date: 2026-04-29                                                                              
+  321 #AAB1E6 docs://oxgame/.topos/cross-substrate-distillation-2026-04-18.md                       
+      date: 2026-04-18                                                                              
+----------------------------------------------------------------------------------------------------
+commitments                                                                                         
+- open-game core: Remix O/X detection as play, coplay, payoff, equilibrium, and certificate rathe...
+- Nash boundary: Treat fingerprints and screen summaries as post-convergence certificates; keep v...
+- survival pressure: Let finite pressure choose detectors first; missed surfaces become coworld e...
+- SCIP exactness: Keep derivation URIs stable so fuzzy recall can suggest candidates while exact ...
+- ACSet artifact: Store the remix as tileable JSON/text artifacts that can cross substrates witho...
+- color chain: Seed each lane/source with Gay.jl colors so repeated composition has a replayable ...
+====================================================================================================

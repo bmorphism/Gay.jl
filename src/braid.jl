@@ -515,7 +515,7 @@ end
 # Demo: Random Walk to #FFFF69 in 69 Steps
 # ═══════════════════════════════════════════════════════════════════════════
 
-function demo_random_walk_ffff69()
+function world_random_walk_ffff69()
     target = RGB(1.0, 1.0, 0.4118)  # #FFFF69
     
     println("╔════════════════════════════════════════════════════════════════╗")

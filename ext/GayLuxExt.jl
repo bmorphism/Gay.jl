@@ -500,7 +500,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_lux()
+function world_gay_lux()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAYLUXEXT: Neural Network SPI Coloring                                   ║")
@@ -535,6 +535,6 @@ function demo_gay_lux()
     cn
 end
 
-export demo_gay_lux
+export world_gay_lux
 
 end # module GayLuxExt

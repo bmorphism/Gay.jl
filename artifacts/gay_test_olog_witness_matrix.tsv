@@ -1,0 +1,205 @@
+ordinal	aspect	color_hex	testset_hint	catcolab_uri
+1	color_space_object	#08BC2B	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-001
+2	trit_tick_object	#8965DB	Color Spaces	scip://catcolab/olog/gay-test-closure/test-002
+3	rng_determinism_object	#531C2C	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-003
+4	parallel_invariance_object	#537D7B	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-004
+5	palette_interface_object	#61BC68	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-005
+6	lisp_semantics_object	#D5CEB8	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-006
+7	entropy_source_object	#5BCA4A	Palette Generation	scip://catcolab/olog/gay-test-closure/test-007
+8	propagator_cell_object	#7B106C	Pride Flags	scip://catcolab/olog/gay-test-closure/test-008
+9	abductive_world_object	#E2324B	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-009
+10	fuzz_soundness_object	#70C5FD	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-010
+11	ternary_regression_object	#A5685C	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-011
+12	nonriemannian_gate_object	#0F16F7	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-012
+13	exa_loop_object	#319854	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-013
+14	aqua_hygiene_object	#2F39FC	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-014
+15	scip_catcolab_object	#7C2444	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-015
+16	color_space_object	#DD739C	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-016
+17	trit_tick_object	#B9E1BD	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-017
+18	rng_determinism_object	#642D21	Backend Switching	scip://catcolab/olog/gay-test-closure/test-018
+19	parallel_invariance_object	#C923C3	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-019
+20	palette_interface_object	#B27E38	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-020
+21	lisp_semantics_object	#942B7E	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-021
+22	entropy_source_object	#9C1852	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-022
+23	propagator_cell_object	#006D4E	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-023
+24	abductive_world_object	#5B7186	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-024
+25	fuzz_soundness_object	#8B5016	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-025
+26	ternary_regression_object	#DABEC6	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-026
+27	nonriemannian_gate_object	#D5A5D8	Color Spaces	scip://catcolab/olog/gay-test-closure/test-027
+28	exa_loop_object	#81AEA4	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-028
+29	aqua_hygiene_object	#07AC0A	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-029
+30	scip_catcolab_object	#B092EB	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-030
+31	color_space_object	#C0097B	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-031
+32	trit_tick_object	#57F072	Palette Generation	scip://catcolab/olog/gay-test-closure/test-032
+33	rng_determinism_object	#BC2E9D	Pride Flags	scip://catcolab/olog/gay-test-closure/test-033
+34	parallel_invariance_object	#8216A4	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-034
+35	palette_interface_object	#EEB325	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-035
+36	lisp_semantics_object	#BB1C53	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-036
+37	entropy_source_object	#70A9D9	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-037
+38	propagator_cell_object	#0ED72D	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-038
+39	abductive_world_object	#51CA40	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-039
+40	fuzz_soundness_object	#D978A7	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-040
+41	ternary_regression_object	#9F7B08	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-041
+42	nonriemannian_gate_object	#E66BAA	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-042
+43	exa_loop_object	#2654B9	Backend Switching	scip://catcolab/olog/gay-test-closure/test-043
+44	aqua_hygiene_object	#5EA448	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-044
+45	scip_catcolab_object	#27CD16	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-045
+46	color_space_object	#06DAFD	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-046
+47	trit_tick_object	#3819B8	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-047
+48	rng_determinism_object	#EB40EA	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-048
+49	parallel_invariance_object	#39208D	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-049
+50	palette_interface_object	#FC8C52	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-050
+51	lisp_semantics_object	#BD73E0	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-051
+52	entropy_source_object	#84A6EE	Color Spaces	scip://catcolab/olog/gay-test-closure/test-052
+53	propagator_cell_object	#75C73D	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-053
+54	abductive_world_object	#AB7209	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-054
+55	fuzz_soundness_object	#162871	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-055
+56	ternary_regression_object	#CB547A	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-056
+57	nonriemannian_gate_object	#8ED345	Palette Generation	scip://catcolab/olog/gay-test-closure/test-057
+58	exa_loop_object	#0510AC	Pride Flags	scip://catcolab/olog/gay-test-closure/test-058
+59	aqua_hygiene_object	#8413F1	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-059
+60	scip_catcolab_object	#6C6252	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-060
+61	color_space_object	#27FE58	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-061
+62	trit_tick_object	#5B13F9	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-062
+63	rng_determinism_object	#53ACD7	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-063
+64	parallel_invariance_object	#FFC091	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-064
+65	palette_interface_object	#F23745	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-065
+66	lisp_semantics_object	#95DAE6	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-066
+67	entropy_source_object	#55B542	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-067
+68	propagator_cell_object	#2119D9	Backend Switching	scip://catcolab/olog/gay-test-closure/test-068
+69	abductive_world_object	#E0BEB7	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-069
+70	fuzz_soundness_object	#5BA9B3	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-070
+71	ternary_regression_object	#BC14F6	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-071
+72	nonriemannian_gate_object	#D75521	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-072
+73	exa_loop_object	#0282C0	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-073
+74	aqua_hygiene_object	#B1FB48	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-074
+75	scip_catcolab_object	#0DCA5E	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-075
+76	color_space_object	#19B29E	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-076
+77	trit_tick_object	#DF2BAA	Color Spaces	scip://catcolab/olog/gay-test-closure/test-077
+78	rng_determinism_object	#FF0943	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-078
+79	parallel_invariance_object	#3F1998	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-079
+80	palette_interface_object	#1B0016	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-080
+81	lisp_semantics_object	#DF7D22	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-081
+82	entropy_source_object	#33B9FA	Palette Generation	scip://catcolab/olog/gay-test-closure/test-082
+83	propagator_cell_object	#5AC151	Pride Flags	scip://catcolab/olog/gay-test-closure/test-083
+84	abductive_world_object	#CD270A	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-084
+85	fuzz_soundness_object	#EBEE88	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-085
+86	ternary_regression_object	#737BCE	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-086
+87	nonriemannian_gate_object	#C29CD1	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-087
+88	exa_loop_object	#19EAF1	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-088
+89	aqua_hygiene_object	#97434B	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-089
+90	scip_catcolab_object	#BD6619	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-090
+91	color_space_object	#E92AA8	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-091
+92	trit_tick_object	#5F558B	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-092
+93	rng_determinism_object	#DD2048	Backend Switching	scip://catcolab/olog/gay-test-closure/test-093
+94	parallel_invariance_object	#3EB126	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-094
+95	palette_interface_object	#750AB3	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-095
+96	lisp_semantics_object	#34A9B0	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-096
+97	entropy_source_object	#EB5B8B	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-097
+98	propagator_cell_object	#DEF3FF	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-098
+99	abductive_world_object	#D82DD0	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-099
+100	fuzz_soundness_object	#6FF84F	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-100
+101	ternary_regression_object	#B0451B	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-101
+102	nonriemannian_gate_object	#F21939	Color Spaces	scip://catcolab/olog/gay-test-closure/test-102
+103	exa_loop_object	#899EA1	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-103
+104	aqua_hygiene_object	#8DCF92	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-104
+105	scip_catcolab_object	#1DB8E2	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-105
+106	color_space_object	#9B9ED3	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-106
+107	trit_tick_object	#8E49E7	Palette Generation	scip://catcolab/olog/gay-test-closure/test-107
+108	rng_determinism_object	#87E587	Pride Flags	scip://catcolab/olog/gay-test-closure/test-108
+109	parallel_invariance_object	#7544D7	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-109
+110	palette_interface_object	#700E59	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-110
+111	lisp_semantics_object	#5A1DAA	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-111
+112	entropy_source_object	#CC6E3E	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-112
+113	propagator_cell_object	#9F2504	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-113
+114	abductive_world_object	#3D23F2	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-114
+115	fuzz_soundness_object	#E38062	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-115
+116	ternary_regression_object	#1186E8	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-116
+117	nonriemannian_gate_object	#08EB32	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-117
+118	exa_loop_object	#515918	Backend Switching	scip://catcolab/olog/gay-test-closure/test-118
+119	aqua_hygiene_object	#FE67E0	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-119
+120	scip_catcolab_object	#3B0EC0	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-120
+121	color_space_object	#C2B33E	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-121
+122	trit_tick_object	#5DB5FD	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-122
+123	rng_determinism_object	#692FD2	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-123
+124	parallel_invariance_object	#374470	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-124
+125	palette_interface_object	#FC8D74	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-125
+126	lisp_semantics_object	#FABE54	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-126
+127	entropy_source_object	#22E2D6	Color Spaces	scip://catcolab/olog/gay-test-closure/test-127
+128	propagator_cell_object	#2368B2	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-128
+129	abductive_world_object	#4E9B04	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-129
+130	fuzz_soundness_object	#4ADD19	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-130
+131	ternary_regression_object	#DC9CFD	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-131
+132	nonriemannian_gate_object	#E475F0	Palette Generation	scip://catcolab/olog/gay-test-closure/test-132
+133	exa_loop_object	#43D76D	Pride Flags	scip://catcolab/olog/gay-test-closure/test-133
+134	aqua_hygiene_object	#F5A802	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-134
+135	scip_catcolab_object	#3FACD6	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-135
+136	color_space_object	#1B0B36	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-136
+137	trit_tick_object	#4FC2A4	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-137
+138	rng_determinism_object	#427D4F	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-138
+139	parallel_invariance_object	#C08B58	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-139
+140	palette_interface_object	#A3C6F1	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-140
+141	lisp_semantics_object	#4978A7	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-141
+142	entropy_source_object	#35EBFC	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-142
+143	propagator_cell_object	#6DA091	Backend Switching	scip://catcolab/olog/gay-test-closure/test-143
+144	abductive_world_object	#0FF0A7	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-144
+145	fuzz_soundness_object	#BAF464	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-145
+146	ternary_regression_object	#930D79	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-146
+147	nonriemannian_gate_object	#668850	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-147
+148	exa_loop_object	#1661BA	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-148
+149	aqua_hygiene_object	#F02ACC	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-149
+150	scip_catcolab_object	#586EA6	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-150
+151	color_space_object	#465753	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-151
+152	trit_tick_object	#F24F1D	Color Spaces	scip://catcolab/olog/gay-test-closure/test-152
+153	rng_determinism_object	#EB6D4F	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-153
+154	parallel_invariance_object	#732C41	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-154
+155	palette_interface_object	#A94A78	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-155
+156	lisp_semantics_object	#FC4807	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-156
+157	entropy_source_object	#BBEFAA	Palette Generation	scip://catcolab/olog/gay-test-closure/test-157
+158	propagator_cell_object	#397676	Pride Flags	scip://catcolab/olog/gay-test-closure/test-158
+159	abductive_world_object	#639C9C	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-159
+160	fuzz_soundness_object	#5216E2	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-160
+161	ternary_regression_object	#96D184	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-161
+162	nonriemannian_gate_object	#65991A	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-162
+163	exa_loop_object	#D2C8C8	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-163
+164	aqua_hygiene_object	#5A113D	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-164
+165	scip_catcolab_object	#5E6AEE	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-165
+166	color_space_object	#2B963B	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-166
+167	trit_tick_object	#E743D7	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-167
+168	rng_determinism_object	#82A2EB	Backend Switching	scip://catcolab/olog/gay-test-closure/test-168
+169	parallel_invariance_object	#5E9277	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-169
+170	palette_interface_object	#5C82A2	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-170
+171	lisp_semantics_object	#238977	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-171
+172	entropy_source_object	#B6A983	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-172
+173	propagator_cell_object	#B94EF1	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-173
+174	abductive_world_object	#EB475C	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-174
+175	fuzz_soundness_object	#B10E44	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-175
+176	ternary_regression_object	#7FC12E	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-176
+177	nonriemannian_gate_object	#D3E790	Color Spaces	scip://catcolab/olog/gay-test-closure/test-177
+178	exa_loop_object	#65743C	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-178
+179	aqua_hygiene_object	#A0B86D	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-179
+180	scip_catcolab_object	#69A5AF	Splittable Determinism	scip://catcolab/olog/gay-test-closure/test-180
+181	color_space_object	#DC8068	Strong Parallelism Invariance	scip://catcolab/olog/gay-test-closure/test-181
+182	trit_tick_object	#0A7038	Palette Generation	scip://catcolab/olog/gay-test-closure/test-182
+183	rng_determinism_object	#699C95	Pride Flags	scip://catcolab/olog/gay-test-closure/test-183
+184	parallel_invariance_object	#D2C0FA	Gamut Operations	scip://catcolab/olog/gay-test-closure/test-184
+185	palette_interface_object	#BC304A	Comrade Sky Models	scip://catcolab/olog/gay-test-closure/test-185
+186	lisp_semantics_object	#9FBD4C	Lisp Interface	scip://catcolab/olog/gay-test-closure/test-186
+187	entropy_source_object	#45C39D	Parallel Color Generation	scip://catcolab/olog/gay-test-closure/test-187
+188	propagator_cell_object	#05A7F7	KernelAbstractions SPMD Colors	scip://catcolab/olog/gay-test-closure/test-188
+189	abductive_world_object	#C2EB04	XOR Fingerprint SPI Verification	scip://catcolab/olog/gay-test-closure/test-189
+190	fuzz_soundness_object	#E029F1	SPI Multi-Seed Verification	scip://catcolab/olog/gay-test-closure/test-190
+191	ternary_regression_object	#8229A5	SPI Workgroup Independence	scip://catcolab/olog/gay-test-closure/test-191
+192	nonriemannian_gate_object	#FA1D0B	Color Entropy Sources	scip://catcolab/olog/gay-test-closure/test-192
+193	exa_loop_object	#51D5FE	Backend Switching	scip://catcolab/olog/gay-test-closure/test-193
+194	aqua_hygiene_object	#851637	Abductive Tests	scip://catcolab/olog/gay-test-closure/test-194
+195	scip_catcolab_object	#6DA656	QUIC Tests	scip://catcolab/olog/gay-test-closure/test-195
+196	color_space_object	#26150F	Fuzz and Jepsen Tests	scip://catcolab/olog/gay-test-closure/test-196
+197	trit_tick_object	#B1BC3C	Propagator Tests	scip://catcolab/olog/gay-test-closure/test-197
+198	rng_determinism_object	#57FB44	Regression Ternary	scip://catcolab/olog/gay-test-closure/test-198
+199	parallel_invariance_object	#9FBB54	Non-Riemannian Gate	scip://catcolab/olog/gay-test-closure/test-199
+200	palette_interface_object	#8A514F	Exa Loop Extensions	scip://catcolab/olog/gay-test-closure/test-200
+201	lisp_semantics_object	#FB5E9D	Aqua.jl package hygiene	scip://catcolab/olog/gay-test-closure/test-201
+202	entropy_source_object	#51D076	Color Spaces	scip://catcolab/olog/gay-test-closure/test-202
+203	propagator_cell_object	#EDE7AE	Trit-Tick Time Base	scip://catcolab/olog/gay-test-closure/test-203
+204	abductive_world_object	#EBA03F	Random Color Generation	scip://catcolab/olog/gay-test-closure/test-204

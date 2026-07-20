@@ -62,7 +62,7 @@ export
     CoveringClassification, classify_all_coverings,
     
     # Demo
-    demo_parametrizable_coverings
+    world_parametrizable_coverings
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS

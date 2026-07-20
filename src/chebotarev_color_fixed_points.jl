@@ -53,7 +53,7 @@ export
     export_to_octave, generate_itaca_matlab,
 
     # Demo
-    demo_chebotarev_colors
+    world_chebotarev_colors
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -622,7 +622,7 @@ function generate_itaca_matlab()::String
 % Authors: Gay.jl Framework
 % License: MIT
 
-function gay_itaca_demo()
+function gay_itaca_world()
 
     % ═══ SPLITMIX64 PRNG ═══
     function z = splitmix64(state)
@@ -776,7 +776,7 @@ function gay_itaca_demo()
 end
 
 % Run the demo
-gay_itaca_demo();
+gay_itaca_world();
 """
     code
 end
@@ -785,7 +785,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_chebotarev_colors()
+function world_chebotarev_colors()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  CHEBOTAREV COLOR FIXED POINTS: Gay Seeds in Learnable Color Spaces      ║")

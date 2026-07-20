@@ -54,7 +54,7 @@ export
     PersistentDiagramFlow,
     
     # Demo
-    demo_arrow_failures
+    world_arrow_failures
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG
@@ -1323,7 +1323,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_arrow_failures()
+function world_arrow_failures()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  ACSET ARROW FAILURES: Categorical Obstruction Taxonomy                   ║")

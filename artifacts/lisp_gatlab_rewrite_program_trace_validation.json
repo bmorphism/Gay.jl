@@ -1,0 +1,51 @@
+{
+    "request_count": 3,
+    "program_execution_fingerprint": "0x51b507c10de3c235",
+    "parser": "lispsyntax",
+    "selected_ordinals": [
+        1,
+        2
+    ],
+    "step_count": 3,
+    "execution_count": 3,
+    "backends": [
+        "projection",
+        "projection",
+        "projection"
+    ],
+    "fingerprint": "0x8daeed567f6917d4",
+    "valid": true,
+    "comparisons": {
+        "request_count": true,
+        "step_request_arguments": true,
+        "program_execution_fingerprint": true,
+        "selected_ordinals": true,
+        "step_request_backends": true,
+        "step_backends": true,
+        "step_execution_fingerprints": true,
+        "step_count": true,
+        "execution_count": true,
+        "all_selected_all_targets": true,
+        "backends": true,
+        "coverage_complete": true,
+        "fingerprint": true,
+        "step_fingerprints": true,
+        "step_selected_all_targets": true,
+        "program_fingerprint": true,
+        "repeated_ordinals": true,
+        "step_introduced_ordinals": true,
+        "step_request_fingerprints": true,
+        "step_selected_all_materialized": true,
+        "step_selected_ordinals": true,
+        "step_request_operations": true,
+        "step_plan_fingerprints": true,
+        "all_selected_all_materialized": true,
+        "step_indices": true
+    },
+    "program_fingerprint": "0x36a6ddc85c3c8142",
+    "evidence": "LispSyntax rewrite trace form replays to the same GATlab/AlgebraicJulia trace",
+    "parsed_fingerprint": "0x8daeed567f6917d4",
+    "repeated_ordinals": [
+        1
+    ]
+}

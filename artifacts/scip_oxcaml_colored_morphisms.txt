@@ -1,0 +1,56 @@
+============================================================================================================
+SCIP/OxCaml Colored Morphism World                                                                          
+bmorphism/scip-ocaml head: 1e27bfe4626f                                                                     
+bridge fp: 0x49d2f22efc2e272e                                                                               
+------------------------------------------------------------------------------------------------------------
+endpoints                                                                                                   
+#459047 indexer tool://bmorphism/scip-ocaml                                                                 
+  path: /Users/dietrich/worlds/scip-work/scip-ocaml                                                         
+  status: latest local bmorphism/scip-ocaml master; external-symbol Path.t resolution available             
+  evidence count: 275                                                                                       
+#F02C2B code_index scip://oxgame                                                                            
+  path: /Users/dietrich/worlds/x/src/oxgame                                                                 
+  status: Oxgame source has 275 OCaml source/interface files and 678 typed-tree files; partial scip-ocaml...
+  evidence count: 3                                                                                         
+#54C1ED docs docs://oxcaml                                                                                  
+  path: /Users/dietrich/worlds/docs-clone/oxcaml                                                            
+  status: docs://oxcaml clone exposes 37 pages for modes, kinds, uniqueness, capsules, and stack allocation 
+  evidence count: 37                                                                                        
+#CAA693 code_index scip://oxcaml                                                                            
+  path: pending:oxcaml-source                                                                               
+  status: target code-index lane; represented here by scip-ocaml symbol grammar and external-symbol morph...
+  evidence count: 0                                                                                         
+------------------------------------------------------------------------------------------------------------
+colored morphisms                                                                                           
+#D2F2B4 -1  blocked typedtree_index                                                                         
+  tool://bmorphism/scip-ocaml -> scip://oxgame                                                              
+  scip-ocaml emitted a tiny valid probe index, but most Oxgame .cmt/.cmti files were produced by OCaml 5....
+  limit: Rebuild Oxgame and scip-ocaml with the same compiler-libs ABI to turn this red edge green.         
+#326DEE 0   witnessed mode_annotation_evidence                                                              
+  scip://oxgame -> docs://oxcaml                                                                            
+  Oxgame Lens, Para, Arena, and PettingZoo interfaces carry comments for local_, portable, unique_, excla...
+  limit: Docs evidence is semantic rather than a compiler-checked source edge in this Gay.jl artifact.      
+#5BF6A1 +1  proposed docs_to_symbol_expectation                                                             
+  docs://oxcaml -> scip://oxcaml                                                                            
+  Oxcaml docs define the modes/kinds/uniqueness vocabulary that should color future SCIP symbols, occurre...
+  limit: The docs clone is not a SCIP index; it seeds the expected color semantics.                         
+#6ED225 +1  partial external_symbol_bridge                                                                  
+  scip://oxgame -> scip://oxcaml                                                                            
+  scip-ocaml resolves missed in-tree Texp_ident references through Path.t into deterministic external sym...
+  limit: Package-accurate cross-repo navigation still needs a module-to-package resolution table.           
+#7E6CD6 0   witnessed colored_morphism_lift                                                                 
+  scip://oxgame/lib/oxgame_kernel/color_unifier.mli -> docs://oxcaml/documentation/kinds/intro/             
+  Oxgame Color_unifier lifts Color_trit, Secret_colors, Share3, Trit, DisCoPy wires, and CatColab places ...
+  limit: The bridge colors semantic lanes; it does not assert perceptual equivalence without Gay.jl color...
+#D6E9BC -1  witnessed paraoptic_bisimulation                                                                
+  arena://gay/ox/shared-bisimulation -> scip://oxgame                                                       
+  SharedOxArena models O/X/W as Para(Optic(C)); scip://oxgame supplies concrete Lens/Para/Arena names for...
+  limit: Bisimulation here is structural and artifact-level, not a full proof over every Oxgame module.     
+------------------------------------------------------------------------------------------------------------
+commitments                                                                                                 
+- version lock: SCIP over OCaml is a typed-tree morphism; compiler-libs ABI mismatch is a real red edge, ...
+- docs-to-code color: Oxcaml docs color the intended mode/kind semantics; scip://oxcaml should eventually...
+- source-to-doc witness: Oxgame already names Lens, Para, Arena, Color_unifier, and mode comments that ma...
+- external edges: bmorphism/scip-ocaml makes cross-index dependency references visible with deterministic...
+- Gay.jl replay: Every morphism gets a stable Gay.jl color so interpretation changes can be replayed as c...
+============================================================================================================

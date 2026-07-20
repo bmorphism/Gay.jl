@@ -1,0 +1,231 @@
+{
+  "artifact": "retinal-dither-name-world",
+  "version": 1,
+  "purpose": "Replace the phonetically ambiguous microsaccade vocabulary with biologically grounded, recallable, tileable names and Gay.jl color chains.",
+  "problem": {
+    "avoid": [
+      "microsaccade",
+      "micro-saccade",
+      "syccade",
+      "cicade",
+      "cicada-like homophones"
+    ],
+    "reason": "The spoken token is too easy to mishear and too tied to one ocular mechanism when the useful substrate is a retina-scale active sampling and update pattern."
+  },
+  "biology_basis": [
+    {
+      "claim": "Fixational eye movement includes tremor, drift, and microsaccades; the saccade-like component is rapid and moves the retinal image across many photoreceptor widths.",
+      "source": "https://www.nature.com/articles/srep24086"
+    },
+    {
+      "claim": "The functional story includes counteracting fading/adaptation and contributing to active sensing during fixation.",
+      "source": "https://www.nature.com/articles/srep24086"
+    },
+    {
+      "claim": "A mechanistic story is synchrony-based retinal ganglion-cell coding: fast image shifts can produce short-timescale synchronous spike volleys at salient contrast edges.",
+      "source": "https://www.nature.com/articles/srep24086"
+    },
+    {
+      "claim": "The broader biomimetic framing follows diverse-intelligence and hybrid-embodiment language rather than only genetics-plus-environment lineage tracing.",
+      "source": "https://drmichaellevin.org/publications/preprints.html"
+    }
+  ],
+  "recommendation": {
+    "canonical_display": "Retinal Dither",
+    "canonical_slug": "retinal_dither",
+    "formal_name": "Retinal Mosaic Dither",
+    "verb": "dither",
+    "event_unit": "dither pulse",
+    "why": "It captures small, purposeful-enough image displacement over a receptor mosaic, the information geometry of resampling, and the anti-fade/active-sensing function without using the ambiguous saccade sound."
+  },
+  "gay_color_generation": {
+    "repo": "/Users/dietrich/worlds/z/bmorphism/Gay.jl",
+    "method": "Generated with Gay.jl stable_seed, color_at, rgb_hex, and CIEDE2000 colordiff over 900 deterministic candidates.",
+    "triad_seed": 13418111070463605249,
+    "selection_metric": {
+      "max_pair_distance": 113.63596451748482,
+      "minimum_pair_distance": 67.25885431192907,
+      "pairwise_ciede2000": {
+        "retinal_dither__mosaic_refresh": 113.63596451748482,
+        "retinal_dither__ganglion_sync": 72.45014477675956,
+        "mosaic_refresh__ganglion_sync": 67.25885431192907
+      }
+    }
+  },
+  "interpretations": [
+    {
+      "slug": "retinal_dither",
+      "display": "Retinal Dither",
+      "pronunciation_hint": "RET-in-al DITH-er",
+      "gf3_role": "+1 play",
+      "interpretation": "Active sampling: the system moves a signal across a receptor mosaic to create the fastest useful update path.",
+      "biological_pattern": "small high-speed image slip over cone/receptor mosaic; contrast edges enter new receptive fields",
+      "information_geometry": "dithered resampling lowers degeneracy and keeps a stationary signal informative",
+      "color": {
+        "base_hex": "#AFFB3E",
+        "gay_index": 619,
+        "chain_seed": 4708092008076594128,
+        "chain_hex": [
+          "#9C5E5C",
+          "#A5E9B0",
+          "#993FC2",
+          "#16A66D",
+          "#99B4FE",
+          "#A322B5",
+          "#8AA2F8"
+        ]
+      },
+      "associations": [
+        "dither",
+        "sampling",
+        "anti-aliasing",
+        "mosaic",
+        "active perception",
+        "fast update"
+      ],
+      "tile_uris": [
+        "gay://retina/retinal_dither",
+        "tile://retinal_dither/receptor_mosaic",
+        "world://shared_episode/retinal_dither"
+      ]
+    },
+    {
+      "slug": "mosaic_refresh",
+      "display": "Mosaic Refresh",
+      "pronunciation_hint": "mo-ZAY-ik re-FRESH",
+      "gf3_role": "0 witness",
+      "interpretation": "Anti-fade witness: the same world is held stable by refreshing the substrate underneath it.",
+      "biological_pattern": "photoreceptor and retinal ganglion-cell adaptation is interrupted by fresh local contrast",
+      "information_geometry": "a stable percept is maintained by local renewal rather than by static representation",
+      "color": {
+        "base_hex": "#0C068C",
+        "gay_index": 641,
+        "chain_seed": 855570893831936446,
+        "chain_hex": [
+          "#EF6BB7",
+          "#6F0537",
+          "#A176D6",
+          "#F2CDE7",
+          "#C26315",
+          "#B91F5F",
+          "#913DD2"
+        ]
+      },
+      "associations": [
+        "refresh",
+        "anti-fade",
+        "maintenance",
+        "witness",
+        "homeostasis",
+        "shared now"
+      ],
+      "tile_uris": [
+        "gay://retina/mosaic_refresh",
+        "tile://mosaic_refresh/adaptation_gate",
+        "world://shared_episode/mosaic_refresh"
+      ]
+    },
+    {
+      "slug": "ganglion_sync",
+      "display": "Ganglion Sync",
+      "pronunciation_hint": "GANG-glee-on SINK",
+      "gf3_role": "-1 coplay",
+      "interpretation": "Constraint-return coding: the retina answers motion by synchronizing the cells whose receptive fields receive salient edges.",
+      "biological_pattern": "short-timescale retinal ganglion-cell spike volleys after fast contrast-edge displacement",
+      "information_geometry": "meaning appears as coincidence structure: which cells fire together is the code",
+      "color": {
+        "base_hex": "#F5B6F6",
+        "gay_index": 493,
+        "chain_seed": 13499727420772396991,
+        "chain_hex": [
+          "#02C534",
+          "#B8D4F6",
+          "#BE8505",
+          "#224614",
+          "#D8B048",
+          "#897778",
+          "#9EB079"
+        ]
+      },
+      "associations": [
+        "synchrony",
+        "edge volley",
+        "coincidence",
+        "constraint",
+        "coplay",
+        "salience"
+      ],
+      "tile_uris": [
+        "gay://retina/ganglion_sync",
+        "tile://ganglion_sync/edge_volley",
+        "world://shared_episode/ganglion_sync"
+      ]
+    }
+  ],
+  "secondary_candidates": [
+    {
+      "display": "Foveal Dither",
+      "slug": "foveal_dither",
+      "status": "good if the intended scope is fixation and high-acuity foveal sampling"
+    },
+    {
+      "display": "Cone Mosaic Dither",
+      "slug": "cone_mosaic_dither",
+      "status": "more anatomically explicit, slightly longer"
+    },
+    {
+      "display": "Retinotopic Refresh",
+      "slug": "retinotopic_refresh",
+      "status": "good for map-level substrate updates, less vivid as a spoken token"
+    },
+    {
+      "display": "Edge Volley",
+      "slug": "edge_volley",
+      "status": "good for the ganglion-cell synchrony interpretation, not broad enough as the canonical name"
+    },
+    {
+      "display": "Fixation Weave",
+      "slug": "fixation_weave",
+      "status": "good for cybernetic/interaction prose, less directly retinal"
+    },
+    {
+      "display": "Receptor Resampling",
+      "slug": "receptor_resampling",
+      "status": "precise but too technical for the primary recallable"
+    }
+  ],
+  "recallable_policy": {
+    "preferred_slug_rules": [
+      "lowercase ascii",
+      "two tokens when possible",
+      "no sacc/cic/syc syllable",
+      "biological substrate first, operation second",
+      "stable under speech-to-text and code search"
+    ],
+    "collision_notes": [
+      "retinal_dither collides productively with graphics dither and information geometry",
+      "mosaic_refresh collides productively with homeostatic renewal and shared-now witnessing",
+      "ganglion_sync collides productively with synchrony, coincidence detection, and coplay constraints"
+    ]
+  },
+  "tileability": {
+    "substrates": [
+      "retina",
+      "display",
+      "BCI stream",
+      "shared episode ledger",
+      "cellular automaton",
+      "agent simulation",
+      "robot sensorimotor loop"
+    ],
+    "scales": [
+      "photoreceptor",
+      "ganglion-cell population",
+      "visual field patch",
+      "participant episode",
+      "multi-agent world",
+      "open dynamical system"
+    ],
+    "rule": "A tile is valid when the same slug, time coordinate, color seed, and episode fingerprint can be replayed on another substrate without changing the interpretation class."
+  }
+}

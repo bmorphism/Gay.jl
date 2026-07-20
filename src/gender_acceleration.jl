@@ -25,7 +25,7 @@ export OriginaryHue, PhenomenalToken, ColoredPetriNet
 export TwoMonad, Transduction, AbductiveClosure
 export hadamard_color, cnot_color, xor_color
 export SEPConcept, semantic_seed, accelerate!
-export demo_gender_acceleration
+export world_gender_acceleration
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Constants and Core Types
@@ -662,7 +662,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gender_acceleration()
+function world_gender_acceleration()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GENDER ACCELERATION: Multiversal Chromatic Increments                    ║")

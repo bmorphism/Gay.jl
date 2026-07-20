@@ -12,6 +12,7 @@
 #   --thread ID        Set thread ID for context
 #   --size N           Set concept tensor size (default: 23)
 #   --benchmark        Run performance benchmarks
+#   --worlds           Run interactive world checks
 #   --export FILE      Export report to markdown file
 #   --quiet            Minimal output
 
@@ -64,8 +65,8 @@ function parse_args(args::Vector{String})
             command = :verify
         elseif arg == "--report"
             command = :report
-        elseif arg == "--demo"
-            command = :demo
+        elseif arg == "--worlds"
+            command = :worlds
         elseif arg == "--thread" && i < length(args)
             i += 1
             thread_id = args[i]
@@ -170,39 +171,39 @@ function cmd_report(args::CLIArgs)
     true
 end
 
-function cmd_demo(args::CLIArgs)
+function cmd_worlds(args::CLIArgs)
     println("═" ^ 60)
-    println("SPI DEMONSTRATION")
+    println("SPI WORLD CHECKS")
     println("═" ^ 60)
     println()
     
-    println("1. Concept Tensor Demo")
+    println("1. Concept Tensor World")
     println("-" ^ 40)
     world_concept_tensor(; size=min(args.tensor_size, 23), n_steps=3)
     println()
     
-    println("2. Exponential X^X Demo")
+    println("2. Exponential X^X World")
     println("-" ^ 40)
     world_exponential(; size=min(args.tensor_size, 11))
     println()
     
-    println("3. Higher Structure Demo")
+    println("3. Higher Structure World")
     println("-" ^ 40)
     world_higher_structure(; size=min(args.tensor_size, 11))
     println()
     
-    println("4. Traced Tensor Demo")
+    println("4. Traced Tensor World")
     println("-" ^ 40)
     world_traced_tensor(; size=min(args.tensor_size, 11))
     println()
     
-    println("5. Thread Findings Demo")
+    println("5. Thread Findings World")
     println("-" ^ 40)
     world_thread_findings(; n_threads=min(args.n_threads, 20))
     println()
     
     println("═" ^ 60)
-    println("DEMONSTRATION COMPLETE")
+    println("WORLD CHECKS COMPLETE")
     println("═" ^ 60)
     
     true
@@ -218,7 +219,7 @@ Usage:
 Commands:
   --verify       Run full verification (default)
   --report       Generate verification report
-  --demo         Run interactive demos
+  --worlds       Run interactive world checks
 
 Options:
   --thread ID    Set thread ID for context
@@ -254,8 +255,8 @@ function run_cli(args::CLIArgs)
         cmd_verify(args)
     elseif args.command == :report
         cmd_report(args)
-    elseif args.command == :demo
-        cmd_demo(args)
+    elseif args.command == :worlds
+        cmd_worlds(args)
     elseif args.command == :help
         cmd_help()
     else

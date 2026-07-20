@@ -484,7 +484,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_enzyme_subobject()
+function world_enzyme_subobject()
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  Enzyme.jl Subobject Classifier χ: Color → Ω₃ = {Duck, Worm, Ape}     ║")
     println("╚═══════════════════════════════════════════════════════════════════════╝")

@@ -1,0 +1,67 @@
+====================================================================================================
+Shared O/X Arena - bisimulation Para(Optic(C))                                                      
+arena: arena://gay/ox/shared-bisimulation                                                           
+source fp: 0x3417d9d6e6060864                                                                       
+arena fp: 0x391b517a3112a7aa                                                                        
+----------------------------------------------------------------------------------------------------
+players                                                                                             
+O  +1  #4E62C2 spoiler / concealer - Choose a source or interface move whose hidden ideology shou...
+X  -1  #F96F5F duplicator / detector - Answer each O move with a derivation-preserving observatio...
+W  0   #C1361E witness / arena - Hold shared state, certificate context, and the accepted/rejecte...
+----------------------------------------------------------------------------------------------------
+interfaces                                                                                          
+#9635CC OpticC [O+X] optic://gay/ox/source-observation                                              
+  play: surface -> observable trace                                                                 
+  coplay: (surface, finding) -> naming pressure                                                     
+#901B34 OpticC [X+W] optic://gay/ox/scip-derivation                                                 
+  play: finding -> scip derivation URI                                                              
+  coplay: (finding, certificate) -> exact navigation obligation                                     
+#FA61FB ParaOpticC [O+X] paraoptic://gay/ox/strategy-family                                         
+  play: (parameters, surface) -> O/X strategy response                                              
+  coplay: (parameters, response, pressure) -> parameter update                                      
+#85566E ParaOpticC [O+X+W] paraoptic://gay/ox/certificate-context                                   
+  play: (arena, world fingerprint) -> accepted observation                                          
+  coplay: (arena, observation, rejected candidate) -> coworld residue                               
+#DC021A OpticC [W] optic://gay/ox/artifact-replay                                                   
+  play: world -> JSON/text artifact                                                                 
+  coplay: (world, artifact) -> replay check                                                         
+#C06747 ParaOpticC [O+X+W] paraoptic://gay/ox/player-combinations                                   
+  play: subset(O,X,W) x lane -> local game                                                          
+  coplay: (subset, local game, shared arena) -> merged arena state                                  
+----------------------------------------------------------------------------------------------------
+bisimulation witnesses                                                                              
+#7EC01A bisim://gay/ox/1                                                                            
+  scip://gay/src/Gay.jl#L290 <-> scip://gay/src/Gay.jl#L290::semantic_alias                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#83D94A bisim://gay/ox/2                                                                            
+  scip://gay/src/Gay.jl#L293 <-> scip://gay/src/Gay.jl#L293::semantic_alias                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#6E0B5F bisim://gay/ox/3                                                                            
+  scip://gay/src/Gay.jl#L485 <-> scip://gay/src/Gay.jl#L485::semantic_alias                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#AB7B82 bisim://gay/ox/4                                                                            
+  scip://gay/src/Gay.jl#L568 <-> scip://gay/src/Gay.jl#L568::export_surface                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#85ECC2 bisim://gay/ox/5                                                                            
+  scip://gay/src/Gay.jl#L568 <-> scip://gay/src/Gay.jl#L568::literal_surface                        
+  source state and SCIP-derived state expose the same O/X observation                               
+#67BF76 bisim://gay/ox/6                                                                            
+  scip://gay/src/Gay.jl#L639 <-> scip://gay/src/Gay.jl#L639::semantic_alias                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#EFD581 bisim://gay/ox/7                                                                            
+  scip://gay/src/Gay.jl#L735 <-> scip://gay/src/Gay.jl#L735::derivable_interface                    
+  source state and SCIP-derived state expose the same O/X observation                               
+#ECD6F6 bisim://gay/ox/8                                                                            
+  scip://gay/src/Gay.jl#L769 <-> scip://gay/src/Gay.jl#L769::semantic_alias                         
+  source state and SCIP-derived state expose the same O/X observation                               
+#2A1285 bisim://gay/ox/9                                                                            
+  scip://gay/src/Gay.jl#L773 <-> scip://gay/src/Gay.jl#L773::derivable_interface                    
+  source state and SCIP-derived state expose the same O/X observation                               
+----------------------------------------------------------------------------------------------------
+composition rules                                                                                   
+- two-player O/X: Optic(C): O plays a surface; X coplays a finding and pressure.                    
+- three-player O/X/W: Para(Optic(C)): W parameterizes context, certificates, and accepted state.    
+- mixed subsets: Tensor/coproduct combinations reuse one shared arena rather than separate games.   
+- bisimulation rule: If O moves in source, X must answer in derivation; if O moves in derivation,...
+- shared arena: The arena state is the quotient of all lanes that preserve observation, payoff, p...
+====================================================================================================

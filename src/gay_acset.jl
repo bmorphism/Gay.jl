@@ -61,7 +61,7 @@ export
     HuffmanTree, huffman_org, encode_bitstring, decode_bitstring,
     
     # Demo
-    demo_gay_acset, demo_org_correspondence
+    world_gay_acset, world_org_correspondence
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -854,7 +854,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_gay_acset()
+function world_gay_acset()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GayACSet: Chromatic Attributed C-Sets with Org Monad Structure           ║")
@@ -955,7 +955,7 @@ function demo_gay_acset()
     (gay=gay, tile=tile, superposition=sup, huffman=tree)
 end
 
-function demo_org_correspondence()
+function world_org_correspondence()
     println()
     println("═══════════════════════════════════════════════════════════════════════════")
     println("  CORRESPONDENCES: GayACSet ↔ TileACSet")

@@ -64,7 +64,7 @@ export
     HorizonLimit, approach_horizon, obstructions_remaining,
     
     # Demo
-    demo_horizon_complexity
+    world_horizon_complexity
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Core PRNG (SPI compliant)
@@ -537,7 +537,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_horizon_complexity()
+function world_horizon_complexity()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  HORIZON COMPLEXITY: P=PSPACE at Nested Event Horizons                   ║")

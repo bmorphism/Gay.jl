@@ -1,0 +1,123 @@
+{
+  "artifact": "concealment-oxgame-world",
+  "version": 3,
+  "generated_at": "2026-07-08T14:54:51.350",
+  "run": {
+    "repo": "/Users/dietrich/worlds/z/bmorphism/Gay.jl/",
+    "seed": "1069",
+    "pressure_budget": 144,
+    "pressure_spent": 144,
+    "surfaces_scanned": 11,
+    "findings": 20,
+    "o_payoff": 104,
+    "x_payoff": 96,
+    "fingerprint_hex": "0x3417d9d6e6060864",
+    "screen_fingerprint_hex": "0x18211bc8643621d7",
+    "shared_arena_fingerprint_hex": "0x391b517a3112a7aa"
+  },
+  "detectors": {
+    "semantic_alias": 9,
+    "derivable_interface": 5,
+    "literal_surface": 3,
+    "normalized_collision": 2,
+    "export_surface": 1
+  },
+  "top_findings": [
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L290::semantic_alias",
+      "color_hex": "#9DD40A",
+      "evidence": "using .TriadicSubagents: Polarity, MINUS, ERGODIC, PLUS, TriadicAgent, sample_agent!, parallel_sample!, verify_triadic_spi, phase_to_polarity, polarity_twist, w"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L293::semantic_alias",
+      "color_hex": "#2BC05F",
+      "evidence": "export sample_agent!, parallel_sample!"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L485::semantic_alias",
+      "color_hex": "#61611D",
+      "evidence": "# export SampleSpace, RandomElement, RandomVariable, ProbabilitySheaf"
+    },
+    {
+      "detector": "export_surface",
+      "severity": 9,
+      "pressure_cost": 3,
+      "uri": "scip://gay/src/Gay.jl#L568::export_surface",
+      "color_hex": "#35392E",
+      "evidence": "export demonstrate_hyperdoctrine"
+    },
+    {
+      "detector": "literal_surface",
+      "severity": 8,
+      "pressure_cost": 4,
+      "uri": "scip://gay/src/Gay.jl#L568::literal_surface",
+      "color_hex": "#B6CECE",
+      "evidence": "export demonstrate_hyperdoctrine"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L639::semantic_alias",
+      "color_hex": "#0F4655",
+      "evidence": "export ChromaticEvent, ChromaticProcess, sample_chromatic!, superpose_chromatic, thin_chromatic"
+    },
+    {
+      "detector": "derivable_interface",
+      "severity": 3,
+      "pressure_cost": 9,
+      "uri": "scip://gay/src/Gay.jl#L735::derivable_interface",
+      "color_hex": "#FFE7DC",
+      "evidence": "# Include ANANAS Hierarchy - Measuring Hierarchiness of Co-Cone Extractions"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L769::semantic_alias",
+      "color_hex": "#D965F5",
+      "evidence": "# MISSING: export BirbWaveform, render_waveform, waveform_samples"
+    },
+    {
+      "detector": "derivable_interface",
+      "severity": 3,
+      "pressure_cost": 9,
+      "uri": "scip://gay/src/Gay.jl#L773::derivable_interface",
+      "color_hex": "#747B12",
+      "evidence": "# Deciding between GayLuxExt.jl and GayTuringExt.jl"
+    },
+    {
+      "detector": "derivable_interface",
+      "severity": 3,
+      "pressure_cost": 9,
+      "uri": "scip://gay/src/Gay.jl#L780::derivable_interface",
+      "color_hex": "#28FF2F",
+      "evidence": "export LuxGayExt, TuringGayExt, ZigZagBoomerangGayExt, DynamicHMCGayExt, ActiveMatterGayExt"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L817::semantic_alias",
+      "color_hex": "#5264CF",
+      "evidence": "export verify_all_worlds, verify_sample_worlds, fail_fast_verify, exhaustive_verify"
+    },
+    {
+      "detector": "semantic_alias",
+      "severity": 4,
+      "pressure_cost": 8,
+      "uri": "scip://gay/src/Gay.jl#L866::semantic_alias",
+      "color_hex": "#558092",
+      "evidence": "export sample_gadget!, walk_gadgets!, gadget_color, gadget_fingerprint"
+    }
+  ]
+}

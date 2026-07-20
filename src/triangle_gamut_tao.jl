@@ -56,7 +56,7 @@ export
     bidirectional_gamut_gradient, gamut_loss, optimize_triangle!,
 
     # Demo
-    demo_triangle_gamut
+    world_triangle_gamut
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -676,7 +676,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_triangle_gamut()
+function world_triangle_gamut()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  TRIANGLE GAMUT TAO: Metric Inequalities with Restriction Bounds          ║")

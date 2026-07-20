@@ -27,7 +27,7 @@ export AdversarialPlayer, DynamicEquilibrium
 export OpticOpenGame, ParaLens, chromatic_play, chromatic_coplay
 export parallel_walk!, find_nash_equilibrium
 export DuckDBColorSource, load_palette_bandwidth
-export demo_chromatic_walk
+export world_chromatic_walk
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DuckDB Color Source (from ies analysis)
@@ -641,7 +641,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_chromatic_walk()
+function world_chromatic_walk()
     println("╔═══════════════════════════════════════════════════════════════════════╗")
     println("║  Chromatic Random Walk: Self-Seeking/Self-Avoiding Adversarial Game   ║")
     println("║  Derivable from DuckDB ies color analysis + Gay.jl SPI               ║")

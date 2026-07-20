@@ -54,7 +54,7 @@ export
     xbow_aim, xbow_fire!,
     
     # Demo
-    demo_xbow_wev
+    world_xbow_wev
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Constants & PRNG
@@ -858,7 +858,7 @@ end
 # Demo
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_xbow_wev()
+function world_xbow_wev()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  XBOW-WEV: Crossbow for World Extractable Value                           ║")

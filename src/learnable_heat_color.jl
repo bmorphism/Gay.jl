@@ -20,7 +20,7 @@ using ColorTypes
 using LinearAlgebra
 
 export HeatParams, solve_heat_rk2, compute_heat_loss, reverse_mode_heat_rk2
-export learn_heat_color!, demo_learnable_heat_color
+export learn_heat_color!, world_learnable_heat_color
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Core Parameter and State Structures
@@ -387,13 +387,13 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-    demo_learnable_heat_color()
+    world_learnable_heat_color()
 
 Provides a beautiful terminal demonstration of the learnable color diffusion solver.
 Initializes a 2D ring of heat/color, defines a target uniform gradient, and optimizes
 the parameters to minimize difference, showing the training progression.
 """
-function demo_learnable_heat_color()
+function world_learnable_heat_color()
     println("="^80)
     println("  DEMONSTRATING LEARNABLE COLOR DIFFUSION (FTCS RK2 HEAT EQ)")
     println("="^80)

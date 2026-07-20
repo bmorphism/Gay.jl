@@ -293,7 +293,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 """
-    demo_commitment_acsets()
+    world_commitment_acsets()
 
 Run the AI governance scenario using ACSets.
 
@@ -303,7 +303,7 @@ Shows:
   3. Divergence measurement
   4. Unified space construction
 """
-function demo_commitment_acsets()
+function world_commitment_acsets()
   println("\n╔════════════════════════════════════════════════════════════════╗")
   println("║  Commitment Tracker + ACSets: Three-Agent Negotiation         ║")
   println("╚════════════════════════════════════════════════════════════════╝\n")

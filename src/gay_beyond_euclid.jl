@@ -65,7 +65,7 @@ export
     next_color, next_color!,
     
     # Demo
-    demo_beyond_euclid
+    world_beyond_euclid
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -671,7 +671,7 @@ end
 # DEMO
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function demo_beyond_euclid()
+function world_beyond_euclid()
     println()
     println("╔═══════════════════════════════════════════════════════════════════════════╗")
     println("║  GAY BEYOND EUCLID: Non-Euclidean Seed Bundle Discovery                   ║")

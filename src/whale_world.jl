@@ -81,7 +81,7 @@ export add_whale!, remove_whale!, compute_all_synergies
 export find_optimal_triads, synergy_matrix
 export color_fingerprint, verify_first_contact
 export world_state_hash, export_transient_state
-export spi_parallel_demo, parallel_synergy_search
+export verify_spi_parallel_synergy, parallel_synergy_search
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Core Types
@@ -472,11 +472,11 @@ function first_contact_challenge(world::WhaleWorld; n_challenge::Int=3)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Parallel SPI Demonstration
+# Parallel SPI Verification
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Demonstrate SPI through parallel synergy computation.
+Verify SPI through parallel synergy computation.
 
 This function shows the KEY SPI PROPERTIES:
 1. Sequential and parallel execution produce IDENTICAL results
@@ -485,12 +485,12 @@ This function shows the KEY SPI PROPERTIES:
 
 This is the algorithm the whales "carry out" to find synergistic groupings.
 """
-function spi_parallel_demo(world::WhaleWorld; verbose::Bool=true)
+function verify_spi_parallel_synergy(world::WhaleWorld; verbose::Bool=true)
     whale_ids = sort(collect(keys(world.whales)))
     n = length(whale_ids)
     
     if n < 3
-        verbose && println("Need at least 3 whales for tripartite demo")
+        verbose && println("Need at least 3 whales for tripartite verification")
         return nothing
     end
     
@@ -716,11 +716,11 @@ function export_transient_state(world::WhaleWorld)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Quick Demo Setup
+# Quick World Setup
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Create a demo whale world with EC-1 clan whales.
+Create a shared whale world with EC-1 clan whales.
 """
 function world_whale_world(; n_whales::Int=6, seed::UInt64=GAY_SEED)
     world = WhaleWorld(seed)
@@ -735,9 +735,9 @@ function world_whale_world(; n_whales::Int=6, seed::UInt64=GAY_SEED)
 end
 
 """
-Run full demo showing SPI through whale tripartite synergy.
+Build a contact-report world showing SPI through whale tripartite synergy.
 """
-function whale_world_demo()
+function world_whale_contact_report()
     println()
     println("  🐋 Whale World: Parallel SPI Demonstration")
     println("  ═══════════════════════════════════════════")
@@ -752,8 +752,8 @@ function whale_world_demo()
     end
     println()
     
-    # Run SPI demonstration
-    result = spi_parallel_demo(world; verbose=true)
+    # Run SPI verification
+    result = verify_spi_parallel_synergy(world; verbose=true)
     
     println()
     println("  Optimal Triads:")
