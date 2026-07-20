@@ -9,6 +9,9 @@ docs/build/
 docs/site/
 docs/Manifest.toml
 
+# Generated build and compiler-index state
+.build/
+
 # IDE
 .idea/
 .vscode/
