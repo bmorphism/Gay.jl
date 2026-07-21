@@ -374,9 +374,12 @@ immer-preserves       preserves-syrup       syrup-fibers
 Artifacts, interactions, bags, and adhesions each carry a deterministic Gay
 color tile derived from seed 1069 and a declared index. The decomposition
 validator requires every interaction to occur in a bag and every adhesion apex
-to equal the actual intersection of its endpoint bags. This avoids the current
-extension prototype's error of coloring every adhesion from the first two bags
-regardless of its real span.
+to equal the actual intersection of its endpoint bags. The optional
+`GayStructuredDecompositionsExt` now resolves each span's actual endpoint bags
+from `adhesionSpans(d, true)` instead of coloring every adhesion from the first
+two bags. Run `scripts/check_structured_decomposition_colors.jl` in an
+environment containing StructuredDecompositions 0.2 and Catlab to exercise that
+package-backed path.
 
 Colors make locality, overlap, obstruction, and provenance visible. Equal
 colors do not establish equal referents, and different colors do not establish

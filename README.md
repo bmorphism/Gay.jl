@@ -77,6 +77,8 @@ julia --project=. -e 'using Pkg; Pkg.precompile()'
 julia --project=. scripts/lint_no_demo.jl
 bb scripts/verify_referent_boundary.bb --self-test
 bb scripts/verify_higher_order_interactions.bb --self-test
+julia --project=/path/to/structured-decompositions-env \
+  scripts/check_structured_decomposition_colors.jl
 ```
 
 The former long README is archived at

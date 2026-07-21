@@ -35,11 +35,13 @@ Catlab = "134e5e36-593f-5add-ad60-77f754baafbe"
 Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 GATlab = "f0ffcf3b-d13a-433e-917c-cc44ccf5ead2"
 Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
+StructuredDecompositions = "ba32925c-6e4c-4640-bed9-b00febeea19a"
 
 [extensions]
 GayAlgebraicJuliaExt = ["GATlab", "Catlab", "ACSets", "AlgebraicRewriting"]
 GayEnzymeExt = "Enzyme"
 GayMetalExt = "Metal"
+GayStructuredDecompositionsExt = ["StructuredDecompositions", "Catlab"]
 
 [compat]
 ACSets = "0.2"
@@ -71,6 +73,7 @@ Sockets = "1"
 SparseArrays = "1.12.0"
 SplittableRandoms = "0.1"
 Statistics = "1.11.1"
+StructuredDecompositions = "0.2"
 StructTypes = "1"
 julia = "≥ 1.6.0"
 

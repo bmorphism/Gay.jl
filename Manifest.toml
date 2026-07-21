@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "3e996eb5fe1bf8353e93410333cb72d7398e4911"
+project_hash = "6cf818540e75679dcd741b8ec928797b073f496a"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "d9aaef7c63466eee4de23b4d9dad03629df54bea"
@@ -378,6 +378,7 @@ version = "0.1.0"
     GayAlgebraicJuliaExt = ["GATlab", "Catlab", "ACSets", "AlgebraicRewriting"]
     GayEnzymeExt = "Enzyme"
     GayMetalExt = "Metal"
+    GayStructuredDecompositionsExt = ["StructuredDecompositions", "Catlab"]
 
     [deps.Gay.weakdeps]
     ACSets = "227ef7b5-1206-438b-ac65-934d6da304b8"
@@ -388,6 +389,7 @@ version = "0.1.0"
     Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
     GATlab = "f0ffcf3b-d13a-433e-917c-cc44ccf5ead2"
     Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
+    StructuredDecompositions = "ba32925c-6e4c-4640-bed9-b00febeea19a"
 
 [[deps.Graphs]]
 deps = ["ArnoldiMethod", "DataStructures", "Inflate", "LinearAlgebra", "Random", "SimpleTraits", "SparseArrays", "Statistics"]

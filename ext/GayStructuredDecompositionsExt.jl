@@ -14,7 +14,7 @@ using StructuredDecompositions
 using StructuredDecompositions.Decompositions: StrDecomp, bags, adhesions, adhesionSpans
 using StructuredDecompositions.Decompositions: DecompType, Decomposition, CoDecomposition
 using StructuredDecompositions.DecidingSheaves: decide_sheaf_tree_shape, 𝐃
-using Catlab.CategoricalAlgebra: ob_map, hom_map
+using Catlab.CategoricalAlgebra: ob_map, hom_map, dom, codom
 using Catlab.Graphs: Graph, src, tgt, nv, ne, vertices, edges
 using Colors: RGB
 
@@ -190,8 +190,8 @@ end
 
 Color a structured decomposition with SPI-compliant colors.
 
-Bags: colored by position in decomposition shape
-Adhesions: colored by XOR of adjacent bag colors (Hadamard guarantee)
+Bags: colored by stable position in decomposition shape
+Adhesions: colored by XOR of the actual endpoint bag colors
 """
 function color_decomposition(d::StrDecomp; seed::UInt64=GAY_SEED)
     bag_colors = color_bags(d; seed)
@@ -202,34 +202,32 @@ end
 
 function color_bags(d::StrDecomp; seed::UInt64=GAY_SEED)
     bs = bags(d)
-    map(enumerate(bs)) do (i, bag)
-        bag_hash = UInt64(hash(bag) ⊻ i)
-        hash_color_rgb(bag_hash, seed)
+    map(eachindex(bs)) do i
+        hash_color_rgb(UInt64(i), seed)
     end
 end
 
 function color_adhesions(d::StrDecomp, bag_colors::Vector; seed::UInt64=GAY_SEED)
-    spans = adhesionSpans(d)
+    indexed_bags = bags(d, true)
+    bag_positions = Dict(bag_key => i for (i, (bag_key, _)) in enumerate(indexed_bags))
+    spans = adhesionSpans(d, true)
+    shape_category = dom(d.diagram)
     
-    map(enumerate(spans)) do (i, span)
-        # XOR of adjacent bag colors for Hadamard guarantee
-        # This ensures CNOT·CNOT = I across the adhesion
-        src_idx = 1  # First bag in span
-        tgt_idx = min(2, length(bag_colors))  # Second bag in span
-        
-        if src_idx <= length(bag_colors) && tgt_idx <= length(bag_colors)
-            c1 = bag_colors[src_idx]
-            c2 = bag_colors[tgt_idx]
-            
-            # XOR the RGB components
-            r = UInt8(round(c1.r * 255)) ⊻ UInt8(round(c2.r * 255))
-            g = UInt8(round(c1.g * 255)) ⊻ UInt8(round(c2.g * 255))
-            b = UInt8(round(c1.b * 255)) ⊻ UInt8(round(c2.b * 255))
-            
-            RGB{Float32}(r/255, g/255, b/255)
-        else
-            hash_color_rgb(UInt64(i), seed)
-        end
+    map(enumerate(spans)) do (i, (shape_span, _))
+        length(shape_span) == 2 || error("adhesion span $i must have exactly two legs")
+        left_key = codom(shape_category, shape_span[1])
+        right_key = codom(shape_category, shape_span[2])
+        left_idx = get(bag_positions, left_key, nothing)
+        right_idx = get(bag_positions, right_key, nothing)
+        left_idx === nothing && error("adhesion span $i has unknown left bag $left_key")
+        right_idx === nothing && error("adhesion span $i has unknown right bag $right_key")
+
+        c1 = bag_colors[left_idx]
+        c2 = bag_colors[right_idx]
+        r = round(UInt8, clamp(c1.r, 0, 1) * 255) ⊻ round(UInt8, clamp(c2.r, 0, 1) * 255)
+        g = round(UInt8, clamp(c1.g, 0, 1) * 255) ⊻ round(UInt8, clamp(c2.g, 0, 1) * 255)
+        b = round(UInt8, clamp(c1.b, 0, 1) * 255) ⊻ round(UInt8, clamp(c2.b, 0, 1) * 255)
+        RGB{Float32}(r / 255, g / 255, b / 255)
     end
 end
 
