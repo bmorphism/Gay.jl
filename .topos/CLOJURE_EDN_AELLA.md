@@ -321,3 +321,18 @@ The first implementation increment is complete only when it demonstrates:
 
 Until those gates pass, the document remains a target contract rather than an
 implementation-completeness claim.
+
+## Executable boundary witness
+
+The checked-in [referent boundary instance](referent-boundary.edn) separates
+typed referents from tiles, artifacts, interfaces, and the `web://` adapter.
+Validate it with the Babashka witness:
+
+```bash
+bb scripts/verify_referent_boundary.bb
+```
+
+The validator rejects URI-shaped referent keys, unknown referent edges,
+identity claims on representation layers, non-`clojure://` interface routes,
+and `web://` adapters whose DNS and inherited HTTPS authorities disagree. This
+is a boundary check, not a proof that the example referents exist externally.

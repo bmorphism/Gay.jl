@@ -1,0 +1,54 @@
+{:ontology/version 1
+ :ontology/claim
+ "Identity belongs to typed referents. Representations belong to tiles, artifacts, and interfaces. web:// is an adapter to inherited DNS/HTTPS space."
+
+ :referents
+ [{:referent/type :gay.type/kernel
+   :referent/key "spi"}
+  {:referent/type :gay.type/morphism
+   :referent/key "compose"}
+  {:referent/type :aella.type/primitive
+   :referent/key "compersion"}]
+
+ :tiles
+ [{:tile/key "spi-kernel-edn"
+   :tile/media-type "application/edn"
+   :tile/represents [:gay.type/kernel "spi"]}
+  {:tile/key "compersion-aellith"
+   :tile/media-type "text/x-aellith"
+   :tile/represents [:aella.type/primitive "compersion"]}]
+
+ :artifacts
+ [{:artifact/path ".topos/referent-boundary.edn"
+   :artifact/media-type "application/edn"
+   :artifact/represents
+   [[:gay.type/kernel "spi"]
+    [:gay.type/morphism "compose"]
+    [:aella.type/primitive "compersion"]]}]
+
+ :interfaces
+ [{:interface/route "clojure://edn/read"
+   :interface/operation :edn/read
+   :interface/authority :none}
+  {:interface/route "clojure://gay/query"
+   :interface/operation :gay/query
+   :interface/authority :declared-capabilities}]
+
+ :adapters
+ [{:adapter/route "web://example.org/gay/spi"
+   :adapter/type :web
+   :adapter/inherited
+   {:dns/name "example.org"
+    :https/url "https://example.org/gay/spi"}}]
+
+ :laws
+ [{:law/name :identity-only-on-typed-referents
+   :law/status :required}
+  {:law/name :representations-reference-existing-referents
+   :law/status :required}
+  {:law/name :artifact-hash-is-not-referent-identity
+   :law/status :required}
+  {:law/name :interface-route-is-not-referent-identity
+   :law/status :required}
+  {:law/name :web-is-only-a-dns-https-adapter
+   :law/status :required}]}
