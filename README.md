@@ -76,6 +76,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 julia --project=. -e 'using Pkg; Pkg.precompile()'
 julia --project=. scripts/lint_no_demo.jl
 bb scripts/verify_referent_boundary.bb --self-test
+bb scripts/verify_higher_order_interactions.bb --self-test
 ```
 
 The former long README is archived at

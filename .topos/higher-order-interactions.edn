@@ -1,0 +1,84 @@
+{:persistence/version 1
+ :boundary/source ".topos/referent-boundary.edn"
+
+ :artifacts
+ [{:artifact/key "query-input-1"
+   :artifact/hash "sha256:example-query-input"
+   :artifact/media-type "application/edn"}
+  {:artifact/key "query-output-1"
+   :artifact/hash "sha256:example-query-output"
+   :artifact/media-type "application/edn"}
+  {:artifact/key "query-output-2"
+   :artifact/hash "sha256:example-query-output-replay"
+   :artifact/media-type "application/edn"}
+  {:artifact/key "audit-output-1"
+   :artifact/hash "sha256:example-audit-output"
+   :artifact/media-type "application/edn"}]
+
+ :interactions
+ [{:interaction/key "query-1"
+   :interaction/type :gay.interaction/query
+   :interaction/participants
+   [[:gay.type/kernel "spi"]]
+   :interaction/interface "clojure://gay/query"
+   :interaction/input-artifacts ["query-input-1"]
+   :interaction/output-artifacts ["query-output-1"]
+   :interaction/requires #{:gay.capability/query}
+   :causality/after #{}
+   :interaction/observed-at #inst "2026-07-21T20:00:00Z"}
+
+  {:interaction/key "query-2"
+   :interaction/type :gay.interaction/replay
+   :interaction/participants
+   [[:gay.type/kernel "spi"]]
+   :interaction/interface "clojure://gay/query"
+   :interaction/input-artifacts ["query-input-1"]
+   :interaction/output-artifacts ["query-output-2"]
+   :interaction/requires #{:gay.capability/query}
+   :replay/of "query-1"
+   :causality/after #{"query-1"}
+   :interaction/observed-at #inst "2026-07-21T20:01:00Z"}
+
+  {:interaction/key "audit-1"
+   :interaction/type :gay.interaction/audit
+   :interaction/participants
+   [[:gay.type/kernel "spi"]
+    [:gay.type/morphism "compose"]]
+   :interaction/interface "clojure://gay/query"
+   :interaction/input-artifacts
+   ["query-output-1" "query-output-2"]
+   :interaction/output-artifacts ["audit-output-1"]
+   :interaction/requires #{:gay.capability/query}
+   :interaction/targets #{"query-1" "query-2"}
+   :causality/after #{"query-1" "query-2"}
+   :audit/result
+   {:equivalent? false
+    :reason :replay-is-distinct-interaction}
+   :interaction/observed-at #inst "2026-07-21T20:02:00Z"}
+
+  {:interaction/key "retraction-1"
+   :interaction/type :evidence.interaction/retraction
+   :interaction/participants
+   [[:gay.type/morphism "compose"]]
+   :interaction/interface "clojure://gay/query"
+   :interaction/input-artifacts ["audit-output-1"]
+   :interaction/output-artifacts []
+   :interaction/requires #{:gay.capability/query}
+   :interaction/targets #{"query-1"}
+   :causality/after #{"audit-1"}
+   :retraction/reason :failed-runtime-witness
+   :interaction/observed-at #inst "2026-07-21T20:03:00Z"}]
+
+ :laws
+ [{:law/name :interactions-are-append-only-observations
+   :law/status :required}
+  {:law/name :higher-order-targets-exist
+   :law/status :required}
+  {:law/name :causality-is-explicit-and-acyclic
+   :law/status :required}
+  {:law/name :replay-creates-a-new-interaction
+   :law/status :required}
+  {:law/name :capability-names-persist-but-grants-do-not
+   :law/status :required}
+  {:law/name :artifact-hashes-do-not-identify-referents
+   :law/status :required}]}

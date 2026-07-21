@@ -338,3 +338,21 @@ and `web://` adapters whose DNS and inherited HTTPS authorities disagree. This
 is a boundary check, not a proof that the example referents exist externally.
 Self-test mode mutates the valid witness once for every prohibited collapse and
 requires all five counterexamples to fail validation.
+
+## Higher-order interaction persistence
+
+The [higher-order interaction instance](higher-order-interactions.edn) records
+query, replay, audit, and retraction events without treating a serialized event
+as the live act itself. Its causal and target edges point to immutable earlier
+interaction artifacts:
+
+```bash
+bb scripts/verify_higher_order_interactions.bb --self-test
+```
+
+The persistence validator requires unique local event keys, existing typed
+participants, known interface routes, existing input/output artifacts, explicit
+acyclic causality, and replay under a new event key. Capability names may be
+recorded as requirements; grants, credentials, tokens, and secrets may not be
+persisted. Retraction is a later interaction targeting an earlier observation,
+so correction preserves rather than overwrites history.
