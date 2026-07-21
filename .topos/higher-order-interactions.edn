@@ -4,16 +4,20 @@
  :artifacts
  [{:artifact/key "query-input-1"
    :artifact/hash "sha256:example-query-input"
-   :artifact/media-type "application/edn"}
+   :artifact/media-type "application/edn"
+   :color/tile {:color/seed 1069 :color/index 1 :color/hex "#55B0E6"}}
   {:artifact/key "query-output-1"
    :artifact/hash "sha256:example-query-output"
-   :artifact/media-type "application/edn"}
+   :artifact/media-type "application/edn"
+   :color/tile {:color/seed 1069 :color/index 2 :color/hex "#C8A0C2"}}
   {:artifact/key "query-output-2"
    :artifact/hash "sha256:example-query-output-replay"
-   :artifact/media-type "application/edn"}
+   :artifact/media-type "application/edn"
+   :color/tile {:color/seed 1069 :color/index 3 :color/hex "#FFA6C2"}}
   {:artifact/key "audit-output-1"
    :artifact/hash "sha256:example-audit-output"
-   :artifact/media-type "application/edn"}]
+   :artifact/media-type "application/edn"
+   :color/tile {:color/seed 1069 :color/index 4 :color/hex "#789A20"}}]
 
  :interactions
  [{:interaction/key "query-1"
@@ -25,6 +29,7 @@
    :interaction/output-artifacts ["query-output-1"]
    :interaction/requires #{:gay.capability/query}
    :causality/after #{}
+   :color/tile {:color/seed 1069 :color/index 5 :color/hex "#54C1ED"}
    :interaction/observed-at #inst "2026-07-21T20:00:00Z"}
 
   {:interaction/key "query-2"
@@ -37,6 +42,7 @@
    :interaction/requires #{:gay.capability/query}
    :replay/of "query-1"
    :causality/after #{"query-1"}
+   :color/tile {:color/seed 1069 :color/index 6 :color/hex "#285DD0"}
    :interaction/observed-at #inst "2026-07-21T20:01:00Z"}
 
   {:interaction/key "audit-1"
@@ -54,6 +60,7 @@
    :audit/result
    {:equivalent? false
     :reason :replay-is-distinct-interaction}
+   :color/tile {:color/seed 1069 :color/index 7 :color/hex "#6233EF"}
    :interaction/observed-at #inst "2026-07-21T20:02:00Z"}
 
   {:interaction/key "retraction-1"
@@ -67,7 +74,37 @@
    :interaction/targets #{"query-1"}
    :causality/after #{"audit-1"}
    :retraction/reason :failed-runtime-witness
+   :color/tile {:color/seed 1069 :color/index 8 :color/hex "#D4BE57"}
    :interaction/observed-at #inst "2026-07-21T20:03:00Z"}]
+
+ :decomposition
+ {:decomposition/type :structured/tree
+  :decomposition/problem :persistence/global-consistency
+  :decomposition/bags
+  [{:bag/key "immer-preserves"
+    :bag/layer :persistence/local-snapshots
+    :bag/members #{"query-1" "query-2"}
+    :color/tile {:color/seed 1069 :color/index 9 :color/hex "#389BC3"}}
+   {:bag/key "preserves-syrup"
+    :bag/layer :persistence/canonical-artifacts
+    :bag/members #{"query-2" "audit-1"}
+    :color/tile {:color/seed 1069 :color/index 10 :color/hex "#7278C0"}}
+   {:bag/key "syrup-fibers"
+    :bag/layer :persistence/live-realization
+    :bag/members #{"audit-1" "retraction-1"}
+    :color/tile {:color/seed 1069 :color/index 11 :color/hex "#5FA42B"}}]
+
+  :decomposition/adhesions
+  [{:adhesion/key "query-replay-boundary"
+    :adhesion/left "immer-preserves"
+    :adhesion/right "preserves-syrup"
+    :adhesion/apex #{"query-2"}
+    :color/tile {:color/seed 1069 :color/index 12 :color/hex "#C3F7FA"}}
+   {:adhesion/key "audit-realization-boundary"
+    :adhesion/left "preserves-syrup"
+    :adhesion/right "syrup-fibers"
+    :adhesion/apex #{"audit-1"}
+    :color/tile {:color/seed 1069 :color/index 13 :color/hex "#DE1FBE"}}]}
 
  :laws
  [{:law/name :interactions-are-append-only-observations
@@ -81,4 +118,8 @@
   {:law/name :capability-names-persist-but-grants-do-not
    :law/status :required}
   {:law/name :artifact-hashes-do-not-identify-referents
+   :law/status :required}
+  {:law/name :colors-annotate-tiles-not-identities
+   :law/status :required}
+  {:law/name :adhesion-colors-follow-actual-spans
    :law/status :required}]}

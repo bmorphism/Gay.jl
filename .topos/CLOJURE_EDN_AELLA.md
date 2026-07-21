@@ -356,3 +356,29 @@ acyclic causality, and replay under a new event key. Capability names may be
 recorded as requirements; grants, credentials, tokens, and secrets may not be
 persisted. Retraction is a later interaction targeting an earlier observation,
 so correction preserves rather than overwrites history.
+
+### Chromatic structured cover
+
+Color is attached throughout as a representation tile, never as referent
+identity. Following the `StructuredDecompositions.jl` approach, the interaction
+history is covered by local bags and their actual overlaps:
+
+```text
+immer-preserves       preserves-syrup       syrup-fibers
+{query-1, query-2} -- {query-2, audit-1} -- {audit-1, retraction-1}
+                  ^                         ^
+             adhesion apex             adhesion apex
+                query-2                   audit-1
+```
+
+Artifacts, interactions, bags, and adhesions each carry a deterministic Gay
+color tile derived from seed 1069 and a declared index. The decomposition
+validator requires every interaction to occur in a bag and every adhesion apex
+to equal the actual intersection of its endpoint bags. This avoids the current
+extension prototype's error of coloring every adhesion from the first two bags
+regardless of its real span.
+
+Colors make locality, overlap, obstruction, and provenance visible. Equal
+colors do not establish equal referents, and different colors do not establish
+different referents. Global validity comes from gluing locally valid witnesses
+across every adhesion, not from color equality alone.
