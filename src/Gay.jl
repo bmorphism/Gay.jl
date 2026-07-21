@@ -286,7 +286,7 @@ export OBJECT_LEVEL, META_LEVEL, HIGHER_META
 export ChromaticPredicate_v2
 export world_color_logic_pullback
 
-# TODO: include("tropical_semirings.jl")
+include("tropical_semirings.jl")
 
 # Include JSON3 serialization
 include("serialization.jl")

@@ -55,7 +55,7 @@ include("lisp_gatlab_bridge_tests.jl")
                 name -> !isdefined(Gay, name),
                 names(Gay; all=false, imported=false),
             )
-            @test length(undefined_exports) <= 2113
+            @test length(undefined_exports) <= 2109
             Aqua.test_undefined_exports(Gay; broken=true)
         end
         
@@ -98,6 +98,12 @@ include("lisp_gatlab_bridge_tests.jl")
         @test length(world) == 1
         @test world.valid_count == 1
         @test verify_three_match(only(world.triangles))
+
+        @test semiring_add(TropicalMinPlus, 3.0, 5.0) == 3.0
+        @test semiring_mul(TropicalMinPlus, 3.0, 5.0) == 8.0
+        @test semiring_zero(TropicalMinPlus) == Inf
+        @test semiring_one(TropicalMinPlus) == 0.0
+        @test all(result -> result.passed, verify_semiring_laws(TropicalMinPlus, [1.0, 2.0, 3.0]))
     end
 
     @testset "Color Spaces" begin
