@@ -866,7 +866,7 @@ export LazyParameter, EagernessThreshold, DelayFactor, ObstructionDensity
 export ParametrizedLazy, evaluate_lazy!, force_eager!, laziness_score, polarity_from_laziness
 export Obstruction, SeedBlock, ColorMismatch, FingerprintCollision
 export InsertableObstruction, ObstructionSite
-export insert_obstruction!, remove_obstruction!, list_obstructions, obstruction_density, is_obstructed
+export list_obstructions, obstruction_density, is_obstructed
 export WorldReliability, ReliableWorld, UnreliableWorld, PartiallyReliable
 export assess_reliability, reliability_proof
 export GayMCVerifier, MonteCarloConfig, VerificationResult

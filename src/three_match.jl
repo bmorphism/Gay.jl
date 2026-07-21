@@ -43,7 +43,7 @@ export Trit, MINUS, ERGODIC, PLUS, trit_sum, gf3_conserved
 
 # Obstruction types
 export Obstruction, SeedBlock, ColorMismatch, FingerprintCollision
-export ObstructionSite, insert_obstruction!, remove_obstruction!
+export ObstructionSite
 export list_obstructions, obstruction_density, is_obstructed
 
 # World builders
@@ -64,18 +64,19 @@ Element of GF(3): {-1, 0, +1} with mod 3 arithmetic.
     PLUS = 1
 end
 
-"""Convert integer to Trit."""
-function Trit(x::Integer)::Trit
+"""Convert an integer to its balanced residue in `Trit`."""
+function trit_from_integer(x::Integer)::Trit
     m = mod(x, 3)
     m == 0 && return ERGODIC
     m == 1 && return PLUS
     return MINUS
 end
+export trit_from_integer
 
 """Sum trits and return result in GF(3)."""
 function trit_sum(trits::Vector{Trit})::Trit
     s = sum(Int8(t) for t in trits)
-    Trit(s)
+    trit_from_integer(s)
 end
 
 """Check if collection of trits is GF(3) conserved (sum ≡ 0 mod 3)."""
@@ -292,7 +293,7 @@ function list_obstructions(triangles::Vector{ThreeMatchTriangle})::Vector{Obstru
         if !t.conserved
             s = sum(Int8(leg.trit) for leg in t.legs)
             names = join([leg.name for leg in t.legs], ", ")
-            push!(obs, ColorMismatch(ERGODIC, Trit(s), names))
+            push!(obs, ColorMismatch(ERGODIC, trit_from_integer(s), names))
         end
     end
     obs
@@ -380,7 +381,7 @@ Build a ThreeMatchWorld from skill definitions.
 Each skill is (name, trit_value) where trit_value ∈ {-1, 0, 1}.
 """
 function world_skill_triplets(skills::Vector{Tuple{String, Int}})::ThreeMatchWorld
-    items = [(name, Trit(t)) for (name, t) in skills]
+    items = [(name, trit_from_integer(t)) for (name, t) in skills]
     world_three_match(items)
 end
 

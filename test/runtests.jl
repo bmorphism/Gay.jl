@@ -55,7 +55,7 @@ include("lisp_gatlab_bridge_tests.jl")
                 name -> !isdefined(Gay, name),
                 names(Gay; all=false, imported=false),
             )
-            @test length(undefined_exports) <= 2115
+            @test length(undefined_exports) <= 2113
             Aqua.test_undefined_exports(Gay; broken=true)
         end
         
@@ -86,6 +86,9 @@ include("lisp_gatlab_bridge_tests.jl")
         # ThreeMatch defines its own Trit values. Keep them qualified because
         # Gay's established MINUS/ERGODIC/PLUS names denote Polarity values.
         three_match = Gay.ThreeMatch
+        @test three_match.trit_from_integer(-4) == three_match.MINUS
+        @test three_match.trit_from_integer(3) == three_match.ERGODIC
+        @test three_match.trit_from_integer(4) == three_match.PLUS
         items = [
             ("minus", three_match.MINUS),
             ("zero", three_match.ERGODIC),
