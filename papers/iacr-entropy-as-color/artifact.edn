@@ -1,0 +1,45 @@
+{:artifact/version 1
+ :artifact/name "Entropy as Color evidence bundle"
+ :artifact/license-files ["LICENSE" "LICENSE-CULTURAL" "LICENSE-COMMERCIAL"]
+ :artifact/source-files
+ ["papers/iacr-entropy-as-color/main.tex"
+  "papers/iacr-entropy-as-color/refs.bib"
+  "papers/iacr-entropy-as-color/iacrtrans.cls"
+  "papers/iacr-entropy-as-color/README.md"
+  "papers/iacr-entropy-as-color/READINESS.md"
+  "papers/iacr-entropy-as-color/claims.edn"
+  "papers/iacr-entropy-as-color/artifact.edn"
+  "Project.toml"
+  "Manifest.toml"
+  "src/zmod3.jl"
+  "src/entropy_sources.jl"
+  "lean4/gf3_elegant.lean"
+  "test/runtests.jl"
+  "scripts/audit_iacr_paper.jl"
+  "scripts/check_iacr_paper.jl"
+  "scripts/verify_iacr_claims.bb"
+  "scripts/verify_iacr_artifact.bb"
+  "scripts/lint_no_demo.jl"]
+ :artifact/generated-files
+ ["papers/iacr-entropy-as-color/main.aux"
+  "papers/iacr-entropy-as-color/main.bbl"
+  "papers/iacr-entropy-as-color/main.blg"
+  "papers/iacr-entropy-as-color/main.log"
+  "papers/iacr-entropy-as-color/main.out"
+  "papers/iacr-entropy-as-color/main.pdf"]
+ :artifact/commands
+ [{:command/id :paper-check
+   :command/run "julia --project=. scripts/check_iacr_paper.jl"
+   :command/expect "IACR paper checks passed"}
+  {:command/id :claims
+   :command/run "bb scripts/verify_iacr_claims.bb"
+   :command/expect ":valid true"}
+  {:command/id :readiness
+   :command/run "julia --project=. scripts/audit_iacr_paper.jl"
+   :command/expect "ready = false until all submission gates close"}
+  {:command/id :tests
+   :command/run "julia --project=. -e 'using Pkg; Pkg.test()'"
+   :command/expect "Testing Gay tests passed"}
+  {:command/id :lint
+   :command/run "julia --project=. scripts/lint_no_demo.jl"
+   :command/expect "No demo identifier violations found"}]}

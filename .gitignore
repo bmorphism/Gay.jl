@@ -27,3 +27,11 @@ Thumbs.db
 *.lcov
 lcov.info
 coverage/
+
+# IACR paper build outputs (regenerate from source for each release)
+papers/iacr-entropy-as-color/main.aux
+papers/iacr-entropy-as-color/main.bbl
+papers/iacr-entropy-as-color/main.blg
+papers/iacr-entropy-as-color/main.log
+papers/iacr-entropy-as-color/main.out
+papers/iacr-entropy-as-color/main.pdf

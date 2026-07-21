@@ -5,7 +5,10 @@ see [READINESS.md](READINESS.md) for the evidence rubric and blocking gaps.
 
 ## Abstract
 
-We present a novel algebraic framework that maps cryptographic entropy sources to color space via GF(3), enabling visual verification, compositional analysis, and conservation laws for entropy in distributed systems.
+We study a GF(3)-valued audit and presentation layer for observations from
+heterogeneous entropy sources. Its deterministic labels make policy balance
+inspectable but do not create entropy, authenticate sources, or establish
+cryptographic security.
 
 ## Building
 
@@ -23,15 +26,23 @@ latexmk -pdf main.tex
 
 The manuscript build additionally depends on a TeX distribution providing the
 checked-in `iacrtrans.cls`, `pdflatex`, and `bibtex`. TeX was not available on
-the validation platform below, so the checked-in PDF is not current evidence.
+the validation platform below. Generated PDFs and auxiliary files are ignored;
+the release PDF must be rebuilt from the tagged source before submission.
 
 From the repository root, audit claims and artifact readiness with:
 
 ```bash
+julia --project=. scripts/check_iacr_paper.jl
+julia --project=. scripts/check_iacr_paper.jl --full
 julia --project=. scripts/audit_iacr_paper.jl
 julia --project=. scripts/audit_iacr_paper.jl --strict  # required before submission
 bb scripts/verify_iacr_claims.bb
+bb scripts/verify_iacr_artifact.bb
 ```
+
+`check_iacr_paper.jl` is the reviewer entrypoint. `--full` also runs the full
+package suite; `--strict` additionally requires every submission blocker to be
+closed and is intentionally failing while the rubric remains open.
 
 ## Artifact dependencies and platform
 
@@ -64,17 +75,44 @@ bibliographic and archival-package requirements are also satisfied.
 - `README.md` - This file
 - `READINESS.md` - IACR standards crosswalk and evidence ledger
 - `claims.edn` - Machine-readable claim-to-evidence ledger
+- `artifact.edn` - Source-only archival package manifest
 
-## Target Venues
+## Selected target venue
 
-- IACR ePrint (primary)
-- CHES 2026
-- Asiacrypt 2026
+The initial archival target is the **Cryptology ePrint Archive**. This contract
+was retrieved on 2026-07-21 from the official
+[acceptance and publishing conditions](https://eprint.iacr.org/operations.html)
+and [license list](https://eprint.iacr.org/licenses).
+
+- ePrint is a technical-report archive, not peer review, and has no submission
+  deadline or anonymity requirement.
+- The paper must make a technical contribution in cryptology; be clear,
+  readable, self-contained, and somewhat new and interesting; and contain
+  proofs or convincing arguments for its claims.
+- The first page must not be anonymous. It must state title, author names, and
+  contact addresses or affiliations. The current anonymous placeholder must be
+  replaced by the authors before submission.
+- Authors remain responsible for correctness and copyright. Every named author
+  must approve the submission and the policies.
+- An approved license must be selected at submission and cannot later be
+  changed. License compatibility with any later venue must be checked first.
+- Accepted versions remain archived. Withdrawal retains title, abstract, and
+  past versions; revisions should replace duplicate entries.
+- Later or concurrent conference submission is allowed by ePrint, but the
+  conference's own policy remains independently binding.
+
+CHES and ASIACRYPT remain possible later peer-reviewed targets, not active
+contracts. Their year-specific calls, anonymity rules, formats, and deadlines
+must be frozen before adapting this draft for either venue.
 
 ## Connection to Gay.jl
 
-This paper formalizes the GF(3) trit algebra and QCD color dynamics implemented in:
-- `src/schroedinger_hypergraph_worlds.jl` - Core implementation
+The current paper maps its implementation claims to:
+
+- `src/zmod3.jl` for GF(3) operations;
+- `src/entropy_sources.jl` for recorded observations and deterministic mixing;
+- `lean4/gf3_elegant.lean` for the exact finite-field identities;
+- `test/runtests.jl` and `claims.edn` for executable evidence boundaries.
 
 ## License
 
