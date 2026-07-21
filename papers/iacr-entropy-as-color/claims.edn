@@ -1,0 +1,74 @@
+{:ledger/version 1
+ :manuscript "papers/iacr-entropy-as-color/main.tex"
+ :statuses #{:verified :scoped :unverified :contradicted}
+ :claims
+ [{:claim/id :gf3/balanced-iff
+   :claim/kind :formal
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "For a b c in F3, a+b+c=0 iff c=-(a+b)."
+   :evidence [{:evidence/type :lean-symbol
+               :evidence/path "lean4/gf3_elegant.lean"
+               :evidence/symbol "balanced_iff"}]}
+
+  {:claim/id :gf3/characteristic-three
+   :claim/kind :formal
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "For t in F3, t+t+t=0."
+   :evidence [{:evidence/type :lean-symbol
+               :evidence/path "lean4/gf3_elegant.lean"
+               :evidence/symbol "char_three"}]}
+
+  {:claim/id :labels/deterministic-composition
+   :claim/kind :implementation
+   :claim/status :scoped
+   :claim/asserted? true
+   :claim/text "Gay.jl deterministically combines recorded ColoredTick values."
+   :evidence [{:evidence/type :julia-symbol
+               :evidence/path "src/entropy_sources.jl"
+               :evidence/symbol "composite_from_readings"}
+              {:evidence/type :test-text
+               :evidence/path "test/runtests.jl"
+               :evidence/symbol "CompositeSource"}]}
+
+  {:claim/id :labels/not-entropy
+   :claim/kind :negative-result
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "Balanced GF3 labels alone imply no positive min-entropy bound."
+   :evidence [{:evidence/type :manuscript-counterexample
+               :evidence/path "papers/iacr-entropy-as-color/main.tex"
+               :evidence/symbol "Label conservation is not extraction"}]}
+
+  {:claim/id :security/universal-composability
+   :claim/kind :security
+   :claim/status :contradicted
+   :claim/asserted? false
+   :claim/text "GF3-balanced sources achieve universal composability."
+   :evidence [{:evidence/type :counterexample
+               :evidence/path "papers/iacr-entropy-as-color/main.tex"
+               :evidence/symbol "Label conservation is not extraction"}]}
+
+  {:claim/id :security/entropy-amplification
+   :claim/kind :security
+   :claim/status :contradicted
+   :claim/asserted? false
+   :claim/text "Balanced labels amplify effective entropy."
+   :evidence [{:evidence/type :counterexample
+               :evidence/path "papers/iacr-entropy-as-color/main.tex"
+               :evidence/symbol "all-zero string"}]}
+
+  {:claim/id :algebra/yang-baxter
+   :claim/kind :formal
+   :claim/status :unverified
+   :claim/asserted? false
+   :claim/text "The scalar color kernel induces a Yang-Baxter operator and braided category."
+   :evidence []}
+
+  {:claim/id :evaluation/automotive-rates
+   :claim/kind :empirical
+   :claim/status :unverified
+   :claim/asserted? false
+   :claim/text "The named automotive sensors provide specified entropy rates."
+   :evidence []}]}

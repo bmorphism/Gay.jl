@@ -24,7 +24,7 @@
 \definecolor{qcdantigreen}{RGB}{180,60,180}
 \definecolor{qcdantiblue}{RGB}{180,180,60}
 
-\title{Entropy as Color: A GF(3) Algebraic Framework for Composable Cryptographic Entropy Sources}
+\title{Entropy as Color: GF(3) Labels for Auditable Entropy-Source Composition}
 
 \author{
   Anonymous\inst{1}
@@ -38,10 +38,10 @@
 \maketitle
 
 \begin{abstract}
-We present a novel algebraic framework that maps cryptographic entropy sources to color space via the finite field $\text{GF}(3)$, enabling visual verification, compositional analysis, and conservation laws for entropy in distributed systems. Drawing inspiration from quantum chromodynamics (QCD), we introduce a \emph{color charge} formalism where entropy sources carry ternary ``color'' attributes that must satisfy conservation constraints analogous to color confinement. Our framework provides: (1) a rigorous algebraic structure for combining heterogeneous entropy sources, (2) visual diagnostics for entropy health in real-time systems, (3) a Yang-Baxter compatible braided monoidal category for entropy composition, and (4) practical applications to automotive sensor fusion, TPM attestation chains, and distributed random beacon protocols. We prove that entropy sources satisfying our GF(3) conservation law achieve composable security under the random oracle model, and demonstrate the framework in a reference implementation for autonomous vehicle sensor entropy aggregation.
+We study a deterministic presentation and audit layer that assigns elements of the finite field $\mathbb{F}_3$ and corresponding color tiles to observations from heterogeneous entropy sources. The labels make policy balance and execution-order invariance inspectable, but they neither create entropy nor establish cryptographic security. We define the label algebra, prove its elementary conservation identities, and connect those identities to a Julia implementation and Lean statements. We also state the source-model, extractor, and reduction obligations that would be required to turn this audit layer into a cryptographic construction. Our principal contribution is therefore a falsifiable separation between measured source evidence, deterministic representations, and security claims.
 \end{abstract}
 
-\keywords{Entropy \and GF(3) \and Color Algebra \and Composable Security \and Yang-Baxter \and TRNG \and Automotive Security}
+\keywords{Entropy Sources \and GF(3) \and Audit Labels \and Reproducibility \and Randomness Extraction}
 
 %------------------------------------------------------------------------------
 \section{Introduction}
@@ -54,15 +54,15 @@ We propose a paradigm shift: treating entropy sources as \emph{colored} objects 
 
 \paragraph{Contributions.}
 \begin{enumerate}
-    \item \textbf{GF(3) Entropy Algebra}: We define a ternary trit algebra over entropy sources with operations $\oplus_3$ satisfying conservation laws (\Cref{sec:algebra}).
+    \item \textbf{GF(3) Audit Algebra}: We define ternary labels with operation $\oplus_3$ and separate their algebraic invariants from entropy estimates (\Cref{sec:algebra}).
     
-    \item \textbf{Color Charge Formalism}: We map entropy quality metrics to a six-color + colorless system analogous to QCD, with conservation constraints (\Cref{sec:color}).
+    \item \textbf{Representation Boundary}: We map labels to color tiles while making explicit that colors and hashes represent observations rather than identify sources or grant authority (\Cref{sec:color}).
     
-    \item \textbf{Yang-Baxter Structure}: We prove our composition satisfies the Yang-Baxter equation, yielding a braided monoidal category for entropy (\Cref{sec:yangbaxter}).
+    \item \textbf{Algebraic Scope}: We identify the additional typing and naturality obligations needed for a Yang--Baxter or braided-monoidal interpretation (\Cref{sec:yangbaxter}).
     
-    \item \textbf{Composable Security}: Under the random oracle model, GF(3)-conserving entropy compositions achieve universal composability (\Cref{sec:security}).
+    \item \textbf{Security Non-implication}: We show why label conservation alone implies neither extraction nor composable security and give the missing proof obligations (\Cref{sec:security}).
     
-    \item \textbf{Practical Implementation}: Reference implementation in Julia (Gay.jl) with applications to automotive sensor fusion (\Cref{sec:implementation}).
+    \item \textbf{Executable Reference}: We connect deterministic label composition to the Gay.jl implementation and its tests (\Cref{sec:implementation}).
 \end{enumerate}
 
 %------------------------------------------------------------------------------
@@ -117,16 +117,17 @@ Given an entropy source $\mathcal{E}$, its \emph{trit assignment} $\tau(\mathcal
 where $\theta_{\text{low}}, \theta_{\text{high}}$ are application-specific thresholds.
 \end{definition}
 
-\begin{theorem}[Conservation Law]
+\begin{proposition}[Conditional label balance]
 \label{thm:conservation}
-For any valid entropy composition $\mathcal{E}_1 \circ \mathcal{E}_2 \circ \mathcal{E}_3$, the trit assignments must satisfy:
+For labels $a,b,c\in\mathbb{F}_3$, if $c=-(a+b)$, then:
 \[
-\tau(\mathcal{E}_1) \oplus_3 \tau(\mathcal{E}_2) \oplus_3 \tau(\mathcal{E}_3) = 0
+a \oplus_3 b \oplus_3 c = 0.
 \]
-\end{theorem}
+This algebraic statement does not imply that three measured sources are independent, unpredictable, or secure.
+\end{proposition}
 
 \begin{proof}
-[Proof sketch] We construct a homomorphism from the entropy composition monoid to $(\mathbb{F}_3, \oplus_3)$ and show that valid compositions (those maintaining min-entropy above security threshold) necessarily satisfy the conservation constraint. Full proof in \Cref{app:proofs}.
+By substitution, $a+b+c=a+b-(a+b)=0$ in the additive group of $\mathbb{F}_3$. See \Cref{app:proofs} for the exact Lean cross-reference.
 \end{proof}
 
 %------------------------------------------------------------------------------
@@ -167,46 +168,51 @@ Color charges map to the HSL color wheel:
 \end{itemize}
 
 %------------------------------------------------------------------------------
-\section{Yang-Baxter Structure}
+\section{Yang--Baxter Scope}
 \label{sec:yangbaxter}
 %------------------------------------------------------------------------------
 
-We prove that entropy composition admits a Yang-Baxter compatible structure, enabling quantum-group-theoretic analysis.
+The label set suggests braid-like visualizations, but a visualization is not a
+braiding on entropy sources. We record the candidate below to expose, rather
+than conceal, the missing structure.
 
 \begin{definition}[R-Matrix]
-The entropy R-matrix $R: \mathcal{C} \times \mathcal{C} \to \mathbb{C}$ is defined by:
+The candidate scalar kernel $r: \mathcal{C} \times \mathcal{C} \to \mathbb{C}$ is defined by:
 \[
-R_{ij} = q^{\phi(\chi_i) \cdot \phi(\chi_j)}
+r(i,j) = q^{\phi(\chi_i) \cdot \phi(\chi_j)}
 \]
 where $q = e^{2\pi i/3}$ is a primitive third root of unity.
 \end{definition}
 
-\begin{theorem}[Yang-Baxter Equation]
-The entropy R-matrix satisfies:
-\[
-(R \otimes I)(I \otimes R)(R \otimes I) = (I \otimes R)(R \otimes I)(I \otimes R)
-\]
-\end{theorem}
-
-This structure yields a \emph{braided monoidal category} $\mathbf{Ent}_{\text{GF}(3)}$ of entropy sources with composition as the monoidal product.
+This scalar kernel is not yet an operator $R:V\otimes V\to V\otimes V$ and
+therefore does not, by itself, state the Yang--Baxter equation. Establishing a
+braided monoidal category would require a category of source objects, a
+monoidal product, a natural invertible braiding, and proofs of the hexagon
+identities. We make no such theorem in the present work.
 
 %------------------------------------------------------------------------------
 \section{Security Analysis}
 \label{sec:security}
 %------------------------------------------------------------------------------
 
-\begin{theorem}[Composable Security]
+\begin{proposition}[Label conservation is not extraction]
 \label{thm:security}
-Let $\mathcal{E}_1, \mathcal{E}_2, \mathcal{E}_3$ be independent entropy sources with $\tau(\mathcal{E}_1) \oplus_3 \tau(\mathcal{E}_2) \oplus_3 \tau(\mathcal{E}_3) = 0$. Then the composed source $\mathcal{E} = \mathcal{E}_1 \| \mathcal{E}_2 \| \mathcal{E}_3$ satisfies:
-\[
-H_\infty(\mathcal{E}) \ge \max\{H_\infty(\mathcal{E}_1), H_\infty(\mathcal{E}_2), H_\infty(\mathcal{E}_3)\}
-\]
-and achieves universal composability in the random oracle model.
-\end{theorem}
+GF(3) label balance alone implies no lower bound on min-entropy and no
+computational indistinguishability guarantee.
+\end{proposition}
 
-\begin{corollary}[Entropy Amplification]
-Color-neutral triadic compositions amplify effective entropy while maintaining conservation.
-\end{corollary}
+\begin{proof}
+Take three deterministic constant sources and assign them labels $+1,0,-1$.
+Their labels balance, while their joint output has min-entropy zero. Thus label
+balance cannot imply entropy amplification, pseudorandomness, or universal
+composability.
+\end{proof}
+
+A cryptographic construction would additionally need a security parameter, a
+joint or conditional source model, an explicit seeded or multi-source
+extractor, output length and statistical-error parameters, and either a game
+or an ideal functionality with an adversary, environment, and simulator. The
+present implementation is an audit layer and is not such a construction.
 
 %------------------------------------------------------------------------------
 \section{Implementation}
@@ -220,7 +226,7 @@ We provide a reference implementation in Julia as part of the Gay.jl package.
 \label{alg:composition}
 \begin{algorithmic}[1]
 \Require Entropy sources $\mathcal{E}_1, \mathcal{E}_2, \mathcal{E}_3$
-\Ensure Color-neutral composed entropy
+\Ensure A deterministic mixed value or rejection under the label policy
 \State $t_1 \gets \tau(\mathcal{E}_1)$; $t_2 \gets \tau(\mathcal{E}_2)$; $t_3 \gets \tau(\mathcal{E}_3)$
 \If{$(t_1 \oplus_3 t_2 \oplus_3 t_3) \neq 0$}
     \State \textbf{reject} (conservation violated)
@@ -232,23 +238,23 @@ We provide a reference implementation in Julia as part of the Gay.jl package.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Automotive Application}
+\subsection{Illustrative sensor policy}
 
-We apply the framework to autonomous vehicle sensor entropy:
+As a non-empirical example, a policy could label three sensor classes:
 \begin{itemize}
-    \item \textbf{LiDAR timing jitter}: PLUS (+1), $\sim$100 Mbits/sec
-    \item \textbf{Camera CCD noise}: ERGODIC (0), $\sim$50 Mbits/sec
-    \item \textbf{Radar Doppler variance}: MINUS (-1), $\sim$10 Mbits/sec
+    \item \textbf{LiDAR timing jitter}: PLUS (+1)
+    \item \textbf{Camera CCD noise}: ERGODIC (0)
+    \item \textbf{Radar Doppler variance}: MINUS (-1)
 \end{itemize}
 
-The triadic combination satisfies $+1 + 0 + (-1) = 0$, yielding a color-neutral, high-quality entropy pool for TPM seeding.
+The labels satisfy $+1 + 0 + (-1) = 0$. This says only that the policy is
+balanced; source quality, dependence, and fitness for TPM seeding require
+separate measurement and analysis.
 
 %------------------------------------------------------------------------------
 \section{Related Work}
 \label{sec:related}
 %------------------------------------------------------------------------------
-
-\paragraph{Ternary TRNGs.} Cambou et al.~\cite{cambou2018ternary} proposed ternary PUFs but did not develop the algebraic composition theory.
 
 \paragraph{Visual Cryptography.} Naor and Shamir's visual secret sharing~\cite{naor1995visual} uses visual representations but for different purposes.
 
@@ -261,7 +267,7 @@ The triadic combination satisfies $+1 + 0 + (-1) = 0$, yielding a color-neutral,
 \label{sec:conclusion}
 %------------------------------------------------------------------------------
 
-We have introduced a novel framework treating entropy sources as colored algebraic objects in $\text{GF}(3)$. The conservation laws, Yang-Baxter structure, and composable security guarantees provide both theoretical elegance and practical utility. Future work includes extending to $\text{GF}(p)$ for larger primes and formal verification of the Julia implementation.
+We have specified a GF(3)-valued audit and presentation layer for entropy-source observations. Its conservation identities are elementary and executable, while its colors remain representations rather than security evidence. The counterexample in \Cref{thm:security} prevents a balanced label policy from being mistaken for entropy extraction. Future work must begin with a precise source model and extractor construction before making cryptographic security claims.
 
 %------------------------------------------------------------------------------
 \section*{Acknowledgments}
@@ -279,32 +285,25 @@ We have introduced a novel framework treating entropy sources as colored algebra
 \label{app:proofs}
 
 \begin{proof}[Proof of \Cref{thm:conservation}]
-The trit algebra $(\mathbb{F}_3, \oplus_3)$ is isomorphic to $(\mathbb{Z}/3\mathbb{Z}, +)$, which is a commutative ring of characteristic 3. The conservation law $\tau(\mathcal{E}_1) \oplus_3 \tau(\mathcal{E}_2) \oplus_3 \tau(\mathcal{E}_3) = 0$ is a polynomial identity in this ring: $a + b + c = 0 \Leftrightarrow c = -(a+b)$ (verified by \texttt{linear\_combination} in Lean 4, file \texttt{lean4/gf3\_elegant.lean}).
-
-The conservation law follows from two properties:
-\begin{enumerate}
-    \item \textbf{Characteristic 3}: For any $t \in \mathbb{F}_3$, $t + t + t = 0$ (since $3 = 0$ in $\mathbb{F}_3$). This means three copies of any source type form a valid composition. Lean 4: \texttt{char\_three}.
-    \item \textbf{Negation as M\"obius inversion}: The M\"obius function $\mu(3) = -1$ (3 is prime), so M\"obius inversion on $\mathbb{F}_3$ is negation. If a composition is valid ($\sum \tau_i = 0$), then the M\"obius-inverted composition ($\sum (-\tau_i) = 0$) is also valid. Lean 4: \texttt{moebius\_preserves\_balance}.
-\end{enumerate}
-
-The homomorphism from the entropy composition monoid to $(\mathbb{F}_3, +)$ is the trit assignment $\tau$. Validity of compositions (maintaining min-entropy above threshold) is preserved because the thresholds $\theta_{\text{low}}, \theta_{\text{high}}$ are chosen such that $\tau$ is a monoid homomorphism: $\tau(\mathcal{E}_1 \| \mathcal{E}_2) = \tau(\mathcal{E}_1) + \tau(\mathcal{E}_2)$ when sources are independent.
+The additive inverse axiom in $\mathbb{F}_3$ gives
+$a+b-(a+b)=0$. The repository theorem
+\texttt{balanced\_iff} in \texttt{lean4/gf3\_elegant.lean} states the
+corresponding equivalence. The nearby theorem \texttt{char\_three} proves the
+distinct characteristic-three identity $t+t+t=0$. Neither theorem mentions
+entropy sources, independence, or cryptographic security.
 \end{proof}
 
 \begin{proof}[Proof of \Cref{thm:security}]
-The min-entropy bound follows from the leftover hash lemma applied to independent sources. For independent $\mathcal{E}_1, \mathcal{E}_2, \mathcal{E}_3$:
-\[
-H_\infty(\mathcal{E}_1 \| \mathcal{E}_2 \| \mathcal{E}_3) = H_\infty(\mathcal{E}_1) + H_\infty(\mathcal{E}_2) + H_\infty(\mathcal{E}_3)
-\]
-which is $\ge \max_i H_\infty(\mathcal{E}_i)$.
+Let each source output the all-zero string with probability one. Assign the
+three observations labels $+1,0,-1$. The label sum is zero, but every function
+of the joint deterministic sample is deterministic and has min-entropy zero.
+This proves the non-implication.
 
-Universal composability follows from the color neutrality constraint: a color-neutral triad produces output that is computationally indistinguishable from a random oracle, because the GF(3) conservation ensures that no single source's bias survives in the composed output. The braided monoidal structure (\Cref{sec:yangbaxter}) guarantees this under arbitrary composition order.
-
-\paragraph{Formal verification.} Both theorems are machine-verified:
-\begin{itemize}
-    \item Lean 4: 176 theorems across 6 files (see \texttt{lean4/} directory)
-    \item Aristotle (harmonic.fun): 94 theorems across 92 projects, including two independent proofs of the Bumpus-Kocsis $\frac{2}{3}$ bound
-    \item Key insight: $\mathbb{F}_3 \cong \mathbb{Z}/3\mathbb{Z}$ is a \texttt{CommRing} in Mathlib; all trit theorems are corollaries
-\end{itemize}
+\paragraph{Formal-verification scope.} The checked-in Lean sources include
+machine-checkable finite-field identities such as \texttt{balanced\_iff} and
+\texttt{char\_three}. They do not formalize an entropy-source distribution,
+extractor, random-oracle game, or UC ideal functionality. We therefore make no
+machine-verification claim for a cryptographic theorem.
 \end{proof}
 
 \section{Connection to Bumpus-Kocsis Bound}
@@ -319,8 +318,13 @@ The tight witness is the three-element chain $\{\bot < e < \top\}$:
     \item $e$ ($\tau = 0$, ERGODIC): does NOT satisfy LEM ($e \vee \neg e = e \vee \bot = e \neq \top$)
 \end{itemize}
 
-This means the ergodic coordinator in a GF(3) entropy system \emph{cannot self-decide its own color classically}. It requires external entropy---hence the drand beacon integration in Gay.jl's \texttt{drand\_seed()} function.
+The Heyting-algebra result does not imply that a software coordinator requires
+an external beacon, nor does it establish entropy or authentication properties.
+Any such operational requirement must be justified by a separate threat and
+source model.
 
-The Padovan sequence $P(n) = P(n-2) + P(n-3)$ provides the temporal structure: its residues modulo 3 have period 13 (a prime, $\mu(13) = -1$), with Noether-conserved sum ($12 \equiv 0 \pmod{3}$) but biased flow (net compression $2 \equiv -1 \pmod{3}$). This asymmetry is the algebraic manifestation of the expansion-to-compression phase transition observed in representation learning~\cite{tan2024}.
+The Padovan residue observations in the repository are combinatorial examples.
+We do not infer a physical Noether law or a representation-learning phase
+transition from them.
 
 \end{document}
