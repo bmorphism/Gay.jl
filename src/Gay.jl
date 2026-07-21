@@ -384,8 +384,8 @@ export verify_cognitive_laws, world_cognitive_superposition
 
 # Include S-expression parser (standalone Lisp subset)
 include("sexp.jl")
-using .SExp: @sx, sexp_eval, sexp_read
-export @sx, sexp_eval, sexp_read
+using .SExp: @sx, @sx_str, sexp_eval, sexp_read
+export @sx, @sx_str, sexp_eval, sexp_read
 
 # Include jank-like Lisp/GATlab bridge over all test-olog counterfactuals
 include("lisp_gatlab_bridge.jl")
@@ -1620,11 +1620,6 @@ export iterate_until_equilibrium!, cfr_marginals!
 export equilibrium_fingerprint, verify_nash
 export SelfDualGame, dual_marginal, mitsein_equilibrium
 export world_gay_open_game, world_marginal_convergence
-
-# Include Self-hosted S-expression parser (robust LispSyntax alternative)
-include("sexp.jl")
-# SUSPECT: using .SExp
-export @sx, @sx_str, sexp_read, sexp_eval, sexp_parse
 
 # Include GayAsync - core.async-style chromatic channels for Julia
 # MISSING: include("gay_async.jl")
