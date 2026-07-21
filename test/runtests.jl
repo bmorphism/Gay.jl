@@ -602,6 +602,34 @@ include("lisp_gatlab_bridge_tests.jl")
             @test summary.measured_trit == Int8(0)
             @test summary.confidence == 0.68f0
             @test summary.tick == TritTick(2)
+
+            # Permutation-invariant threshold accumulation. Without canonical
+            # ordering, Float32 sums of [1, -1, 0.33] straddle 0.33f0.
+            threshold_observations = [
+                ColoredTick(TritTick(1), Int8(1), UInt64(1), 1.0f0, :plus_one),
+                ColoredTick(TritTick(2), Int8(-1), UInt64(2), 1.0f0, :minus_one),
+                ColoredTick(TritTick(3), Int8(1), UInt64(4), 0.33f0, :threshold),
+            ]
+            permutations = [
+                threshold_observations[[1, 2, 3]],
+                threshold_observations[[1, 3, 2]],
+                threshold_observations[[2, 1, 3]],
+                threshold_observations[[2, 3, 1]],
+                threshold_observations[[3, 1, 2]],
+                threshold_observations[[3, 2, 1]],
+            ]
+            threshold_summaries = composite_from_readings.(permutations, :threshold_fixture)
+            @test all(==(first(threshold_summaries)), threshold_summaries)
+            @test first(threshold_summaries).measured_trit == Int8(1)
+
+            @test_throws ArgumentError composite_from_readings([
+                ColoredTick(TritTick(1), Int8(2), UInt64(0), 0.5f0, :invalid_trit),
+            ])
+            for invalid_weight in Float32[-0.1, 1.1, NaN, Inf]
+                @test_throws ArgumentError composite_from_readings([
+                    ColoredTick(TritTick(1), Int8(0), UInt64(0), invalid_weight, :invalid_weight),
+                ])
+            end
         end
 
         @testset "Agreement and disagreement" begin

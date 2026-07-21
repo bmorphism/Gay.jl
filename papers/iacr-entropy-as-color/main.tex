@@ -42,7 +42,7 @@
 \keywords{Entropy Sources \and GF(3) \and Audit Labels \and Reproducibility \and Randomness Extraction}
 
 \begin{abstract}
-We study a deterministic presentation and audit layer that assigns elements of the finite field $\mathbb{F}_3$ and corresponding color tiles to observations from heterogeneous entropy sources. The labels make policy balance and execution-order invariance inspectable, but they neither create entropy nor establish cryptographic security. We define the label algebra, prove its elementary conservation identities, and connect those identities to a Julia implementation and Lean statements. We also state the source-model, extractor, and reduction obligations that would be required to turn this audit layer into a cryptographic construction. Our principal contribution is therefore a falsifiable separation between measured source evidence, deterministic representations, and security claims.
+We study a deterministic presentation and audit layer that assigns elements of the finite field $\mathbb{F}_3$ and corresponding color tiles to observations from heterogeneous entropy sources. The labels make policy balance inspectable, and canonical accumulation makes the implemented summary permutation-invariant for validated observations; neither property creates entropy or establishes cryptographic security. We define the label algebra, prove its elementary conservation identities, and connect those identities to a Julia implementation and Lean statements. We also state the source-model, extractor, and reduction obligations that would be required to turn this audit layer into a cryptographic construction. Our principal contribution is therefore a falsifiable separation between measured source evidence, deterministic representations, and security claims.
 \end{abstract}
 
 %------------------------------------------------------------------------------
@@ -233,12 +233,20 @@ not reject unbalanced labels and does not output cryptographic randomness.
 \caption{Deterministic observation summary}
 \label{alg:composition}
 \begin{algorithmic}[1]
-\Require Nonempty observations $o_i=(\rho_i,t_i,x_i,\ell_i,w_i)$
+\Require Observations $o_i=(\rho_i,t_i,x_i,\ell_i,w_i)$
 \Ensure Summary $(t^*,x^*,\ell^*,w^*)$
+\If{the sequence is empty}
+    \State \Return the distinguished all-zero summary
+\EndIf
+\For{each $o_i$}
+    \If{$\ell_i\notin\{-1,0,1\}$ or $w_i\notin[0,1]$ or $w_i$ is not finite}
+        \State \textbf{raise} an input error
+    \EndIf
+\EndFor
 \State $x^* \gets x_1\oplus\cdots\oplus x_n$
-\State $v \gets \sum_i w_i\ell_i$
+\State $V \gets \operatorname{sort}([w_i\ell_i]_{i=1}^n)$; $v \gets \sum_{z\in V}z$
 \State $\ell^* \gets +1$ if $v>0.33$, $-1$ if $v<-0.33$, and $0$ otherwise
-\State $w^* \gets \operatorname{mean}_i(w_i)$
+\State $W \gets \operatorname{sort}([w_i]_{i=1}^n)$; $w^* \gets \sum_{z\in W}z/n$
 \If{all $\ell_i$ are equal}
     \State $w^* \gets \min(1,1.2w^*)$
 \Else
@@ -249,11 +257,23 @@ not reject unbalanced labels and does not output cryptographic randomness.
 \end{algorithmic}
 \end{algorithm}
 
+\begin{proposition}[Permutation invariance of the validated summary]
+\label{thm:permutation}
+For every finite sequence of accepted observations $R$, every permutation
+$\pi(R)$ produces the same output under \Cref{alg:composition}.
+\end{proposition}
+
 The empty-input implementation returns a distinguished all-zero summary.
 Separately, \texttt{entropy\_mix} applies SplitMix64 to a seed XORed with one
 sample word and an encoding of its label. Both operations are deterministic;
 neither estimates entropy, checks source independence, performs health tests,
 or instantiates a NIST conditioning component.
+
+The vote terms and weights are sorted before Float32 accumulation. This makes
+the implemented result a function of the multiset of validated observations,
+not their vector order. It does not make Float32 arithmetic exact. A regression
+fixture covers the boundary multiset $\{1,-1,0.33\}$, whose unsorted sums can be
+either $0.33$ or $0.33000004$ under different permutations.
 
 \subsection{Illustrative sensor policy}
 
@@ -331,6 +351,8 @@ The evaluation asks only questions supported by the audit-layer contribution:
     that claim identity or authority?
     \item Does the implementation produce a deterministic summary matching
     \Cref{alg:composition} for a fixed observation vector?
+    \item Does every permutation of the threshold fixture produce the same
+    summary, and are malformed trits and weights rejected?
 \end{enumerate}
 
 On Julia 1.12.6 and Apple arm64 Darwin 25.5.0, the committed commands produced:
@@ -341,7 +363,7 @@ On Julia 1.12.6 and Apple arm64 Darwin 25.5.0, the committed commands produced:
 \hline
 Check & Positive result & Negative witnesses \\
 \hline
-Claims & 10 resolved & unsupported assertion rejected \\
+Claims & 11 resolved & unsupported assertion rejected \\
 Referents & 3 referents, 5 laws & 5 malformed cases rejected \\
 Interactions & 4 records, 8 laws & 9 malformed cases rejected \\
 Fixture & sample $10\oplus12=6$ & not a security test \\
@@ -351,6 +373,9 @@ Fixture & sample $10\oplus12=6$ & not a security test \\
 
 For the two-observation fixture with labels $+1,-1$ and weights $0.9,0.8$,
 the summary is deterministic, has label $0$, and has adjusted weight $0.68$.
+All six permutations of the threshold fixture produce label $+1$ after
+canonical accumulation; invalid trits, non-finite weights, and weights outside
+$[0,1]$ are rejected.
 The commands and expected outputs are recorded in \texttt{artifact.edn}.
 
 \paragraph{Limitations.} These checks validate conformance and rejection
@@ -402,6 +427,15 @@ finite-field identities such as
 \texttt{char\_three}. They do not formalize an entropy-source distribution,
 extractor, random-oracle game, or UC ideal functionality. We therefore make no
 formal-verification claim for a cryptographic theorem.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{thm:permutation}]
+Permutation preserves the multiset of sample words, and XOR is associative and
+commutative. Sorting maps equal multisets of vote terms and weights to equal
+Float32 sequences, so both folds execute the same operations in the same
+order. Unanimity and the maximum timestamp are symmetric predicates; the
+output source name is a fixed argument. Every output field is therefore equal.
+This is an implementation invariant, not an entropy or security property.
 \end{proof}
 
 \end{document}

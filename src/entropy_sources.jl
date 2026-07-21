@@ -474,16 +474,18 @@ function inject_jerk!(as::AccelerometerSource, jerk::Real)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Composite Source — multiple sources, conservation-checked
+# Composite Source — multiple observations summarized by policy
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
     CompositeSource <: EntropySource
 
-Combines multiple entropy sources. The composite trit and entropy
-are derived from all active sources, weighted by trustworthiness.
+Reads multiple observation providers and produces one deterministic policy
+summary. The compatibility sample words are XOR-folded and the trits are
+weighted by provider policy metadata.
 
-Conservation check: if all sources agree on trit, strong signal.
+If all observations carry the same trit, the policy increases their mean
+weight. This is not an entropy, independence, or security check.
 If they disagree, the disagreement IS the information.
 
 "Your brain says make but the air says check."
@@ -504,7 +506,7 @@ source_trustworthiness(cs::CompositeSource) =
 """
     read_entropy(cs::CompositeSource) -> ColoredTick
 
-Read from all sources, combine entropy and compute consensus trit.
+Read every provider and compute the validated policy summary.
 """
 function read_entropy(cs::CompositeSource)::ColoredTick
     readings = [read_entropy(s) for s in cs.sources]
@@ -516,8 +518,13 @@ end
 
 Combine multiple `ColoredTick` observations into one policy summary.
 - Sample word: XOR fold of all compatibility `entropy` fields
-- Trit: weighted vote by confidence
-- Confidence: mean of individual confidences, boosted by agreement
+- Trit: weighted vote with canonical Float32 accumulation
+- Confidence: canonical Float32 mean, boosted by agreement
+
+Accepted observations have trits in `{-1, 0, 1}` and finite policy weights in
+`[0, 1]`; malformed observations raise `ArgumentError`. Canonical sorting of
+the vote terms and weights makes the summary invariant under permutation of
+accepted readings, including at the `0.33f0` decision threshold.
 
 No independence test, min-entropy estimator, conditioning function, or
 extractor is performed.
@@ -525,16 +532,25 @@ extractor is performed.
 function composite_from_readings(readings::Vector{ColoredTick}, name::Symbol=:composite)
     isempty(readings) && return ColoredTick(TritTick(UInt64(0)), Int8(0), UInt64(0), 0.0f0, name)
 
+    for ct in readings
+        ct.measured_trit in Int8[-1, 0, 1] ||
+            throw(ArgumentError("measured_trit must be -1, 0, or 1"))
+        isfinite(ct.confidence) && 0.0f0 <= ct.confidence <= 1.0f0 ||
+            throw(ArgumentError("confidence policy weight must be finite and in [0, 1]"))
+    end
+
     # XOR-fold entropy
     entropy = reduce(⊻, ct.entropy for ct in readings)
 
     # Weighted trit vote
-    weighted_sum = sum(Float32(ct.measured_trit) * ct.confidence for ct in readings)
+    vote_terms = sort!(Float32[Float32(ct.measured_trit) * ct.confidence for ct in readings])
+    weighted_sum = sum(vote_terms)
     consensus_trit = weighted_sum > 0.33f0 ? Int8(1) :
                      weighted_sum < -0.33f0 ? Int8(-1) : Int8(0)
 
     # Confidence: mean, boosted if all agree
-    mean_conf = sum(ct.confidence for ct in readings) / length(readings)
+    weights = sort!(Float32[ct.confidence for ct in readings])
+    mean_conf = sum(weights) / length(weights)
     all_agree = all(ct.measured_trit == readings[1].measured_trit for ct in readings)
     confidence = all_agree ? min(mean_conf * 1.2f0, 1.0f0) : mean_conf * 0.8f0
 

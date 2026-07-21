@@ -33,6 +33,19 @@
                :evidence/path "test/runtests.jl"
                :evidence/symbol "CompositeSource"}]}
 
+  {:claim/id :labels/permutation-invariant-summary
+   :claim/kind :implementation
+   :claim/manuscript-label "thm:permutation"
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "Canonical accumulation makes composite_from_readings permutation-invariant for validated observations."
+   :evidence [{:evidence/type :test-text
+               :evidence/path "test/runtests.jl"
+               :evidence/symbol "Permutation-invariant threshold accumulation"}
+              {:evidence/type :julia-symbol
+               :evidence/path "src/entropy_sources.jl"
+               :evidence/symbol "composite_from_readings"}]}
+
   {:claim/id :observations/opaque-sample-word
    :claim/kind :semantics
    :claim/status :verified
