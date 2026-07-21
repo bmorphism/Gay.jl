@@ -10,6 +10,7 @@ function check(label, command)
 end
 
 check("claim ledger", Cmd(["bb", "scripts/verify_iacr_claims.bb"]))
+check("standards ledger", Cmd(["bb", "scripts/verify_iacr_standards.bb"]))
 check("artifact manifest", Cmd(["bb", "scripts/verify_iacr_artifact.bb"]))
 check("referent boundary",
       Cmd(["bb", "scripts/verify_referent_boundary.bb", "--self-test"]))

@@ -25,6 +25,10 @@ contract. The initial archival contract is IACR ePrint, retrieved 2026-07-21;
 CHES and ASIACRYPT are explicitly deferred until a year-specific call is
 selected.
 
+`standards.edn` is the authoritative machine-readable crosswalk for this
+snapshot. Each locally satisfied requirement names tracked evidence; every
+incomplete or external requirement must instead carry a reason.
+
 ## Rubric and current evidence
 
 | Gate | Required evidence | Current status |
@@ -42,10 +46,10 @@ selected.
 | Evaluation | Research questions, baselines, datasets/sources, platform, repetitions, statistics, and limitations | Conformance and negative-witness questions, fixture, platform, outputs, and limitations documented; independent reproduction remains open |
 | Artifact functionality | Clean build, pinned dependencies, one-command tests, expected output, runtime, resource bounds | Dependencies, platform, commands, outputs, and approximate runtime documented; clean-room run remains **Incomplete** |
 | Artifact reproduction | Script regenerates every paper table/figure/result from raw inputs | Not applicable while the paper reports no empirical result; required if evaluation results are added |
-| Claim hygiene | Every numeric, empirical, novelty, formal-verification, and security claim has a source or executable witness | Machine-readable ledger passes; exhaustive prose coverage remains **Incomplete** |
-| Identity boundary | Typed referents carry identity; colors/hashes are representations and evidence only | **In progress**; executable EDN gates exist |
+| Claim hygiene | Every numeric, empirical, novelty, formal-verification, and security claim has a source or executable witness | Every labeled theorem/proposition is bijectively represented in the passing ledger; novelty prose still requires independent review and remains **Incomplete** |
+| Identity boundary | Typed referents carry identity; colors/hashes are representations and evidence only | Executable positive laws and fourteen negative witnesses pass across the referent and interaction validators |
 | Ethics and submission | Authors approve; conflicts and overlap disclosed; exact venue anonymity and dual-submission rules checked | ePrint contract frozen; author approval, non-anonymous first page, contact details, and license choice remain **Not yet attestable** |
-| Archival package | Source-only clean tree, license, citation metadata, immutable artifact identifier, checksums | **Missing** |
+| Archival package | Source-only clean tree, license, citation metadata, immutable artifact identifier, checksums | Commit-addressed source-archive builder and SHA-256 output exist; release tag and public immutable identifier remain **Incomplete** |
 
 ## Blocking claim repairs
 
@@ -71,6 +75,7 @@ julia --project=. scripts/check_iacr_paper.jl --full
 julia --project=. scripts/audit_iacr_paper.jl
 julia --project=. scripts/audit_iacr_paper.jl --strict
 bb scripts/verify_iacr_claims.bb
+bb scripts/verify_iacr_standards.bb
 bb scripts/verify_iacr_artifact.bb
 ```
 

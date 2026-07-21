@@ -8,6 +8,7 @@
   "papers/iacr-entropy-as-color/README.md"
   "papers/iacr-entropy-as-color/READINESS.md"
   "papers/iacr-entropy-as-color/claims.edn"
+  "papers/iacr-entropy-as-color/standards.edn"
   "papers/iacr-entropy-as-color/artifact.edn"
   "Project.toml"
   "Manifest.toml"
@@ -18,7 +19,9 @@
   "scripts/audit_iacr_paper.jl"
   "scripts/check_iacr_paper.jl"
   "scripts/verify_iacr_claims.bb"
+  "scripts/verify_iacr_standards.bb"
   "scripts/verify_iacr_artifact.bb"
+  "scripts/build_iacr_artifact.bb"
   "scripts/verify_referent_boundary.bb"
   "scripts/verify_higher_order_interactions.bb"
   "scripts/lint_no_demo.jl"]
@@ -36,6 +39,9 @@
   {:command/id :claims
    :command/run "bb scripts/verify_iacr_claims.bb"
    :command/expect ":valid true"}
+  {:command/id :standards
+   :command/run "bb scripts/verify_iacr_standards.bb"
+   :command/expect ":valid true with every open requirement explicit"}
   {:command/id :readiness
    :command/run "julia --project=. scripts/audit_iacr_paper.jl"
    :command/expect "ready = false until all submission gates close"}
@@ -50,4 +56,7 @@
    :command/expect "Testing Gay tests passed"}
   {:command/id :lint
    :command/run "julia --project=. scripts/lint_no_demo.jl"
-   :command/expect "No demo identifier violations found"}]}
+   :command/expect "No demo identifier violations found"}
+  {:command/id :source-archive
+   :command/run "bb scripts/build_iacr_artifact.bb OUTPUT_DIRECTORY"
+   :command/expect "commit-addressed tar.gz path and SHA-256 digest"}]}

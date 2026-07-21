@@ -37,6 +37,7 @@ julia --project=. scripts/check_iacr_paper.jl --full
 julia --project=. scripts/audit_iacr_paper.jl
 julia --project=. scripts/audit_iacr_paper.jl --strict  # required before submission
 bb scripts/verify_iacr_claims.bb
+bb scripts/verify_iacr_standards.bb
 bb scripts/verify_iacr_artifact.bb
 ```
 
@@ -75,7 +76,22 @@ bibliographic and archival-package requirements are also satisfied.
 - `README.md` - This file
 - `READINESS.md` - IACR standards crosswalk and evidence ledger
 - `claims.edn` - Machine-readable claim-to-evidence ledger
+- `standards.edn` - Dated requirement, status, and evidence ledger
 - `artifact.edn` - Source-only archival package manifest
+
+## Building the source archive
+
+After committing the exact release candidate, build a commit-addressed archive
+from only the manifest paths:
+
+```bash
+bb scripts/build_iacr_artifact.bb OUTPUT_DIRECTORY
+```
+
+The builder refuses a dirty manifest path and reports the full Git commit and
+SHA-256 digest. Publishing that archive does not itself create an immutable
+identifier: record the eventual ePrint, IACR Artifact Archive, or repository
+release identifier in the release checklist.
 
 ## Selected target venue
 
@@ -116,4 +132,6 @@ The current paper maps its implementation claims to:
 
 ## License
 
-Same license as Gay.jl repository.
+The source bundle carries the repository's existing dual-license files. That
+does not select the separate, irreversible license for publishing a report on
+ePrint; all authors must select and approve an ePrint license before upload.

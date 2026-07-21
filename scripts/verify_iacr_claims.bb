@@ -33,9 +33,18 @@
 (defn verify-ledger [ledger]
   (let [statuses (:statuses ledger)
         claims (:claims ledger)
-        ids (map :claim/id claims)]
+        ids (map :claim/id claims)
+        manuscript (source-text (:manuscript ledger))
+        proposition-labels
+        (set (map second
+                  (re-seq #"(?s)\\begin\{(?:proposition|theorem)\}.*?\\label\{([^}]+)\}"
+                          manuscript)))
+        ledger-labels (set (keep :claim/manuscript-label claims))]
     (require* (= 1 (:ledger/version ledger)) "unsupported ledger version")
     (require* (= (count ids) (count (set ids))) "duplicate claim IDs")
+    (require* (= proposition-labels ledger-labels)
+              (str "manuscript proposition labels differ from ledger: manuscript="
+                   proposition-labels " ledger=" ledger-labels))
     (doseq [claim claims]
       (let [status (:claim/status claim)
             evidence (:evidence claim)]

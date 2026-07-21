@@ -1,0 +1,90 @@
+{:standards/version 1
+ :standards/retrieved "2026-07-21"
+ :standards/target :iacr-eprint
+ :standards/sources
+ [{:source/id :eprint-conditions
+   :source/url "https://eprint.iacr.org/operations.html"
+   :source/authority :iacr
+   :source/scope :archival-submission}
+  {:source/id :eprint-licenses
+   :source/url "https://eprint.iacr.org/licenses"
+   :source/authority :iacr
+   :source/scope :publication-license}
+  {:source/id :iacr-author-guidelines
+   :source/url "https://www.iacr.org/docs/author.pdf"
+   :source/authority :iacr
+   :source/scope :author-conduct}
+  {:source/id :iacr-artifact-archive
+   :source/url "https://artifacts.iacr.org/"
+   :source/authority :iacr
+   :source/scope :artifact-review}
+  {:source/id :eurocrypt-2025-artifacts
+   :source/url "https://artifacts.iacr.org/eurocrypt/2025/"
+   :source/authority :iacr
+   :source/scope :artifact-functionality}]
+ :standards/requirements
+ [{:requirement/id :paper/cryptology-scope
+   :requirement/source :eprint-conditions
+   :requirement/status :satisfied
+   :requirement/evidence ["papers/iacr-entropy-as-color/main.tex"]}
+  {:requirement/id :paper/clear-self-contained-argument
+   :requirement/source :eprint-conditions
+   :requirement/status :incomplete
+   :requirement/reason "Independent technical reading has not yet been recorded."}
+  {:requirement/id :paper/nonanonymous-first-page
+   :requirement/source :eprint-conditions
+   :requirement/status :blocked-external
+   :requirement/reason "Author names and affiliations require author-supplied publication identity."}
+  {:requirement/id :paper/all-authors-approve
+   :requirement/source :eprint-conditions
+   :requirement/status :blocked-external
+   :requirement/reason "Approval is an author attestation and cannot be inferred from repository state."}
+  {:requirement/id :paper/correctness-responsibility
+   :requirement/source :eprint-conditions
+   :requirement/status :blocked-external
+   :requirement/reason "Named authors must attest responsibility for the submitted version."}
+  {:requirement/id :paper/license-selected
+   :requirement/source :eprint-licenses
+   :requirement/status :blocked-external
+   :requirement/reason "The irreversible ePrint publication license has not been selected."}
+  {:requirement/id :paper/no-duplicate-eprint
+   :requirement/source :eprint-conditions
+   :requirement/status :blocked-external
+   :requirement/reason "Must be checked against the archive immediately before submission."}
+  {:requirement/id :paper/conference-rules
+   :requirement/source :iacr-author-guidelines
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "The selected target is ePrint, not a peer-reviewed venue."}
+  {:requirement/id :artifact/source-available
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["papers/iacr-entropy-as-color/artifact.edn"]}
+  {:requirement/id :artifact/dependencies-pinned
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["Project.toml" "Manifest.toml"]}
+  {:requirement/id :artifact/test-harness
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["scripts/check_iacr_paper.jl" "test/runtests.jl"]}
+  {:requirement/id :artifact/platform-described
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]}
+  {:requirement/id :artifact/output-crosswalk
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md" "papers/iacr-entropy-as-color/claims.edn"]}
+  {:requirement/id :artifact/reusable-documentation
+   :requirement/source :iacr-artifact-archive
+   :requirement/status :incomplete
+   :requirement/reason "A clean-room reviewer has not yet tested the instructions."}
+  {:requirement/id :artifact/release-identifier
+   :requirement/source :iacr-artifact-archive
+   :requirement/status :incomplete
+   :requirement/reason "A release tag and immutable public archive identifier do not yet exist."}
+  {:requirement/id :artifact/checksummed-source-archive
+   :requirement/source :iacr-artifact-archive
+   :requirement/status :satisfied
+   :requirement/evidence ["scripts/build_iacr_artifact.bb"]}]}

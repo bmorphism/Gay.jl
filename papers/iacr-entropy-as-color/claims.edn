@@ -4,6 +4,7 @@
  :claims
  [{:claim/id :gf3/balanced-iff
    :claim/kind :formal
+   :claim/manuscript-label "thm:conservation"
    :claim/status :verified
    :claim/asserted? true
    :claim/text "For a b c in F3, a+b+c=0 iff c=-(a+b)."
@@ -58,6 +59,7 @@
 
   {:claim/id :labels/not-entropy
    :claim/kind :negative-result
+   :claim/manuscript-label "thm:security"
    :claim/status :verified
    :claim/asserted? true
    :claim/text "Balanced GF3 labels alone imply no positive min-entropy bound."
