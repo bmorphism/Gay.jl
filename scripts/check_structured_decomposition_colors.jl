@@ -1,9 +1,11 @@
 #!/usr/bin/env julia
 
 using Gay
+using Catlab.CategoricalAlgebra: dom, codom
 using Catlab.Graphs: Graph, path_graph
 using Colors: hex
 using StructuredDecompositions
+using StructuredDecompositions.Decompositions: bags, adhesionSpans
 
 extension_module = Base.get_extension(Gay, :GayStructuredDecompositionsExt)
 extension_module === nothing && error("GayStructuredDecompositionsExt did not load")
@@ -15,7 +17,18 @@ colored = extension_module.color_decomposition(decomposition; seed=Gay.GAY_SEED)
 @assert length(colored.adhesions) == 2
 @assert hex.(colored.bags) == ["55B0E6", "C8A0C2", "FFA6C2"]
 
-expected_adhesions = map([(2, 1), (3, 2)]) do (left, right)
+indexed_bags = bags(decomposition, true)
+bag_positions = Dict(bag_key => i for (i, (bag_key, _)) in enumerate(indexed_bags))
+shape_category = dom(decomposition.diagram)
+endpoint_pairs = map(adhesionSpans(decomposition, true)) do (shape_span, _)
+    @assert length(shape_span) == 2
+    (bag_positions[codom(shape_category, shape_span[1])],
+     bag_positions[codom(shape_category, shape_span[2])])
+end
+
+@assert endpoint_pairs == [(2, 1), (3, 2)]
+
+expected_adhesions = map(endpoint_pairs) do (left, right)
     c1 = colored.bags[left]
     c2 = colored.bags[right]
     r = round(UInt8, clamp(c1.r, 0, 1) * 255) ⊻ round(UInt8, clamp(c2.r, 0, 1) * 255)
@@ -30,4 +43,4 @@ end
 println((valid=true,
          bags=hex.(colored.bags),
          adhesions=hex.(colored.adhesions),
-         endpoint_pairs=[(2, 1), (3, 2)]))
+         endpoint_pairs=endpoint_pairs))

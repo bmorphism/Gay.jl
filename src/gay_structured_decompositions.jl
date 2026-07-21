@@ -29,7 +29,7 @@
 # │    ArenaError = violation of ownership invariants                           │
 # │    ArenaIndeterminacyError = nondeterministic ownership conflict            │
 # │                                                                             │
-# │    Gay chromatic identity → unique ownership coloring                       │
+# │    Typed resource/owner IDs → ownership; color → local witness tile     │
 # │    Structured decomposition → ownership doesn't cross bag boundaries        │
 # │                                                                             │
 # │  PATH FINDING:                                                              │
@@ -129,7 +129,7 @@ abstract type ArenaError <: Exception end
     ArenaIndeterminacyError
 
 Nondeterministic ownership conflict - multiple owners claim same resource.
-Vanishes when chromatic coloring is unique.
+Detected from resource and owner referents; coloring only witnesses the conflict.
 """
 struct ArenaIndeterminacyError <: ArenaError
     resource_id::UInt64
@@ -183,7 +183,7 @@ mutable struct Ownership
     # Borrow stack (for nested borrows)
     borrowers::Vector{UInt64}
     
-    # Chromatic identity (unique color = unique ownership)
+    # Contextual representation of this ownership relation; not its identity
     color::NTuple{3, Float64}
     
     seed::UInt64
@@ -342,7 +342,7 @@ function check_ownership(arena::Arena)
 end
 
 function ownership_coloring(arena::Arena)
-    # Assign unique colors to each ownership relationship
+    # Project ownership relationships into contextual color tiles.
     colors = Dict{UInt64, NTuple{3, Float64}}()
     for (rid, ownership) in arena.resources
         colors[rid] = ownership.color
@@ -460,13 +460,13 @@ end
     GayBag
 
 A bag in a Gay structured decomposition.
-Contains vertices with chromatic identity.
+Contains typed vertex referents and a contextual color tile.
 """
 struct GayBag
     id::Int
     vertices::Set{UInt64}
     
-    # Chromatic identity of the bag
+    # Contextual representation of the bag; `id` carries its identity
     color::NTuple{3, Float64}
     
     # Arena for this bag's resources
@@ -526,7 +526,7 @@ end
 """
     GayDecomposition
 
-A structured decomposition with Gay chromatic identity.
+A structured decomposition with Gay chromatic witness tiles.
 Implements adhesion_filter for deciding sheaves.
 """
 mutable struct GayDecomposition

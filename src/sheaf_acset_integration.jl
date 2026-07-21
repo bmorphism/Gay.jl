@@ -9,7 +9,8 @@ where local neighborhoods are threads sharing common ancestors, and rewriting ga
 are forks creating parallel copresheaf sections.
 
 The adhesion_filter algorithm from Bumpus et al. checks consistency across overlapping
-neighborhoods - we extend this with chromatic identity for SPI verification.
+neighborhoods - we extend this with chromatic witness tiles for SPI verification.
+Typed referents carry identity; colors carry contextual provenance and presentation.
 
 Reference: Structured decompositions as functors
     𝐃: Cat_pullback → Cat
@@ -30,7 +31,7 @@ using SplittableRandoms
 """
     ColorMorphism{C}
 
-A morphism tagged with chromatic identity for SPI verification.
+A morphism tagged with a chromatic witness tile for SPI verification.
 The color tracks provenance through the decomposition.
 """
 struct ColorMorphism{C}
@@ -43,7 +44,7 @@ end
 """
     ChromaticBag{T,C}
 
-A bag in a structured decomposition with chromatic identity.
+A bag in a structured decomposition with chromatic witness tiles.
 Each element has an associated color for neighbor-aware tracking.
 """
 struct ChromaticBag{T,C}
@@ -76,7 +77,7 @@ end
 """
     ChromaticDecomposition{G,T,C}
 
-A structured decomposition with chromatic identity on all components.
+A structured decomposition with chromatic witness tiles on all components.
 - shape: The underlying graph/tree structure (typically a tree for tractable inference)
 - bags: ChromaticBag at each node
 - adhesions: ChromaticAdhesion at each edge
@@ -302,7 +303,7 @@ end
     ThreadAncestryNode
 
 A node in the thread ancestry forest (copresheaf over continuation category).
-Each thread has a color identity for SPI verification.
+`thread_id` carries identity; color is its contextual SPI witness tile.
 """
 struct ThreadAncestryNode
     thread_id::UInt64
@@ -403,13 +404,13 @@ end
     RewritingGadget
 
 A local rewriting gadget creates parallel copresheaf sections through forks.
-The gadget tracks chromatic identity to ensure SPI verification.
+The gadget tracks a chromatic provenance signature for SPI verification.
 """
 struct RewritingGadget{T}
     pattern::T                    # What to match
     replacement::T                # What to replace with
     neighborhood_radius::Int      # How far to look for neighbors
-    color_signature::RGB{Float64} # Chromatic identity of this gadget
+    color_signature::RGB{Float64} # Contextual provenance signature
     preserves_colors::Bool        # Does rewriting preserve color structure?
 end
 
@@ -792,7 +793,7 @@ end
     seed_1069_signature()
 
 The balanced ternary representation of seed 1069: [+1, -1, -1, +1, +1, +1, +1]
-This is the chromatic identity signature for the IES system.
+This is the chromatic witness signature for the IES system, not an identity referent.
 """
 function seed_1069_signature()
     # 1069 in balanced ternary = +--++++
