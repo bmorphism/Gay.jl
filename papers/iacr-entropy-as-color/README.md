@@ -133,6 +133,15 @@ CHES and ASIACRYPT remain possible later peer-reviewed targets, not active
 contracts. Their year-specific calls, anonymity rules, formats, and deadlines
 must be frozen before adapting this draft for either venue.
 
+For any later peer-reviewed IACR submission, the venue profile must also record
+the presentation commitment, overlapping-review prohibition, prior-review
+response policy, and every automatic or disclosed conflict of interest. The
+general IACR COI policy includes advisor relationships without a time limit,
+shared affiliation within two years, at least two joint works within three
+years, and immediate family. The exact venue call must additionally be checked
+for its current policy on automated or generative tools; the 2014 general
+author guidelines do not answer that question.
+
 ## Connection to Gay.jl
 
 The current paper maps its implementation claims to:

@@ -14,6 +14,14 @@
    :source/url "https://www.iacr.org/docs/author.pdf"
    :source/authority :iacr
    :source/scope :author-conduct}
+  {:source/id :iacr-irregular-submissions
+   :source/url "https://www.iacr.org/docs/irregular.pdf"
+   :source/authority :iacr
+   :source/scope :parallel-submission-and-plagiarism}
+  {:source/id :iacr-conflicts
+   :source/url "https://www.iacr.org/docs/conflicts.pdf"
+   :source/authority :iacr
+   :source/scope :conflicts-of-interest}
   {:source/id :iacr-artifact-archive
    :source/url "https://artifacts.iacr.org/"
    :source/authority :iacr
@@ -56,6 +64,31 @@
    :requirement/status :not-applicable
    :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
    :requirement/reason "The selected target is ePrint, not a peer-reviewed venue."}
+  {:requirement/id :conference/anonymity
+   :requirement/source :iacr-author-guidelines
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "The ePrint report must be nonanonymous; a future conference profile must replace this status."}
+  {:requirement/id :conference/attendance-commitment
+   :requirement/source :iacr-author-guidelines
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "No conference is selected."}
+  {:requirement/id :conference/parallel-submission
+   :requirement/source :iacr-irregular-submissions
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "No peer-review period is active; this must be rechecked before any venue submission."}
+  {:requirement/id :conference/conflicts-of-interest
+   :requirement/source :iacr-conflicts
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "ePrint has no program committee; all authors must supply a COI inventory for a future venue."}
+  {:requirement/id :conference/prior-review-response
+   :requirement/source :iacr-author-guidelines
+   :requirement/status :not-applicable
+   :requirement/evidence ["papers/iacr-entropy-as-color/README.md"]
+   :requirement/reason "No prior venue review is recorded."}
   {:requirement/id :artifact/source-available
    :requirement/source :eurocrypt-2025-artifacts
    :requirement/status :satisfied
