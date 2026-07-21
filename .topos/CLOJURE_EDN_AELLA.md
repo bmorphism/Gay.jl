@@ -21,6 +21,39 @@ Reading never evaluates. Validation never grants capabilities. Interpretation
 never resolves outside its declared environment. In particular, an EDN list is
 not executable merely because its first value is a symbol.
 
+## Identity and representation
+
+Identity belongs to typed referents. It does not belong to their spellings,
+serialized forms, colors, locations, hashes, pages, or transport routes.
+
+```text
+typed referent
+  ├── represented by tile
+  ├── recorded by artifact
+  └── operated on through interface
+         └── possibly reached through adapter
+```
+
+The layers are distinct:
+
+| Layer | Role | Examples |
+| --- | --- | --- |
+| typed referent | The identity-bearing subject | world, morphism, kernel, rule, person |
+| tile | A composable representation | EDN form, Aellith clause, color tile, diagram node |
+| artifact | A durable representation or witness | source file, trace, canonical EDN bytes, report |
+| interface | An operation surface | `clojure://gay/query`, Julia API, MCP method |
+| adapter | A bridge into inherited address space | `web://` to DNS/HTTPS |
+
+A typed referent may have many tiles and artifacts. Two byte-identical artifacts
+need not refer to the same typed referent, and two byte-distinct artifacts may
+represent the same one. A canonical hash identifies an artifact encoding; it
+does not manufacture referent identity.
+
+`clojure://*` therefore names interfaces and evaluator routes, not subjects.
+Likewise, `web://` survives only as an adapter to inherited DNS/HTTPS space. A
+web location is evidence about where an artifact was retrieved, never the
+identity of the referent described by that artifact.
+
 ## EDN grammar
 
 The grammar describes the textual carrier. Equality, uniqueness, precision,
@@ -42,11 +75,11 @@ trivia      = whitespace | "," | comment | discard ;
 comment     = ";", { non-newline }, newline ;
 ```
 
-Our reader must preserve symbols and keywords as distinct identity-bearing
-values. It must preserve namespace and spelling, so `:foo-bar`, `:foo_bar`, and
-`:foo/bar` remain distinct. Unknown qualified tags are retained as generic
-tag-plus-form values until an interpreter with a registered handler receives
-them.
+Our reader must preserve symbols and keywords as distinct typed values. Their
+namespace and spelling belong to the representation and must survive reading,
+so `:foo-bar`, `:foo_bar`, and `:foo/bar` remain distinct tiles. Unknown
+qualified tags are retained as generic tag-plus-form values until an
+interpreter with a registered handler receives them.
 
 Maps reject duplicate keys and odd element counts. Sets reject duplicate
 members. Map and set order has no semantic meaning. A concrete-syntax-tree
@@ -55,8 +88,9 @@ does not.
 
 ## Canonical EDN profile
 
-Ordinary EDN does not define a byte-level canonical encoding. Repository
-identity therefore uses a versioned profile:
+Ordinary EDN does not define a byte-level canonical encoding. Artifact
+deduplication and reproducible repository projections therefore use a versioned
+profile:
 
 ```clojure
 {:gay.canonical/version 1
@@ -67,19 +101,21 @@ identity therefore uses a versioned profile:
  :gay.canonical/unknown-tags :preserve}
 ```
 
-The identity pipeline is:
+The artifact-fingerprint pipeline is:
 
 ```text
 read -> validate -> canonicalize -> hash
 ```
 
 Whitespace, commas, comments, source map order, and source set order do not
-change the canonical hash.
+change the canonical hash. The hash witnesses a representation; it is not the
+identity of the represented typed referent.
 
-## URI profiles
+## Interface routes
 
-The `clojure` scheme names a family of value and program surfaces. Its authority
-and path select semantics; the scheme alone grants nothing.
+The `clojure` scheme names a family of value and program interfaces. Its
+authority and path select semantics; the scheme alone grants nothing and does
+not identify a referent.
 
 | URI | Meaning | Execution authority |
 | --- | --- | --- |
@@ -93,7 +129,26 @@ and path select semantics; the scheme alone grants nothing.
 | `clojure://full/eval` | Full Clojure evaluation | Explicit Clojure runtime authority |
 
 `clojure://*` is a family wildcard for discovery. It is not an instruction to
-evaluate every readable value.
+evaluate every readable value, nor is it an identity namespace.
+
+### `web://` adapter
+
+`web://` has no independent referent ontology. It adapts an inherited web
+locator into the interface system:
+
+```clojure
+{:adapter/type :web
+ :adapter/input "web://example.org/path"
+ :adapter/inherited
+ {:scheme :https
+  :authority "example.org"
+  :path "/path"}}
+```
+
+Resolution may yield an artifact plus retrieval evidence. DNS ownership, TLS
+authentication, HTTP status, and content hashes are properties of that adapter
+episode. None of them establishes the identity of the typed referent that the
+retrieved artifact claims to represent.
 
 ## Minimal calculus
 

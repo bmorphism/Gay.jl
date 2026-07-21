@@ -61,11 +61,13 @@ reafference instead of ambient state.
 ## Data and language boundary
 
 Gay.jl realizes deterministic color, SPI, GF(3), and model operations from
-portable value descriptions. Canonical EDN carries identity and evidence;
-`clojure://` profiles select interpretation without granting authority during
-reading. Minimal profiles expose registered Gay operations, while full Clojure
-execution remains an explicit, separate runtime. The complete Aella, EDN, and
-runtime contract lives in [`.topos/CLOJURE_EDN_AELLA.md`](.topos/CLOJURE_EDN_AELLA.md).
+portable value descriptions. Identity belongs to typed referents; canonical
+EDN carries representations and evidence about them. `clojure://` interfaces
+select interpretation without granting authority during reading, while
+`web://` is only an adapter to inherited DNS/HTTPS space. Minimal profiles
+expose registered Gay operations, and full Clojure execution remains an
+explicit, separate runtime. The complete Aella, EDN, and runtime contract lives
+in [`.topos/CLOJURE_EDN_AELLA.md`](.topos/CLOJURE_EDN_AELLA.md).
 
 ## Develop
 
