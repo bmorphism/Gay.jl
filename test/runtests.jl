@@ -55,7 +55,7 @@ include("lisp_gatlab_bridge_tests.jl")
                 name -> !isdefined(Gay, name),
                 names(Gay; all=false, imported=false),
             )
-            @test length(undefined_exports) <= 2156
+            @test length(undefined_exports) <= 2115
             Aqua.test_undefined_exports(Gay; broken=true)
         end
         
@@ -77,6 +77,26 @@ include("lisp_gatlab_bridge_tests.jl")
             Aqua.test_project_extras(Gay)
         end
     end
+
+    @testset "Restored substantive exports" begin
+        bundle = SeedBundle(UInt64[11, 22, 33], Dict{Symbol, Vector{UInt64}}(), 0, 0, "test")
+        @test seeds_range(bundle, 1:3) == UInt64[11, 22, 33]
+        @test verify_bundle_spi(bundle)
+
+        # ThreeMatch defines its own Trit values. Keep them qualified because
+        # Gay's established MINUS/ERGODIC/PLUS names denote Polarity values.
+        three_match = Gay.ThreeMatch
+        items = [
+            ("minus", three_match.MINUS),
+            ("zero", three_match.ERGODIC),
+            ("plus", three_match.PLUS),
+        ]
+        world = world_three_match(items)
+        @test length(world) == 1
+        @test world.valid_count == 1
+        @test verify_three_match(only(world.triangles))
+    end
+
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace
         @test DisplayP3() isa ColorSpace

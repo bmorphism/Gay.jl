@@ -672,8 +672,8 @@ export CANONICAL_SEEDS, world_seed_semantics
 
 # Include Gay Seed Bundle - Lossless Ordered Locale View with O(1) Parallel Access
 # Better randomness than drand via 5 combined entropy sources
-# MISSING: include("gay_seed_bundle.jl")
-# MISSING: using .GaySeedBundle
+include("gay_seed_bundle.jl")
+using .GaySeedBundle
 export SeedBundle, EntropySource, LocaleView
 export gay_seed, refresh_bundle!, seed_at, seeds_range
 export hardware_entropy, temporal_entropy, splittable_entropy
@@ -857,8 +857,8 @@ export world_regret_monad, world_escape_routes
 
 # Include ThreeMatch - Flexibly Controllable Parametrized Lazy in GayACSet
 # 3-MATCH by GayMC in all worlds reliable or in none by inserting configurable obstructions
-# MISSING: include("three_match.jl")
-# MISSING: using .ThreeMatch
+include("three_match.jl")
+using .ThreeMatch
 # MISSING: export ThreeMatchWorld, MatchLeg, ThreeMatchTriangle
 export seed_to_color, color_to_fingerprint, seed_to_fingerprint
 export verify_three_match, three_match_distance
