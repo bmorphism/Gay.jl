@@ -329,10 +329,12 @@ typed referents from tiles, artifacts, interfaces, and the `web://` adapter.
 Validate it with the Babashka witness:
 
 ```bash
-bb scripts/verify_referent_boundary.bb
+bb scripts/verify_referent_boundary.bb --self-test
 ```
 
 The validator rejects URI-shaped referent keys, unknown referent edges,
 identity claims on representation layers, non-`clojure://` interface routes,
 and `web://` adapters whose DNS and inherited HTTPS authorities disagree. This
 is a boundary check, not a proof that the example referents exist externally.
+Self-test mode mutates the valid witness once for every prohibited collapse and
+requires all five counterexamples to fail validation.

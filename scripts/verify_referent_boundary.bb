@@ -22,9 +22,7 @@
     :web-is-only-a-dns-https-adapter})
 
 (defn fail! [message]
-  (binding [*out* *err*]
-    (println (str "FAIL: " message)))
-  (System/exit 1))
+  (throw (ex-info message {:type ::validation-failure})))
 
 (defn require* [ok? message]
   (when-not ok?
@@ -117,6 +115,56 @@
      :adapters (count (:adapters document))
      :laws (count law-statuses)}))
 
-(let [path (or (first *command-line-args*) default-path)
-      result (verify (edn/read-string (slurp path)))]
-  (println (pr-str result)))
+(defn rejected? [document]
+  (try
+    (verify document)
+    false
+    (catch clojure.lang.ExceptionInfo error
+      (if (= ::validation-failure (:type (ex-data error)))
+        true
+        (throw error)))))
+
+(defn self-test [document]
+  (let [mutations
+        {:uri-shaped-referent
+         (assoc-in document [:referents 0 :referent/key] "world://spi")
+
+         :artifact-claims-identity
+         (assoc-in document [:artifacts 0 :artifact/identity] "spi")
+
+         :unknown-referent-edge
+         (assoc-in document [:tiles 0 :tile/represents]
+                   [:gay.type/kernel "missing"])
+
+         :interface-uses-web-route
+         (assoc-in document [:interfaces 0 :interface/route]
+                   "web://example.org/read")
+
+         :web-authority-disagrees
+         (assoc-in document [:adapters 0 :adapter/inherited :https/url]
+                   "https://other.example/gay/spi")}
+        outcomes (into {} (map (fn [[name mutation]]
+                                 [name (rejected? mutation)])
+                               mutations))]
+    (require* (every? true? (vals outcomes))
+              (str "negative boundary case escaped: " outcomes))
+    {:valid true
+     :positive (verify document)
+     :negative-cases outcomes}))
+
+(defn run! [args]
+  (let [self-test? (= "--self-test" (first args))
+        path (if self-test?
+               (or (second args) default-path)
+               (or (first args) default-path))
+        document (edn/read-string (slurp path))]
+    (if self-test?
+      (self-test document)
+      (verify document))))
+
+(try
+  (println (pr-str (run! *command-line-args*)))
+  (catch clojure.lang.ExceptionInfo error
+    (binding [*out* *err*]
+      (println (str "FAIL: " (.getMessage error))))
+    (System/exit 1)))

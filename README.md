@@ -75,6 +75,7 @@ in [`.topos/CLOJURE_EDN_AELLA.md`](.topos/CLOJURE_EDN_AELLA.md).
 julia --project=. -e 'using Pkg; Pkg.test()'
 julia --project=. -e 'using Pkg; Pkg.precompile()'
 julia --project=. scripts/lint_no_demo.jl
+bb scripts/verify_referent_boundary.bb --self-test
 ```
 
 The former long README is archived at
