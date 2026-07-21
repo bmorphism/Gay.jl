@@ -1,10 +1,8 @@
 % IACR ePrint Submission
-% Entropy as Color: A GF(3) Algebraic Framework for Composable Cryptographic Entropy Sources
+% Entropy as Color: GF(3) Labels for Auditable Entropy-Source Composition
 \documentclass[preprint]{iacrtrans}
 
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 \usepackage{xcolor}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -48,17 +46,23 @@ We study a deterministic presentation and audit layer that assigns elements of t
 \label{sec:intro}
 %------------------------------------------------------------------------------
 
-Cryptographic systems depend fundamentally on high-quality entropy sources, yet the composition and verification of entropy from heterogeneous sources remains largely ad-hoc. Current approaches treat entropy as a scalar quantity (measured in bits), losing critical structural information about source independence, quality degradation, and compositional properties.
+Cryptographic systems depend on validated entropy sources and random-bit
+generator constructions. Existing standards carefully separate noise-source
+models, health tests, entropy estimates, conditioning, and deterministic
+generation. Our concern is narrower: experimental software can erase those
+distinctions by naming arbitrary recorded words ``entropy'' and by presenting
+deterministic labels as security evidence.
 
-We propose a paradigm shift: treating entropy sources as \emph{colored} objects in an algebraic structure derived from the finite field $\text{GF}(3) = \{-1, 0, +1\}$. This ``entropy as color'' framework draws deep inspiration from quantum chromodynamics, where color charge conservation governs fundamental particle interactions.
+We study a deliberately modest labeling discipline: recorded observations may
+carry elements of $\mathbb F_3=\{-1,0,+1\}$ and corresponding display colors.
+The QCD vocabulary is mnemonic only; it supplies no physical or cryptographic
+claim.
 
 \paragraph{Contributions.}
 \begin{enumerate}
     \item \textbf{GF(3) Audit Algebra}: We define ternary labels with operation $\oplus_3$ and separate their algebraic invariants from entropy estimates (\Cref{sec:algebra}).
     
     \item \textbf{Representation Boundary}: We map labels to color tiles while making explicit that colors and hashes represent observations rather than identify sources or grant authority (\Cref{sec:color}).
-    
-    \item \textbf{Algebraic Scope}: We identify the additional typing and naturality obligations needed for a Yang--Baxter or braided-monoidal interpretation (\Cref{sec:yangbaxter}).
     
     \item \textbf{Security Non-implication}: We show why label conservation alone implies neither extraction nor composable security and give the missing proof obligations (\Cref{sec:security}).
     
@@ -81,17 +85,31 @@ Let $\mathbb{F}_3 = \text{GF}(3) = \{-1, 0, +1\}$ denote the finite field of thr
 
 \subsection{Entropy Sources}
 
-An \emph{entropy source} $\mathcal{E}$ is characterized by:
-\begin{itemize}
-    \item Output distribution $D$ over bitstrings
-    \item Min-entropy rate $H_\infty(\mathcal{E})$
-    \item Sampling rate $r$ (samples per second)
-    \item Independence structure $\mathcal{I}$ (correlation with other sources)
-\end{itemize}
+Following NIST SP 800-90B~\cite{nist80090b}, a cryptographic entropy source
+requires a noise-source model, digitization, health testing, and a justified
+min-entropy estimate. The implementation studied here does not establish those
+properties. We therefore distinguish a source from its recorded observation.
 
-\subsection{Color Charge in QCD}
+\begin{definition}[Source observation]
+A source observation is a tuple
+\[
+o=(\rho,t,x,\ell,w),
+\]
+where $\rho$ is a typed source referent, $t$ is a logical timestamp,
+$x\in\{0,1\}^{64}$ is an opaque sample word, $\ell\in\mathbb F_3$ is a policy
+label, and $w\in[0,1]$ is an application-supplied vote weight. Neither $x$ nor
+$w$ is, by type alone, a min-entropy estimate.
+\end{definition}
 
-In quantum chromodynamics, quarks carry one of three color charges $\{\text{red}, \text{green}, \text{blue}\}$ or their anti-colors. The fundamental constraint is \emph{color confinement}: observable hadrons must be color-neutral (``white'').
+Gay.jl's compatibility type \texttt{ColoredTick} stores $(t,\ell,x,w)$ and a
+symbolic source label. Its historical field \texttt{entropy} stores $x$; the
+name must not be read as evidence that $H_\infty(X)>0$.
+
+\subsection{QCD analogy boundary}
+
+Quantum chromodynamics motivates some terminology, but supplies no theorem
+about software observations. Our colors are presentation tiles; they are not
+physical charges, source identities, entropy estimates, or security labels.
 
 %------------------------------------------------------------------------------
 \section{GF(3) Entropy Algebra}
@@ -105,16 +123,19 @@ a \oplus_3 b \triangleq ((a + b + 1) \mod 3) - 1
 \]
 \end{definition}
 
-\begin{definition}[Trit Assignment]
-Given an entropy source $\mathcal{E}$, its \emph{trit assignment} $\tau(\mathcal{E}) \in \mathbb{F}_3$ is determined by:
+\begin{definition}[Policy label]
+Given a real-valued application measurement $m(o)$ and configured thresholds,
+the observation label $\tau(o)\in\mathbb F_3$ is:
 \[
-\tau(\mathcal{E}) = \begin{cases}
-    +1 & \text{if } H_\infty(\mathcal{E}) > \theta_{\text{high}} \\
-    0 & \text{if } \theta_{\text{low}} \le H_\infty(\mathcal{E}) \le \theta_{\text{high}} \\
-    -1 & \text{if } H_\infty(\mathcal{E}) < \theta_{\text{low}}
+\tau(o) = \begin{cases}
+    +1 & \text{if } m(o) > \theta_{\text{high}} \\
+    0 & \text{if } \theta_{\text{low}} \le m(o) \le \theta_{\text{high}} \\
+    -1 & \text{if } m(o) < \theta_{\text{low}}
 \end{cases}
 \]
-where $\theta_{\text{low}}, \theta_{\text{high}}$ are application-specific thresholds.
+where $\theta_{\text{low}}\le\theta_{\text{high}}$ are application policy.
+Unless $m$ is separately validated as an entropy estimator, $\tau$ makes no
+statement about min-entropy.
 \end{definition}
 
 \begin{proposition}[Conditional label balance]
@@ -135,10 +156,11 @@ By substitution, $a+b+c=a+b-(a+b)=0$ in the additive group of $\mathbb{F}_3$. Se
 \label{sec:color}
 %------------------------------------------------------------------------------
 
-Building on the trit algebra, we introduce a richer color structure inspired by QCD.
+Building on the trit algebra, we introduce a color presentation inspired by QCD.
 
-\begin{definition}[Color Charge]
-An entropy source $\mathcal{E}$ carries a \emph{color charge} $\chi(\mathcal{E}) \in \mathcal{C}$ where:
+\begin{definition}[Color tile]
+A recorded observation may be rendered with a \emph{color tile}
+$\chi(o)\in\mathcal C$, where:
 \[
 \mathcal{C} = \{\text{RED}, \text{GREEN}, \text{BLUE}, \text{ANTI\_RED}, \text{ANTI\_GREEN}, \text{ANTI\_BLUE}, \text{COLORLESS}\}
 \]
@@ -152,11 +174,14 @@ The color-to-trit mapping $\phi: \mathcal{C} \to \mathbb{F}_3$ is:
     \phi(\text{COLORLESS}) &= 0
 \end{align}
 
-\begin{definition}[Color Neutrality]
-A set of entropy sources $\{\mathcal{E}_1, \ldots, \mathcal{E}_n\}$ is \emph{color-neutral} if:
+\begin{definition}[Display balance]
+A set of recorded observations $\{o_1, \ldots, o_n\}$ is
+\emph{display-balanced} if:
 \[
-\bigoplus_{i=1}^n \phi(\chi(\mathcal{E}_i)) = 0 \pmod{3}
+\bigoplus_{i=1}^n \phi(\chi(o_i)) = 0 \pmod{3}.
 \]
+This predicate is a property of representations under $\phi$, not of the
+identity, independence, or unpredictability of the represented sources.
 \end{definition}
 
 \paragraph{Visual Representation.}
@@ -166,29 +191,6 @@ Color charges map to the HSL color wheel:
     \item \textbf{ERGODIC (0)}: Neutral hues (60°--180°)
     \item \textbf{MINUS (-1)}: Cool hues (180°--300°)
 \end{itemize}
-
-%------------------------------------------------------------------------------
-\section{Yang--Baxter Scope}
-\label{sec:yangbaxter}
-%------------------------------------------------------------------------------
-
-The label set suggests braid-like visualizations, but a visualization is not a
-braiding on entropy sources. We record the candidate below to expose, rather
-than conceal, the missing structure.
-
-\begin{definition}[R-Matrix]
-The candidate scalar kernel $r: \mathcal{C} \times \mathcal{C} \to \mathbb{C}$ is defined by:
-\[
-r(i,j) = q^{\phi(\chi_i) \cdot \phi(\chi_j)}
-\]
-where $q = e^{2\pi i/3}$ is a primitive third root of unity.
-\end{definition}
-
-This scalar kernel is not yet an operator $R:V\otimes V\to V\otimes V$ and
-therefore does not, by itself, state the Yang--Baxter equation. Establishing a
-braided monoidal category would require a category of source objects, a
-monoidal product, a natural invertible braiding, and proofs of the hexagon
-identities. We make no such theorem in the present work.
 
 %------------------------------------------------------------------------------
 \section{Security Analysis}
@@ -220,23 +222,34 @@ present implementation is an audit layer and is not such a construction.
 %------------------------------------------------------------------------------
 
 We provide a reference implementation in Julia as part of the Gay.jl package.
+The following algorithm describes \texttt{composite\_from\_readings}; it does
+not reject unbalanced labels and does not output cryptographic randomness.
 
 \begin{algorithm}
-\caption{GF(3) Entropy Composition}
+\caption{Deterministic observation summary}
 \label{alg:composition}
 \begin{algorithmic}[1]
-\Require Entropy sources $\mathcal{E}_1, \mathcal{E}_2, \mathcal{E}_3$
-\Ensure A deterministic mixed value or rejection under the label policy
-\State $t_1 \gets \tau(\mathcal{E}_1)$; $t_2 \gets \tau(\mathcal{E}_2)$; $t_3 \gets \tau(\mathcal{E}_3)$
-\If{$(t_1 \oplus_3 t_2 \oplus_3 t_3) \neq 0$}
-    \State \textbf{reject} (conservation violated)
+\Require Nonempty observations $o_i=(\rho_i,t_i,x_i,\ell_i,w_i)$
+\Ensure Summary $(t^*,x^*,\ell^*,w^*)$
+\State $x^* \gets x_1\oplus\cdots\oplus x_n$
+\State $v \gets \sum_i w_i\ell_i$
+\State $\ell^* \gets +1$ if $v>0.33$, $-1$ if $v<-0.33$, and $0$ otherwise
+\State $w^* \gets \operatorname{mean}_i(w_i)$
+\If{all $\ell_i$ are equal}
+    \State $w^* \gets \min(1,1.2w^*)$
+\Else
+    \State $w^* \gets 0.8w^*$
 \EndIf
-\State $\chi_1 \gets \text{assign\_color}(t_1)$
-\State $\chi_2 \gets \text{assign\_color}(t_2)$
-\State $\chi_3 \gets \text{assign\_color}(t_3)$
-\State \Return $\text{XOR}(\mathcal{E}_1.\text{sample}(), \mathcal{E}_2.\text{sample}(), \mathcal{E}_3.\text{sample}())$
+\State $t^* \gets t_j$ for an index $j\in\operatorname{argmax}_i t_i$
+\State \Return $(t^*,x^*,\ell^*,w^*)$
 \end{algorithmic}
 \end{algorithm}
+
+The empty-input implementation returns a distinguished all-zero summary.
+Separately, \texttt{entropy\_mix} applies SplitMix64 to a seed XORed with one
+sample word and an encoding of its label. Both operations are deterministic;
+neither estimates entropy, checks source independence, performs health tests,
+or instantiates a NIST conditioning component.
 
 \subsection{Illustrative sensor policy}
 
@@ -256,11 +269,73 @@ separate measurement and analysis.
 \label{sec:related}
 %------------------------------------------------------------------------------
 
-\paragraph{Visual Cryptography.} Naor and Shamir's visual secret sharing~\cite{naor1995visual} uses visual representations but for different purposes.
+\paragraph{Entropy-source standards.} NIST SP 800-90B~\cite{nist80090b}
+specifies entropy-source design, health testing, min-entropy estimation, and
+conditioning. NIST SP 800-90C~\cite{nist80090c} composes 90B entropy sources
+with 90A DRBG mechanisms into defined RBG constructions. RFC 4086
+~\cite{rfc4086} likewise warns that statistical appearance is not
+unpredictability, correlated XOR inputs can fail, and mixing cannot increase
+the unpredictability present in its inputs. Gay.jl's observation summary is
+not a substitute for any of these mechanisms.
 
-\paragraph{Entropy Visualization.} Prior work on entropy visualization~\cite{entropy_viz} focuses on display rather than algebraic structure.
+\paragraph{Extraction.} Fuzzy extractors formalize extraction of nearly
+uniform key material from noisy, nonuniform inputs under explicit entropy and
+distance assumptions~\cite{dodis2004extractors}. Our labels are not an
+extractor seed, secure sketch, or entropy bound.
 
-\paragraph{Composable Entropy.} Dodis et al.~\cite{dodis2004extractors} study entropy extraction but not colored composition.
+\paragraph{Visual cryptography.} Naor and Shamir's visual secret
+sharing~\cite{naor1995visual} encodes secrets into visual shares. Our colors
+instead display audit metadata and carry no secret-sharing property.
+
+\paragraph{Novelty boundary.} We do not claim a new RNG, extractor, entropy
+estimator, robust combiner, or security definition. The contribution is a
+typed audit separation---source referent, recorded sample word, policy label,
+weight, color tile, and deterministic summary---together with an executable
+claim ledger that rejects promotion of representation invariants into
+cryptographic claims. Whether this audit discipline is sufficiently new and
+useful for cryptology requires comparison against additional provenance and
+assurance systems; this remains an open literature task.
+
+%------------------------------------------------------------------------------
+\section{Artifact Evaluation}
+\label{sec:evaluation}
+%------------------------------------------------------------------------------
+
+The evaluation asks only questions supported by the audit-layer contribution:
+
+\begin{enumerate}
+    \item Does the claim ledger reject an asserted claim whose state is
+    \texttt{unverified} or \texttt{contradicted}?
+    \item Do the referent and interaction validators reject representations
+    that claim identity or authority?
+    \item Does the implementation produce a deterministic summary matching
+    \Cref{alg:composition} for a fixed observation vector?
+\end{enumerate}
+
+On Julia 1.12.6 and Apple arm64 Darwin 25.5.0, the committed commands produced:
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Check & Positive result & Negative witnesses \\
+\hline
+Claim ledger & 10 claims resolved & asserted unsupported states rejected \\
+Referent boundary & 3 referents, 5 laws & 5 malformed cases rejected \\
+Interaction boundary & 4 interactions, 8 laws & 9 malformed cases rejected \\
+Summary fixture & sample word $10\oplus12=6$ & not a security test \\
+\hline
+\end{tabular}
+\end{center}
+
+For the two-observation fixture with labels $+1,-1$ and weights $0.9,0.8$,
+the summary is deterministic, has label $0$, and has adjusted weight $0.68$.
+The commands and expected outputs are recorded in \texttt{artifact.edn}.
+
+\paragraph{Limitations.} These checks validate conformance and rejection
+behavior, not novelty, usability, source entropy, statistical randomness,
+side-channel resistance, or cryptographic security. There is no performance
+claim and therefore no timing benchmark. An independent artifact evaluator
+has not yet reproduced the results.
 
 %------------------------------------------------------------------------------
 \section{Conclusion}
@@ -305,26 +380,5 @@ machine-checkable finite-field identities such as \texttt{balanced\_iff} and
 extractor, random-oracle game, or UC ideal functionality. We therefore make no
 machine-verification claim for a cryptographic theorem.
 \end{proof}
-
-\section{Connection to Bumpus-Kocsis Bound}
-\label{app:bumpus}
-
-The GF(3) conservation law connects to a deeper result in lattice theory. Bumpus and Kocsis~\cite{bumpus2021} proved that in any finite non-Boolean Heyting algebra $H$, at most $\frac{2}{3}$ of elements satisfy the law of excluded middle ($a \vee \neg a = \top$).
-
-The tight witness is the three-element chain $\{\bot < e < \top\}$:
-\begin{itemize}
-    \item $\bot$ ($\tau = 0$, ERGODIC): satisfies LEM trivially
-    \item $\top$ ($\tau = 0$, ERGODIC): satisfies LEM trivially
-    \item $e$ ($\tau = 0$, ERGODIC): does NOT satisfy LEM ($e \vee \neg e = e \vee \bot = e \neq \top$)
-\end{itemize}
-
-The Heyting-algebra result does not imply that a software coordinator requires
-an external beacon, nor does it establish entropy or authentication properties.
-Any such operational requirement must be justified by a separate threat and
-source model.
-
-The Padovan residue observations in the repository are combinatorial examples.
-We do not infer a physical Noether law or a representation-learning phase
-transition from them.
 
 \end{document}

@@ -1,4 +1,4 @@
-# Entropy as Color: A GF(3) Algebraic Framework
+# Entropy as Color: GF(3) Labels for Auditable Entropy-Source Composition
 
 Working draft for the "Entropy as Color" paper. It is not submission-ready;
 see [READINESS.md](READINESS.md) for the evidence rubric and blocking gaps.

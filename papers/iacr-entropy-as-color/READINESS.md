@@ -29,17 +29,17 @@ selected.
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| Scope and novelty | Precise problem, closest cryptographic work, delta over prior art | **Missing**: related work is sparse and several entries need bibliographic verification |
-| Syntax and semantics | Algorithms with typed inputs, outputs, state, failure behavior, and parameters | **Incomplete**: the color projection is specified; the entropy-source and composition semantics are not |
+| Scope and novelty | Precise problem, closest cryptographic work, delta over prior art | Standards, extraction, and visual-secret-sharing boundaries are now explicit and bibliography entries are mechanically checked for use; comparison against provenance and assurance systems remains **Incomplete** |
+| Syntax and semantics | Algorithms with typed inputs, outputs, state, failure behavior, and parameters | Source observations and the exact deterministic summary operation are now typed and mapped to implementation symbols |
 | Security model | Parties, trust assumptions, adversary class, corruption, setup, leakage, and security parameter | Not applicable to the current negative result; mandatory before any positive cryptographic construction |
 | Security definition | Game or ideal functionality with quantified advantage and success event | Not applicable to the current negative result; mandatory before any positive security theorem |
 | Theorem | Assumptions and conclusion matching the definition | Verified negative proposition with an explicit deterministic-source counterexample |
 | Proof | Simulator or reduction with explicit hybrids and bounds | Counterexample proved; no simulator or reduction is claimed |
 | Entropy reasoning | Correct source model, conditional min-entropy, independence assumptions, extractor theorem, output length and error | Positive amplification language removed; the manuscript now states these as prerequisites for future work |
-| Algebraic claim | Well-typed R-matrix/braiding and a proof of the Yang--Baxter equation | **Incomplete**: the scalar kernel is retained only as an explicitly insufficient candidate |
+| Algebraic claim | Well-typed R-matrix/braiding and a proof of the Yang--Baxter equation | Not applicable: the unsupported Yang--Baxter and braided-category material has been removed |
 | Formal verification | Toolchain lock, source theorem names, clean build, and claim-to-theorem crosswalk | Scoped to exact Lean symbols for finite-field identities; no formal security claim remains |
 | Implementation fidelity | Paper algorithm mapped to package symbols and tests | README now maps the paper to `zmod3.jl`, `entropy_sources.jl`, exact Lean symbols, tests, and the claim ledger |
-| Evaluation | Research questions, baselines, datasets/sources, platform, repetitions, statistics, and limitations | **Missing** |
+| Evaluation | Research questions, baselines, datasets/sources, platform, repetitions, statistics, and limitations | Conformance and negative-witness questions, fixture, platform, outputs, and limitations documented; independent reproduction remains open |
 | Artifact functionality | Clean build, pinned dependencies, one-command tests, expected output, runtime, resource bounds | Dependencies, platform, commands, outputs, and approximate runtime documented; clean-room run remains **Incomplete** |
 | Artifact reproduction | Script regenerates every paper table/figure/result from raw inputs | Not applicable while the paper reports no empirical result; required if evaluation results are added |
 | Claim hygiene | Every numeric, empirical, novelty, formal-verification, and security claim has a source or executable witness | Machine-readable ledger passes; exhaustive prose coverage remains **Incomplete** |

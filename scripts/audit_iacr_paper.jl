@@ -43,6 +43,13 @@ check(:no_unqualified_amplification,
 check(:no_false_leftover_hash_attribution,
       !occursin("leftover hash lemma applied to independent sources", lowercase(tex)),
       "leftover-hash lemma is not used to justify bare concatenation")
+check(:typed_observation_semantics,
+      occursin("opaque sample word", tex) && occursin("typed source referent", tex),
+      "manuscript separates source referents from recorded sample words")
+check(:implementation_nonimplication,
+      occursin("does not output cryptographic randomness", tex) &&
+          occursin("No independence test", read(joinpath(root, "src", "entropy_sources.jl"), String)),
+      "paper and implementation deny extractor or entropy-estimator semantics")
 
 lean_sources = filter(path -> endswith(path, ".lean"),
                       readdir(joinpath(root, "lean4"); join=true))
@@ -65,8 +72,11 @@ cites = Set(m.captures[1] for m in eachmatch(r"\\cite\{([^}]+)\}", tex))
 cites = Set(strip(key) for group in cites for key in split(group, ','))
 bibkeys = Set(m.captures[1] for m in eachmatch(r"@[A-Za-z]+\{([^,]+),", bib))
 missing_cites = sort!(collect(setdiff(cites, bibkeys)))
+unused_bib = sort!(collect(setdiff(bibkeys, cites)))
 check(:citations_resolve, isempty(missing_cites),
       isempty(missing_cites) ? "all citation keys resolve" : "missing: $(join(missing_cites, ", "))")
+check(:no_unused_bibliography, isempty(unused_bib),
+      isempty(unused_bib) ? "every bibliography entry is cited" : "unused: $(join(unused_bib, ", "))")
 check(:no_placeholder_authors,
       !occursin("and others", lowercase(bib)),
       "bibliography contains complete author lists")

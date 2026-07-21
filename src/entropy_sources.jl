@@ -51,25 +51,27 @@ Classification of entropy source lifespan.
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ColoredTick: a TritTick with entropy from a physical source
+# ColoredTick: a timestamped source observation with a compatibility payload
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
     ColoredTick
 
-A TritTick augmented with entropy from a physical measurement.
+A timestamped source observation. The historical field name `entropy` is
+retained for compatibility, but its `UInt64` value is an opaque sample word;
+it carries no min-entropy estimate or cryptographic guarantee.
 
 - `tick`: temporal position in the trit-tick grid
 - `measured_trit`: GF(3) trit from the physical measurement (not from time)
-- `entropy`: 64-bit entropy from the source (for seed mixing)
-- `confidence`: 0.0–1.0, how reliable this measurement is
-- `source`: which source produced this tick
+- `entropy`: opaque 64-bit sample word (compatibility name)
+- `confidence`: application-supplied weight in 0.0–1.0, not a probability
+- `source`: representation label; a typed external referent carries identity
 """
 struct ColoredTick
     tick::TritTick
     measured_trit::Int8            # -1, 0, +1 from the physical measurement
-    entropy::UInt64                # raw entropy bits from the source
-    confidence::Float32            # 0.0 (noise) to 1.0 (certain)
+    entropy::UInt64                # opaque sample word; not an entropy estimate
+    confidence::Float32            # policy weight; not calibrated certainty
     source::Symbol                 # :drand, :energy, :bci, :heartbeat, etc.
 end
 
@@ -82,8 +84,9 @@ end
 """
     entropy_mix(seed::UInt64, ct::ColoredTick) -> UInt64
 
-Mix a ColoredTick's entropy into a seed. The physical measurement
-becomes part of the color identity.
+Deterministically mix a `ColoredTick` sample word and label into a seed.
+This is a representation transform, not an extractor, identity proof, or
+cryptographic random-bit generator.
 """
 function entropy_mix(seed::UInt64, ct::ColoredTick)
     # XOR entropy with seed, then finalize with SplitMix64
@@ -99,7 +102,7 @@ end
 """
     EntropySource
 
-Abstract type for physical entropy sources. Subtypes implement:
+Compatibility interface for observation providers. Subtypes implement:
 - `read_entropy(source) -> ColoredTick`
 - `source_name(source) -> Symbol`
 - `source_mortality(source) -> Mortality`
@@ -124,19 +127,20 @@ function classify_trit(value::Real, low::Real, high::Real)::Int8
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Source 0: drand Beacon (Immortal, cryptographic)
+# Source 0: deterministic drand-shaped simulator
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
     DrandSource <: EntropySource
 
-Distributed randomness beacon. New entropy every 30 seconds.
-Verifiable, global, no single point of failure.
+Local simulator with the timing shape of a drand beacon. It does not perform
+HTTP retrieval or BLS verification and must not be treated as live drand
+randomness.
 
 1 drand round = 30 seconds = 30 × 141,120,000 = 4,233,600,000 trit-ticks.
 
-Trustworthiness: very high (threshold BLS signatures).
-Mortality: Immortal (League of Entropy is distributed).
+The `trustworthiness` and `mortality` values below are application policy
+metadata, not measured reliability or availability.
 """
 mutable struct DrandSource <: EntropySource
     last_round::UInt64             # most recent drand round number
@@ -155,12 +159,12 @@ source_trustworthiness(::DrandSource) = Float32(0.95)
 """
     read_entropy(ds::DrandSource) -> ColoredTick
 
-Read from drand. In the real implementation, this would HTTP GET
-`/public/latest` and parse the JSON. Here we provide the interface
-and a simulation mode using the round number.
+Advance the deterministic round-number simulator. A live implementation would
+need to retrieve the round, validate the chain parameters and BLS signature,
+and record that verification evidence; this function does none of those.
 """
 function read_entropy(ds::DrandSource)::ColoredTick
-    # Simulation: derive entropy from round number
+    # Simulation: derive an opaque sample word from the round number
     # Real implementation: HTTP GET ds.endpoint/public/latest
     ds.last_round += 1
     ds.last_randomness = splitmix64(ds.last_round * 0x6472616e64626561)  # "drandbea"
@@ -385,17 +389,17 @@ function inject_aqi!(aqs::AirQualitySource, aqi::Real, pm25::Real)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Source 5: Git Push (Immortal, cryptographic)
+# Source 5: deterministic Git metadata adapter
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
     GitSource <: EntropySource
 
-Git commit hash → trit. The git history IS a trit stream.
+Git commit hash → trit representation.
 `share3_hash(commit_hash)` → deterministic trit assignment.
 
-Trustworthiness: high (SHA-1/SHA-256 commit hashes).
-Mortality: Immortal (append-only, history never shrinks).
+A commit hash is public deterministic metadata, not an entropy source. The
+`trustworthiness` and `mortality` values are application policy labels.
 """
 mutable struct GitSource <: EntropySource
     repo_path::String
@@ -510,10 +514,13 @@ end
 """
     composite_from_readings(readings::Vector{ColoredTick}, name::Symbol=:composite) -> ColoredTick
 
-Combine multiple ColoredTick readings into one.
-- Entropy: XOR fold of all entropies
+Combine multiple `ColoredTick` observations into one policy summary.
+- Sample word: XOR fold of all compatibility `entropy` fields
 - Trit: weighted vote by confidence
 - Confidence: mean of individual confidences, boosted by agreement
+
+No independence test, min-entropy estimator, conditioning function, or
+extractor is performed.
 """
 function composite_from_readings(readings::Vector{ColoredTick}, name::Symbol=:composite)
     isempty(readings) && return ColoredTick(TritTick(UInt64(0)), Int8(0), UInt64(0), 0.0f0, name)

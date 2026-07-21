@@ -591,6 +591,17 @@ include("lisp_gatlab_bridge_tests.jl")
             ct = read_entropy(cs)
             @test ct.source == :composite
             @test ct.measured_trit in Int8[-1, 0, 1]
+
+            observations = [
+                ColoredTick(TritTick(1), Int8(1), UInt64(10), 0.9f0, :a),
+                ColoredTick(TritTick(2), Int8(-1), UInt64(12), 0.8f0, :b),
+            ]
+            summary = composite_from_readings(observations, :paper_fixture)
+            @test summary == composite_from_readings(observations, :paper_fixture)
+            @test summary.entropy == UInt64(6) # opaque XOR-folded sample word
+            @test summary.measured_trit == Int8(0)
+            @test summary.confidence == 0.68f0
+            @test summary.tick == TritTick(2)
         end
 
         @testset "Agreement and disagreement" begin

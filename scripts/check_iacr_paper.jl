@@ -11,6 +11,10 @@ end
 
 check("claim ledger", Cmd(["bb", "scripts/verify_iacr_claims.bb"]))
 check("artifact manifest", Cmd(["bb", "scripts/verify_iacr_artifact.bb"]))
+check("referent boundary",
+      Cmd(["bb", "scripts/verify_referent_boundary.bb", "--self-test"]))
+check("interaction boundary",
+      Cmd(["bb", "scripts/verify_higher_order_interactions.bb", "--self-test"]))
 
 readiness = ["julia", "--project=.", "scripts/audit_iacr_paper.jl"]
 strict && push!(readiness, "--strict")

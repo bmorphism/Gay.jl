@@ -19,6 +19,8 @@
   "scripts/check_iacr_paper.jl"
   "scripts/verify_iacr_claims.bb"
   "scripts/verify_iacr_artifact.bb"
+  "scripts/verify_referent_boundary.bb"
+  "scripts/verify_higher_order_interactions.bb"
   "scripts/lint_no_demo.jl"]
  :artifact/generated-files
  ["papers/iacr-entropy-as-color/main.aux"
@@ -37,6 +39,12 @@
   {:command/id :readiness
    :command/run "julia --project=. scripts/audit_iacr_paper.jl"
    :command/expect "ready = false until all submission gates close"}
+  {:command/id :referent-boundary
+   :command/run "bb scripts/verify_referent_boundary.bb --self-test"
+   :command/expect ":valid true and five negative cases"}
+  {:command/id :interaction-boundary
+   :command/run "bb scripts/verify_higher_order_interactions.bb --self-test"
+   :command/expect ":valid true and nine negative cases"}
   {:command/id :tests
    :command/run "julia --project=. -e 'using Pkg; Pkg.test()'"
    :command/expect "Testing Gay tests passed"}
