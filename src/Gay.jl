@@ -563,7 +563,7 @@ export TofuColorTick, tofu_color_at
 # export run_verification_suite
 
 include("multiverse_geometric.jl")
-# MISSING: using .MultiverseGeometric
+using .MultiverseGeometric
 export Verse, MultiverseFrame, GeometricMorphism
 export partition, pushdown!, pullup!, resolve!
 export verify_multiverse_laws

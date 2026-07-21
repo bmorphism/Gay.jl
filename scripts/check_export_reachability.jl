@@ -22,6 +22,7 @@ if SOURCES
     source_dir = normpath(joinpath(@__DIR__, "..", "src"))
     stub_exports = Set{Symbol}()
     substantive_exports = Set{Symbol}()
+    substantive_sources = Dict{Symbol, Vector{String}}()
 
     for source_file in readdir(source_dir; join=true)
         endswith(source_file, ".jl") || continue
@@ -34,7 +35,11 @@ if SOURCES
                 name = strip(raw_name)
                 isempty(name) && continue
                 occursin(r"^[^\s]+$", name) || continue
-                push!(target, Symbol(name))
+                symbol = Symbol(name)
+                push!(target, symbol)
+                if target === substantive_exports
+                    push!(get!(substantive_sources, symbol, String[]), basename(source_file))
+                end
             end
         end
     end
@@ -47,6 +52,21 @@ if SOURCES
     println("undefined_stub_only_backed=$(length(stub_only_backed))")
     println("undefined_substantive_backed=$(length(substantive_backed))")
     println("undefined_source_unknown=$(length(source_unknown))")
+
+    if LIST
+        for name in sort!(collect(substantive_backed); by=string)
+            files = join(sort!(unique(substantive_sources[name])), ',')
+            println("substantive\t", name, '\t', files)
+        end
+        foreach(
+            name -> println("stub_only\t", name),
+            sort!(collect(stub_only_backed); by=string),
+        )
+        foreach(
+            name -> println("source_unknown\t", name),
+            sort!(collect(source_unknown); by=string),
+        )
+    end
 end
 
 if STRICT && !isempty(undefined)
