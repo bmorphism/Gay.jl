@@ -49,8 +49,13 @@ include("lisp_gatlab_bridge_tests.jl")
         end
         
         @testset "Undefined exports" begin
-            # Currently broken due to submodule re-export complexity
-            # TODO: Fix 2222 undefined exports from nested modules
+            # Keep Aqua's zero-tolerance check visible while ratcheting the
+            # existing monorepo debt: new undefined exports must fail CI.
+            undefined_exports = filter(
+                name -> !isdefined(Gay, name),
+                names(Gay; all=false, imported=false),
+            )
+            @test length(undefined_exports) <= 2170
             Aqua.test_undefined_exports(Gay; broken=true)
         end
         
