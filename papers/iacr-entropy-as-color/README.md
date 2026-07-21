@@ -93,6 +93,13 @@ SHA-256 digest. Publishing that archive does not itself create an immutable
 identifier: record the eventual ePrint, IACR Artifact Archive, or repository
 release identifier in the release checklist.
 
+Validation record: on 2026-07-21, a fresh depth-one clone of public branch
+`gay` at commit `06e0e1dba5b3fcf51e8d88034005de8615e7aa3d` passed the reviewer
+entrypoint and produced the archive twice with identical SHA-256 digest
+`f452ef47a29dbd0afd701c50ece734c679f3931cdcb716958d5a603b40ff1b46`.
+This is a clean-checkout reproducibility check by the maintainers, not an
+independent artifact review or an IACR badge.
+
 ## Selected target venue
 
 The initial archival target is the **Cryptology ePrint Archive**. This contract
