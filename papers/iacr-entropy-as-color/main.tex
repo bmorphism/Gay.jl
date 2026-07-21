@@ -195,9 +195,9 @@ of the represented sources.
 \paragraph{Visual Representation.}
 One non-normative policy may use the HSL color wheel:
 \begin{itemize}
-    \item \textbf{PLUS (+1)}: Warm hues (0°--60°, 300°--360°)
-    \item \textbf{ERGODIC (0)}: Neutral hues (60°--180°)
-    \item \textbf{MINUS (-1)}: Cool hues (180°--300°)
+    \item \textbf{PLUS (+1)}: Warm hues $[0^\circ,60^\circ)\cup[300^\circ,360^\circ)$
+    \item \textbf{ERGODIC (0)}: Neutral hues $[60^\circ,180^\circ)$
+    \item \textbf{MINUS (-1)}: Cool hues $[180^\circ,300^\circ)$
 \end{itemize}
 
 %------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ not reject unbalanced labels and does not output cryptographic randomness.
         \State \textbf{raise} an input error
     \EndIf
 \EndFor
-\State $x^* \gets x_1\oplus\cdots\oplus x_n$
+\State $x^* \gets \operatorname{XOR}(x_1,\ldots,x_n)$
 \State $V \gets \operatorname{sort}([w_i\ell_i]_{i=1}^n)$; $v \gets \sum_{z\in V}z$
 \State $\ell^* \gets +1$ if $v>0.33$, $-1$ if $v<-0.33$, and $0$ otherwise
 \State $W \gets \operatorname{sort}([w_i]_{i=1}^n)$; $w^* \gets \sum_{z\in W}z/n$
@@ -260,6 +260,10 @@ not reject unbalanced labels and does not output cryptographic randomness.
 \State \Return $(t^*,x^*,\ell^*,w^*)$
 \end{algorithmic}
 \end{algorithm}
+
+The vote terms, thresholds, weight fold, and confidence adjustment in
+\Cref{alg:composition} use IEEE 754 Float32 arithmetic. The operation on the
+sample words is bitwise XOR, not addition in $\mathbb F_3$.
 
 \begin{proposition}[Permutation invariance of the validated summary]
 \label{thm:permutation}
