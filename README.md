@@ -78,9 +78,18 @@ julia --project=. -e 'using Pkg; Pkg.precompile()'
 julia --project=. scripts/lint_no_demo.jl
 bb scripts/verify_referent_boundary.bb --self-test
 bb scripts/verify_higher_order_interactions.bb --self-test
+bb scripts/verify_cc_math_license.bb
 julia --project=/path/to/structured-decompositions-env \
   scripts/check_structured_decomposition_colors.jl
 ```
+
+## License
+
+The repository's effective dual-license terms remain in [`LICENSE`](LICENSE).
+[`LICENSE-CC-MATH-DRAFT.md`](LICENSE-CC-MATH-DRAFT.md) is a non-operative,
+counterfactual public-good dedication for software understood as executable
+mathematics. Its Gay.jl color tiles annotate permission, preservation, and
+constraint; they do not carry identity or legal authority.
 
 The former long README is archived at
 [.topos/Gay.jl.README.md](.topos/Gay.jl.README.md). Keep this file as the Julia
