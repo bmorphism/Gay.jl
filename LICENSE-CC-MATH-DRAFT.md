@@ -1,4 +1,4 @@
-# CC-MATH 0.1 — Counterfactual Draft
+# CC-MATH — Counterfactual Draft
 
 **Not presently operative. Not legal advice. Not affiliated with or endorsed by
 Creative Commons.** This text records a proposed public-good dedication. Gay.jl
@@ -119,7 +119,14 @@ A final CC-MATH should be adopted only after:
 4. the waiver, fallback license, patent promise, and disclaimer receive legal
    review in the jurisdictions that matter; and
 5. a stable name and machine-readable identifier are chosen without implying
-   Creative Commons sponsorship.
+Creative Commons sponsorship.
 
 Until then, this is a proposition about the fairest treatment of executable
 mathematics—not a replacement for the repository's effective license.
+
+## Version projection
+
+This Markdown file is a readable projection of a versioned typed artifact. Its
+version identity, ancestry, content witness, processor version, and unresolved
+adoption gates are recorded in `licenses/cc-math/versions.edn`. No version
+number embedded in this prose is authoritative.

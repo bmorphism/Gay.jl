@@ -1,0 +1,49 @@
+{:cc-math/schema :cc-math/version-graph
+ :cc-math/schema-revision 1
+ :license/referent
+ {:referent/type :license/family
+  :referent/id :cc-math}
+ :license/artifacts
+ {:cc-math/license
+  {:artifact/type :license/text
+   :artifact/head #uuid "8fc5f64a-8d41-4e82-a726-c13a9ba77f31"}
+  :cc-math/processor
+  {:artifact/type :license/version-processor
+   :artifact/head #uuid "4a4444fb-9a62-4470-a114-a9be7833babe"}}
+ :license/versions
+ {#uuid "8fc5f64a-8d41-4e82-a726-c13a9ba77f31"
+  {:version/id #uuid "8fc5f64a-8d41-4e82-a726-c13a9ba77f31"
+   :version/artifact :cc-math/license
+   :version/schema :cc-math/license-text
+   :version/ordinal 1
+   :version/parents #{}
+   :version/status :counterfactual
+   :version/processor #uuid "4a4444fb-9a62-4470-a114-a9be7833babe"
+   :content/path "LICENSE-CC-MATH-DRAFT.md"
+   :content/sha256 "c2cd6dad35fd94ac974da02e6fad3bf6712c4f50b8d2a55957c191f4b22ecc83"
+   :version/adoption-gates
+   [{:gate/id :rights-inventory :gate/status :open}
+    {:gate/id :rights-holder-assent :gate/status :open}
+    {:gate/id :third-party-separation :gate/status :open}
+    {:gate/id :legal-review :gate/status :open}
+    {:gate/id :stable-identifier :gate/status :open}]}
+
+  #uuid "4a4444fb-9a62-4470-a114-a9be7833babe"
+  {:version/id #uuid "4a4444fb-9a62-4470-a114-a9be7833babe"
+   :version/artifact :cc-math/processor
+   :version/schema :cc-math/jank-processor
+   :version/ordinal 1
+   :version/parents #{}
+   :version/status :executable
+   :content/path "jank/cc_math_license.jank"
+   :content/sha256 "cc3820551c89ad5fe3bb20b3854861c5e5e17fa2269472958d392f024889f1de"
+   :processor/interface "clojure://cc-math/version"
+   :processor/persistence :immutable
+   :processor/native-collections :immer
+   :processor/optimization-target :jank-ir
+   :processor/optimization-contract
+   {:purity :required
+    :ambient-io :forbidden
+    :reflection :forbidden
+    :dynamic-eval :forbidden
+    :lowering-status :candidate}}}}
