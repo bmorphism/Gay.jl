@@ -1,0 +1,7 @@
+{:toolchain/version 1
+ :tectonic/version "0.15.0"
+ :tectonic/bundle-url "https://data1.fullyjustified.net/tlextras-2022.0r0.tar"
+ :tectonic/bundle-digest "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c"
+ :tectonic/allowed-console-warning "algorithm.sty:11"
+ :pdf/source-date-epoch "1784620800"
+ :pdf/minimum-bytes 50000}

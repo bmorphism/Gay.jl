@@ -3,6 +3,7 @@
 root = normpath(joinpath(@__DIR__, ".."))
 strict = "--strict" in ARGS
 full = "--full" in ARGS
+pdf = full || "--pdf" in ARGS
 
 function check(label, command)
     println("\n==> ", label)
@@ -22,6 +23,7 @@ strict && push!(readiness, "--strict")
 check("paper readiness", Cmd(readiness))
 check("repository terminology",
       Cmd(["julia", "--project=.", "scripts/lint_no_demo.jl"]))
+pdf && check("rendered PDF", Cmd(["bb", "scripts/check_iacr_pdf.bb"]))
 
 if full
     check("full package tests",

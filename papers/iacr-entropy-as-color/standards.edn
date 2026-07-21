@@ -87,4 +87,9 @@
   {:requirement/id :artifact/checksummed-source-archive
    :requirement/source :iacr-artifact-archive
    :requirement/status :satisfied
-   :requirement/evidence ["scripts/build_iacr_artifact.bb"]}]}
+   :requirement/evidence ["scripts/build_iacr_artifact.bb"]}
+  {:requirement/id :artifact/rendered-pdf
+   :requirement/source :eurocrypt-2025-artifacts
+   :requirement/status :satisfied
+   :requirement/evidence ["papers/iacr-entropy-as-color/toolchain.edn"
+                          "scripts/check_iacr_pdf.bb"]}]}

@@ -1,6 +1,9 @@
 % IACR ePrint Submission
 % Entropy as Color: GF(3) Labels for Auditable Entropy-Source Composition
-\documentclass[preprint]{iacrtrans}
+% The checked-in class predates Tectonic's bundled hyperxmp; disabling that
+% optional layer avoids malformed XMP warnings while retaining hyperref's PDF
+% title, author, language, and keyword metadata.
+\documentclass[preprint,nohyperxmp]{iacrtrans}
 
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{xcolor}
@@ -27,6 +30,7 @@
 \author{
   Anonymous\inst{1}
 }
+\authorrunning{Anonymous}
 \institute{
   Anonymous Institution
 }
@@ -35,11 +39,11 @@
 
 \maketitle
 
+\keywords{Entropy Sources \and GF(3) \and Audit Labels \and Reproducibility \and Randomness Extraction}
+
 \begin{abstract}
 We study a deterministic presentation and audit layer that assigns elements of the finite field $\mathbb{F}_3$ and corresponding color tiles to observations from heterogeneous entropy sources. The labels make policy balance and execution-order invariance inspectable, but they neither create entropy nor establish cryptographic security. We define the label algebra, prove its elementary conservation identities, and connect those identities to a Julia implementation and Lean statements. We also state the source-model, extractor, and reduction obligations that would be required to turn this audit layer into a cryptographic construction. Our principal contribution is therefore a falsifiable separation between measured source evidence, deterministic representations, and security claims.
 \end{abstract}
-
-\keywords{Entropy Sources \and GF(3) \and Audit Labels \and Reproducibility \and Randomness Extraction}
 
 %------------------------------------------------------------------------------
 \section{Introduction}
@@ -295,14 +299,14 @@ representation boundary is therefore not a new general provenance model; it
 is a domain-specific restriction on how entropy-related metadata may be
 interpreted.
 
-\paragraph{Authenticated artifact assurance.} in-toto records materials,
-products, commands, and functionaries in signed link metadata checked against
-a signed supply-chain layout~\cite{intoto2019}. SLSA provenance similarly
-binds build outputs by digest to their producing build~\cite{slsa11}. Our EDN
-ledgers are unsigned local conformance records: they provide neither
-functionary authentication nor tamper-resistant provenance. Deployments that
-need those properties should carry these records inside an authenticated
-provenance system rather than treating a color, symbol, or hash as authority.
+\paragraph{Authenticated artifact assurance.} in-toto records signed link
+metadata for materials, products, commands, and functionaries, then checks it
+against a signed supply-chain layout~\cite{intoto2019}. SLSA provenance binds
+build outputs by digest to their producing build~\cite{slsa11}. Our EDN
+ledgers are unsigned conformance records. They provide neither functionary
+authentication nor tamper resistance. A deployment needing those properties
+should carry the records in an authenticated provenance system; a color,
+symbol, or hash does not grant authority.
 
 \paragraph{Novelty boundary.} We do not claim a new RNG, extractor, entropy
 estimator, robust combiner, provenance model, supply-chain assurance system,
@@ -322,8 +326,7 @@ SLSA, or the NIST random-bit-generation standards.
 The evaluation asks only questions supported by the audit-layer contribution:
 
 \begin{enumerate}
-    \item Does the claim ledger reject an asserted claim whose state is
-    \texttt{unverified} or \texttt{contradicted}?
+    \item Does the claim ledger reject an asserted unsupported claim?
     \item Do the referent and interaction validators reject representations
     that claim identity or authority?
     \item Does the implementation produce a deterministic summary matching
@@ -333,14 +336,15 @@ The evaluation asks only questions supported by the audit-layer contribution:
 On Julia 1.12.6 and Apple arm64 Darwin 25.5.0, the committed commands produced:
 
 \begin{center}
+\small
 \begin{tabular}{lll}
 \hline
 Check & Positive result & Negative witnesses \\
 \hline
-Claim ledger & 10 claims resolved & asserted unsupported states rejected \\
-Referent boundary & 3 referents, 5 laws & 5 malformed cases rejected \\
-Interaction boundary & 4 interactions, 8 laws & 9 malformed cases rejected \\
-Summary fixture & sample word $10\oplus12=6$ & not a security test \\
+Claims & 10 resolved & unsupported assertion rejected \\
+Referents & 3 referents, 5 laws & 5 malformed cases rejected \\
+Interactions & 4 records, 8 laws & 9 malformed cases rejected \\
+Fixture & sample $10\oplus12=6$ & not a security test \\
 \hline
 \end{tabular}
 \end{center}
@@ -392,11 +396,12 @@ three observations labels $+1,0,-1$. The label sum is zero, but every function
 of the joint deterministic sample is deterministic and has min-entropy zero.
 This proves the non-implication.
 
-\paragraph{Formal-verification scope.} The checked-in Lean sources include
-machine-checkable finite-field identities such as \texttt{balanced\_iff} and
+\paragraph{Formal scope.} The checked-in Lean sources include checked
+finite-field identities such as
+\texttt{balanced\_}\allowbreak\texttt{iff} and
 \texttt{char\_three}. They do not formalize an entropy-source distribution,
 extractor, random-oracle game, or UC ideal functionality. We therefore make no
-machine-verification claim for a cryptographic theorem.
+formal-verification claim for a cryptographic theorem.
 \end{proof}
 
 \end{document}

@@ -19,20 +19,22 @@ pdflatex main.tex
 pdflatex main.tex
 ```
 
-Or with latexmk:
+Or with Tectonic:
 ```bash
-latexmk -pdf main.tex
+tectonic main.tex --keep-logs
 ```
 
-The manuscript build additionally depends on a TeX distribution providing the
-checked-in `iacrtrans.cls`, `pdflatex`, and `bibtex`. TeX was not available on
-the validation platform below. Generated PDFs and auxiliary files are ignored;
-the release PDF must be rebuilt from the tagged source before submission.
+Tectonic 0.15.0 successfully built the manuscript and bibliography on the
+validation platform below. A conventional build instead requires a TeX
+distribution providing the checked-in `iacrtrans.cls`, `pdflatex`, and
+`bibtex`. Generated PDFs and auxiliary files are ignored; the release PDF must
+be rebuilt from the tagged source before submission.
 
 From the repository root, audit claims and artifact readiness with:
 
 ```bash
 julia --project=. scripts/check_iacr_paper.jl
+julia --project=. scripts/check_iacr_paper.jl --pdf
 julia --project=. scripts/check_iacr_paper.jl --full
 julia --project=. scripts/audit_iacr_paper.jl
 julia --project=. scripts/audit_iacr_paper.jl --strict  # required before submission
@@ -41,9 +43,11 @@ bb scripts/verify_iacr_standards.bb
 bb scripts/verify_iacr_artifact.bb
 ```
 
-`check_iacr_paper.jl` is the reviewer entrypoint. `--full` also runs the full
-package suite; `--strict` additionally requires every submission blocker to be
-closed and is intentionally failing while the rubric remains open.
+`check_iacr_paper.jl` is the reviewer entrypoint. `--pdf` builds and audits the
+PDF with the version and bundle recorded in `toolchain.edn`; `--full` adds that
+PDF gate and the full package suite. `--strict` additionally requires every
+submission blocker to be closed and is intentionally failing while the rubric
+remains open.
 
 ## Artifact dependencies and platform
 
@@ -77,6 +81,7 @@ bibliographic and archival-package requirements are also satisfied.
 - `READINESS.md` - IACR standards crosswalk and evidence ledger
 - `claims.edn` - Machine-readable claim-to-evidence ledger
 - `standards.edn` - Dated requirement, status, and evidence ledger
+- `toolchain.edn` - Pinned manuscript renderer and bundle identity
 - `artifact.edn` - Source-only archival package manifest
 
 ## Building the source archive

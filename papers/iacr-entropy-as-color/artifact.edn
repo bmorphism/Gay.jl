@@ -9,6 +9,7 @@
   "papers/iacr-entropy-as-color/READINESS.md"
   "papers/iacr-entropy-as-color/claims.edn"
   "papers/iacr-entropy-as-color/standards.edn"
+  "papers/iacr-entropy-as-color/toolchain.edn"
   "papers/iacr-entropy-as-color/artifact.edn"
   "Project.toml"
   "Manifest.toml"
@@ -18,6 +19,7 @@
   "test/runtests.jl"
   "scripts/audit_iacr_paper.jl"
   "scripts/check_iacr_paper.jl"
+  "scripts/check_iacr_pdf.bb"
   "scripts/verify_iacr_claims.bb"
   "scripts/verify_iacr_standards.bb"
   "scripts/verify_iacr_artifact.bb"
@@ -36,6 +38,9 @@
  [{:command/id :paper-check
    :command/run "julia --project=. scripts/check_iacr_paper.jl"
    :command/expect "IACR paper checks passed"}
+  {:command/id :pdf-check
+   :command/run "julia --project=. scripts/check_iacr_paper.jl --pdf"
+   :command/expect ":valid true with pinned Tectonic and a clean TeX log"}
   {:command/id :claims
    :command/run "bb scripts/verify_iacr_claims.bb"
    :command/expect ":valid true"}
