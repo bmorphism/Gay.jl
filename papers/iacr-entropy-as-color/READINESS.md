@@ -33,7 +33,7 @@ incomplete or external requirement must instead carry a reason.
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| Scope and novelty | Precise problem, closest cryptographic work, delta over prior art | Standards, extraction, and visual-secret-sharing boundaries are now explicit and bibliography entries are mechanically checked for use; comparison against provenance and assurance systems remains **Incomplete** |
+| Scope and novelty | Precise problem, closest cryptographic work, delta over prior art | Boundaries against NIST RBG standards, extraction, visual secret sharing, W3C PROV, in-toto, and SLSA are explicit; the contribution is limited to a domain-specific audit view and negative promotion gates, while independent novelty assessment remains **Incomplete** |
 | Syntax and semantics | Algorithms with typed inputs, outputs, state, failure behavior, and parameters | Source observations and the exact deterministic summary operation are now typed and mapped to implementation symbols |
 | Security model | Parties, trust assumptions, adversary class, corruption, setup, leakage, and security parameter | Not applicable to the current negative result; mandatory before any positive cryptographic construction |
 | Security definition | Game or ideal functionality with quantified advantage and success event | Not applicable to the current negative result; mandatory before any positive security theorem |

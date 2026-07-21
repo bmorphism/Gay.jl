@@ -287,14 +287,32 @@ extractor seed, secure sketch, or entropy bound.
 sharing~\cite{naor1995visual} encodes secrets into visual shares. Our colors
 instead display audit metadata and carry no secret-sharing property.
 
+\paragraph{Provenance.} W3C PROV distinguishes entities, activities, agents,
+derivations, responsibility, and alternate or specialized descriptions of the
+same thing~\cite{w3cprov}. A source observation can be represented as a PROV
+entity and the deterministic summary as an activity. Our typed referent and
+representation boundary is therefore not a new general provenance model; it
+is a domain-specific restriction on how entropy-related metadata may be
+interpreted.
+
+\paragraph{Authenticated artifact assurance.} in-toto records materials,
+products, commands, and functionaries in signed link metadata checked against
+a signed supply-chain layout~\cite{intoto2019}. SLSA provenance similarly
+binds build outputs by digest to their producing build~\cite{slsa11}. Our EDN
+ledgers are unsigned local conformance records: they provide neither
+functionary authentication nor tamper-resistant provenance. Deployments that
+need those properties should carry these records inside an authenticated
+provenance system rather than treating a color, symbol, or hash as authority.
+
 \paragraph{Novelty boundary.} We do not claim a new RNG, extractor, entropy
-estimator, robust combiner, or security definition. The contribution is a
-typed audit separation---source referent, recorded sample word, policy label,
-weight, color tile, and deterministic summary---together with an executable
-claim ledger that rejects promotion of representation invariants into
-cryptographic claims. Whether this audit discipline is sufficiently new and
-useful for cryptology requires comparison against additional provenance and
-assurance systems; this remains an open literature task.
+estimator, robust combiner, provenance model, supply-chain assurance system,
+or security definition. The limited contribution is a GF(3)-valued,
+domain-specific view over source referents, recorded sample words, policy
+labels, weights, color tiles, and deterministic summaries, together with
+executable negative gates that reject promotion of representation invariants
+into entropy, identity, authority, or cryptographic claims. Its value must be
+judged as an audit specialization, not as a replacement for PROV, in-toto,
+SLSA, or the NIST random-bit-generation standards.
 
 %------------------------------------------------------------------------------
 \section{Artifact Evaluation}
