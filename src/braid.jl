@@ -1,6 +1,6 @@
 # Gay Braid Protocol: Synchronization for Chromatic State
 #
-# Extends Braid-HTTP (state synchronization) with Gay.jl chromatic identity.
+# Extends Braid-HTTP (state synchronization) with Gay.jl chromatic state tiles.
 # Forks, mergers, and re-orderings of space over time with SPI guarantees.
 #
 # References:
@@ -9,7 +9,7 @@
 # - Gay Hyperdoctrine (chromatic categorical logic)
 #
 # Key concepts:
-# - VERSIONING: Each version carries chromatic identity
+# - VERSIONING: Each version has an `id` and carries a chromatic state tile
 # - PATCHES: Color deltas preserve SPI fingerprints
 # - SUBSCRIPTIONS: Color streams with deterministic trajectory
 # - MERGE-TYPES: CRDT/Sync9 with chromatic conflict resolution
@@ -44,7 +44,7 @@ A single braid generator: strand crossing.
 struct BraidGenerator
     strand::Int       # Which strand (1-indexed)
     crossing::CrossingType
-    color::RGB{Float64}  # Chromatic identity of this crossing
+    color::RGB{Float64}  # Contextual state tile for this crossing
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -93,7 +93,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-A version in the braid: snapshot of state with chromatic identity.
+A version in the braid: identified by `id`, with a chromatic snapshot tile.
 """
 struct BraidVersion
     id::String
@@ -115,7 +115,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-A patch (delta) between versions with chromatic identity.
+A patch (delta) whose endpoint version IDs carry identity and color witnesses change.
 """
 struct BraidPatch
     from_version::String
@@ -142,11 +142,14 @@ function holonomy(versions::Vector{BraidVersion})
 end
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Peer Color Identity (Reafference Tracking)
+# Peer Color Trajectory (Reafference Tracking)
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Peer identity with color trajectory for self-sameness detection.
+Color trajectory keyed by the authoritative `peer_id` referent.
+
+`PeerColorIdentity` is retained as a compatibility name. Equal colors or equal
+trajectories never imply equal peers.
 """
 mutable struct PeerColorIdentity
     peer_id::String
@@ -181,9 +184,9 @@ function reafference_distance(peer::PeerColorIdentity)
 end
 
 """
-Check if peer has returned to self-sameness.
+Check if the peer's represented color state has returned near its origin.
 
-Self-sameness = trajectory returns to origin color (fixed point).
+This is a color-space fixed-point predicate, not an identity comparison.
 """
 function is_self_same(peer::PeerColorIdentity; threshold::Float64=0.1)
     reafference_distance(peer) < threshold
@@ -194,12 +197,12 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Gay Braid Model: establishes self-sameness through color path reafference.
+Gay Braid Model: measures color-state recurrence through path reafference.
 
 SELF-SAMENESS:
-A trajectory exhibits self-sameness when it returns to a color state
+A trajectory exhibits color-state recurrence when it returns to a color state
 that is "the same as" its origin (within threshold). This is a fixed
-point in the color space under the braid action.
+point in the color space under the braid action; `peer_id` remains authoritative.
 
 REAFFERENCE:
 The ability of a trajectory to observe its own past states. Each step
@@ -281,13 +284,13 @@ end
 # ═══════════════════════════════════════════════════════════════════════════
 
 """
-Braid Log: unified state synchronization with chromatic identity.
+Braid Log: unified state synchronization with chromatic witness tiles.
 
 Combines:
 - Braid-HTTP protocol (versions, patches, subscriptions)
 - Gay.jl SPI (deterministic color trajectories)
 - Cohesive ∞-topos semantics (♯/♭/ʃ modalities)
-- Self-sameness through reafference
+- Color-state recurrence through reafference
 """
 mutable struct BraidLog
     resource_url::String

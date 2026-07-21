@@ -102,7 +102,7 @@ export comrade_show, comrade_mring, comrade_disk, comrade_crescent
 # Include KernelAbstractions SPMD kernels for portable parallel execution
 include("kernels.jl")
 
-# Include Reafference Proof (predict/observe/verify color identity)
+# Include Reafference Proof (predict/observe/verify color-stream continuity)
 include("reafference.jl")
 using .Reafference
 export ReafferenceProof, reafference_challenge

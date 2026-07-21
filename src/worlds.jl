@@ -145,7 +145,8 @@ end
     world_three_match(; seed) -> WorldResult
 
 Spawn the 3-MATCH verification world.
-Chromatic identity triangle: seed → color → fingerprint.
+Chromatic representation pipeline: seed → color → fingerprint.
+The resulting values witness deterministic derivation; they do not identify referents.
 """
 function world_three_match(; seed::UInt64=GAY_SEED, kwargs...)
     meta = WorldMetadata(:three_match;

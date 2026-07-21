@@ -1,11 +1,12 @@
-# Reafference Proof: predict your own color, observe, verify identity
+# Reafference Proof: predict a color stream, observe, verify continuity
 #
 # Von Holst & Mittelstaedt (1950): an organism predicts the sensory
 # consequence of its own action. Prediction = efference copy.
 # Observation = reafference. Match = self-generated. Mismatch = exafference.
 #
-# Applied to capability security: prove identity by proving you can
-# predict your own color sequence.
+# Applied to capability systems: witness possession of seed-derived material by
+# predicting its color sequence. This is continuity evidence, not identity,
+# authentication, or authority; those belong to typed referents and capabilities.
 
 module Reafference
 
@@ -44,7 +45,7 @@ end
 A one-time seed derived from permanent identity + public randomness + counter.
 Changes every interaction. Cannot be replayed.
 
-- `permanent_seed`: did:gay identity (content-addressed, never changes)
+- `permanent_seed`: derivation input associated with a typed referent
 - `drand_round`: distributed randomness beacon (changes every 30 seconds)
 - `interaction_counter`: monotonic (incremented per interaction)
 """
@@ -74,7 +75,7 @@ end
 """
     ReafferenceProof
 
-A completed proof of color identity. Contains:
+A completed proof of seed-derived color-stream continuity. Contains:
 - The challenge (which ticks to predict)
 - The predictions (what the prover claimed)
 - The observations (what was actually seen)
@@ -122,9 +123,14 @@ end
     verify(seed, ticks, predicted, observed; threshold=25.0) -> ReafferenceProof
 
 Complete reafference verification:
-1. Compute dE2000 distance between each predicted/observed pair
-2. Check all distances are below threshold
-3. Return the proof (pass or fail)
+1. Recompute the deterministic predictions from `seed` and `ticks`
+2. Reject claimed predictions that differ from that derived stream
+3. Compute dE2000 distance between each predicted/observed pair
+4. Check all distances are below threshold
+5. Return the proof (pass or fail)
+
+A passing result witnesses agreement with the supplied seed and observations.
+It does not authenticate a referent or grant a capability.
 
 Default threshold 25.0 dE2000 — generous for display variation.
 Tighten to 5.0 for calibrated displays, 1.0 for reference monitors.
@@ -142,7 +148,9 @@ function verify(seed::UInt64,
         push!(distances, dE2000_distance(p, o))
     end
 
-    all_pass = all(d -> d < threshold, distances)
+    expected = predict(seed, ticks)
+    prediction_matches_seed = predicted == expected
+    all_pass = prediction_matches_seed && all(d -> d < threshold, distances)
 
     ReafferenceProof(seed, ticks, predicted, observed, distances, threshold, all_pass)
 end

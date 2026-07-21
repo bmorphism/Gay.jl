@@ -55,8 +55,9 @@ large color differences use saturating, path-aware perception
 ```
 
 Live signals can become `ColoredTick`s; colored paths can be re-predicted; and
-capabilities can be gated by SPI fingerprints, GF(3) conservation, and
-reafference instead of ambient state.
+policies can inspect SPI fingerprints, GF(3) conservation, and reafference.
+Authority still requires an explicit typed capability; representation matches
+never mint or substitute for one.
 
 ## Data and language boundary
 

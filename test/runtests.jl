@@ -106,6 +106,19 @@ include("lisp_gatlab_bridge_tests.jl")
         @test all(result -> result.passed, verify_semiring_laws(TropicalMinPlus, [1.0, 2.0, 3.0]))
     end
 
+    @testset "Reafference witnesses continuity, not identity" begin
+        seed = UInt64(1069)
+        ticks = [TritTick(0), TritTick(EPOCH_1_HZ)]
+        expected = Gay.Reafference.predict(seed, ticks)
+
+        proof = Gay.Reafference.verify(seed, ticks, expected, expected; threshold=1.0)
+        @test proof.verified
+
+        forged = fill((0.0f0, 0.0f0, 0.0f0), length(ticks))
+        forged_proof = Gay.Reafference.verify(seed, ticks, forged, forged; threshold=1.0)
+        @test !forged_proof.verified
+    end
+
     @testset "Color Spaces" begin
         @test SRGB() isa ColorSpace
         @test DisplayP3() isa ColorSpace
