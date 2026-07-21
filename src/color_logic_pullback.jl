@@ -14,7 +14,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-export ColorLogicSystem, LogicPullbackSquare, ColoredTheory
+export LogicPullbackSquare, ColoredTheory
 export fibered_product, pullback_color, beck_chevalley_proper
 export theory_level, metatheory_level, logic_system_color
 export world_color_logic_pullback

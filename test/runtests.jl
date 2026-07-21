@@ -55,7 +55,7 @@ include("lisp_gatlab_bridge_tests.jl")
                 name -> !isdefined(Gay, name),
                 names(Gay; all=false, imported=false),
             )
-            @test length(undefined_exports) <= 2109
+            @test length(undefined_exports) <= 2106
             Aqua.test_undefined_exports(Gay; broken=true)
         end
         

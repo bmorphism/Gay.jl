@@ -34,7 +34,7 @@ module ObligationClearing
 
 using SplittableRandoms: SplittableRandom, split
 
-export ObligationNetwork, Obligation, ClearingCycle, NettingSolution,
+export ObligationNetwork, Obligation, ClearingCycle,
        MutualCreditUnit, ClearingResult,
        add_obligation!, find_clearing_cycles, clear!, multilateral_setoff!,
        xor_clearing_fingerprint, verify_zero_sum, landauer_clearing_cost,

@@ -245,7 +245,7 @@ export Seed  # Universal seed wrapper
 # Include Obligation Clearing (Sardex/Fleischman Mutual Credit as GF(3) Conservation)
 include("obligation_clearing.jl")
 using .ObligationClearing
-export ObligationNetwork, Obligation, ClearingCycle, NettingSolution,
+export ObligationNetwork, Obligation, ClearingCycle,
        MutualCreditUnit, ClearingResult,
        add_obligation!, find_clearing_cycles, clear!, multilateral_setoff!,
        xor_clearing_fingerprint, verify_zero_sum, landauer_clearing_cost,
@@ -277,7 +277,7 @@ export world_hyperdoctrine
 
 # Include Color-Logic Pullback Squares (Proper Beck-Chevalley from Hatchery)
 include("color_logic_pullback.jl")
-export ColorLogicSystem, LogicPullbackSquare, ColoredTheory
+export LogicPullbackSquare, ColoredTheory
 export fibered_product, pullback_color, beck_chevalley_proper
 export theory_level, metatheory_level, logic_system_color
 export LogicSystem, TheoryLevel
