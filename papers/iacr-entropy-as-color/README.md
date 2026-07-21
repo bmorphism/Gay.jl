@@ -1,6 +1,7 @@
 # Entropy as Color: A GF(3) Algebraic Framework
 
-IACR ePrint submission for the "Entropy as Color" paper.
+Working draft for the "Entropy as Color" paper. It is not submission-ready;
+see [READINESS.md](READINESS.md) for the evidence rubric and blocking gaps.
 
 ## Abstract
 
@@ -20,11 +21,19 @@ Or with latexmk:
 latexmk -pdf main.tex
 ```
 
+From the repository root, audit claims and artifact readiness with:
+
+```bash
+julia --project=. scripts/audit_iacr_paper.jl
+julia --project=. scripts/audit_iacr_paper.jl --strict  # required before submission
+```
+
 ## Files
 
 - `main.tex` - Main paper source
 - `refs.bib` - Bibliography
 - `README.md` - This file
+- `READINESS.md` - IACR standards crosswalk and evidence ledger
 
 ## Target Venues
 
