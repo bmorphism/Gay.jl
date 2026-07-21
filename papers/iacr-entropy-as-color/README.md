@@ -148,6 +148,8 @@ The current paper maps its implementation claims to:
 
 - `src/zmod3.jl` for GF(3) operations;
 - `src/entropy_sources.jl` for recorded observations and deterministic mixing;
+- `src/gay_structured_decompositions.jl` for contextual color tiles whose
+  typed identifiers remain separate from presentation;
 - `lean4/gf3_elegant.lean` for the exact finite-field identities;
 - `test/runtests.jl` and `claims.edn` for executable evidence boundaries.
 

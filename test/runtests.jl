@@ -473,6 +473,14 @@ include("lisp_gatlab_bridge_tests.jl")
             @test ct.measured_trit == Int8(1)
             @test ct.confidence == 0.9f0
             @test ct.source == :test
+            for invalid_trit in (-2, 2)
+                @test_throws ArgumentError ColoredTick(
+                    TritTick(0), invalid_trit, UInt64(0), 0.5, :invalid_trit)
+            end
+            for invalid_weight in (-0.1, 1.1, NaN, Inf)
+                @test_throws ArgumentError ColoredTick(
+                    TritTick(0), 0, UInt64(0), invalid_weight, :invalid_weight)
+            end
         end
 
         @testset "classify_trit" begin
@@ -481,6 +489,10 @@ include("lisp_gatlab_bridge_tests.jl")
             @test classify_trit(2.0, 5.0, 30.0) == Int8(-1)    # below low
             @test classify_trit(30.0, 5.0, 30.0) == Int8(0)    # at boundary = middle
             @test classify_trit(5.0, 5.0, 30.0) == Int8(0)     # at boundary = middle
+            @test_throws ArgumentError classify_trit(NaN, 5.0, 30.0)
+            @test_throws ArgumentError classify_trit(15.0, NaN, 30.0)
+            @test_throws ArgumentError classify_trit(15.0, 5.0, Inf)
+            @test_throws ArgumentError classify_trit(15.0, 30.0, 5.0)
         end
 
         @testset "entropy_mix" begin
@@ -583,6 +595,9 @@ include("lisp_gatlab_bridge_tests.jl")
             gs = GitSource(".")
             cs = CompositeSource([es, gs])
             @test source_name(cs) == :composite
+            @test_throws ArgumentError CompositeSource(EntropySource[])
+            @test source_trustworthiness(CompositeSource([es, gs])) ==
+                  source_trustworthiness(CompositeSource([gs, es]))
 
             # Inject known values
             inject_watts!(es, 50.0)  # maker
@@ -622,14 +637,6 @@ include("lisp_gatlab_bridge_tests.jl")
             @test all(==(first(threshold_summaries)), threshold_summaries)
             @test first(threshold_summaries).measured_trit == Int8(1)
 
-            @test_throws ArgumentError composite_from_readings([
-                ColoredTick(TritTick(1), Int8(2), UInt64(0), 0.5f0, :invalid_trit),
-            ])
-            for invalid_weight in Float32[-0.1, 1.1, NaN, Inf]
-                @test_throws ArgumentError composite_from_readings([
-                    ColoredTick(TritTick(1), Int8(0), UInt64(0), invalid_weight, :invalid_weight),
-                ])
-            end
         end
 
         @testset "Agreement and disagreement" begin

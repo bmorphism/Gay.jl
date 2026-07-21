@@ -58,6 +58,30 @@
                :evidence/path "papers/iacr-entropy-as-color/main.tex"
                :evidence/symbol "historical field"}]}
 
+  {:claim/id :observations/validated-domain
+   :claim/kind :semantics
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "Observation construction and policy classification reject malformed trits, weights, measurements, and thresholds."
+   :evidence [{:evidence/type :test-text
+               :evidence/path "test/runtests.jl"
+               :evidence/symbol "invalid_weight"}
+              {:evidence/type :test-text
+               :evidence/path "src/entropy_sources.jl"
+               :evidence/symbol "classification value must be finite"}]}
+
+  {:claim/id :representations/contextual-color-not-identity
+   :claim/kind :semantics
+   :claim/status :verified
+   :claim/asserted? true
+   :claim/text "StructuredDecompositions color tiles are contextual representations while typed identifiers carry identity."
+   :evidence [{:evidence/type :test-text
+               :evidence/path "src/gay_structured_decompositions.jl"
+               :evidence/symbol "Contextual representation of the bag; `id` carries its identity"}
+              {:evidence/type :manuscript-counterexample
+               :evidence/path "papers/iacr-entropy-as-color/main.tex"
+               :evidence/symbol "The rendering policy need not be injective"}]}
+
   {:claim/id :observations/composite-not-extractor
    :claim/kind :semantics
    :claim/status :verified

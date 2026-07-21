@@ -73,7 +73,20 @@ struct ColoredTick
     entropy::UInt64                # opaque sample word; not an entropy estimate
     confidence::Float32            # policy weight; not calibrated certainty
     source::Symbol                 # :drand, :energy, :bci, :heartbeat, etc.
+
+    function ColoredTick(tick::TritTick, measured_trit::Int8, entropy::UInt64,
+                         confidence::Float32, source::Symbol)
+        measured_trit in (Int8(-1), Int8(0), Int8(1)) ||
+            throw(ArgumentError("measured_trit must be -1, 0, or 1"))
+        isfinite(confidence) && 0.0f0 <= confidence <= 1.0f0 ||
+            throw(ArgumentError("confidence policy weight must be finite and in [0, 1]"))
+        new(tick, measured_trit, entropy, confidence, source)
+    end
 end
+
+ColoredTick(tick::TritTick, measured_trit::Integer, entropy::Integer,
+            confidence::Real, source::Symbol) =
+    ColoredTick(tick, Int8(measured_trit), UInt64(entropy), Float32(confidence), source)
 
 function Base.show(io::IO, ct::ColoredTick)
     role = ct.measured_trit == 1 ? "maker" : ct.measured_trit == 0 ? "coordinator" : "checker"
@@ -121,8 +134,15 @@ Classify a measurement into GF(3):
 - value > high_threshold → +1 (maker/generator)
 - low_threshold ≤ value ≤ high_threshold → 0 (coordinator/ergodic)
 - value < low_threshold → -1 (checker/validator)
+
+The measurement and thresholds must be finite and `low_threshold ≤
+high_threshold`; otherwise the function raises `ArgumentError`.
 """
 function classify_trit(value::Real, low::Real, high::Real)::Int8
+    isfinite(value) || throw(ArgumentError("classification value must be finite"))
+    isfinite(low) && isfinite(high) ||
+        throw(ArgumentError("classification thresholds must be finite"))
+    low <= high || throw(ArgumentError("low threshold must not exceed high threshold"))
     value > high ? Int8(1) : value < low ? Int8(-1) : Int8(0)
 end
 
@@ -493,6 +513,11 @@ If they disagree, the disagreement IS the information.
 struct CompositeSource <: EntropySource
     sources::Vector{EntropySource}
     name::Symbol
+
+    function CompositeSource(sources::Vector{EntropySource}, name::Symbol)
+        isempty(sources) && throw(ArgumentError("CompositeSource requires at least one provider"))
+        new(sources, name)
+    end
 end
 
 CompositeSource(sources::Vector{<:EntropySource}; name::Symbol=:composite) =
@@ -500,8 +525,10 @@ CompositeSource(sources::Vector{<:EntropySource}; name::Symbol=:composite) =
 
 source_name(cs::CompositeSource) = cs.name
 source_mortality(cs::CompositeSource) = maximum(source_mortality, cs.sources)
-source_trustworthiness(cs::CompositeSource) =
-    sum(source_trustworthiness, cs.sources) / length(cs.sources)
+function source_trustworthiness(cs::CompositeSource)
+    weights = sort!(Float32[source_trustworthiness(source) for source in cs.sources])
+    sum(weights) / length(weights)
+end
 
 """
     read_entropy(cs::CompositeSource) -> ColoredTick
@@ -533,7 +560,7 @@ function composite_from_readings(readings::Vector{ColoredTick}, name::Symbol=:co
     isempty(readings) && return ColoredTick(TritTick(UInt64(0)), Int8(0), UInt64(0), 0.0f0, name)
 
     for ct in readings
-        ct.measured_trit in Int8[-1, 0, 1] ||
+        ct.measured_trit in (Int8(-1), Int8(0), Int8(1)) ||
             throw(ArgumentError("measured_trit must be -1, 0, or 1"))
         isfinite(ct.confidence) && 0.0f0 <= ct.confidence <= 1.0f0 ||
             throw(ArgumentError("confidence policy weight must be finite and in [0, 1]"))
@@ -594,8 +621,8 @@ end
 """
     CompositeTicks <: TickSource
 
-A TickSource backed by a CompositeSource. Each `current_tick` reads
-from all physical sources, folds entropy, and returns the consensus tick.
+A TickSource backed by a `CompositeSource`. Each `current_tick` reads every
+provider and returns the latest timestamp from the deterministic policy summary.
 """
 struct CompositeTicks <: TickSource
     composite::CompositeSource
@@ -609,7 +636,7 @@ end
 """
     current_colored_tick(ct::CompositeTicks) -> ColoredTick
 
-Get the full ColoredTick (with entropy and confidence) from a CompositeTicks source.
+Get the full policy summary from a `CompositeTicks` source.
 """
 current_colored_tick(ct::CompositeTicks) = read_entropy(ct.composite)
 

@@ -15,6 +15,7 @@
   "Manifest.toml"
   "src/zmod3.jl"
   "src/entropy_sources.jl"
+  "src/gay_structured_decompositions.jl"
   "lean4/gf3_elegant.lean"
   "test/runtests.jl"
   "scripts/audit_iacr_paper.jl"

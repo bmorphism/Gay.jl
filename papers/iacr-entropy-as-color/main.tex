@@ -107,7 +107,10 @@ $w$ is, by type alone, a min-entropy estimate.
 
 Gay.jl's compatibility type \texttt{ColoredTick} stores $(t,\ell,x,w)$ and a
 symbolic source label. Its historical field \texttt{entropy} stores $x$; the
-name must not be read as evidence that $H_\infty(X)>0$.
+name must not be read as evidence that $H_\infty(X)>0$. Construction rejects
+labels outside $\{-1,0,1\}$ and non-finite or out-of-range weights. The policy
+classifier likewise rejects non-finite measurements, non-finite thresholds,
+and reversed threshold intervals instead of silently assigning label $0$.
 
 \subsection{QCD analogy boundary}
 
@@ -156,40 +159,41 @@ By substitution, $a+b+c=a+b-(a+b)=0$ in the additive group of $\mathbb{F}_3$. Se
 \end{proof}
 
 %------------------------------------------------------------------------------
-\section{Color Charge Formalism}
+\section{Contextual Color Presentation}
 \label{sec:color}
 %------------------------------------------------------------------------------
 
 Building on the trit algebra, we introduce a color presentation inspired by QCD.
 
-\begin{definition}[Color tile]
-A recorded observation may be rendered with a \emph{color tile}
-$\chi(o)\in\mathcal C$, where:
+\begin{definition}[Contextual color tile]
+Let $\Gamma$ be a rendering context and $\mathcal C\subseteq[0,1]^3$ an RGB
+display space. A rendering policy
 \[
-\mathcal{C} = \{\text{RED}, \text{GREEN}, \text{BLUE}, \text{ANTI\_RED}, \text{ANTI\_GREEN}, \text{ANTI\_BLUE}, \text{COLORLESS}\}
+\kappa:\mathbb F_3\times\Gamma\longrightarrow\mathcal C
 \]
+may attach the tile $\kappa(\ell,\gamma)$ to an observation carrying label
+$\ell$. The tile is contextual presentation metadata; the typed referent
+$\rho$, not the RGB value, carries source identity.
 \end{definition}
 
-The color-to-trit mapping $\phi: \mathcal{C} \to \mathbb{F}_3$ is:
-\begin{align}
-    \phi(\text{RED}) = \phi(\text{ANTI\_RED}) &= +1 \\
-    \phi(\text{GREEN}) = \phi(\text{ANTI\_GREEN}) &= 0 \\
-    \phi(\text{BLUE}) = \phi(\text{ANTI\_BLUE}) &= -1 \\
-    \phi(\text{COLORLESS}) &= 0
-\end{align}
+This follows Gay.jl's StructuredDecompositions convention that bag identifiers
+and typed vertices carry identity while colors are contextual projections.
+The rendering policy need not be injective, so a color alone need not recover
+the label. It never grants authority.
 
 \begin{definition}[Display balance]
 A set of recorded observations $\{o_1, \ldots, o_n\}$ is
 \emph{display-balanced} if:
 \[
-\bigoplus_{i=1}^n \phi(\chi(o_i)) = 0 \pmod{3}.
+\bigoplus_{i=1}^n \ell_i = 0 \quad\text{in }\mathbb F_3.
 \]
-This predicate is a property of representations under $\phi$, not of the
-identity, independence, or unpredictability of the represented sources.
+The predicate is computed from recorded labels, not reconstructed from RGB
+tiles. It says nothing about the identity, independence, or unpredictability
+of the represented sources.
 \end{definition}
 
 \paragraph{Visual Representation.}
-Color charges map to the HSL color wheel:
+One non-normative policy may use the HSL color wheel:
 \begin{itemize}
     \item \textbf{PLUS (+1)}: Warm hues (0°--60°, 300°--360°)
     \item \textbf{ERGODIC (0)}: Neutral hues (60°--180°)
@@ -363,7 +367,7 @@ On Julia 1.12.6 and Apple arm64 Darwin 25.5.0, the committed commands produced:
 \hline
 Check & Positive result & Negative witnesses \\
 \hline
-Claims & 11 resolved & unsupported assertion rejected \\
+Claims & 13 resolved & unsupported assertion rejected \\
 Referents & 3 referents, 5 laws & 5 malformed cases rejected \\
 Interactions & 4 records, 8 laws & 9 malformed cases rejected \\
 Fixture & sample $10\oplus12=6$ & not a security test \\
