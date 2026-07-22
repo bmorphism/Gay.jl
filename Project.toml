@@ -45,7 +45,7 @@ GayStructuredDecompositionsExt = ["StructuredDecompositions", "Catlab"]
 
 [compat]
 ACSets = "0.2"
-AMDGPU = "1"
+AMDGPU = "1, 2"
 AlgebraicRewriting = "0.5"
 CUDA = "5"
 Catlab = "0.17"
@@ -73,8 +73,8 @@ Sockets = "1"
 SparseArrays = "1.12.0"
 SplittableRandoms = "0.1"
 Statistics = "1.11.1"
-StructuredDecompositions = "0.2"
 StructTypes = "1"
+StructuredDecompositions = "0.2"
 julia = "≥ 1.6.0"
 
 [extras]
