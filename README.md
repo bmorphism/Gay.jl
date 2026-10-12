@@ -79,6 +79,7 @@ julia --project=. scripts/lint_no_demo.jl
 bb scripts/verify_referent_boundary.bb --self-test
 bb scripts/verify_higher_order_interactions.bb --self-test
 bb scripts/verify_cc_math_license.bb
+bb scripts/verify_cc_math_license.bb --bb-only  # Explicitly omit native Jank checks
 julia --project=/path/to/structured-decompositions-env \
   scripts/check_structured_decomposition_colors.jl
 ```

@@ -9,6 +9,7 @@
 
 (def root (.getCanonicalFile (io/file (or (System/getenv "GAY_ROOT") "."))))
 (def registry-file (io/file root "licenses/cc-math/versions.edn"))
+(def bb-only? (= ["--bb-only"] (vec *command-line-args*)))
 
 (defn require* [condition message]
   (when-not condition (throw (ex-info message {}))))
@@ -29,17 +30,24 @@
    {:trit "0" :name "ERGODIC" :tile "🟩" :rgb "#64c864"}
    {:trit "−1" :name "MINUS" :tile "🟦" :rgb "#6464ff"}])
 
-(defn verify-node [versions [version-id version]]
+(defn verify-node [world [version-id version]]
   (require* (= version-id (:version/id version)) "version key/id mismatch")
   (require* (uuid? version-id) "version identity must be a typed UUID")
   (require* (pos-int? (:version/ordinal version)) "ordinal must be positive")
   (require* (set? (:version/parents version)) "parents must be a set")
   (doseq [parent (:version/parents version)]
-    (require* (contains? versions parent) (str "unknown parent: " parent)))
-  (let [content-file (io/file root (:content/path version))]
+    (require* (contains? (:license/versions world) parent) (str "unknown parent: " parent)))
+  (let [content-file (io/file root (get-in world [:license/content-archives version-id]
+                                         (:content/path version)))]
     (require* (.isFile content-file) (str "missing version content: " content-file))
     (require* (= (:content/sha256 version) (sha256 content-file))
               (str "content digest mismatch: " (:content/path version)))))
+
+(defn verify-boundaries-bb []
+  ;; Load the same processor and regression suite used by native Jank.
+  (load-file (str (io/file root "jank/cc_math_license.jank")))
+  (load-file (str (io/file root "jank/cc_math_license_test.jank")))
+  ((ns-resolve 'cc-math-license-test 'verify-boundaries)))
 
 (defn verify [world]
   (let [versions (:license/versions world)
@@ -54,7 +62,11 @@
               "license referent is missing")
     (doseq [[_ {:artifact/keys [head]}] artifacts]
       (require* (contains? versions head) (str "artifact head is unknown: " head)))
-    (doseq [node versions] (verify-node versions node))
+    (doseq [version-id (keys (:license/content-archives world))]
+      (require* (contains? versions version-id) (str "archive version is unknown: " version-id)))
+    (doseq [node versions] (verify-node world node))
+    (require* (= :counterfactual (:version/status (get versions license-head)))
+              "draft version must remain counterfactual")
     (require* (str/includes? license-text "Not presently operative")
               "draft must remain explicitly non-operative")
     (require* (not (re-find #"CC-MATH\s+[0-9]+(?:\.[0-9]+)*" license-text))
@@ -66,16 +78,24 @@
                 (str "missing semantic tile: " name))
       (require* (str/includes? license-text rgb)
                 (str "missing presentation color: " name)))
-    (let [result (shell {:dir root :out :string :err :string}
-                        "jank" "--module-path" "jank"
-                        "run-main" "cc-math-license")]
-      (require* (zero? (:exit result)) (str "native jank check failed: " (:err result)))
-      (require* (str/includes? (:out result) ":optimization-target :jank-ir")
-                "native jank processor did not report its target")
-      (require* (str/includes? (:out result) ":input-preserved true")
-                "native jank processor mutated or replaced its rejected input")
-      (require* (str/includes? (:out result) ":invalid-version :rejected")
-                "native jank processor accepted an untyped version"))
+    (verify-boundaries-bb)
+    (when-not bb-only?
+      (let [result (shell {:dir root :out :string :err :string}
+                          "jank" "--module-path" "jank"
+                          "run-main" "cc-math-license")]
+        (require* (zero? (:exit result)) (str "native jank check failed: " (:err result)))
+        (require* (str/includes? (:out result) ":optimization-target :jank-ir")
+                  "native jank processor did not report its target")
+        (require* (str/includes? (:out result) ":input-preserved true")
+                  "native jank processor mutated or replaced its rejected input")
+        (require* (str/includes? (:out result) ":invalid-version :rejected")
+                  "native jank processor accepted an untyped version"))
+      (let [result (shell {:dir root :out :string :err :string}
+                          "jank" "--module-path" "jank"
+                          "run-main" "cc-math-license-test")]
+        (require* (zero? (:exit result)) (str "native jank boundary tests failed: " (:err result)))
+        (require* (str/includes? (:out result) ":cc-math/boundaries :passed")
+                  "native jank boundary tests did not report success")))
     {:valid true
      :status :counterfactual
      :version-nodes (count versions)
@@ -83,10 +103,14 @@
      :identity-bearing :typed-referent
      :version-identity :typed-uuid
      :persistence :immutable
-     :native-runtime :jank
+     :predicate-tests :passed
+     :predicate-runtime :babashka
+     :native-runtime (if bb-only? :not-run :jank)
      :optimization-target :jank-ir}))
 
 (try
+  (require* (#{[] ["--bb-only"]} (vec *command-line-args*))
+            "usage: bb scripts/verify_cc_math_license.bb [--bb-only]")
   (println (verify (edn/read-string (slurp registry-file))))
   (catch Exception error
     (binding [*out* *err*]

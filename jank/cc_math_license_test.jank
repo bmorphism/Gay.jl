@@ -1,0 +1,92 @@
+(ns cc-math-license-test
+  (:require [cc-math-license :as license]))
+
+;; Synthetic versions exercise processor invariants, not legal authorization.
+(def left-id #uuid "00000000-0000-4000-8000-000000000001")
+(def right-id #uuid "00000000-0000-4000-8000-000000000002")
+(def unknown-id #uuid "00000000-0000-4000-8000-000000000003")
+(def other-unknown-id #uuid "00000000-0000-4000-8000-000000000004")
+
+(def version
+  {:version/id left-id
+   :version/artifact :cc-math/license
+   :version/schema :cc-math/license-text
+   :version/parents #{}
+   :version/status :operative
+   :content/path "synthetic"
+   :content/sha256 "0000000000000000000000000000000000000000000000000000000000000000"})
+
+(def world
+  {:license/versions {left-id version
+                      right-id (assoc version :version/id right-id)}
+   :license/artifacts {:cc-math/license {:artifact/head right-id}}})
+
+(defn require* [condition message]
+  (when-not condition (throw (ex-info message {}))))
+
+(defn verify-boundaries []
+  (require* (license/transportable-family? world left-id right-id)
+            "known versions with matching artifact/schema must remain compatible")
+  (doseq [[left right] [[unknown-id other-unknown-id]
+                       [unknown-id unknown-id]
+                       [unknown-id left-id]
+                       [left-id unknown-id]
+                       [nil nil]]]
+    (require* (not (license/transportable-family? world left right))
+              (str "unknown versions must not transport: " [left right])))
+  (doseq [[field value] [[:version/artifact :cc-math/processor]
+                        [:version/schema :cc-math/jank-processor]]]
+    (require* (not (license/transportable-family?
+                   (assoc-in world [:license/versions right-id field] value)
+                   left-id right-id))
+              (str "mismatched family field must not transport: " field)))
+  ;; Missing, nil, and empty collections cannot pass by vacuous truth.
+  (doseq [[label candidate]
+          [[:absent version]
+           [:nil (assoc version :version/adoption-gates nil)]
+           [:empty (assoc version :version/adoption-gates [])]
+           [:open (assoc version :version/adoption-gates
+                         [{:gate/id :rights-holder-assent :gate/status :open}])]
+           [:unresolved (assoc version :version/adoption-gates
+                               [{:gate/id :rights-holder-assent}])]
+           [:unknown-status (assoc version :version/adoption-gates
+                                   [{:gate/id :rights-holder-assent
+                                     :gate/status :unknown}])]
+           [:nil-gate (assoc version :version/adoption-gates [nil])]
+           [:partially-satisfied
+            (assoc version :version/adoption-gates
+                   [{:gate/id :rights-inventory :gate/status :satisfied}
+                    {:gate/id :rights-holder-assent :gate/status :open}])]]]
+    (require* (not (license/adoption-ready?
+                   (assoc-in world [:license/versions left-id] candidate) left-id))
+              (str "operative version must fail unresolved adoption gates: " label)))
+  (let [satisfied (assoc version :version/adoption-gates
+                         [{:gate/id :rights-inventory :gate/status :satisfied}
+                          {:gate/id :rights-holder-assent :gate/status :satisfied}])
+        ready-world (assoc-in world [:license/versions left-id] satisfied)]
+    (require* (license/adoption-ready? ready-world left-id)
+              "operative synthetic version with all supplied gates satisfied must pass")
+    (require* (not (license/adoption-ready?
+                   (assoc-in ready-world [:license/versions left-id :version/status]
+                             :counterfactual) left-id))
+              "satisfied gates must not make a counterfactual version operative"))
+  (require* (not (license/adoption-ready? world unknown-id))
+            "unknown version must not be adoption-ready")
+  (let [candidate (assoc version :version/id unknown-id :version/parents #{left-id})
+        result (license/world-add-version world candidate)
+        replacement (license/world-add-version (:world result)
+                                               (assoc candidate :version/status :counterfactual))]
+    (require* (= :added (:result result)) "typed child version must be addable")
+    (require* (not (license/known-version? world unknown-id))
+              "adding a version must preserve the original world")
+    (require* (= version (license/version-node (:world result) left-id))
+              "adding a child must preserve its parent")
+    (require* (= #{left-id} (license/version-ancestors (:world result) unknown-id))
+              "typed parent identity must be preserved")
+    (require* (and (= :already-present (:result replacement))
+                   (= (:world result) (:world replacement)))
+              "existing version identity must not be overwritten"))
+  {:cc-math/boundaries :passed :synthetic true})
+
+(defn -main [& _]
+  (println (verify-boundaries)))

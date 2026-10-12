@@ -1,0 +1,80 @@
+(ns cc-math-license)
+
+;; Pure, persistent version-graph operations. jank lowers these ordinary
+;; Clojure maps and vectors through its native runtime; mutation is not needed.
+
+(defn version-node [world version-id]
+  (get-in world [:license/versions version-id]))
+
+(defn known-version? [world version-id]
+  (some? (version-node world version-id)))
+
+(defn parents-known? [world version]
+  (every? #(known-version? world %) (:version/parents version)))
+
+(defn structurally-valid? [world version]
+  (and (uuid? (:version/id version))
+       (keyword? (:version/artifact version))
+       (set? (:version/parents version))
+       (string? (:content/path version))
+       (= 64 (count (:content/sha256 version)))
+       (parents-known? world version)))
+
+(defn world-add-version
+  "Return a new world containing version; the input world remains reusable."
+  [world version]
+  (let [version-id (:version/id version)]
+    (cond
+      (known-version? world version-id)
+      {:world world :result :already-present :version/id version-id}
+
+      (not (structurally-valid? world version))
+      {:world world :result :rejected :version/id version-id}
+
+      :else
+      {:world (-> world
+                  (assoc-in [:license/versions version-id] version)
+                  (assoc-in [:license/artifacts (:version/artifact version)
+                             :artifact/head]
+                            version-id))
+       :result :added
+       :version/id version-id})))
+
+(defn version-ancestors
+  "Return the persistent set of ancestors reachable from version-id."
+  [world version-id]
+  (loop [frontier (seq (:version/parents (version-node world version-id)))
+         seen #{}]
+    (if (empty? frontier)
+      seen
+      (let [current (first frontier)
+            remaining (rest frontier)]
+        (if (contains? seen current)
+          (recur remaining seen)
+          (recur (concat (:version/parents (version-node world current))
+                         remaining)
+                 (conj seen current)))))))
+
+(defn transportable-family?
+  "Versions transport within a family only when artifact and schema agree."
+  [world left-id right-id]
+  (let [left (version-node world left-id)
+        right (version-node world right-id)]
+    (and (= (:version/artifact left) (:version/artifact right))
+         (= (:version/schema left) (:version/schema right)))))
+
+(defn adoption-ready? [world version-id]
+  (let [version (version-node world version-id)]
+    (and (= :operative (:version/status version))
+         (every? #(= :satisfied (:gate/status %))
+                 (:version/adoption-gates version)))))
+
+(defn -main [& _]
+  (let [world {:license/versions {}
+               :license/artifacts {}}
+        result (world-add-version world {:version/id :untyped})]
+    (println {:cc-math/processor :loaded
+              :persistence :immutable
+              :input-preserved (= world (:world result))
+              :invalid-version (:result result)
+              :optimization-target :jank-ir})))
