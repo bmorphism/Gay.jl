@@ -56,16 +56,19 @@
                  (conj seen current)))))))
 
 (defn transportable-family?
-  "Versions transport within a family only when artifact and schema agree."
+  "Known versions transport within a family only when artifact and schema agree."
   [world left-id right-id]
   (let [left (version-node world left-id)
         right (version-node world right-id)]
-    (and (= (:version/artifact left) (:version/artifact right))
+    (and (some? left)
+         (some? right)
+         (= (:version/artifact left) (:version/artifact right))
          (= (:version/schema left) (:version/schema right)))))
 
 (defn adoption-ready? [world version-id]
   (let [version (version-node world version-id)]
     (and (= :operative (:version/status version))
+         (seq (:version/adoption-gates version))
          (every? #(= :satisfied (:gate/status %))
                  (:version/adoption-gates version)))))
 
